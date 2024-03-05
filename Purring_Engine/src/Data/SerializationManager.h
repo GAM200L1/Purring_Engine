@@ -69,15 +69,18 @@ class SerializationManager
 public:
     /*!***********************************************************************************
      \brief Opens a file explorer and returns the selected file path as a string.
+
+     \param[in] type  The file type to filter for.
     *************************************************************************************/
-    std::string OpenFileExplorer();
+    std::string OpenFileExplorer(std::string const& type = ".json");
 
     /*!***********************************************************************************
      \brief Opens a file explorer and returns the selected file path as a string.
             This version is used mainly to save a file with a potentially not existing
             filename.
+    \param[in] type  The file type to filter for.
     *************************************************************************************/
-    std::string OpenFileExplorerRequestPath();
+    std::string OpenFileExplorerRequestPath(std::string const& type = ".json");
 
     /*!***********************************************************************************
      \brief Serialize all entities in the scene into a single JSON object.
@@ -92,7 +95,9 @@ public:
     /*!***********************************************************************************
      \brief Save the serialized JSON of all entities to a file with the given filename.
     *************************************************************************************/
-    void SaveAllEntitiesToFile(std::string const& fileName, bool fp = false);
+    void SerializeScene(std::string const& fileName, bool fp = false);
+
+    void DeserializeScene(std::string const& r_scenePath);
 
     /*!***********************************************************************************
      \brief Serialize the entity with the given ID to a JSON object.
@@ -103,6 +108,16 @@ public:
      \brief Serialize the entity with the given ID to a JSON object as a prefab
     *************************************************************************************/
     nlohmann::json SerializeEntityPrefab(int entityId);
+
+    /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object as a prefab composite
+    *************************************************************************************/
+    nlohmann::json SerializeEntityComposite(int entityID);
+
+    /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object as a prefab composite
+    *************************************************************************************/
+    nlohmann::json SerializePrefabComposite();
 
     /*!***********************************************************************************
      \brief Deserialize a JSON object to create an entity, returning its ID.
@@ -135,6 +150,22 @@ public:
     *************************************************************************************/
     nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
 
+    /*!***********************************************************************************
+    \brief Save animation data to file
+
+    \param[in] filepath  The path to the file to save to.
+    \param[in] serializedData  The data to save.
+    *************************************************************************************/
+    void SaveMetaDataToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
+
+    /*!***********************************************************************************
+    \brief Load an animation from a serialized file.
+
+    \param[in] filename  The path to the file to load from.
+    \return nlohmann::json  The loaded data.
+    *************************************************************************************/
+    nlohmann::json LoadMetaDataFromFile(const std::filesystem::path& filepath);
+
     /*!************************************************************************
      \brief Serializes an entity's component to JSON.
 
@@ -149,6 +180,12 @@ public:
     template<typename ComponentType>
     void SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json);
 
+    /*!***********************************************************************************
+    \brief Loads a prefab from file
+
+    \param[in] r_json  The path to the file to save to.
+    *************************************************************************************/
+    size_t LoadPrefabFromFile(nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:
@@ -223,6 +260,8 @@ private:
      \brief Load the Transform component from JSON.
     *************************************************************************************/
     bool LoadGUISlider(const size_t& r_id, const nlohmann::json& r_json);
+
+
 
     // ----- Private Methods ----- //
 private:

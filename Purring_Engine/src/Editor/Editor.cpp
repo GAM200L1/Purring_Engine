@@ -187,6 +187,7 @@ namespace PE {
 
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
+		ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus, Editor::OnWindowFocusEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedObject = -1;
@@ -451,7 +452,7 @@ namespace PE {
 					{
 						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							auto save = serializationManager.SerializeEntityPrefab(1);
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
 							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 							m_applyPrefab = true;
@@ -785,6 +786,7 @@ namespace PE {
 					std::string name;
 
 					name += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+
 					if (usedNames.count(name))
 						name += " - " + std::to_string(id);
 					
@@ -890,7 +892,7 @@ namespace PE {
 					auto save = serializationManager.SerializeEntityPrefab(static_cast<int>(m_currentSelectedObject));
 					std::string filepath = "../Assets/Prefabs/";
 					filepath += EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).name; // can change to request name or smth
-					filepath += "_Prefab.json";
+					filepath += ".prefab";
 					std::ofstream outFile(filepath);
 					if (outFile)
 					{
@@ -901,7 +903,6 @@ namespace PE {
 				if (ImGui::Selectable("Delete Object"))
 				{
 						AddInfoLog("Object Deleted");
-
 						
 						if (m_currentSelectedObject != -1)
 						{
@@ -954,7 +955,7 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty.prefab");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -963,7 +964,7 @@ namespace PE {
 				{
 					if (ImGui::MenuItem("Create Canvas Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas.prefab");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
 					}
@@ -971,7 +972,7 @@ namespace PE {
 					{
 		
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -979,7 +980,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -987,7 +988,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create UI Slider")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -995,7 +996,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -1004,13 +1005,13 @@ namespace PE {
 				}
 				if (ImGui::Selectable("Create Audio Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio.prefab");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera.prefab");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					m_currentSelectedObject = static_cast<int>(s_id);
 				}
@@ -1034,7 +1035,7 @@ namespace PE {
 			{
 				if (m_objectIsSelected || m_isPrefabMode)
 				{
-					EntityID entityID = (m_isPrefabMode)? 1 : m_currentSelectedObject;
+					EntityID entityID = /*(m_isPrefabMode) ? 1 :*/ m_currentSelectedObject;
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
 					bool hasScripts = false;
@@ -2503,7 +2504,7 @@ namespace PE {
 									ImGui::SameLine();
 									if (ImGui::Button("Load"))
 									{
-										std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+										std::string filePath = serializationManager.OpenFileExplorerRequestPath(".ttf");
 
 										// Check if filePath is not empty
 										if (!filePath.empty())
@@ -2681,7 +2682,7 @@ namespace PE {
 
 					if (hasScripts)
 					{
-						m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
+						//m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
 							if (key == "GameStateController")
@@ -3777,6 +3778,48 @@ namespace PE {
 					}
 
 				}
+				else if (m_currentSelectedResourcePath != "")
+				{
+					// Display properties of the selected resource
+					if (ImGui::CollapsingHeader("Resource Properties", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+					{
+						std::filesystem::path path = m_currentSelectedResourcePath;
+						std::filesystem::path metaPath = path.string() + ".meta";
+						std::string guid;
+
+						ImGui::Text(path.filename().string().c_str());
+
+						if (path.extension().string() == ".png")
+						{
+							// load current resource metadata
+							TextureMetaData metaData{};
+							metaData.Deserialize(serializationManager.LoadMetaDataFromFile(metaPath));
+
+							ImGui::Text("Guid: "); ImGui::SameLine(); ImGui::Text(metaData.Guid.c_str());
+							ImGui::Text("Type: "); ImGui::SameLine(); ImGui::Text(metaData.Type.c_str());
+
+							bool checkBox = metaData.IsSpriteSheet;
+							std::string str = "##IsSpriteSheet";
+							ImGui::Text("Spritesheet: ");
+							ImGui::SameLine();
+							
+							if (ImGui::Checkbox(str.c_str(), &checkBox))
+							{
+								metaData.IsSpriteSheet = checkBox;
+								serializationManager.SaveMetaDataToFile(metaPath, metaData.Serialize());
+							}							
+						}
+						else
+						{
+							// load current resource metadata
+							MetaData metaData{};
+							metaData.Deserialize(serializationManager.LoadMetaDataFromFile(metaPath));
+
+							ImGui::Text("Guid: "); ImGui::SameLine(); ImGui::Text(metaData.Guid.c_str());
+							ImGui::Text("Type: "); ImGui::SameLine(); ImGui::Text(metaData.Type.c_str());
+						}			
+					}
+				}
 			}
 			ImGui::EndChild();
 			ImGui::End();
@@ -3873,6 +3916,12 @@ namespace PE {
 
 				if (ImGui::IsWindowHovered())
 				{
+					if (ImGui::IsMouseClicked(0))
+					{
+						// reset selected resource
+						m_currentSelectedResourcePath.clear();
+					}
+
 					glfwSetDropCallback(WindowManager::GetInstance().GetWindow(), &HotLoadingNewFiles);
 					if (m_fileDragged)
 					{
@@ -3895,6 +3944,7 @@ namespace PE {
 					// Calculate number of items per row with dynamic padding
 					int numItemPerRow = static_cast<int>(ImGui::GetContentRegionAvail().x / totalChildWidth);
 					if (numItemPerRow < 1) numItemPerRow = 1;
+
 
 
 					// list the files in the current showing directory as imgui text
@@ -3972,7 +4022,7 @@ namespace PE {
 										icon = "../Assets/Icons/Audio_Icon.png";
 									else if (extension == ".ttf")
 										icon = "../Assets/Icons/Font_Icon.png";
-									else if (extension == ".json")
+									else if (extension == ".prefab")
 										icon = "../Assets/Icons/Prefabs_Icon.png";
 									else
 										icon = "../Assets/Icons/Other_Icon.png";
@@ -4023,6 +4073,15 @@ namespace PE {
 										draggedItemIndex = n; // Start dragging
 										isDragging = true;
 
+										// set current selected resource
+										std::filesystem::path filePath = m_files[n];
+										filePath.make_preferred();
+
+										m_currentSelectedObject = -1;
+										m_objectIsSelected = false;
+										m_currentSelectedResourcePath = filePath.string();
+										std::cout << "Selected Resource: " << m_currentSelectedResourcePath << std::endl;
+
 										std::string iconDraggedExtension = m_files[n].extension().string();
 										if (iconDraggedExtension == "")
 											iconDragged = "../Assets/Icons/Directory_Icon.png";
@@ -4036,7 +4095,7 @@ namespace PE {
 										}
 										else if (iconDraggedExtension == ".ttf")
 											iconDragged = "../Assets/Icons/Font_Icon.png";
-										else if (iconDraggedExtension == ".json")
+										else if (iconDraggedExtension == ".prefab")
 											iconDragged = "../Assets/Icons/Prefabs_Icon.png";
 										else if (iconDraggedExtension == ".png")
 											iconDragged = "../Assets/Icons/Texture_Icon.png";
@@ -4064,7 +4123,7 @@ namespace PE {
 							{
 								rmbIndex = n;
 
-								if (m_files[n].extension().string() == ".json")
+								if (m_files[n].extension().string() == ".prefab")
 								{
 									ImGui::OpenPopup("EditPrefab");
 								}
@@ -4205,7 +4264,7 @@ namespace PE {
 
 							if (m_mouseInScene || m_mouseInObjectWindow)
 							{
-								if (m_files[draggedItemIndex].extension() == ".json")
+								if (m_files[draggedItemIndex].extension() == ".prefab")
 								{
 									EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string(), true);
 									UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
@@ -4393,17 +4452,17 @@ namespace PE {
 					currentAnimationID = animationFilePaths[animationIndex].string();
 				}
 
-				if (ImGui::Button("Create Animation"))
-				{
-					// Get the file path using the file explorer
-					std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+			if (ImGui::Button("Create Animation"))
+			{
+				// Get the file path using the file explorer
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath(".anim");
 
 					// Check if filePath is not empty
 					if (!filePath.empty())
 					{
 						// format filepath to be relative to the Assets folder
 						std::replace(filePath.begin(), filePath.end(), '\\', '/');
-						filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + "_Anim.json";
+						filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find_last_of(".") - filePath.find("/Assets/")) + ".anim";
 
 						// Create a new animation
 						currentAnimationID = AnimationManager::CreateAnimation(filePath);
@@ -4460,7 +4519,7 @@ namespace PE {
 					ImGui::SameLine();
 					if (ImGui::Button("Load"))
 					{
-						std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+						std::string filePath = serializationManager.OpenFileExplorerRequestPath(".anim");
 
 						// Check if filePath is not empty
 						if (!filePath.empty())
@@ -4844,8 +4903,7 @@ namespace PE {
 					{
 						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							auto save = serializationManager.SerializeEntityPrefab(1);
-
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 							std::ofstream outFile(prefabFP);
 							if (outFile)
 							{
@@ -4865,7 +4923,7 @@ namespace PE {
 						{
 							if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 							{
-								auto save = serializationManager.SerializeEntityPrefab(1);
+								nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 								prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
 								prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 								std::ofstream outFile(prefabFP);
@@ -4967,7 +5025,7 @@ namespace PE {
 									
 									if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 									{
-										auto save = serializationManager.SerializeEntityPrefab(1);
+										nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 
 										std::ofstream outFile(prefabFP);
 										if (outFile)
@@ -4993,7 +5051,7 @@ namespace PE {
 									engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 									// This will save all entities to a file
 
-									serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath(), true);
+									serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(".scene"), true);
 									engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								}
 								if (ImGui::MenuItem("Load"))
@@ -5001,7 +5059,7 @@ namespace PE {
 									engine_logger.AddLog(false, "Opening file explorer to load entities...", __FUNCTION__);
 
 									// Invoke the file explorer and allow user to choose a JSON file for loading entities.
-									std::string filePath = serializationManager.OpenFileExplorer();
+									std::string filePath = serializationManager.OpenFileExplorer(".scene");
 									if (!filePath.empty())
 									{
 										engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
@@ -5142,14 +5200,14 @@ namespace PE {
 							UndoStack::GetInstance().ClearStack();
 
 							// if active scene is default scene, open file explorer to save new scene
-							if (SceneManager::GetInstance().GetActiveScene() == "DefaultScene.json")
+							if (SceneManager::GetInstance().GetActiveScene() == "Default_Scene.scene")
 							{
-								serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath(), true);
+								serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(), true);
 							}
 							else
 							{
 								// save active scene
-								serializationManager.SaveAllEntitiesToFile(SceneManager::GetInstance().GetActiveScene());
+								serializationManager.SerializeScene(SceneManager::GetInstance().GetActiveScene());
 							}
 
 							SceneManager::GetInstance().CreateDefaultScene();
@@ -5845,7 +5903,7 @@ namespace PE {
 		}
 		else
 		{
-			NextCanvasID = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
+			NextCanvasID = serializationManager.LoadFromFile("EditorDefaults/Canvas.prefab");
 		}
 
 		return NextCanvasID;
@@ -5855,7 +5913,7 @@ namespace PE {
 	{
 		// save active scene name
 		m_savedScene = SceneManager::GetInstance().GetActiveScene();
-		serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+		serializationManager.SerializeScene("Savestate/savestate.scene");
 		UndoStack::GetInstance().ClearStack();
 	}
 
@@ -5867,12 +5925,12 @@ namespace PE {
 		if (m_savedScene == SceneManager::GetInstance().GetActiveScene())
 		{
 			// if active sccene is the same as active scene, restart scene
-			SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+			SceneManager::GetInstance().RestartScene("Savestate/savestate.scene");
 		}
 		else
 		{
 			// else need to reload assets for the scene
-			SceneManager::GetInstance().LoadSceneToLoad("Savestate/savestate.json");
+			SceneManager::GetInstance().LoadSceneToLoad("Savestate/savestate.scene");
 		}
 		SceneManager::GetInstance().SetActiveScene(m_savedScene);
 	}

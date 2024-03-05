@@ -183,7 +183,7 @@ namespace PE
 						{
 							SerializationManager sm;
 
-							slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+							slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob.prefab"));
 							Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
 						}
 					}
@@ -191,7 +191,7 @@ namespace PE
 					{
 						SerializationManager sm;
 
-						slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+						slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob.prefab"));
 						Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
 					}
 
@@ -239,7 +239,7 @@ namespace PE
 
 
 							float tv = slider.m_maxValue - slider.m_minValue;
-							float ratio = slider.m_currentValue / tv;
+							float ratio = slider.m_currentValue / (tv ? tv : 1.f);
 
 
 							knobTransform.width = ratio * EntityManager::GetInstance().Get<Transform>(objectID).width;
@@ -325,7 +325,7 @@ namespace PE
 							slider.m_endPoint = EntityManager::GetInstance().Get<Transform>(objectID).width / 2;
 
 							float tv = slider.m_maxValue - slider.m_minValue;
-							float ratio = slider.m_currentValue / tv;
+							float ratio = slider.m_currentValue / (tv ? tv : 1.f);
 
 							knobTransform.width = ratio * EntityManager::GetInstance().Get<Transform>(objectID).width;
 							knobTransform.relPosition.x = slider.CalculateKnobCenter(slider.m_currentValue) - knobTransform.width / 2;

@@ -236,23 +236,23 @@ namespace PE
 					{
 						case EnumCatType::MAINCAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("Meowsalot_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("Meowsalot.prefab"));
 							break;
 						}
 						case EnumCatType::GREYCAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("Grey Cat_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("Grey Cat.prefab"));
 							break;
 						}
 						case EnumCatType::ORANGECAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("OrangeCat_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("OrangeCat.prefab"));
 							break;
 						}
 						//case EnumCatType::FLUFFYCAT:
 						//{
 						//	//to be replaced
-						//	NewCatID = sm.LoadFromFile(("DeploymentTest_Prefab.json"));
+						//	NewCatID = sm.LoadFromFile(("DeploymentTest.prefab"));
 						//	break;
 						//}
 					}

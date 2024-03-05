@@ -19,6 +19,8 @@
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
 #include "UndoStack.h"
+#include "Utilities/FileUtilities.h"
+
 extern SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
@@ -162,5 +164,10 @@ namespace PE {
 					m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 					}
 				}
+		}
+
+		void Editor::OnWindowFocusEvent(const PE::Event<PE::WindowEvents>& r_e)
+		{
+			GetFileNamesInParentPath(m_parentPath, m_files);
 		}
 }

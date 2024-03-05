@@ -33,7 +33,7 @@ namespace PE
 	{
 		// create projectile //
 		SerializationManager serializationManager;
-		projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
+		projectileID = serializationManager.LoadFromFile("Projectile.prefab");
 		CatHelperFunctions::ToggleEntity(projectileID, false);
 
 		if (isMainCat)
@@ -47,7 +47,7 @@ namespace PE
 
 			SerializationManager serializationManager;
 
-			EntityID telegraphID = serializationManager.LoadFromFile("PlayerAttackTelegraph_Prefab.json");
+			EntityID telegraphID = serializationManager.LoadFromFile("PlayerAttackTelegraph.prefab");
 			Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
 			//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
@@ -285,7 +285,7 @@ namespace PE
 				
 				// ----- Attacking Audio ----- //
 				SerializationManager m_serializationManager;
-				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX_Prefab.json");
+				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX.prefab");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 				EntityManager::GetInstance().RemoveEntity(sound);
@@ -295,13 +295,13 @@ namespace PE
 					switch (randomInteger)
 					{
 					case 1:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX1_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX1.prefab");
 						break;
 					case 2:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX2_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX2.prefab");
 						break;
 					case 3:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX3_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX3.prefab");
 						break;
 					}
 
@@ -374,12 +374,12 @@ namespace PE
 			}
 			else if (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, p_attackData->damage);
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
 				return true;
 			}
 			else if (id2 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, p_attackData->damage);
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
 				return true;
 			}
 		}

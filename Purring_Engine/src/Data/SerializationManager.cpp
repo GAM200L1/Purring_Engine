@@ -39,6 +39,8 @@
 #include "Math/MathCustom.h"
 #include "GUI/Canvas.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Hierarchy/HierarchyManager.h"
+#include "Layers/LayerManager.h"
 
 // RTTR
 #include <rttr/variant.h>
@@ -48,8 +50,26 @@
 #include "Logic/Cat/CatScript_v2_0.h"
 
 const std::wstring wjsonExt = L".json";
+const std::wstring wAnimExt = L".anim";
+const std::wstring wSceneExt = L".scene";
+const std::wstring wPrefabExt = L".prefab";
+const std::wstring wTrueTypeFontExt = L".ttf";
+const std::wstring wPngExt = L".png";
 
-std::string SerializationManager::OpenFileExplorer()
+const wchar_t* wJsonFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
+const wchar_t* wAnimFilter = L"ANIM Files\0*.anim\0All Files\0*.*\0";
+const wchar_t* wTrueTypeFontFilter = L"TrueType font Files\0*.ttf\0All Files\0*.*\0";
+const wchar_t* wSceneFilter = L"SCENE Files\0*.scene\0All Files\0*.*\0";
+const wchar_t* wPrefabFilter = L"PREFAB Files\0*.scene\0All Files\0*.*\0";
+const wchar_t* wPngFilter = L"PNG Files\0*.png\0All Files\0*.*\0";
+
+const wchar_t* wAnimInitialDirectory = L"..\\Assets\\Animation";
+const wchar_t* wFontInitialDirectory = L"..\\Assets\\Fonts";
+const wchar_t* wSceneInitialDirectory = L"..\\Assets\\Scenes";
+const wchar_t* wPrefabInitialDirectory = L"..\\Assets\\Prefabs";
+const wchar_t* wTextureInitialDirectory = L"..\\Assets\\Textures";
+
+std::string SerializationManager::OpenFileExplorer(std::string const& type)
 {
     OPENFILENAME ofn;
     wchar_t szFile[260];
@@ -59,12 +79,42 @@ std::string SerializationManager::OpenFileExplorer()
     ofn.lpstrFile = szFile;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (type == ".json")
+    {
+        ofn.lpstrFilter = wJsonFilter;
+        ofn.lpstrInitialDir = NULL;
+    }
+    else if (type == ".anim")
+    {
+        ofn.lpstrFilter = wAnimFilter;
+        ofn.lpstrInitialDir = wAnimInitialDirectory;
+    }
+    else if (type == ".scene")
+    {
+        ofn.lpstrFilter = wSceneFilter;
+        ofn.lpstrInitialDir = wSceneInitialDirectory;
+    }
+    else if (type == ".prefab")
+	{
+		ofn.lpstrFilter = wPrefabFilter;
+		ofn.lpstrInitialDir = wPrefabInitialDirectory;
+	}
+    else if (type == ".ttf")
+    {
+        ofn.lpstrFilter = wTrueTypeFontFilter;
+        ofn.lpstrInitialDir = wFontInitialDirectory;
+    }
+    else if (type == ".png")
+    {
+        ofn.lpstrFilter = wPngFilter;
+        ofn.lpstrInitialDir = wTextureInitialDirectory;
+    }
+
 
     if (GetOpenFileNameW(&ofn) == TRUE)
     {
@@ -84,7 +134,7 @@ std::string SerializationManager::OpenFileExplorer()
     return "";
 }
 
-std::string SerializationManager::OpenFileExplorerRequestPath()
+std::string SerializationManager::OpenFileExplorerRequestPath(std::string const& type)
 {
     OPENFILENAME ofn;
     wchar_t szFile[260];
@@ -94,12 +144,41 @@ std::string SerializationManager::OpenFileExplorerRequestPath()
     ofn.lpstrFile = szFile;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (type == ".json")
+    {
+        ofn.lpstrFilter = wJsonFilter;
+        ofn.lpstrInitialDir = NULL;
+    }
+    else if (type == ".anim")
+    {
+        ofn.lpstrFilter = wAnimFilter;
+        ofn.lpstrInitialDir = wAnimInitialDirectory;
+    }
+    else if (type == ".scene")
+    {
+        ofn.lpstrFilter = wSceneFilter;
+        ofn.lpstrInitialDir = wSceneInitialDirectory;
+    }
+    else if (type == ".prefab")
+	{
+		ofn.lpstrFilter = wPrefabFilter;
+		ofn.lpstrInitialDir = wPrefabInitialDirectory;
+	}
+    else if (type == ".ttf")
+    {
+        ofn.lpstrFilter = wTrueTypeFontFilter;
+        ofn.lpstrInitialDir = wFontInitialDirectory;
+    }
+    else if (type == ".png")
+    {
+        ofn.lpstrFilter = wPngFilter;
+        ofn.lpstrInitialDir = wTextureInitialDirectory;
+    }
 
     if (GetOpenFileNameW(&ofn) == TRUE)
     {
@@ -164,7 +243,23 @@ void SerializationManager::DeserializeAllEntities(const nlohmann::json& r_j)
     }
 }
 
-void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bool fp)
+//void SerializationManager::ConvertJsonToExtension(nlohmann::json const& r_json, std::string const& r_fileName)
+//{
+//    std::string jsonData{ r_json.dump() };
+//
+//    std::ofstream outFile(r_fileName);
+//    if (outFile)
+//    {
+//        outFile << jsonData;
+//        outFile.close();
+//    }
+//    else
+//    {
+//        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+//    }
+//}
+
+void SerializationManager::SerializeScene(std::string const& filename, bool fp)
 {
     nlohmann::json allEntitiesJson = SerializeAllEntities();
 
@@ -189,6 +284,31 @@ void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bo
     else
     {
         std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
+
+void SerializationManager::DeserializeScene(std::string const& r_scenePath)
+{
+    std::filesystem::path filepath = r_scenePath;
+
+    if (!std::filesystem::exists(filepath))
+    {
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return;
+    }
+
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        SerializationManager serializationManager;
+        nlohmann::json allEntitiesJson;
+        inFile >> allEntitiesJson;
+        serializationManager.DeserializeAllEntities(allEntitiesJson);
+        inFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
     }
 }
 
@@ -245,17 +365,39 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
 
 nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
 {
-    PE::EntityDescriptor tmp;
-    tmp.name = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).name;
-    if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType == "")
-        tmp.prefabType = tmp.name;
-    else
-        tmp.prefabType = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType;
-
-    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
-    nlohmann::json ret = SerializeEntity(entityId);
-    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+    nlohmann::json ret;
+    auto tmp = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent;
+    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent.reset();
+    ret["Prefab"].push_back(SerializeEntityComposite(entityId));
+    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent = tmp;
     return ret;
+}
+
+nlohmann::json SerializationManager::SerializeEntityComposite(int entityID)
+{
+    nlohmann::json ret;
+    ret += SerializeEntity(entityID);
+    auto& desc = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityID));
+    if (desc.children.size())
+    {
+        for (auto id : desc.children)
+        {
+            if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(id)).children.size())
+            {
+                ret += SerializeEntityComposite(static_cast<int>(id));
+            }
+            else
+            {
+                ret += SerializeEntity(static_cast<int>(id));
+            }
+        }
+    }
+    return ret;
+}
+
+nlohmann::json SerializationManager::SerializePrefabComposite()
+{
+    return SerializeAllEntities();
 }
 
 size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
@@ -289,6 +431,8 @@ size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
                 // // Deserialize components
             }
         }
+        PE::EntityManager::GetInstance().UpdateVectors(id);
+        PE::LayerManager::GetInstance().UpdateEntity(id);
     }
     return id;
 }
@@ -347,7 +491,8 @@ size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
         nlohmann::json j;
         inFile >> j;
         inFile.close();
-        return DeserializeEntity(j);
+        size_t ret = LoadPrefabFromFile(j);
+        return ret;
     }
     else
     {
@@ -371,7 +516,81 @@ nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem
     return loadedData;
 }
 
+void SerializationManager::SaveMetaDataToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData)
+{
+    std::ofstream outFile(filepath);
+    if (outFile)
+    {
+        outFile << serializedData.dump(4);
+        outFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
 
+nlohmann::json SerializationManager::LoadMetaDataFromFile(const std::filesystem::path& filepath)
+{
+    nlohmann::json loadedData;
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        inFile >> loadedData;
+        inFile.close();
+    }
+    else {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+    }
+    return loadedData;
+}
+
+
+size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
+{
+    if (r_json.contains("Prefab")) // following multi prefab method
+    {
+        for (auto item : r_json["Prefab"]) // each set should be a group of entities, first is parent, following is children
+        {
+            size_t parent = MAXSIZE_T;
+            for (auto entity : item)
+            {
+                if (parent == MAXSIZE_T)
+                {
+                    parent = DeserializeEntity(entity);
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).children.clear();
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).sceneID = parent;
+                }
+                else
+                {
+                    size_t id  = DeserializeEntity(entity);
+                    if (id == MAXSIZE_T) // child will have a child
+                    {
+                        nlohmann::json tmp;
+                        tmp["Prefab"].push_back(entity);
+                        //std::cout << tmp << std::endl;
+                        id = LoadPrefabFromFile(tmp);
+                    }
+                    else
+                    {
+                        PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).children.clear();
+                    }
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).sceneID = id;
+                    PE::Hierarchy::GetInstance().AttachChild(parent, id);
+                    
+                }
+            }
+
+            return parent;
+        }
+    }
+    else // following old format (handle old way)
+    {
+        std::cout << r_json << std::endl;
+        return DeserializeEntity(r_json);
+    }
+    return MAXSIZE_T;
+}
 
 void SerializationManager::LoadLoaders()
 {
@@ -752,7 +971,6 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
             }
         }
     }
-
     return true;
 }
 
@@ -839,3 +1057,5 @@ bool SerializationManager::LoadGUISlider(const EntityID& r_id, const nlohmann::j
     }
     return false;
 }
+
+

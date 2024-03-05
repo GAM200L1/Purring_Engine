@@ -1,0 +1,101 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 1,
+                            "Prefab Type": "RatBossBashAttackTelegraph",
+                            "children": [
+                                2
+                            ],
+                            "isActive": true,
+                            "name": "RatBossBashAttackTelegraphwAnim",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Bash_512px.png"
+                        },
+                        "RigidBody": {
+                            "linearDrag": 2.0,
+                            "mass": 10.0,
+                            "type": 0
+                        },
+                        "Transform": {
+                            "height": 256.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 74.00018310546875,
+                                "y": 27.99999237060547
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 256.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            {
+                "Entity": {
+                    "components": {
+                        "AnimationComponent": {
+                            "AnimationIDs": [
+                                "../Assets/Animation/RatKingBashAttack.anim"
+                            ],
+                            "CurrentAnimationID": "../Assets/Animation/RatKingBashAttack.anim"
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 1,
+                            "Prefab Type": "RatBossBashAttackSpike",
+                            "children": [],
+                            "isActive": false,
+                            "name": "RatBossBashAttackSpike",
+                            "parent": 1,
+                            "sceneID": 2
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": ""
+                        },
+                        "Transform": {
+                            "height": 512.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 98.00025939941406,
+                                "y": 71.9999771118164
+                            },
+                            "relativeposition": {
+                                "x": 24.000076293945313,
+                                "y": 43.99998474121094
+                            },
+                            "relorientation": 0.0,
+                            "width": 512.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}
