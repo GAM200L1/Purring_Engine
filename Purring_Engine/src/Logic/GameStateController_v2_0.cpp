@@ -78,7 +78,7 @@ namespace PE
 
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 				{
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png"));
 				}
 			}
 			else // if not first level
@@ -95,7 +95,7 @@ namespace PE
 
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner))
 				{
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_1429x415.png"));
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png"));
 				}
 
 			}
@@ -124,9 +124,9 @@ namespace PE
 		m_currentLevelBackground = ResourceManager::GetInstance().LoadTexture(m_currentLevelBackground);
 		m_currentLevelSepiaBackground = ResourceManager::GetInstance().LoadTexture(m_currentLevelSepiaBackground);
 		m_defaultPotraitTextureKey = ResourceManager::GetInstance().LoadTexture("UnitPortrait_Default_256px.png");
-		m_planningPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_1429x415.png");
-		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_1429x415.png");
-		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_1429x415.png");
+		m_planningPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png");
+		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
+		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
 
 
@@ -1349,7 +1349,7 @@ namespace PE
 			{
 				if (EntityManager::GetInstance().Has<TextComponent>(id2))
 				{
-					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn: " + std::to_string(CurrentTurn));
+					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn " + std::to_string(CurrentTurn));
 				}
 				continue;
 			}
