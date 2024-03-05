@@ -593,7 +593,7 @@ size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
     }
     else // following old format (handle old way)
     {
-        std::cout << r_json << std::endl;
+        //std::cout << r_json << std::endl;
         return DeserializeEntity(r_json);
     }
     return MAXSIZE_T;
