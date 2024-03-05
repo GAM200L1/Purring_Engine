@@ -183,6 +183,7 @@ std::string SerializationManager::OpenFileExplorerRequestPath(std::string const&
     if (GetOpenFileNameW(&ofn) == TRUE)
     {
         std::wstring wfp = ofn.lpstrFile;
+
         // check for extention
         for (size_t i{ wfp.length() - 5 }, j{}; i < wfp.length(); ++i, ++j)
         {
@@ -269,10 +270,16 @@ void SerializationManager::SerializeScene(std::string const& filename, bool fp)
     if (fp)
     {
         filepath = filename;
+        filepath.make_preferred();
     }
     else
     {
         filepath = std::string{ "../Assets/Scenes/" } + filename;
+    }
+
+    if (filepath.has_extension())
+    {
+        filepath.replace_extension(".scene");
     }
 
     std::ofstream outFile(filepath);
@@ -586,7 +593,7 @@ size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
     }
     else // following old format (handle old way)
     {
-        std::cout << r_json << std::endl;
+        //std::cout << r_json << std::endl;
         return DeserializeEntity(r_json);
     }
     return MAXSIZE_T;
