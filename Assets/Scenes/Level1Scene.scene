@@ -83,8 +83,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -397,8 +397,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -674,8 +674,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -835,8 +835,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1190,8 +1190,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1235,8 +1235,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1598,8 +1598,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1875,8 +1875,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2289,8 +2289,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2614,8 +2614,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2696,8 +2696,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3027,8 +3027,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3304,8 +3304,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4059,8 +4059,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4109,15 +4109,15 @@
                     },
                     "GUIRenderer": {
                         "Color": {
-                            "a": 0.0,
+                            "a": 1.0,
                             "b": 1.0,
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_1429x415.png"
+                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_933x302.png"
                     },
                     "Transform": {
-                        "height": 400.0,
+                        "height": 302.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -4128,7 +4128,7 @@
                             "y": 273.00006103515625
                         },
                         "relorientation": 0.0,
-                        "width": 1200.0
+                        "width": 933.0
                     }
                 },
                 "name": ""
@@ -4138,8 +4138,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4294,6 +4294,7 @@
                                     "GreyCatAttackVariables": {
                                         "attacKDirection": 0,
                                         "bulletDelay": 0.0,
+                                        "bulletFireAnimationIndex": 3,
                                         "bulletForce": 1000.0,
                                         "bulletLifeTime": 1.0,
                                         "bulletRange": 3.0,
@@ -4443,6 +4444,7 @@
                                     "GreyCatAttackVariables": {
                                         "attacKDirection": 0,
                                         "bulletDelay": 0.0,
+                                        "bulletFireAnimationIndex": 3,
                                         "bulletForce": 500.0,
                                         "bulletLifeTime": 1.0,
                                         "bulletRange": 3.0,
@@ -4491,8 +4493,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4597,7 +4599,25 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 91
+                                "FollowObjectID": 91,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
                             },
                             "state": 0
                         }
@@ -4732,7 +4752,25 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 92
+                                "FollowObjectID": 92,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
                             },
                             "state": 0
                         }
