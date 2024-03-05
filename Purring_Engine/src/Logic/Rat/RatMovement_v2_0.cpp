@@ -62,6 +62,7 @@ namespace PE
         if (gameStateController->currentState == GameStates_v2_0::EXECUTE)
         {
             m_planningRunOnce = false;
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
 
             switch (p_data->ratType)
             {
