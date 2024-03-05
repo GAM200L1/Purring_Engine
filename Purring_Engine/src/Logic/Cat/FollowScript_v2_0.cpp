@@ -160,10 +160,10 @@ namespace PE
 		switch (randomInteger)
 		{
 		case 1:
-			sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX_Prefab.json");
+			sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX.prefab");
 			break;
 		case 2:
-			sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX2_Prefab.json");
+			sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX2.prefab");
 			break;
 		}
 

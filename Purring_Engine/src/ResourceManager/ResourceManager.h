@@ -44,6 +44,7 @@
 #include "Graphics/Text.h"
 #include "Animation/Animation.h"
 #include "imgui.h"
+#include "MetaData.h"
 
 //class Resource
 //{
@@ -256,17 +257,22 @@ namespace PE
         void LoadAllAudio();
 
         /*!***********************************************************************************
-        \brief Loads all the fonts in texture key map.
+        \brief Loads all the fonts in font key map.
         *************************************************************************************/
         void LoadAllFonts();
 
         /*!***********************************************************************************
-        \brief Loads all the animations in texture key map.
+        \brief Loads all the animations in animation key map.
         *************************************************************************************/
         void LoadAllAnimations();
 
         /*!***********************************************************************************
-        \brief Loads all the resources in the resource key maps.
+        \brief Loads all the prefabs in prefab key map.
+        *************************************************************************************/
+        void LoadAllPrefabs();
+
+        /*!***********************************************************************************
+        \brief Loads all the resources.
         *************************************************************************************/
         void LoadAllResources();
 
@@ -297,6 +303,13 @@ namespace PE
         \param[in] r_key Filepath of animation.
         *************************************************************************************/
         void AddAnimationKeyToLoad(std::string const& r_key);
+
+        /*!***********************************************************************************
+        \brief Adds prefab key to load.
+
+        \param[in] r_key Filepath of prefab.
+        *************************************************************************************/
+        void AddPrefabKeyToLoad(std::string const& r_key);
     private:
 
         /*!***********************************************************************************
@@ -318,10 +331,12 @@ namespace PE
         std::string m_defaultAudioKey;
         std::string m_defaultFontKey;
         std::string m_defaultAnimationKey;
+        std::string m_defaultPrefabKey;
 
         std::unordered_set<std::string> m_allTextureKeys;
         std::unordered_set<std::string> m_allAudioKeys;
         std::unordered_set<std::string> m_allFontKeys;
         std::unordered_set<std::string> m_allAnimationKeys;
+        std::unordered_set<std::string> m_allPrefabKeys;
     };
 }

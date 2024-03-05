@@ -36,8 +36,8 @@ namespace PE
 
     void SceneManager::CreateDefaultScene()
     {
-        SetActiveScene("DefaultScene.json");
-        LoadSceneFromPath("../Assets/Defaults/DefaultScene.json");
+        SetActiveScene("Default_Scene.scene");
+        LoadSceneFromPath("../Assets/Defaults/Default_Scene.scene");
     }
 
     void SceneManager::SetStartScene(std::string const& r_sceneName)
@@ -82,27 +82,9 @@ namespace PE
         // unload all resources
         ResourceManager::GetInstance().UnloadResources();
 
-        std::filesystem::path filepath = r_scenePath;
-
-        if (!std::filesystem::exists(filepath))
-        {
-            std::cerr << "File does not exist: " << filepath << std::endl;
-            return;
-        }
-
-        std::ifstream inFile(filepath);
-        if (inFile)
-        {
-            SerializationManager serializationManager;
-            nlohmann::json allEntitiesJson;
-            inFile >> allEntitiesJson;
-            serializationManager.DeserializeAllEntities(allEntitiesJson);
-            inFile.close();
-        }
-        else
-        {
-            std::cerr << "Could not open the file for reading: " << filepath << std::endl;
-        }
+        // load scene
+        SerializationManager serializationManager;
+        serializationManager.DeserializeScene(r_scenePath);
 
         // load all resources
         ResourceManager::GetInstance().LoadAllResources();
@@ -163,6 +145,7 @@ namespace PE
                 EntityManager::GetInstance().RemoveEntity(n);
             }
         }
+
         Hierarchy::GetInstance().Update();
         //LayerManager::GetInstance().ResetLayerCache();
     }

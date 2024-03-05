@@ -183,7 +183,7 @@ namespace PE
 						{
 							SerializationManager sm;
 
-							slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+							slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob.prefab"));
 							Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
 						}
 					}
@@ -191,7 +191,7 @@ namespace PE
 					{
 						SerializationManager sm;
 
-						slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+						slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob.prefab"));
 						Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
 					}
 
