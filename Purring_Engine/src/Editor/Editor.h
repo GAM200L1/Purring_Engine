@@ -161,6 +161,12 @@ namespace PE {
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
 		void OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_e);
+
+		/*!***********************************************************************************
+		 \brief the callback function for an onwindowevent
+		 \param[in] const temp::Event<temp::WindowEvents>& event called
+		*************************************************************************************/
+		void OnWindowFocusEvent(const PE::Event<PE::WindowEvents>& r_e);
 		// ----- ImGui Window Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -420,6 +426,7 @@ namespace PE {
 		bool m_objectIsSelected;
 		bool m_sceneViewFocused;
 		int m_currentSelectedObject{ -1 };
+		std::string m_currentSelectedResourcePath;
 		ImGuizmo::OPERATION m_currentGizmoOperation{ImGuizmo::OPERATION::TRANSLATE};
 
 		//variable for assets browser

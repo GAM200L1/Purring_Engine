@@ -69,15 +69,18 @@ class SerializationManager
 public:
     /*!***********************************************************************************
      \brief Opens a file explorer and returns the selected file path as a string.
+
+     \param[in] type  The file type to filter for.
     *************************************************************************************/
-    std::string OpenFileExplorer();
+    std::string OpenFileExplorer(std::string const& type = ".json");
 
     /*!***********************************************************************************
      \brief Opens a file explorer and returns the selected file path as a string.
             This version is used mainly to save a file with a potentially not existing
             filename.
+    \param[in] type  The file type to filter for.
     *************************************************************************************/
-    std::string OpenFileExplorerRequestPath();
+    std::string OpenFileExplorerRequestPath(std::string const& type = ".json");
 
     /*!***********************************************************************************
      \brief Serialize all entities in the scene into a single JSON object.
@@ -92,7 +95,9 @@ public:
     /*!***********************************************************************************
      \brief Save the serialized JSON of all entities to a file with the given filename.
     *************************************************************************************/
-    void SaveAllEntitiesToFile(std::string const& fileName, bool fp = false);
+    void SerializeScene(std::string const& fileName, bool fp = false);
+
+    void DeserializeScene(std::string const& r_scenePath);
 
     /*!***********************************************************************************
      \brief Serialize the entity with the given ID to a JSON object.
@@ -144,6 +149,22 @@ public:
     \return nlohmann::json  The loaded data.
     *************************************************************************************/
     nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
+
+    /*!***********************************************************************************
+    \brief Save animation data to file
+
+    \param[in] filepath  The path to the file to save to.
+    \param[in] serializedData  The data to save.
+    *************************************************************************************/
+    void SaveMetaDataToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
+
+    /*!***********************************************************************************
+    \brief Load an animation from a serialized file.
+
+    \param[in] filename  The path to the file to load from.
+    \return nlohmann::json  The loaded data.
+    *************************************************************************************/
+    nlohmann::json LoadMetaDataFromFile(const std::filesystem::path& filepath);
 
     /*!************************************************************************
      \brief Serializes an entity's component to JSON.
