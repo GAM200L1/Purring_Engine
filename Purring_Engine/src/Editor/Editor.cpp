@@ -3381,7 +3381,7 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("BossRatScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										int healthID = static_cast<int> (it->second.health);
+										int healthID = static_cast<int> (it->second.maxHealth);
 										float telegraphRadiusID = it->second.telegraphRadius;
 										float activationTimeID = (it->second.activationTime);
 										float attackDelayID = (it->second.attackDelay);
@@ -3391,8 +3391,8 @@ namespace PE {
 										int rightSideSlamID = static_cast<int> (it->second.rightSideSlam);
 
 										ImGui::SeparatorText("Boss Rat Stats");
-										ImGui::Text("Boss Health: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bhid", &healthID);
-										if (healthID != m_currentSelectedObject) { it->second.health = healthID; }
+										ImGui::Text("Boss Max Health: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bhid", &healthID);
+										if (healthID != m_currentSelectedObject) { it->second.maxHealth = healthID; }
 
 
 										ImGui::SeparatorText("Bash Attack Stats");

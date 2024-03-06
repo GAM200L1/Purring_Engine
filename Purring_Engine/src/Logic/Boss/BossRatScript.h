@@ -32,7 +32,8 @@ namespace PE
 
 		//other boss stats
 
-		int health = 20;
+		float maxHealth = 20;
+		float currenthealth = maxHealth;
 		StateMachine* p_stateManager;
 		BossRatAttack* p_currentAttack;
 		bool finishExecution{true};

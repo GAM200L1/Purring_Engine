@@ -35,6 +35,8 @@ namespace PE
 
 		m_scriptData[id].m_collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 		m_scriptData[id].m_collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+
+		m_currentSlamTurnCounter = 0;
 	}
 
 
@@ -52,7 +54,7 @@ namespace PE
 			return;
 		}
 
-		if (m_scriptData[id].health <= 0)
+		if (m_scriptData[id].currenthealth <= 0)
 		{
 			//do something
 		}
@@ -123,7 +125,7 @@ namespace PE
 
 	void BossRatScript::TakeDamage(int damage)
 	{
-		--m_scriptData[currentBoss].health;
+		--m_scriptData[currentBoss].currenthealth;
 	}
 
 	EntityID BossRatScript::FindFurthestCat()
@@ -155,7 +157,6 @@ namespace PE
 
 	void BossRatScript::OnCollisionStay(const Event<CollisionEvents>& r_collisionStay)
 	{
-		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		OnCollisionStayEvent OCEE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionStay) };
 
 		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
@@ -172,7 +173,6 @@ namespace PE
 
 	void BossRatScript::OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter)
 	{
-		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEnter) };
 
 		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);

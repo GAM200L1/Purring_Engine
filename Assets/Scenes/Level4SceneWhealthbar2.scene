@@ -101,7 +101,7 @@
                         "isActive": false,
                         "name": "PauseCanvas",
                         "parent": null,
-                        "sceneID": 13
+                        "sceneID": 14
                     },
                     "Transform": {
                         "height": 100.0,
@@ -414,7 +414,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 15
                     },
                     "Transform": {
                         "height": 100.0,
@@ -688,7 +688,7 @@
                         "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
-                        "sceneID": 11
+                        "sceneID": 12
                     },
                     "Transform": {
                         "height": 100.0,
@@ -853,7 +853,7 @@
                         "isActive": false,
                         "name": "HowToPlayCanvas",
                         "parent": null,
-                        "sceneID": 12
+                        "sceneID": 13
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1249,7 +1249,7 @@
                         "isActive": false,
                         "name": "FoliageCanvas",
                         "parent": null,
-                        "sceneID": 8
+                        "sceneID": 9
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1615,7 +1615,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 16
+                        "sceneID": 17
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1892,7 +1892,7 @@
                         "isActive": false,
                         "name": "LoseCanvas",
                         "parent": null,
-                        "sceneID": 17
+                        "sceneID": 18
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2157,7 +2157,7 @@
                         "Old ID": 42,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "TurnCounter",
                         "parent": 43,
                         "sceneID": 42
@@ -2175,11 +2175,11 @@
                         "height": 159.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 643.0,
+                            "x": 783.0,
                             "y": 461.0
                         },
                         "relativeposition": {
-                            "x": 643.0,
+                            "x": 783.0,
                             "y": 461.0
                         },
                         "relorientation": 0.0,
@@ -2198,7 +2198,7 @@
                         "Old ID": 45,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "CurrentTurnPhase",
                         "parent": 43,
                         "sceneID": 45
@@ -2214,8 +2214,8 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2000000476837158,
-                        "Text": "Plan Movement",
+                        "Size": 1.5,
+                        "Text": "Planning",
                         "VAlignment": 4,
                         "VOverflow": 2
                     },
@@ -2223,12 +2223,12 @@
                         "height": 103.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 765.0,
-                            "y": 473.4999084472656
+                            "x": 779.001220703125,
+                            "y": 476.4999084472656
                         },
                         "relativeposition": {
-                            "x": 765.0,
-                            "y": 473.4999084472656
+                            "x": 779.001220703125,
+                            "y": 476.4999084472656
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -2246,7 +2246,7 @@
                         "Old ID": 46,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "TurnNumberText",
                         "parent": 43,
                         "sceneID": 46
@@ -2262,7 +2262,7 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.399999976158142,
+                        "Size": 1.2999999523162842,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2271,11 +2271,11 @@
                         "height": 103.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 430.99981689453125,
+                            "x": 533.9995727539063,
                             "y": 473.4997863769531
                         },
                         "relativeposition": {
-                            "x": 430.99981689453125,
+                            "x": 533.9995727539063,
                             "y": 473.4997863769531
                         },
                         "relorientation": 0.0,
@@ -2289,8 +2289,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 0.0,
-                        "Width": 0.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2302,10 +2302,10 @@
                             45,
                             46
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "TurnCounterCanvas",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 10
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2631,7 +2631,7 @@
                         "isActive": false,
                         "name": "CatPortraitCanvas",
                         "parent": null,
-                        "sceneID": 6
+                        "sceneID": 7
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2713,7 +2713,7 @@
                         "isActive": false,
                         "name": "RatPortraitCanvas",
                         "parent": null,
-                        "sceneID": 7
+                        "sceneID": 8
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3044,7 +3044,7 @@
                         "isActive": false,
                         "name": "AreYouSureRestartCanvas",
                         "parent": null,
-                        "sceneID": 15
+                        "sceneID": 16
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3318,7 +3318,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 18
+                        "sceneID": 20
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3391,7 +3391,7 @@
                         "isActive": true,
                         "name": "DeploymentArea",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 21
                     },
                     "Renderer": {
                         "Color": {
@@ -3459,7 +3459,7 @@
                         "isActive": true,
                         "name": "DeployTexture",
                         "parent": null,
-                        "sceneID": 21
+                        "sceneID": 22
                     },
                     "Renderer": {
                         "Color": {
@@ -3505,7 +3505,7 @@
                         "isActive": false,
                         "name": "NoGoAreas",
                         "parent": null,
-                        "sceneID": 22
+                        "sceneID": 23
                     },
                     "Renderer": {
                         "Color": {
@@ -3761,7 +3761,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 25
+                        "sceneID": 26
                     },
                     "Renderer": {
                         "Color": {
@@ -3830,7 +3830,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 26
+                        "sceneID": 35
                     },
                     "Renderer": {
                         "Color": {
@@ -4313,7 +4313,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 35
+                        "sceneID": 41
                     },
                     "Renderer": {
                         "Color": {
@@ -4365,7 +4365,7 @@
                         "isActive": true,
                         "name": "PhaseBannerCanvas",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 11
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4436,42 +4436,6 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 71,
-                        "Prefab Type": "Canvas Object",
-                        "children": [],
-                        "isActive": true,
-                        "name": "PhaseBannerCanvas",
-                        "parent": null,
-                        "sceneID": 19
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
                         "Old ID": 94,
                         "Prefab Type": "Canvas Object",
                         "children": [
@@ -4480,7 +4444,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 23
+                        "sceneID": 25
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4628,7 +4592,7 @@
                         "isActive": true,
                         "name": "BossRatTemp",
                         "parent": null,
-                        "sceneID": 41
+                        "sceneID": 61
                     },
                     "Renderer": {
                         "Color": {
@@ -4898,7 +4862,7 @@
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 71
                     },
                     "Renderer": {
                         "Color": {
@@ -5036,6 +5000,301 @@
                         },
                         "relorientation": 0.0,
                         "width": 453.9440612792969
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 1,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            77,
+                            88,
+                            91,
+                            92
+                        ],
+                        "isActive": true,
+                        "name": "RatKing Health Bar Canvas",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 2,
+                        "Prefab Type": "SliderBody",
+                        "children": [
+                            82
+                        ],
+                        "isActive": true,
+                        "name": "Ratking Healthbar",
+                        "parent": 71,
+                        "sceneID": 88
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 90.0,
+                        "m_currentWidth": 75.0,
+                        "m_currentXpos": 300.0,
+                        "m_defaultColor": [
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 375.0,
+                        "m_hoveredColor": [
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": true,
+                        "m_knobID": 82,
+                        "m_maxValue": 100.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -375.0
+                    },
+                    "ScriptComponent": {
+                        "BossRatHealthBarScript": {
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 65.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 432.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 432.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 750.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 3,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SliderKnob",
+                        "parent": 77,
+                        "sceneID": 82
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.0963115245103836,
+                            "g": 0.0963115245103836,
+                            "r": 0.739534854888916
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 65.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -37.5,
+                            "y": 432.0
+                        },
+                        "relativeposition": {
+                            "x": -37.5,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 675.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 5,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatKing Healthbar Backing",
+                        "parent": 71,
+                        "sceneID": 77
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/RatKing_Healthbar_Backing_760x71.png"
+                    },
+                    "Transform": {
+                        "height": 71.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 432.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 432.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 760.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 6,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatKing Healthbar Frame",
+                        "parent": 71,
+                        "sceneID": 91
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/RatKing_Healthbar_Frame_754x67.png"
+                    },
+                    "Transform": {
+                        "height": 71.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 432.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 432.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 760.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 7,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatKing Healthbar Overlay",
+                        "parent": 71,
+                        "sceneID": 92
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/RatKing_Healthbar_Overlay_818x146.png"
+                    },
+                    "Transform": {
+                        "height": 146.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 432.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 432.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 818.0
                     }
                 },
                 "name": ""

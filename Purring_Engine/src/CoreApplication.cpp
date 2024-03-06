@@ -422,7 +422,7 @@ RTTR_REGISTRATION
 
 
     rttr::registration::class_<PE::BossRatScriptData>("BossRatScript")
-        .property("health", &PE::BossRatScriptData::health)
+        .property("maxHealth", &PE::BossRatScriptData::maxHealth)
         .property("attackDelay", &PE::BossRatScriptData::attackDelay)
         .property("activationTime", &PE::BossRatScriptData::activationTime)
         .property("telegraphRadius", &PE::BossRatScriptData::telegraphRadius)

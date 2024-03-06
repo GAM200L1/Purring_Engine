@@ -239,7 +239,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
 			PhaseBannerTransition(id, deltaTime);
-			UpdateTurnCounter("Plan Movement");
+			UpdateTurnCounter("Planning");
 			prevState = currentState;
 			break;
 		}

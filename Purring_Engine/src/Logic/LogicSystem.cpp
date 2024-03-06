@@ -59,6 +59,7 @@
 #include "Cat/FollowScript_v2_0.h"
 
 #include "Boss/BossRatScript.h"
+#include "Boss/BossRatHealthBarScript.h"
 
 #include "ObjectAttachScript.h"
 
@@ -106,6 +107,7 @@ void PE::LogicSystem::InitializeSystem()
 
 	REGISTER_SCRIPT(BossRatScript);
 	REGISTER_SCRIPT(ObjectAttachScript);
+	REGISTER_SCRIPT(BossRatHealthBarScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
