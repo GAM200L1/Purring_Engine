@@ -4945,8 +4945,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 1,
+                        "Layer": 1,
                         "Old ID": 91,
                         "Prefab Type": "Rat",
                         "children": [],
@@ -5041,8 +5041,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 1,
+                        "Layer": 1,
                         "Old ID": 92,
                         "Prefab Type": "Rat",
                         "children": [],
@@ -5255,8 +5255,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 1,
+                        "Layer": 1,
                         "Old ID": 94,
                         "Prefab Type": "GutterRat",
                         "children": [],

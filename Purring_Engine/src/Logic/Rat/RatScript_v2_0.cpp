@@ -820,7 +820,11 @@ namespace PE
 
 				// create cross attack telegraph
 				r_data.attackTelegraphEntityID = serializationManager.LoadFromFile("GutterRatAttackTelegraph.prefab");
-				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.attackTelegraphEntityID);
+
+				//Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.attackTelegraphEntityID);
+				// The attack needs to render under the rat, and childing the attack to the rat  
+				// will cause it to adopt the render layer of the rat
+
 				ToggleEntity(r_data.attackTelegraphEntityID, false); // set to inactive, it will only show during planning phase if the cat is in the area
 				ScaleEntity(r_data.attackTelegraphEntityID, r_data.attackRadius, r_data.attackRadius);
 				PositionEntity(r_data.attackTelegraphEntityID, vec2{0.f, 0.f});

@@ -32,7 +32,7 @@
                             "type": "CircleCollider"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 0,
+                            "InteractionLayer": 1,
                             "Layer": 1,
                             "Old ID": 94,
                             "Prefab Type": "GutterRat",

@@ -44,6 +44,9 @@ namespace PE
         p_data->attacking = true;  // Set the attacking flag to true
         attackFeedbackOnce = false;
 
+        // Position the attack telegraph
+        RatScript_v2_0::PositionEntity(p_data->attackTelegraphEntityID, RatScript_v2_0::GetEntityPosition(p_data->myID));
+
         p_data->attackedCats.clear();
         //std::cout << "[DEBUG] RatAttack_v2_0::StateEnter - Rat ID: " << id << " transitioning to Attack state." << std::endl;
     }
