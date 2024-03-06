@@ -1,3 +1,16 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     GlobalMusicManager.cpp
+ \date     2-03-2024
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+
+ \brief    Control global music.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include "GlobalMusicManager.h"
 #include "ResourceManager/ResourceManager.h"

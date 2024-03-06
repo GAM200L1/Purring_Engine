@@ -1,3 +1,16 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     AudioSource.h
+ \date     2-03-2024
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+
+ \brief    FMOD Studio Audio Source setup.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #pragma once
 
 #include "AudioManager/FMODStudio/AudioClip.h"

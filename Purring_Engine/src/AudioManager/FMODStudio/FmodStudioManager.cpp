@@ -1,3 +1,16 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     FmodStudioManager.cpp
+ \date     2-03-2024
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+
+ \brief    FMOD Studio FmodStudioManager setup.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include <vector>
 #include <fmod_errors.h>
