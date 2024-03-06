@@ -2179,7 +2179,7 @@
                             "y": 461.0
                         },
                         "relativeposition": {
-                            "x": 643.0,
+                            "x": 783.0,
                             "y": 461.0
                         },
                         "relorientation": 0.0,
@@ -2214,8 +2214,8 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2000000476837158,
-                        "Text": "Plan Movement",
+                        "Size": 1.5,
+                        "Text": "Executing",
                         "VAlignment": 4,
                         "VOverflow": 2
                     },
@@ -2227,7 +2227,7 @@
                             "y": 473.4999084472656
                         },
                         "relativeposition": {
-                            "x": 765.0,
+                            "x": 779.0,
                             "y": 473.4999084472656
                         },
                         "relorientation": 0.0,
@@ -2262,7 +2262,7 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.399999976158142,
+                        "Size": 1.2999999523162842,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2275,7 +2275,7 @@
                             "y": 473.4997863769531
                         },
                         "relativeposition": {
-                            "x": 430.99981689453125,
+                            "x": 534.0,
                             "y": 473.4997863769531
                         },
                         "relorientation": 0.0,
@@ -3304,8 +3304,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4830,8 +4830,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4909,8 +4909,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5000,8 +5000,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,

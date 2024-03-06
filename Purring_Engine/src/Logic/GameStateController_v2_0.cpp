@@ -257,7 +257,7 @@ namespace PE
 
 			ExecutionStateHUD(id, deltaTime);
 			PhaseBannerTransition(id, deltaTime);
-			UpdateTurnCounter("Executing...");
+			UpdateTurnCounter("Executing");
 			CheckFinishExecution();
 			prevState = currentState;
 			break;

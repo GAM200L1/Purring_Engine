@@ -2157,7 +2157,7 @@
                         "Old ID": 42,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "TurnCounter",
                         "parent": 43,
                         "sceneID": 42
@@ -2175,11 +2175,11 @@
                         "height": 159.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 643.0,
+                            "x": 783.0,
                             "y": 461.0
                         },
                         "relativeposition": {
-                            "x": 643.0,
+                            "x": 783.0,
                             "y": 461.0
                         },
                         "relorientation": 0.0,
@@ -2198,7 +2198,7 @@
                         "Old ID": 45,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "CurrentTurnPhase",
                         "parent": 43,
                         "sceneID": 45
@@ -2214,8 +2214,8 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2000000476837158,
-                        "Text": "Plan Movement",
+                        "Size": 1.5,
+                        "Text": "Planning",
                         "VAlignment": 4,
                         "VOverflow": 2
                     },
@@ -2223,12 +2223,12 @@
                         "height": 103.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 765.0,
-                            "y": 473.4999084472656
+                            "x": 779.001220703125,
+                            "y": 476.4999084472656
                         },
                         "relativeposition": {
-                            "x": 765.0,
-                            "y": 473.4999084472656
+                            "x": 779.001220703125,
+                            "y": 476.4999084472656
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -2246,7 +2246,7 @@
                         "Old ID": 46,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "TurnNumberText",
                         "parent": 43,
                         "sceneID": 46
@@ -2262,7 +2262,7 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.399999976158142,
+                        "Size": 1.2999999523162842,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2271,11 +2271,11 @@
                         "height": 103.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 430.99981689453125,
+                            "x": 533.9995727539063,
                             "y": 473.4997863769531
                         },
                         "relativeposition": {
-                            "x": 430.99981689453125,
+                            "x": 533.9995727539063,
                             "y": 473.4997863769531
                         },
                         "relorientation": 0.0,
@@ -2289,8 +2289,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 0.0,
-                        "Width": 0.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2302,7 +2302,7 @@
                             45,
                             46
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "TurnCounterCanvas",
                         "parent": null,
                         "sceneID": 10
@@ -5060,23 +5060,23 @@
                         "isActive": true,
                         "name": "Ratking Healthbar",
                         "parent": 71,
-                        "sceneID": 77
+                        "sceneID": 88
                     },
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
+                            "b": 0.4558139443397522,
+                            "g": 0.4558139443397522,
+                            "r": 0.4558139443397522
                         },
                         "TextureKey": ""
                     },
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
-                        "m_currentValue": 86.0,
+                        "m_currentValue": 90.0,
                         "m_currentWidth": 75.0,
-                        "m_currentXpos": 270.0,
+                        "m_currentXpos": 300.0,
                         "m_defaultColor": [
                             0.3921568691730499,
                             0.3921568691730499,
@@ -5113,16 +5113,21 @@
                         "m_pressedTexture": "",
                         "m_startPoint": -375.0
                     },
+                    "ScriptComponent": {
+                        "BossRatHealthBarScript": {
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 65.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 432.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 432.0
                         },
                         "relorientation": 0.0,
                         "width": 750.0
@@ -5148,9 +5153,9 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "b": 0.0963115245103836,
+                            "g": 0.0963115245103836,
+                            "r": 0.739534854888916
                         },
                         "TextureKey": ""
                     },
@@ -5158,15 +5163,15 @@
                         "height": 65.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -52.5,
-                            "y": 0.0
+                            "x": -37.5,
+                            "y": 432.0
                         },
                         "relativeposition": {
-                            "x": -52.5,
+                            "x": -37.5,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 645.0
+                        "width": 675.0
                     }
                 },
                 "name": ""
@@ -5184,7 +5189,7 @@
                         "isActive": true,
                         "name": "RatKing Healthbar Backing",
                         "parent": 71,
-                        "sceneID": 88
+                        "sceneID": 77
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -5200,11 +5205,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 432.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 432.0
                         },
                         "relorientation": 0.0,
                         "width": 760.0
@@ -5241,11 +5246,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 432.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 432.0
                         },
                         "relorientation": 0.0,
                         "width": 760.0
@@ -5282,11 +5287,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 432.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 432.0
                         },
                         "relorientation": 0.0,
                         "width": 818.0
