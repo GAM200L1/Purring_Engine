@@ -34,13 +34,13 @@
                         "EntityDescriptor": {
                             "InteractionLayer": 1,
                             "Layer": 1,
-                            "Old ID": 94,
+                            "Old ID": 18446744073709551615,
                             "Prefab Type": "GutterRat",
                             "children": [],
                             "isActive": true,
                             "name": "GutterRat",
                             "parent": null,
-                            "sceneID": 94
+                            "sceneID": 18446744073709551615
                         },
                         "Renderer": {
                             "Color": {
