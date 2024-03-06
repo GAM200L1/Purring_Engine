@@ -61,7 +61,7 @@ namespace PE
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
 
-		static bool test{};
+		static bool test{true};
 
 		//attack 1
 		if (!test)

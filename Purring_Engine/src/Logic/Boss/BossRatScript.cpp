@@ -35,8 +35,6 @@ namespace PE
 
 		m_scriptData[id].m_collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 		m_scriptData[id].m_collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
-
-		m_currentSlamTurnCounter = 0;
 	}
 
 
@@ -68,6 +66,7 @@ namespace PE
 
 	void BossRatScript::OnAttach(EntityID id)
 	{
+		m_currentSlamTurnCounter = 0;
 		m_scriptData[id] = BossRatScriptData();
 		currentBoss = id;
 	}

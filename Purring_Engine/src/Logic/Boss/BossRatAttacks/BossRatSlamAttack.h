@@ -34,9 +34,18 @@ namespace PE
 		virtual void ExitAttack(EntityID);
 		virtual ~BossRatSlamAttack();
 	private:
+		void DecideSide();
 		void JumpUp(EntityID,float);
 		void SlamDown(EntityID,float);
 		void SpawnRat(EntityID);
+		void HideTelegraph(EntityID);
+		void DrawDamageTelegraph(EntityID);
+		void UpdateDamageTelegraph(EntityID);
+		void UpdateSlamTelegraph(EntityID,float);
+		void HideDamageTelegraph(EntityID);
+		void CheckDamage(EntityID);
+		void EnableAnimation(EntityID);
+		void DisableAnimation(EntityID);
 	private:
 		//need to take a snapshot of the current player positions here
 		//actually no, only need the furtest cat
@@ -44,6 +53,18 @@ namespace PE
 		BossRatScript* p_script;
 		BossRatScriptData* p_data;
 		std::string m_telegraphPrefab{"BossRatSlamAttackTelegraph.prefab"};
-		float ScreenHeight{ 1080 };
+		float m_screenHeight{ 1080 };
+		vec2 m_slamLandLocation{};
+		float m_slamSize{ 384 };
+		float m_slamMinSize{ 256};
+		bool m_slamTelegraphAnimated{ false };
+		float m_slamShrinkSpeed{ 500 };
+		bool m_attackIsLeft{};
+
+
+		bool m_ratSpawned{ false };
+
+		float m_endExecutionTime{ 1 };
+		float m_endExecutionTimer{ m_endExecutionTime };
 	};
 }

@@ -3389,10 +3389,14 @@ namespace PE {
 										float slamSpeedID =  (it->second.slamSpeed);
 										int leftSideSlamID = static_cast<int> (it->second.leftSideSlam);
 										int rightSideSlamID = static_cast<int> (it->second.rightSideSlam);
+										int rightSideSlamAnimationID = static_cast<int> (it->second.rightSideSlamAnimation);
+										int leftSideSlamAnimationID = static_cast<int> (it->second.leftSideSlamAnimation);
+										int slamTelegraphID = static_cast<int> (it->second.slamTelegraph);
+										int slamAreaTelegraphID = static_cast<int> (it->second.slamAreaTelegraph);
 
 										ImGui::SeparatorText("Boss Rat Stats");
 										ImGui::Text("Boss Max Health: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bhid", &healthID);
-										if (healthID != m_currentSelectedObject) { it->second.maxHealth = healthID; }
+										if (healthID != m_currentSelectedObject) { it->second.maxHealth = static_cast<float>(healthID); }
 
 
 										ImGui::SeparatorText("Bash Attack Stats");
@@ -3411,12 +3415,25 @@ namespace PE {
 										ImGui::Text("Slam Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjssid", &slamSpeedID);
 										if (slamSpeedID != m_currentSelectedObject) it->second.slamSpeed = slamSpeedID;
 
-										ImGui::SeparatorText("Telegraphs");
+										ImGui::SeparatorText("Entities");
 										ImGui::Text("Left Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssid", &leftSideSlamID);
 										if (leftSideSlamID != m_currentSelectedObject) it->second.leftSideSlam = leftSideSlamID;
 
 										ImGui::Text("Right Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brssid", &rightSideSlamID);
 										if (rightSideSlamID != m_currentSelectedObject) it->second.rightSideSlam = rightSideSlamID;
+
+										ImGui::Text("Left Side Slam Animation ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssaid", &leftSideSlamAnimationID);
+										if (leftSideSlamAnimationID != m_currentSelectedObject) it->second.leftSideSlamAnimation = leftSideSlamAnimationID;
+
+										ImGui::Text("Right Side Slam Animation ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brssaid", &rightSideSlamAnimationID);
+										if (rightSideSlamAnimationID != m_currentSelectedObject) it->second.rightSideSlamAnimation = rightSideSlamAnimationID;
+
+										ImGui::Text("Slam Telegraph ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brstid", &slamTelegraphID);
+										if (slamTelegraphID != m_currentSelectedObject) it->second.slamTelegraph = slamTelegraphID;
+
+										ImGui::Text("Slam Area Telegraph ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brsatid", &slamAreaTelegraphID);
+										if (slamAreaTelegraphID != m_currentSelectedObject) it->second.slamAreaTelegraph = slamAreaTelegraphID;
+
 
 										ImGui::SeparatorText("Animations");
 										int num{};

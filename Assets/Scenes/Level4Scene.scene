@@ -3318,7 +3318,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 19
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3391,7 +3391,7 @@
                         "isActive": true,
                         "name": "DeploymentArea",
                         "parent": null,
-                        "sceneID": 21
+                        "sceneID": 20
                     },
                     "Renderer": {
                         "Color": {
@@ -3459,7 +3459,7 @@
                         "isActive": true,
                         "name": "DeployTexture",
                         "parent": null,
-                        "sceneID": 22
+                        "sceneID": 21
                     },
                     "Renderer": {
                         "Color": {
@@ -3505,7 +3505,7 @@
                         "isActive": false,
                         "name": "NoGoAreas",
                         "parent": null,
-                        "sceneID": 23
+                        "sceneID": 22
                     },
                     "Renderer": {
                         "Color": {
@@ -3761,7 +3761,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 26
+                        "sceneID": 24
                     },
                     "Renderer": {
                         "Color": {
@@ -3830,7 +3830,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 35
+                        "sceneID": 30
                     },
                     "Renderer": {
                         "Color": {
@@ -3899,7 +3899,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 28
+                        "sceneID": 25
                     },
                     "Renderer": {
                         "Color": {
@@ -3968,7 +3968,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 29
+                        "sceneID": 26
                     },
                     "Renderer": {
                         "Color": {
@@ -4037,7 +4037,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 30
+                        "sceneID": 27
                     },
                     "Renderer": {
                         "Color": {
@@ -4106,7 +4106,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 31
+                        "sceneID": 28
                     },
                     "Renderer": {
                         "Color": {
@@ -4244,7 +4244,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 34
+                        "sceneID": 29
                     },
                     "Renderer": {
                         "Color": {
@@ -4313,7 +4313,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 41
+                        "sceneID": 31
                     },
                     "Renderer": {
                         "Color": {
@@ -4444,7 +4444,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 25
+                        "sceneID": 23
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4570,8 +4570,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 425.0,
-                                "y": 45.50028991699219
+                                "x": -409.0,
+                                "y": 37.0
                             },
                             "positionOffset": {
                                 "x": 8.0,
@@ -4588,11 +4588,13 @@
                         "Layer": 2,
                         "Old ID": 102,
                         "Prefab Type": "Rat",
-                        "children": [],
+                        "children": [
+                            99
+                        ],
                         "isActive": true,
                         "name": "BossRatTemp",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 34
                     },
                     "Renderer": {
                         "Color": {
@@ -4615,10 +4617,14 @@
                                 "animationStates": {},
                                 "attackDelay": 0.25,
                                 "jumpSpeed": 1500.0,
-                                "leftSideSlam": 0,
+                                "leftSideSlam": 97,
+                                "leftSideSlamAnimation": 93,
                                 "maxHealth": 20.0,
-                                "rightSideSlam": 0,
+                                "rightSideSlam": 95,
+                                "rightSideSlamAnimation": 98,
+                                "slamAreaTelegraph": 100,
                                 "slamSpeed": 5000.0,
+                                "slamTelegraph": 99,
                                 "telegraphRadius": 0.0
                             },
                             "state": 0
@@ -4628,8 +4634,8 @@
                         "height": 256.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 417.0,
-                            "y": 35.50028991699219
+                            "x": -417.0,
+                            "y": 27.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4840,8 +4846,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -372.0000305175781,
-                                "y": -18.000036239624023
+                                "x": 593.9999389648438,
+                                "y": 123.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4862,7 +4868,7 @@
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 71
+                        "sceneID": 36
                     },
                     "Renderer": {
                         "Color": {
@@ -4922,8 +4928,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -372.0000305175781,
-                            "y": -18.000036239624023
+                            "x": 593.9999389648438,
+                            "y": 123.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4971,7 +4977,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 79
+                        "sceneID": 33
                     },
                     "Renderer": {
                         "Color": {
@@ -5065,9 +5071,9 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
+                            "b": 0.43921568989753723,
+                            "g": 0.38823530077934265,
+                            "r": 0.4117647111415863
                         },
                         "TextureKey": ""
                     },
@@ -5295,6 +5301,264 @@
                         },
                         "relorientation": 0.0,
                         "width": 818.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/RatKingSlamAttack.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/RatKingSlamAttack.anim"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 93,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "BossRatSlamAttackAnimationLeft",
+                        "parent": null,
+                        "sceneID": 35
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 512.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -399.0,
+                            "y": -6.000022888183594
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 512.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 95,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SlamAreaRight",
+                        "parent": null,
+                        "sceneID": 37
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_SlamAreaRight_707x776.png"
+                    },
+                    "Transform": {
+                        "height": 776.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 287.99993896484375,
+                            "y": 27.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 707.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 97,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SlamAreaLeft",
+                        "parent": null,
+                        "sceneID": 38
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_SlamAreaLeft_707x776.png"
+                    },
+                    "Transform": {
+                        "height": 776.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -417.0000915527344,
+                            "y": 27.000015258789063
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 707.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/RatKingSlamAttack.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/RatKingSlamAttack.anim"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 98,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "BossRatSlamAttackAnimationRight",
+                        "parent": null,
+                        "sceneID": 39
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 512.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 308.9999694824219,
+                            "y": -6.000022888183594
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 512.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 99,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "BossSlamTelegraph",
+                        "parent": 102,
+                        "sceneID": 99
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Slam_100x140.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -300.0001220703125,
+                            "y": 122.49993896484375
+                        },
+                        "relativeposition": {
+                            "x": 116.9998779296875,
+                            "y": 95.49993896484375
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 100,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Land Area",
+                        "parent": null,
+                        "sceneID": 100
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Telegraphs/Boss/Telegraph_Detection_512px_Faded.png"
+                    },
+                    "Transform": {
+                        "height": 512.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -398.5001220703125,
+                            "y": 6.000007629394531
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 512.0
                     }
                 },
                 "name": ""

@@ -430,6 +430,10 @@ RTTR_REGISTRATION
         .property("slamSpeed", &PE::BossRatScriptData::slamSpeed)
         .property("leftSideSlam", &PE::BossRatScriptData::leftSideSlam)
         .property("rightSideSlam", &PE::BossRatScriptData::rightSideSlam)
+        .property("slamTelegraph", &PE::BossRatScriptData::slamTelegraph)
+        .property("rightSideSlamAnimation", &PE::BossRatScriptData::rightSideSlamAnimation)
+        .property("leftSideSlamAnimation", &PE::BossRatScriptData::leftSideSlamAnimation)
+        .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
         .property("animationStates", &PE::BossRatScriptData::animationStates);
 }
 

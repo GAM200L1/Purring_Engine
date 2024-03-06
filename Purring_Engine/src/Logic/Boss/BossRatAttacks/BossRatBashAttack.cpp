@@ -113,7 +113,7 @@ namespace PE
 		}
 		else
 		{
-			if (m_attackDelay <= 0 && endExecutionTimer == endExecutionTime)
+			if (m_attackDelay <= 0 && m_endExecutionTimer == m_endExecutionTime)
 			{	
 				EntityID tid = m_telegraphPoitions[m_attacksActivated++];
 				for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(tid).children)
@@ -131,15 +131,15 @@ namespace PE
 
 			if (m_attacksActivated == m_noOfAttack)
 			{
-				if (endExecutionTimer <= 0)
+				if (m_endExecutionTimer <= 0)
 				{
 					m_attackActivationTime = p_data->activationTime;
-					endExecutionTimer = endExecutionTimer;
+					m_endExecutionTimer = m_endExecutionTimer;
 					p_data->finishExecution = true;
 				}
 				else
 				{
-					endExecutionTimer -= dt;
+					m_endExecutionTimer -= dt;
 				}
 
 			}

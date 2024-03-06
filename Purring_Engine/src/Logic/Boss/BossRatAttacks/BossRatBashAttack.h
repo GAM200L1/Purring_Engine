@@ -51,7 +51,7 @@ namespace PE
 		float m_attackActivationTime;
 		float m_attackDelay;
 
-		float endExecutionTime{ 1 };
-		float endExecutionTimer{ endExecutionTime };
+		float m_endExecutionTime{ 1 };
+		float m_endExecutionTimer{ m_endExecutionTime };
 	};
 }

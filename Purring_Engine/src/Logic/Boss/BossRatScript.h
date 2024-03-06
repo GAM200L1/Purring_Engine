@@ -49,6 +49,10 @@ namespace PE
 		bool isInSky{ false };
 		EntityID leftSideSlam; //need to be serialized
 		EntityID rightSideSlam;
+		EntityID slamTelegraph;
+		EntityID leftSideSlamAnimation;
+		EntityID rightSideSlamAnimation;
+		EntityID slamAreaTelegraph;
 
 		std::map<std::string, std::string> animationStates;
 
