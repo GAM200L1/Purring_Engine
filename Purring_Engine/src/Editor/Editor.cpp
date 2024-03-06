@@ -4406,6 +4406,7 @@ namespace PE {
 			int frameCount{};
 			int totalSprites{};
 			int frameRate{};
+			bool isLooping{};
 			float animationDuration{};
 
 			// frame data
@@ -4736,6 +4737,14 @@ namespace PE {
 								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
 					}
 
+					if (currentAnimation)
+					{
+						totalSprites = currentAnimation->GetFrameCount();
+						animationDuration = currentAnimation->GetAnimationDuration();
+						frameRate = currentAnimation->GetFrameRate();
+						isLooping = currentAnimation->IsLooping();
+					}
+
 					ImGui::Dummy(ImVec2(0, 5));
 					ImGui::SeparatorText("Animation Properties");
 					ImGui::Columns(2, "TwoSections", true);
@@ -4749,21 +4758,19 @@ namespace PE {
 					ImGui::Dummy(ImVec2(0, 5));
 					ImGui::Text("Frames Held");
 					ImGui::Dummy(ImVec2(0, 5));
+					ImGui::Text("Loop"); ImGui::SameLine();
+
+					if (ImGui::Checkbox("##looped", &isLooping))
+					{
+						if (currentAnimation)
+							currentAnimation->SetLooping(isLooping);
+					}
 
 					ImGui::NextColumn();/*
 					static std::string text{};
 					ImGui::InputText("##name", &text);
 					static bool looped{};
 					ImGui::Checkbox("##looped", &looped);*/
-
-
-
-					if (currentAnimation)
-					{
-						totalSprites = currentAnimation->GetFrameCount();
-						animationDuration = currentAnimation->GetAnimationDuration();
-						frameRate = currentAnimation->GetFrameRate();
-					}
 
 					// edit total sprites in an animation
 					if (ImGui::InputInt("##totalSprites", &totalSprites))
@@ -4786,6 +4793,7 @@ namespace PE {
 						}
 					}
 
+					ImGui::Dummy(ImVec2(0, 5));
 					if (ImGui::InputInt("##frameRate", &frameRate))
 					{
 						if(currentAnimation)
@@ -4795,6 +4803,7 @@ namespace PE {
 					// get frames held
 					framesHeld = static_cast<int>(static_cast<float>(frameRate) * frameTime);
 
+					ImGui::Dummy(ImVec2(0, 5));
 					ImGui::InputInt("##framesHeld", &framesHeld);
 
 					// update animation frame data

@@ -135,6 +135,10 @@ namespace PE
 
 		void ResetAnimation();
 
+		void SetAnimationEnded(bool ended);
+
+		inline bool HasAnimationEnded() const { return m_animationEnded; }
+
 		inline bool IsPlaying() const { return m_isPlaying; }
 
 		/*!***********************************************************************************
@@ -167,6 +171,7 @@ namespace PE
 		unsigned m_currentFrameIndex{}; // current frame index of the animation
 		//std::shared_ptr<Animation> m_currentAnimation; // current playing animation
 		bool m_isPlaying{ false }; // is the animation playing, false by default
+		bool m_animationEnded{ false }; // has the animation ended, false by default
 
 		// add later
 		//std::map<std::string, std::shared_ptr<Animation>> m_animationsMap; // Stores all animations for the component - need this for states? not sure if just key is enough
@@ -246,6 +251,14 @@ namespace PE
 		 \param[in] r_currentFrameIndex Current frame index of the animation.
 		*************************************************************************************/
 		void UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex);
+
+		/*!***********************************************************************************
+		 \brief Update the animation based on elapsed time.
+
+		 \param[in] deltaTime Time since last update.
+		 \param[in] r_animationComponent
+		*************************************************************************************/
+		void UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent);
 
 		/*!***********************************************************************************
 			\brief Get the current frame of the animation.
@@ -366,6 +379,10 @@ namespace PE
 		*************************************************************************************/
 		bool LoadAnimation(std::string const& r_filePath);
 
+		void SetLooping(bool looping);
+
+		inline bool IsLooping() const { return m_isLooping; }
+
 		/*!***********************************************************************************
 		 \brief Serializes the data attached to this animation.
 
@@ -391,6 +408,9 @@ namespace PE
 		unsigned m_totalSprites;
 		unsigned m_frameRate;
 		bool m_isSpriteSheet{ true };
+
+		// new to serialize
+		bool m_isLooping{ true };
 
 		AnimationFrame m_emptyFrame{};
 	};
