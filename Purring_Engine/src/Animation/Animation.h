@@ -127,6 +127,16 @@ namespace PE
 		*************************************************************************************/
 		double GetAnimationFrameTime();
 
+		void PlayAnimation();
+
+		void PauseAnimation();
+
+		void StopAnimation();
+
+		void ResetAnimation();
+
+		inline bool IsPlaying() const { return m_isPlaying; }
+
 		/*!***********************************************************************************
 		 \brief Serializes the data attached to this component.
 
@@ -144,11 +154,25 @@ namespace PE
 		*************************************************************************************/
 		AnimationComponent& Deserialize(const nlohmann::json& r_j);
 
+		// need to serialize
 		std::set<std::string> m_animationsID; // Stores all animations for the component // not in use now
 		std::string m_currentAnimationID{}; // current playing animation
-		std::string m_startingAnimationID{}; // starting playing animation
+		std::string m_startingAnimationID{}; // starting playing animation // may not need this as there are starting states
+
+		// new stuff to serialize
+
+
+		// do not need to serialize
 		float m_currentFrameTime{}; // current frame time of the animation
 		unsigned m_currentFrameIndex{}; // current frame index of the animation
+		//std::shared_ptr<Animation> m_currentAnimation; // current playing animation
+		bool m_isPlaying{ false }; // is the animation playing, false by default
+
+		// add later
+		//std::map<std::string, std::shared_ptr<Animation>> m_animationsMap; // Stores all animations for the component - need this for states? not sure if just key is enough
+		// std::map<std::string, std::shared_ptr<Animation>> m_animationStates; // not sure if using shared_ptr or key for the animation
+		// EntryState m_entryState; // entry state of the animation
+		
 	};
 
 	/*!***********************************************************************************
@@ -444,7 +468,11 @@ namespace PE
 		*************************************************************************************/
 		void SetAnimationSpriteSheetKey(std::string animationID, std::string spriteSheetKey);
 
+		void PlayAllAnimations() const;
 
+		void PauseAllAnimations() const;
+
+		void StopAllAnimations() const;
 
 		// ----- Private Variables ----- //
 	private:

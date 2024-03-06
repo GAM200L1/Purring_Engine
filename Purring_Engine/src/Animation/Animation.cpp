@@ -202,8 +202,11 @@ namespace PE
 
 	void AnimationComponent::SetCurrentAnimationID(std::string animationIndex)
 	{
-		m_currentFrameIndex = 0;
+		ResetAnimation();
+
 		m_currentAnimationID = animationIndex;
+
+		//m_currentAnimation = ResourceManager::GetInstance().GetAnimation(m_currentAnimationID);
 	}
 
 	unsigned AnimationComponent::GetAnimationTotalFrames()
@@ -224,6 +227,30 @@ namespace PE
 	double AnimationComponent::GetAnimationFrameTime()
 	{
 		return ResourceManager::GetInstance().GetAnimation(m_currentAnimationID)->GetAnimationFrameTime();
+	}
+
+	void AnimationComponent::PlayAnimation()
+	{
+		m_isPlaying = true;
+	}
+
+	void AnimationComponent::PauseAnimation()
+	{
+		m_isPlaying = false;
+	}
+
+	void AnimationComponent::StopAnimation()
+	{
+		// Pause the animation and reset the frame index and frame time
+		PauseAnimation();
+		ResetAnimation();
+	}
+
+	void AnimationComponent::ResetAnimation()
+	{
+		// Reset the frame index and frame time
+		m_currentFrameIndex = 0;
+		m_currentFrameTime = 0.f;
 	}
 
 	nlohmann::json AnimationComponent::ToJson(size_t id) const
@@ -343,46 +370,36 @@ namespace PE
 	{
 		AnimationFrame p_currentFrame;
 
-
-#ifndef GAMERELEASE
-		if (Editor::GetInstance().IsRunTime())
+		for (const auto& layer : LayerView<AnimationComponent>())
 		{
-#endif		
-
-			for (const auto& layer : LayerView<AnimationComponent>())
+			for (EntityID const& id : InternalView(layer))
 			{
-				for (EntityID const& id : InternalView(layer))
+				// update animation and get current frame
+				p_currentFrame = UpdateAnimation(id, deltaTime);
+
+				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
+				// update entity based on frame data
+				// in the future probably check for bools in animation component, then update data accordingly
+				// check if theres animation
+				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
 				{
-					// update animation and get current frame
-					p_currentFrame = UpdateAnimation(id, deltaTime);
-
-					std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
-
-					// update entity based on frame data
-					// in the future probably check for bools in animation component, then update data accordingly
-					// check if theres animation
-					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+					if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
 					{
-						if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
+						// spritesheet animation
+						if (p_animation->IsSpriteSheet())
 						{
-							// spritesheet animation
-							if (p_animation->IsSpriteSheet())
-							{
-								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
-								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
-							}
-							else // texture key animation
-							{
-								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
-							}
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+						}
+						else // texture key animation
+						{
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
 						}
 					}
 				}
-
-#ifndef GAMERELEASE
 			}
-#endif
 		}
 	}
 
@@ -413,7 +430,9 @@ namespace PE
 		// store animations in resource manager instead
 		if (ResourceManager::GetInstance().Animations.find(animationComponent.GetAnimationID()) != ResourceManager::GetInstance().Animations.end())
 		{
+			if(animationComponent.IsPlaying())
 			ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent.m_currentFrameTime, animationComponent.m_currentFrameIndex);
+
 			return ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->GetCurrentAnimationFrame(animationComponent.m_currentFrameIndex);
 		}
 		return AnimationFrame{};
@@ -429,5 +448,36 @@ namespace PE
 		ResourceManager::GetInstance().GetAnimation(animationID)->SetSpriteSheetKey(spriteSheetKey);
 	}
 
+	void AnimationManager::PlayAllAnimations() const
+	{
+		for (const auto& layer : LayerView<AnimationComponent>())
+		{
+			for (EntityID const& id : InternalView(layer))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).PlayAnimation();
+			}
+		}
+	}
 
+	void AnimationManager::PauseAllAnimations() const
+	{
+		for (const auto& layer : LayerView<AnimationComponent>())
+		{
+			for (EntityID const& id : InternalView(layer))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).PauseAnimation();
+			}
+		}
+	}
+
+	void AnimationManager::StopAllAnimations() const
+	{
+		for (const auto& layer : LayerView<AnimationComponent>())
+		{
+			for (EntityID const& id : InternalView(layer))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).StopAnimation();
+			}
+		}
+	}
 }
