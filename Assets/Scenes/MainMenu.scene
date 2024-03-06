@@ -940,7 +940,7 @@
                         "VOverflow": 2
                     },
                     "Transform": {
-                        "height": 127.0,
+                        "height": 128.0,
                         "orientation": 0.0,
                         "position": {
                             "x": -777.4993896484375,
@@ -951,7 +951,7 @@
                             "y": 472.49993896484375
                         },
                         "relorientation": 0.0,
-                        "width": 322.0
+                        "width": 347.0
                     }
                 },
                 "name": ""
@@ -1373,7 +1373,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_defaultTexture": "../Assets/Textures/Button_HowToPlay_512x128.png",
+                        "m_defaultTexture": "../Assets/Textures/Button_HowToPlay_MainMenu_347x128.png",
                         "m_disabledColor": [
                             0.5,
                             0.5,
@@ -1387,7 +1387,7 @@
                             0.800000011920929,
                             1.0
                         ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_HowToPlay_Highlighted_512x128.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_HowToPlay_MainMenu_Highlighted_347x128.png",
                         "m_onClicked": "MMOpenHTP",
                         "m_onHoverEnter": "",
                         "m_onHoverExit": "",
@@ -1398,7 +1398,7 @@
                             0.6000000238418579,
                             1.0
                         ],
-                        "m_pressedTexture": "../Assets/Textures/Button_HowToPlay_Dark_512x128.png"
+                        "m_pressedTexture": "../Assets/Textures/Button_HowToPlay_MainMenu_Dark_347x128.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1407,21 +1407,21 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_HowToPlay_512x128.png"
+                        "TextureKey": "../Assets/Textures/Button_HowToPlay_MainMenu_347x128.png"
                     },
                     "Transform": {
                         "height": 128.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -838.500244140625,
+                            "x": -790.500244140625,
                             "y": 432.9999084472656
                         },
                         "relativeposition": {
-                            "x": -838.500244140625,
+                            "x": -790.500244140625,
                             "y": 432.9999084472656
                         },
                         "relorientation": 0.0,
-                        "width": 512.0
+                        "width": 347.0
                     }
                 },
                 "name": ""
@@ -1490,11 +1490,11 @@
                         "height": 128.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 860.999755859375,
+                            "x": 920.99951171875,
                             "y": 433.0
                         },
                         "relativeposition": {
-                            "x": 860.999755859375,
+                            "x": 920.99951171875,
                             "y": 433.0
                         },
                         "relorientation": 0.0,
