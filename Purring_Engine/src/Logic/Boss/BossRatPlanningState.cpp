@@ -29,6 +29,7 @@ namespace PE
 
 		DecideAttack();
 		p_script->FindAllObstacles();
+		if(p_data->p_currentAttack)
 		p_data->p_currentAttack->DrawTelegraphs(id);
 	}
 
@@ -60,10 +61,20 @@ namespace PE
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
 
+		static bool test{};
+
 		//attack 1
-		//p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
-		p_data->p_currentAttack = new BossRatSlamAttack(p_script->FindFurthestCat());
-		p_script->m_currentSlamTurnCounter = 3;
+		if (!test)
+		{
+			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
+		}
+		else
+		{
+			p_data->p_currentAttack = new BossRatSlamAttack(p_script->FindFurthestCat());
+			p_script->m_currentSlamTurnCounter = 3;
+		}
+
+		test = !test;
 	}
 
 } // End of namespace PE

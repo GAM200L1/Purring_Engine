@@ -4394,19 +4394,19 @@
                         "Old ID": 17,
                         "Prefab Type": "PhaseBanner",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PhaseBanner",
                         "parent": 16,
                         "sceneID": 17
                     },
                     "GUIRenderer": {
                         "Color": {
-                            "a": 0.0,
+                            "a": 1.0,
                             "b": 1.0,
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_1429x415.png"
+                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_933x302.png"
                     },
                     "Transform": {
                         "height": 302.0,

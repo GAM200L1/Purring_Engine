@@ -33,7 +33,8 @@ namespace PE
 		CreateCheckStateManager(id);
 		FindAllObstacles();
 
-		m_scriptData[id].m_collisionEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, BossRatScript::OnCollisionEnter, this)
+		m_scriptData[id].m_collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+		m_scriptData[id].m_collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 	}
 
 
@@ -77,7 +78,8 @@ namespace PE
 		if (it != m_scriptData.end())
 		{
 			m_scriptData.erase(id);
-			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionEventKey)
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionEnterEventKey)
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionStayEventKey)
 		}
 	}
 
@@ -151,16 +153,37 @@ namespace PE
 		return m_Obstacles;
 	}
 
+	void BossRatScript::OnCollisionStay(const Event<CollisionEvents>& r_collisionStay)
+	{
+		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		OnCollisionStayEvent OCEE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionStay) };
+
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			if (OCEE.Entity1 == currentBoss  && OCEE.Entity2 == CatID
+				|| OCEE.Entity2 == currentBoss && OCEE.Entity1 == CatID)
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+			}
+		}
+	}
+
 	void BossRatScript::OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter)
 	{
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEnter) };
 
-		//auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
-		//if ((CheckExitPoint(OCEE.Entity1) && OCEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
-		//	|| (CheckExitPoint(OCEE.Entity2) && OCEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
-		//{
-		//	GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage(p_gsc->GetCurrentLevel() + 1); // goes to the next stage
-		//}
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			if (OCEE.Entity1 == currentBoss && OCEE.Entity2 == CatID
+				|| OCEE.Entity2 == currentBoss && OCEE.Entity1 == CatID)
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+			}
+		}
 	}
 } // End of namespace PE

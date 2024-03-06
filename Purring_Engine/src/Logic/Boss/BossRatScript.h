@@ -52,7 +52,7 @@ namespace PE
 		std::map<std::string, std::string> animationStates;
 
 
-		int m_collisionEventKey;
+		int m_collisionEnterEventKey,m_collisionStayEventKey;
 	};
 
 	class BossRatScript : public Script
@@ -144,6 +144,7 @@ namespace PE
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
 
+		void OnCollisionStay(const Event<CollisionEvents>& r_collisionStay);
 		void OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter);
 
 	private:
