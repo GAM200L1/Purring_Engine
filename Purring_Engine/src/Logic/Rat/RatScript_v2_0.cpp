@@ -28,6 +28,7 @@
 #include "../Rat/RatHuntState_v2_0.h"
 #include "../Rat/RatReturnState_v2_0.h"
 #include "../Rat/RatAttack_v2_0.h"
+#include "../Rat/RatDeathState_v2_0.h"
 
 #include "../Cat/CatController_v2_0.h"
 
@@ -392,6 +393,18 @@ namespace PE
 
 				ToggleEntity(it->second.telegraphArrowEntityID, false); // disable the telegraph
 		}
+		
+
+		void RatScript_v2_0::DisableAllSpawnedEntities(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				ToggleEntity(it->second.detectionRadiusId, false);
+				ToggleEntity(it->second.pivotEntityID, false);
+				ToggleEntity(it->second.telegraphArrowEntityID, false);
+				ToggleEntity(it->second.attackTelegraphEntityID, false);
+		}
 
 
 		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
@@ -482,6 +495,11 @@ namespace PE
 		}
 
 
+		void RatScript_v2_0::ChangeStateToDeath(EntityID const id, float const stateChangeDelay) 
+		{
+			TriggerStateChange(id, new RatDeathState_v2_0, stateChangeDelay);
+		}
+
 		// ------------ CAT DETECTION ------------ // 
 
 		bool RatScript_v2_0::GetIsCat(EntityID const id) {
@@ -508,6 +526,7 @@ namespace PE
 
 				it->second.catsInDetectionRadius.clear();
 				it->second.catsExitedDetectionRadius.clear();
+				it->second.hitBy.clear();
 		}
 
 		void RatScript_v2_0::CatEntered(EntityID const id, EntityID const catID)
@@ -720,6 +739,49 @@ namespace PE
 		}
 
 
+		void RatScript_v2_0::DamageRat(EntityID ratId, EntityID damageSourceId, int damage)
+		{
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return; }
+
+				// Check if the rat has hit this entity during this phase
+				if (it->second.hitBy.find(damageSourceId) != it->second.hitBy.end())
+				{
+						// Don't damage the rat twice via the same source
+						return;
+				}
+				it->second.hitBy.emplace(damageSourceId);
+
+				// Subtract the damage from the rat's health
+				it->second.ratHealth -= damage;
+
+				// Check if the rat's health drops below or equals zero
+				if (it->second.ratHealth <= 0)
+				{
+						// Kill the rat
+						KillRat(ratId);
+				}
+				else 
+				{
+						PlayInjuredAudio();
+				}
+		}
+
+
+		void RatScript_v2_0::KillRat(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				// Prevent this function from getting called more than once
+				if (!(it->second.isAlive)) { return; }
+				it->second.isAlive = false;  // Marking the rat as not alive
+
+				ChangeStateToDeath(it->second.myID, 0.f); 
+				// @TODO Check if this should take the current rat animation duration into account?
+		}
+
+
 		void RatScript_v2_0::CreateCheckStateManager(EntityID id)
 		{
 			if (m_scriptData.count(id))
@@ -729,7 +791,6 @@ namespace PE
 
 				m_scriptData[id].p_stateManager = new StateMachine{};
 				ChangeStateToIdle(id);
-				//ChangeStateToMovement(id);
 			}
 		}
 

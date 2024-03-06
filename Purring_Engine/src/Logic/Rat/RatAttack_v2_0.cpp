@@ -40,9 +40,9 @@ namespace PE
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
 
         m_delay = p_data->attackDelay;
-        m_attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(p_data->myID);
         p_data->attacking = true;  // Set the attacking flag to true
         attackFeedbackOnce = false;
+        m_attackDuration = 0; // will be set later when the attack animation plays
 
         // Position the attack telegraph
         RatScript_v2_0::PositionEntity(p_data->attackTelegraphEntityID, RatScript_v2_0::GetEntityPosition(p_data->myID));
@@ -80,6 +80,7 @@ namespace PE
                     attackFeedbackOnce = true;
                     RatScript_v2_0::PlayAttackAudio();
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(p_data->myID, EnumRatAnimations::ATTACK);
+                    m_attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(p_data->myID);
                 }
                 else if (m_attackDuration <= 0.f)
                 {

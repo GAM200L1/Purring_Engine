@@ -8,7 +8,7 @@
  \par      email:      krystal.y@digipen.edu
 
  \brief
-	This file contains functions for a temp rat state for testing purposes.
+	This file contains functions for the rat's return state.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 

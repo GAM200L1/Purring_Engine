@@ -8,7 +8,7 @@
  \par      email:      krystal.y@digipen.edu
 
  \brief
-	This file contains functions for the rat hunting state.
+	This file contains functions for the rat's hunting state.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -20,7 +20,7 @@
 #include "../GameStateController_v2_0.h"
 #include "Layers/LayerManager.h"
 
-#define DEBUG_PRINT
+//#define DEBUG_PRINT
 # define M_PI           3.14159265358979323846 
 
 namespace PE

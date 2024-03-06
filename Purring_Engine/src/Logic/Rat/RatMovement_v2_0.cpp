@@ -55,14 +55,19 @@ namespace PE
             return;
         }
 
-        // Assume rat is idle by default
-        bool isRatMoving = false;
+        static bool triggerWalkAnim{ false };
 
         // If the game state is execute, keep track of any cats that pass through the rat's radius
         if (gameStateController->currentState == GameStates_v2_0::EXECUTE)
         {
             m_planningRunOnce = false;
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
+
+            if (!triggerWalkAnim) 
+            {
+                triggerWalkAnim = true;
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::WALK);
+            }
 
             switch (p_data->ratType)
             {
@@ -73,15 +78,10 @@ namespace PE
                 // The function returns true if the target has been reached
                 if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime))
                 {
-                    // The rat should stop moving, so set the animation to idle
-                    if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->myID))
-                    {
-                        EntityManager::GetInstance().Get<AnimationComponent>(p_data->myID).SetCurrentAnimationID(p_data->animationStates.at("Idle"));
-                    }
+                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
 
                     // Switch to the attack state since we're close enough to the targets
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(id);
-                    std::cout << "Attack State";
                 }
                 break;
             }
@@ -102,6 +102,8 @@ namespace PE
                     m_planningRunOnce = true;
                     p_data->finishedExecution = false;
 
+                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
+
                     // Pick a target position to move to
                     vec2 targetPosition{ PickTargetPosition() };
 
@@ -116,9 +118,6 @@ namespace PE
             }
         }
 
-
-        // Get the animation to play
-        UpdateAnimation(isRatMoving); // @TODO to remove this boolean bc it should always be true
 
         // Store game state of frame
         m_previousGameState = gameStateController->currentState;
@@ -190,29 +189,6 @@ namespace PE
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
         }
     }
-
-
-    void RatMovement_v2_0::UpdateAnimation(bool const isRatMoving)
-    {
-        // Update the animation of the rat
-        if (isRatMoving)
-        {
-            // Set to "Walk" animation only if movement occurred
-            if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->myID))
-            {
-                EntityManager::GetInstance().Get<AnimationComponent>(p_data->myID).SetCurrentAnimationID(p_data->animationStates.at("Walk"));
-            }
-        }
-        else
-        {
-            // Set to "Idle" animation if the rat didn't move
-            if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->myID))
-            {
-                EntityManager::GetInstance().Get<AnimationComponent>(p_data->myID).SetCurrentAnimationID(p_data->animationStates.at("Idle"));
-            }
-        }
-    }
-
 
 
     vec2 RatMovement_v2_0::PickTargetPosition()

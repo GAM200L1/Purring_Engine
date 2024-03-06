@@ -53,9 +53,14 @@ namespace PE
 
 		// reference entities
 		EntityID myID{ 0 };								// id of the rat with this data
-		EntityID ratTelegraphID{ 0 };			// id of an additional invisible object with transform for rotating the arrow telegraph
-		EnumRatType ratType{ EnumRatType::GUTTER };
+		EntityID detectionRadiusId{};
+		EntityID pivotEntityID{ 0 };					// id of parent obj to rotate to adjust the orientation of the telegraphs
+		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
+		EntityID attackTelegraphEntityID{ 0 };			// id of cross attack telegraph
 		StateMachine* p_stateManager;
+
+		bool isAlive{ true }; // True if the rat is alive and should be updated
+		EnumRatType ratType{ EnumRatType::GUTTER };
 
 		// animation
 		AnimationComponent* p_ratAnimationComponent = nullptr;
@@ -64,18 +69,14 @@ namespace PE
 		// rat stats
 		int ratHealth{ 3 };								// health of the rat, needs manual setting
 		int ratMaxHealth{ 3 };						// maximum health of the rat
+		std::unordered_set<EntityID> hitBy; // IDs of attacks that the rat has been hit by during this execution phase
 
 		// Movement Variables
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
 		vec2 targetPosition{ 0.f, 0.f };				// stores the target position the rat is supposed to move towards
-
-		// Attack entities and variables
-		EntityID pivotEntityID{ 0 };					// id of parent obj to rotate to adjust the orientation of the telegraphs
-		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
-		EntityID attackTelegraphEntityID{ 0 };			// id of cross attack telegraph
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
-		EntityID redTelegraphEntityID{ 0 };				// id of red detection telegraph
 
+		// Attack variables
 		int collisionDamage{ 1 };						// damage when touching the rat needs manual setting
 		int attackDamage{ 1 };							// damage when properly attacked by the rat needs manual setting
 
@@ -87,7 +88,6 @@ namespace PE
 		// Rat Idle
 		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
 
-		bool isAlive{ true }; // True if the rat is alive and should be updated
 
 		bool shouldChangeState{};  // Flags that the state should change when [timeBeforeChangingState] is zero
 		bool delaySet{ false }; // Whether the state change has been flagged
@@ -96,7 +96,6 @@ namespace PE
 		bool hasRatStateChanged{ false }; // True if the rat state changed in the last frame, false otherwise
 
 		// Detection and movement
-		EntityID detectionRadiusId{};
 		float detectionRadius{ 200.f };
 		std::set<EntityID> catsInDetectionRadius;
 		std::set<EntityID> catsExitedDetectionRadius;
@@ -111,17 +110,10 @@ namespace PE
 		int maxHuntTurns{ 2 }; // Number of turn the rat will hunt before returning to their original position
 		vec2 originalPosition{ 0.f, 0.f }; // Position to return to
 		
-		// Attack 
-		int skillDamage{};
-		int skillArea{}; // probably dependent on the attack and cannot be stored as a flat var
-
 		// Patrol Points
 		std::vector<vec2> patrolPoints;
-		int patrolIndex{ 0 };							// Index of the current patrol point the rat is moving towards
+		int patrolIndex{ 0 };										// Index of the current patrol point the rat is moving towards
 		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
-
-
-		bool animationStart{ false };
 
 	private:
 		State* p_queuedState{ nullptr }; // State to load
@@ -362,7 +354,19 @@ namespace PE
 		*************************************************************************************/
 		void EnableTelegraphs(EntityID id, vec2 const& r_targetPosition);
 
+		/*!***********************************************************************************
+		 \brief Disables the movement telegraphs.
+
+		 \param[in] id - EntityID of the rat.
+		*************************************************************************************/
 		void DisableTelegraphs(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Disables all entities spawned by the rat.
+
+		 \param[in] id - EntityID of the rat.
+		*************************************************************************************/
+		void DisableAllSpawnedEntities(EntityID id);
 
 
 		// --- RAT STATE CHANGE DETECTION --- // 
@@ -440,6 +444,16 @@ namespace PE
 		*************************************************************************************/
 		void ChangeStateToAttack(EntityID const id, float const stateChangeDelay = 0.f);
 
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed to the death state 
+						after the delay passed in.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void ChangeStateToDeath(EntityID const id, float const stateChangeDelay = 0.f);
+
 
 		// --- COLLISION DETECTION --- // 
 
@@ -510,7 +524,23 @@ namespace PE
 		bool CalculateMovement(EntityID id, float deltaTime);
 		static bool CheckDestinationReached(EntityID id);
 		static bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
-		
+
+		/*!***********************************************************************************
+		 \brief Reduces the health of the rat and plays the SFX. If the rat has run out of 
+						health, the rat is killed using the KillRat function.
+
+		 \param[in] ratId - EntityID of the rat.
+		 \param[in] damageSourceId - EntityID of the entity that damaged the rat.
+		 \param[in] damage - Amount to reduce the rat's health by.
+		*************************************************************************************/
+		void DamageRat(EntityID ratId, EntityID damageSourceId, int damage);
+
+		/*!***********************************************************************************
+		 \brief Kills the rat, setting it to its death state and playing the death SFX + anim.
+
+		 \param[in] id - EntityID of the rat.
+		*************************************************************************************/
+		void KillRat(EntityID id);
 
 		// ----- Private Members ----- //
 	private:
