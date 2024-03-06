@@ -4073,15 +4073,6 @@ namespace PE {
 										draggedItemIndex = n; // Start dragging
 										isDragging = true;
 
-										// set current selected resource
-										std::filesystem::path filePath = m_files[n];
-										filePath.make_preferred();
-
-										m_currentSelectedObject = -1;
-										m_objectIsSelected = false;
-										m_currentSelectedResourcePath = filePath.string();
-										std::cout << "Selected Resource: " << m_currentSelectedResourcePath << std::endl;
-
 										std::string iconDraggedExtension = m_files[n].extension().string();
 										if (iconDraggedExtension == "")
 											iconDragged = "../Assets/Icons/Directory_Icon.png";
@@ -4134,6 +4125,18 @@ namespace PE {
 							}
 							if (n == rmbIndex && ImGui::BeginPopup("AssetDeletePopup"))
 							{
+								if (ImGui::Selectable("Edit properties"))
+								{
+									// set current selected resource
+									std::filesystem::path filePath = m_files[n];
+									filePath.make_preferred();
+
+									m_currentSelectedObject = -1;
+									m_objectIsSelected = false;
+
+									if (filePath.has_extension())
+									m_currentSelectedResourcePath = filePath.string();
+								}
 								if (ImGui::Selectable("Delete Asset"))
 								{
 									try
@@ -4181,6 +4184,18 @@ namespace PE {
 									ClearObjectList();
 									engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
 									serializationManager.LoadFromFile(prefabFP, true);
+								}
+								if (ImGui::Selectable("Edit properties"))
+								{
+									// set current selected resource
+									std::filesystem::path filePath = m_files[n];
+									filePath.make_preferred();
+
+									m_currentSelectedObject = -1;
+									m_objectIsSelected = false;
+
+									if(filePath.has_extension())
+									m_currentSelectedResourcePath = filePath.string();
 								}
 								if (ImGui::Selectable("Delete Asset"))
 								{
@@ -5202,7 +5217,7 @@ namespace PE {
 							// if active scene is default scene, open file explorer to save new scene
 							if (SceneManager::GetInstance().GetActiveScene() == "Default_Scene.scene")
 							{
-								serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(), true);
+								serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(".scene"), true);
 							}
 							else
 							{
