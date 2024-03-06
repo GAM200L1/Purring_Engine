@@ -25,6 +25,9 @@
 
 namespace PE
 {
+	// forward declare animation class
+	class Animation;
+
 	class AnimationComponent
 	{
 		// ----- Public functions ----- //
@@ -35,6 +38,13 @@ namespace PE
 		\return Current animation ID for this animation component.
 		*************************************************************************************/
 		inline std::string GetAnimationID() const { return m_currentAnimationID; }
+
+		/*!***********************************************************************************
+		\brief Get the current playing animation for this component.
+
+		\return Current animation for this animation component.
+		*************************************************************************************/
+		inline std::shared_ptr<Animation> GetAnimation() const { return m_currentAnimation; }
 
 		/*!***********************************************************************************
 		\brief Get the current frame time of the animation.
@@ -196,7 +206,7 @@ namespace PE
 		// do not need to serialize
 		float m_currentFrameTime{}; // current frame time of the animation
 		unsigned m_currentFrameIndex{}; // current frame index of the animation
-		//std::shared_ptr<Animation> m_currentAnimation; // current playing animation
+		std::shared_ptr<Animation> m_currentAnimation; // current playing animation
 		bool m_isPlaying{ false }; // is the animation playing, false by default
 		bool m_animationEnded{ false }; // has the animation ended, false by default
 

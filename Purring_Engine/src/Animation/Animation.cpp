@@ -271,7 +271,7 @@ namespace PE
 
 		m_currentAnimationID = animationIndex;
 
-		//m_currentAnimation = ResourceManager::GetInstance().GetAnimation(m_currentAnimationID);
+		m_currentAnimation = ResourceManager::GetInstance().GetAnimation(m_currentAnimationID);
 	}
 
 	unsigned AnimationComponent::GetAnimationTotalFrames()
