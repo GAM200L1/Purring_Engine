@@ -3360,6 +3360,9 @@ namespace PE {
 										int AreYouSureID = static_cast<int> (it->second.AreYouSureCanvas);
 										int MainMenuCanvasID = static_cast<int> (it->second.MainMenuCanvas);
 										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
+										int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
+										int HowToPlayPageOneID = static_cast<int> (it->second.HowToPlayPageOne);
+										int HowToPlayPageTwoID = static_cast<int> (it->second.HowToPlayPageTwo);
 
 										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCID", &MainMenuCanvasID);
 										if (MainMenuCanvasID != m_currentSelectedObject) { it->second.MainMenuCanvas = MainMenuCanvasID; }
@@ -3369,6 +3372,15 @@ namespace PE {
 
 										ImGui::Text("Are You Sure Canvas Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##AYSMMID", &AreYouSureID);
 										if (AreYouSureID != m_currentSelectedObject) it->second.AreYouSureCanvas = AreYouSureID;
+
+										ImGui::Text("How To Place Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTPCID", &HowToPlayCanvasID);
+										if (HowToPlayCanvasID != m_currentSelectedObject) { it->second.HowToPlayCanvas = HowToPlayCanvasID; }
+
+										ImGui::Text("HowToPlayPageOne ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTP1ID", &HowToPlayPageOneID);
+										if (HowToPlayPageOneID != m_currentSelectedObject) { it->second.HowToPlayPageOne = HowToPlayPageOneID; }
+
+										ImGui::Text("HowToPlayPageTwo ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTP2ID", &HowToPlayPageTwoID);
+										if (HowToPlayPageTwoID != m_currentSelectedObject) it->second.HowToPlayPageTwo = HowToPlayPageTwoID;
 									}
 								}
 							}

@@ -26,6 +26,10 @@ namespace PE
 		EntityID AreYouSureCanvas;
 		EntityID MainMenuCanvas;
 
+		EntityID HowToPlayCanvas;
+		EntityID HowToPlayPageOne;
+		EntityID HowToPlayPageTwo;
+
 		int mouseClickEventID;
 		int windowNotFocusEventID;
 		int windowFocusEventID;
@@ -159,6 +163,30 @@ namespace PE
 		 \param[in]		for button
 		*************************************************************************************/
 		void ReturnFromMMAYS(EntityID);
+		/*!***********************************************************************************
+		 \brief			Close How To Play Canvas
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
+		void MMCloseHTP(EntityID);
+		/*!***********************************************************************************
+		 \brief			Open How To Play Canvas
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
+		void MMOpenHTP(EntityID);
+		/*!***********************************************************************************
+		 \brief			Change to How To Play Page 2
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
+		void MMHTPPage2(EntityID);
+		/*!***********************************************************************************
+		 \brief			Change to How To Play Page 1
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
+		void MMHTPPage1(EntityID);
 		/*!***********************************************************************************
 		 \brief			Click Audio Sound
 		*************************************************************************************/

@@ -271,7 +271,10 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::MainMenuControllerData>("MainMenuController")
         .property("AreYouSureCanvas", &PE::MainMenuControllerData::AreYouSureCanvas)
         .property("MainMenuCanvas", &PE::MainMenuControllerData::MainMenuCanvas)
-        .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
+        .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen)
+        .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
+        .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
+        .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);    

@@ -10,6 +10,7 @@
                         "viewportWidth": 1920.0
                     },
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 2,
                         "Prefab Type": "",
@@ -41,10 +42,11 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 1,
                         "Prefab Type": "Canvas Object",
@@ -78,6 +80,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 3,
                         "Prefab Type": "",
@@ -118,6 +121,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 5,
                         "Prefab Type": "",
@@ -158,6 +162,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 4,
                         "Prefab Type": "",
@@ -192,6 +197,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
                         "m_onClicked": "PlayGameMM",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
@@ -232,6 +239,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 8,
                         "Prefab Type": "Text",
@@ -279,6 +287,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 9,
                         "Prefab Type": "",
@@ -313,6 +322,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
                         "m_onClicked": "QuitGameMM",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
@@ -353,6 +364,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 10,
                         "Prefab Type": "",
@@ -400,10 +412,11 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 6,
                         "Prefab Type": "Canvas Object",
@@ -438,6 +451,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 7,
                         "Prefab Type": "SplashScreen",
@@ -478,12 +492,13 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 11,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Empty Object",
+                        "name": "Main Menu Controller",
                         "parent": null,
                         "sceneID": 2
                     },
@@ -500,6 +515,9 @@
                         "MainMenuController": {
                             "data": {
                                 "AreYouSureCanvas": 14,
+                                "HowToPlayCanvas": 21,
+                                "HowToPlayPageOne": 22,
+                                "HowToPlayPageTwo": 23,
                                 "MainMenuCanvas": 12,
                                 "SplashScreen": 7
                             },
@@ -528,10 +546,11 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 12,
                         "Prefab Type": "Canvas Object",
@@ -540,7 +559,9 @@
                             5,
                             8,
                             9,
-                            10
+                            10,
+                            27,
+                            28
                         ],
                         "isActive": true,
                         "name": "MainMenuCanvas",
@@ -569,6 +590,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 13,
                         "Prefab Type": "",
@@ -609,10 +631,11 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 14,
                         "Prefab Type": "Canvas Object",
@@ -649,6 +672,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 15,
                         "Prefab Type": "SadCat",
@@ -689,6 +713,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 16,
                         "Prefab Type": "yesbutton",
@@ -723,6 +748,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
                         "m_onClicked": "ExitGame",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -763,6 +790,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 17,
                         "Prefab Type": "nobutton",
@@ -797,6 +825,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                         "m_onClicked": "ReturnFromMMAYS",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -837,6 +867,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 18,
                         "Prefab Type": "areyousure",
@@ -877,6 +908,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 19,
                         "Prefab Type": "Text",
@@ -929,10 +961,11 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 20,
                         "Prefab Type": "Canvas Object",
@@ -957,6 +990,515 @@
                         },
                         "relorientation": 0.0,
                         "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 0.0,
+                        "Width": 0.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 18,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            22,
+                            23,
+                            24,
+                            25,
+                            26
+                        ],
+                        "isActive": false,
+                        "name": "HowToPlayCanvas",
+                        "parent": null,
+                        "sceneID": 21
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 19,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "HTPpg1",
+                        "parent": 21,
+                        "sceneID": 22
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/HowToPlay_Page1_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 20,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "HTPpg2",
+                        "parent": 21,
+                        "sceneID": 23
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/HowToPlay_Page2_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 21,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "ReturnFromHTPButton",
+                        "parent": 21,
+                        "sceneID": 24
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Return_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
+                        "m_onClicked": "MMCloseHTP",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Return_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Return_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 125.51280975341797,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -747.5000610351563,
+                            "y": 457.50006103515625
+                        },
+                        "relativeposition": {
+                            "x": -747.5000610351563,
+                            "y": 457.50006103515625
+                        },
+                        "relorientation": 0.0,
+                        "width": 409.8817138671875
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 22,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "pg2",
+                        "parent": 21,
+                        "sceneID": 25
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Next_79x77.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Next_Highlighted_79x77.png",
+                        "m_onClicked": "MMHTPPage2",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Next_Dark_79x77.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Next_79x77.png"
+                    },
+                    "Transform": {
+                        "height": 77.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 849.999267578125,
+                            "y": -54.99995422363281
+                        },
+                        "relativeposition": {
+                            "x": 849.999267578125,
+                            "y": -54.99995422363281
+                        },
+                        "relorientation": 0.0,
+                        "width": 79.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 23,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "pg1",
+                        "parent": 21,
+                        "sceneID": 26
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Back_79x77.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Back_Highlighted_79x77.png",
+                        "m_onClicked": "MMHTPPage1",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Back_Dark_79x77.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Back_79x77.png"
+                    },
+                    "Transform": {
+                        "height": 77.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -880.00048828125,
+                            "y": -55.0
+                        },
+                        "relativeposition": {
+                            "x": -880.00048828125,
+                            "y": -55.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 79.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 27,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "HowToPlay Button",
+                        "parent": 12,
+                        "sceneID": 20
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_HowToPlay_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_HowToPlay_Highlighted_512x128.png",
+                        "m_onClicked": "MMOpenHTP",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_HowToPlay_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_HowToPlay_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 128.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -838.500244140625,
+                            "y": 432.9999084472656
+                        },
+                        "relativeposition": {
+                            "x": -838.500244140625,
+                            "y": 432.9999084472656
+                        },
+                        "relorientation": 0.0,
+                        "width": 512.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 28,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Options Button",
+                        "parent": 12,
+                        "sceneID": 21
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Options_200x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Options_Highlighted_200x128.png",
+                        "m_onClicked": "",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Options_Dark_200x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Options_200x128.png"
+                    },
+                    "Transform": {
+                        "height": 128.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 860.999755859375,
+                            "y": 433.0
+                        },
+                        "relativeposition": {
+                            "x": 860.999755859375,
+                            "y": 433.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 200.0
                     }
                 },
                 "name": ""
