@@ -97,5 +97,38 @@ namespace PE
         }
     }
 
+    void GlobalMusicManager::StartFadeIn(float duration)
+    {
+        isFading = true;
+        isFadingIn = true;
+        fadeProgress = 0.0f;
+        fadeDuration = duration;
+    }
+
+    void GlobalMusicManager::StartFadeOut(float duration)
+    {
+        isFading = true;
+        isFadingIn = false;
+        fadeProgress = 0.0f;
+        fadeDuration = duration;
+    }
+
+    void GlobalMusicManager::Update(float deltaTime)
+    {
+        if (isFading)
+        {
+            fadeProgress += deltaTime / fadeDuration;
+
+            if (fadeProgress >= 1.0f)
+            {
+                fadeProgress = 1.0f;
+                isFading = false;
+            }
+
+            float volume = isFadingIn ? fadeProgress : (1.0f - fadeProgress);
+            SetBackgroundMusicVolume(volume);
+        }
+
+    }
 
 }

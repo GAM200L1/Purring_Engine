@@ -125,6 +125,7 @@ namespace PE
 
 		// toplaybgmfrom  GlobalMusicManager
 		GlobalMusicManager::GetInstance().PlayBackgroundMusic("../Assets/Audio/mus_BGM_Layer1_Loop.wav", true);
+		GlobalMusicManager::GetInstance().StartFadeIn(5.0f);
 
 		////start the background music
 		//EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
@@ -142,6 +143,7 @@ namespace PE
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
+		GlobalMusicManager::GetInstance().Update(deltaTime);
 
 		if (!m_isRat && m_isPotraitShowing)
 		{
@@ -601,7 +603,9 @@ namespace PE
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
 
-			PauseBGM();
+			GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+
+			//PauseBGM();
 			PlayPageAudio();
 
 			PauseManager::GetInstance().SetPaused(true);
@@ -622,7 +626,7 @@ namespace PE
 	{
 		if (currentState == GameStates_v2_0::PAUSE)
 		{
-			ResumeBGM();
+			GlobalMusicManager::GetInstance().StartFadeIn(2.0f);
 
 			for (auto id : SceneView<GUIButton>())
 			{
@@ -756,7 +760,9 @@ namespace PE
 
 	void GameStateController_v2_0::WinGame()
 	{
-		PauseBGM();
+		//PauseBGM();
+		GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+
 		PlayWinAudio();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
@@ -764,7 +770,9 @@ namespace PE
 
 	void GameStateController_v2_0::LoseGame()
 	{
-		PauseBGM();
+		//PauseBGM();
+		GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+
 		PlayLoseAudio();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
@@ -1037,6 +1045,8 @@ namespace PE
 
 	void GameStateController_v2_0::NextStage(int nextStage)
 	{
+		GlobalMusicManager::GetInstance().StartFadeOut(0.01f);
+
 		PlaySceneTransition();
 
 		switch (nextStage)

@@ -27,14 +27,27 @@ namespace PE
         void StopBackgroundMusic();
         void SetBackgroundMusicVolume(float volume);
 
+        void StartFadeIn(float duration = 1.0f);                        // Default fade duration is 1 second
+        void StartFadeOut(float duration = 1.0f);
+        void StartFadeToVolume(float targetVolume, float duration);
+
         void StoreCurrentState();
         void ResumeFromState(const AudioState& state);
+        const AudioState& GetCurrentState() const { return currentState; }
+
+        void Update(float deltaTime); 
 
     private:
         std::map<std::string, std::shared_ptr<AudioComponent>> m_audioComponents;  // Map store audio components
         std::string m_currentTrackKey;
         bool m_isPaused;
         AudioState currentState;
+
+        // Fade-related members
+        float fadeDuration;
+        float fadeProgress;
+        bool isFading;
+        bool isFadingIn;
 
         std::shared_ptr<AudioComponent> GetOrCreateAudioComponent(const std::string& trackKey);
     };
