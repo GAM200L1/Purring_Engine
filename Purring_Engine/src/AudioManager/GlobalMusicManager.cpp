@@ -24,6 +24,25 @@ namespace PE
         StopBackgroundMusic();
     }
 
+    void GlobalMusicManager::Update(float deltaTime)
+    {
+        if (isFading)
+        {
+            fadeProgress += deltaTime / fadeDuration;
+
+            if (fadeProgress >= 1.0f)
+            {
+                fadeProgress = 1.0f;
+                isFading = false;
+            }
+
+            float volume = isFadingIn ? fadeProgress : (1.0f - fadeProgress);
+
+            SetBackgroundMusicVolume(volume);
+        }
+
+    }
+
     void GlobalMusicManager::PlayAudioPrefab(const std::string& prefabPath, bool loop)
     {
         // Load the prefab and create an AudioComponent from it
@@ -44,27 +63,23 @@ namespace PE
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
 
-
     void GlobalMusicManager::PauseBackgroundMusic()
     {
-        auto it = m_audioComponents.find(m_currentTrackKey);
-        if (it != m_audioComponents.end())
+        for (auto& [key, audioComponent] : m_audioComponents)
         {
-            it->second->PauseSound();
-            m_isPaused = true;
+            float currentVolume = audioComponent->GetVolume();
+            m_originalVolumes[key] = currentVolume;  // Store the original volume before changing it
+            audioComponent->SetVolume(currentVolume * 0.2f);  // Reduce volume to 20%
         }
     }
 
     void GlobalMusicManager::ResumeBackgroundMusic()
     {
-        if (m_isPaused)
+        // Assuming m_originalVolumes is a std::map<std::string, float> storing original volumes
+        for (auto& [key, audioComponent] : m_audioComponents)
         {
-            auto it = m_audioComponents.find(m_currentTrackKey);
-            if (it != m_audioComponents.end())
-            {
-                it->second->ResumeSound();
-                m_isPaused = false;
-            }
+            float originalVolume = m_originalVolumes[key];  // Retrieve the original volume
+            audioComponent->SetVolume(originalVolume);  // Restore the original volume
         }
     }
 
@@ -137,23 +152,6 @@ namespace PE
         fadeDuration = duration;
     }
 
-    void GlobalMusicManager::Update(float deltaTime)
-    {
-        if (isFading)
-        {
-            fadeProgress += deltaTime / fadeDuration;
 
-            if (fadeProgress >= 1.0f)
-            {
-                fadeProgress = 1.0f;
-                isFading = false;
-            }
-
-            float volume = isFadingIn ? fadeProgress : (1.0f - fadeProgress);
-
-            SetBackgroundMusicVolume(volume);
-        }
-
-    }
 
 }

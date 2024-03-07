@@ -49,10 +49,12 @@ namespace PE
         void ResumeFromState(const AudioState& state);
         const AudioState& GetCurrentState() const { return currentState; }
 
-        void Update(float deltaTime); 
+        void Update(float deltaTime);
 
     private:
         std::map<std::string, std::shared_ptr<AudioComponent>> m_audioComponents;  // Map store audio components
+        std::map<std::string, float> m_originalVolumes;  // Map to store original volumes of audio components
+
         std::string m_currentTrackKey;
         bool m_isPaused;
         AudioState currentState;
@@ -64,6 +66,7 @@ namespace PE
         bool isFadingIn;
 
         SerializationManager m_serializationManager;
+        float m_originalVolume = 1.0f;  // Assuming the full volume is 1.0
 
 
         std::shared_ptr<AudioComponent> GetOrCreateAudioComponent(const std::string& trackKey);

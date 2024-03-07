@@ -153,6 +153,19 @@ namespace PE
         return nullptr;
     }
 
+    float AudioComponent::GetVolume() const
+    {
+        float volume = 0.0f;
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            if (auto channel = audio->GetChannel())
+            {
+                channel->getVolume(&volume);
+            }
+        }
+        return volume;
+    }
+
     nlohmann::json AudioComponent::ToJson() const
     {
         nlohmann::json j;

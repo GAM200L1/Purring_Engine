@@ -592,7 +592,7 @@ namespace PE
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
 
-			GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+			GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
 
 			//PauseBGM();
 			PlayPageAudio();
@@ -615,7 +615,7 @@ namespace PE
 	{
 		if (currentState == GameStates_v2_0::PAUSE)
 		{
-			GlobalMusicManager::GetInstance().StartFadeIn(2.0f);
+			GlobalMusicManager::GetInstance().ResumeBackgroundMusic();  // Restore volume after resuming
 
 			for (auto id : SceneView<GUIButton>())
 			{

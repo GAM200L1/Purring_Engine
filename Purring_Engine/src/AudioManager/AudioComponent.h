@@ -121,6 +121,8 @@ namespace PE
         *************************************************************************************/
         bool IsPaused() const { return isPaused; }
 
+        float GetVolume() const;
+
         /*!***********************************************************************************
         \brief     Gets the audio channel.
         \return    The audio channel.
