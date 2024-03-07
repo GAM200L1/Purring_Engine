@@ -51,9 +51,9 @@ namespace PE {
         {
         }
 
-        void AudioSource::PlayDelayed(float delay)
-        {
-        }
+        //void AudioSource::PlayDelayed(float delay)
+        //{
+        //}
 
         void AudioSource::Stop()
         {
@@ -68,13 +68,13 @@ namespace PE {
             clip = newClip;
         }
 
-        void AudioSource::SetVolume(float newVolume)
-        {
-            //volume = newVolume;
-            //if (isPlaying) {
-            //    AudioSystem::SetChannelVolume(currentChannelId, volume);
-            //}
-        }
+        //void AudioSource::SetVolume(float newVolume)
+        //{
+        //    //volume = newVolume;
+        //    //if (isPlaying) {
+        //    //    AudioSystem::SetChannelVolume(currentChannelId, volume);
+        //    //}
+        //}
 
         void AudioSource::SetPitch(float newPitch)
         {
