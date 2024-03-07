@@ -123,21 +123,10 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_1429x415.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_1429x415.png");
 
-		// toplaybgmfrom  GlobalMusicManager
-		GlobalMusicManager::GetInstance().PlayBackgroundMusic("../Assets/Audio/mus_BGM_Layer1_Loop.wav", true);
+		// Play audio BGM and BGM Ambience via GlobalMusicManager
+		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Music_Prefab.json", true);
+		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Ambience_Prefab.json", true);
 		GlobalMusicManager::GetInstance().StartFadeIn(5.0f);
-
-		////start the background music
-		//EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
-		//if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-		//	EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
-		//EntityManager::GetInstance().RemoveEntity(bgm);
-
-		//start the background ambience
-		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
-		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
-			EntityManager::GetInstance().Get<AudioComponent>(bga).PlayAudioSound();
-		EntityManager::GetInstance().RemoveEntity(bga);
 
 		ResetPhaseBanner(true);
 	}
@@ -1346,7 +1335,5 @@ namespace PE
 		if (Finished)
 			NextState();
 	}
-
-
 
 }

@@ -24,15 +24,26 @@ namespace PE
         StopBackgroundMusic();
     }
 
-    void GlobalMusicManager::PlayBackgroundMusic(const std::string& trackKey, bool loop)
+    void GlobalMusicManager::PlayAudioPrefab(const std::string& prefabPath, bool loop)
     {
-        StopBackgroundMusic();
+        // Load the prefab and create an AudioComponent from it
+        EntityID audioEntity = m_serializationManager.LoadFromFile(prefabPath);
+        if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
+        {
+            auto audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
+            audioComponent.SetLoop(loop);
+            audioComponent.PlayAudioSound();
+            m_audioComponents[prefabPath] = std::make_shared<AudioComponent>(audioComponent); // Store a copy of audioComponent in the map
+        }
+        else
+        {
+            std::cerr << "Failed to load audio from prefab: " << prefabPath << std::endl;
+        }
 
-        m_currentTrackKey = trackKey;
-        auto audioComponent = GetOrCreateAudioComponent(trackKey);
-        audioComponent->SetLoop(loop);
-        audioComponent->PlayAudioSound();
+        // Clean up by removing the entity if needed
+        EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
+
 
     void GlobalMusicManager::PauseBackgroundMusic()
     {
@@ -102,7 +113,7 @@ namespace PE
 
     void GlobalMusicManager::ResumeFromState(const AudioState& state)
     {
-        PlayBackgroundMusic(state.trackKey, true);  //loop awlays
+        //PlayBackgroundMusic(state.trackKey, true);  //loop awlays
 
         auto it = m_audioComponents.find(state.trackKey);
         if (it != m_audioComponents.end()) {
@@ -139,6 +150,7 @@ namespace PE
             }
 
             float volume = isFadingIn ? fadeProgress : (1.0f - fadeProgress);
+
             SetBackgroundMusicVolume(volume);
         }
 

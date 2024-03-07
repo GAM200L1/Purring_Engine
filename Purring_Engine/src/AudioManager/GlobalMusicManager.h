@@ -13,6 +13,7 @@
 *************************************************************************************/
 #pragma once
 #include "AudioManager.h"
+#include "Data/SerializationManager.h"
 
 #include "AudioComponent.h"
 #include "Singleton.h"
@@ -34,7 +35,7 @@ namespace PE
         GlobalMusicManager();
         ~GlobalMusicManager();
 
-        void PlayBackgroundMusic(const std::string& trackKey, bool loop);
+        void PlayAudioPrefab(const std::string& prefabPath, bool loop);
         void PauseBackgroundMusic();
         void ResumeBackgroundMusic();
         void StopBackgroundMusic();
@@ -61,6 +62,9 @@ namespace PE
         float fadeProgress;
         bool isFading;
         bool isFadingIn;
+
+        SerializationManager m_serializationManager;
+
 
         std::shared_ptr<AudioComponent> GetOrCreateAudioComponent(const std::string& trackKey);
     };
