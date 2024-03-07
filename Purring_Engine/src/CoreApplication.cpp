@@ -137,7 +137,6 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
     REGISTERCOMPONENT(PE::Canvas);
-    REGISTERCOMPONENT(PE::CatSaveData);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -443,7 +442,7 @@ PE::CoreApplication::CoreApplication()
     SerializationManager serializationManager;
     //create background from file
 
-    EntityID uiCameraId{ serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json") };
+    EntityID uiCameraId{ serializationManager.LoadFromFile("EditorDefaults/Camera.prefab") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
 
@@ -470,7 +469,7 @@ void PE::CoreApplication::Run()
     SceneManager::GetInstance().CreateDefaultScene();
 #else
     const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0,0,0);
-    SceneManager::GetInstance().SetStartScene("MainMenu.json"); // set game scene here <-
+    SceneManager::GetInstance().SetStartScene("MainMenu.scene"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE

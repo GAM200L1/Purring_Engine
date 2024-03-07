@@ -50,8 +50,26 @@
 #include "Logic/Cat/CatScript_v2_0.h"
 
 const std::wstring wjsonExt = L".json";
+const std::wstring wAnimExt = L".anim";
+const std::wstring wSceneExt = L".scene";
+const std::wstring wPrefabExt = L".prefab";
+const std::wstring wTrueTypeFontExt = L".ttf";
+const std::wstring wPngExt = L".png";
 
-std::string SerializationManager::OpenFileExplorer()
+const wchar_t* wJsonFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
+const wchar_t* wAnimFilter = L"ANIM Files\0*.anim\0All Files\0*.*\0";
+const wchar_t* wTrueTypeFontFilter = L"TrueType font Files\0*.ttf\0All Files\0*.*\0";
+const wchar_t* wSceneFilter = L"SCENE Files\0*.scene\0All Files\0*.*\0";
+const wchar_t* wPrefabFilter = L"PREFAB Files\0*.scene\0All Files\0*.*\0";
+const wchar_t* wPngFilter = L"PNG Files\0*.png\0All Files\0*.*\0";
+
+const wchar_t* wAnimInitialDirectory = L"..\\Assets\\Animation";
+const wchar_t* wFontInitialDirectory = L"..\\Assets\\Fonts";
+const wchar_t* wSceneInitialDirectory = L"..\\Assets\\Scenes";
+const wchar_t* wPrefabInitialDirectory = L"..\\Assets\\Prefabs";
+const wchar_t* wTextureInitialDirectory = L"..\\Assets\\Textures";
+
+std::string SerializationManager::OpenFileExplorer(std::string const& type)
 {
     OPENFILENAME ofn;
     wchar_t szFile[260];
@@ -61,12 +79,42 @@ std::string SerializationManager::OpenFileExplorer()
     ofn.lpstrFile = szFile;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (type == ".json")
+    {
+        ofn.lpstrFilter = wJsonFilter;
+        ofn.lpstrInitialDir = NULL;
+    }
+    else if (type == ".anim")
+    {
+        ofn.lpstrFilter = wAnimFilter;
+        ofn.lpstrInitialDir = wAnimInitialDirectory;
+    }
+    else if (type == ".scene")
+    {
+        ofn.lpstrFilter = wSceneFilter;
+        ofn.lpstrInitialDir = wSceneInitialDirectory;
+    }
+    else if (type == ".prefab")
+	{
+		ofn.lpstrFilter = wPrefabFilter;
+		ofn.lpstrInitialDir = wPrefabInitialDirectory;
+	}
+    else if (type == ".ttf")
+    {
+        ofn.lpstrFilter = wTrueTypeFontFilter;
+        ofn.lpstrInitialDir = wFontInitialDirectory;
+    }
+    else if (type == ".png")
+    {
+        ofn.lpstrFilter = wPngFilter;
+        ofn.lpstrInitialDir = wTextureInitialDirectory;
+    }
+
 
     if (GetOpenFileNameW(&ofn) == TRUE)
     {
@@ -86,7 +134,7 @@ std::string SerializationManager::OpenFileExplorer()
     return "";
 }
 
-std::string SerializationManager::OpenFileExplorerRequestPath()
+std::string SerializationManager::OpenFileExplorerRequestPath(std::string const& type)
 {
     OPENFILENAME ofn;
     wchar_t szFile[260];
@@ -96,32 +144,60 @@ std::string SerializationManager::OpenFileExplorerRequestPath()
     ofn.lpstrFile = szFile;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (type == ".json")
+    {
+        ofn.lpstrFilter = wJsonFilter;
+        ofn.lpstrInitialDir = NULL;
+    }
+    else if (type == ".anim")
+    {
+        ofn.lpstrFilter = wAnimFilter;
+        ofn.lpstrInitialDir = wAnimInitialDirectory;
+    }
+    else if (type == ".scene")
+    {
+        ofn.lpstrFilter = wSceneFilter;
+        ofn.lpstrInitialDir = wSceneInitialDirectory;
+    }
+    else if (type == ".prefab")
+	{
+		ofn.lpstrFilter = wPrefabFilter;
+		ofn.lpstrInitialDir = wPrefabInitialDirectory;
+	}
+    else if (type == ".ttf")
+    {
+        ofn.lpstrFilter = wTrueTypeFontFilter;
+        ofn.lpstrInitialDir = wFontInitialDirectory;
+    }
+    else if (type == ".png")
+    {
+        ofn.lpstrFilter = wPngFilter;
+        ofn.lpstrInitialDir = wTextureInitialDirectory;
+    }
 
     if (GetOpenFileNameW(&ofn) == TRUE)
     {
         std::wstring wfp = ofn.lpstrFile;
-        // check for extention
-        for (size_t i{ wfp.length() - 5 }, j{}; i < wfp.length(); ++i, ++j)
+        std::filesystem::path filepath = wfp;
+
+        // if extension does not match file open type
+        if (filepath.extension().string() != type)
         {
-            // add the extention if not match
-            if (wfp[i] != wjsonExt[j])
-            {
-                wfp.append(wjsonExt);
-                break;
-            }
+			filepath.replace_extension(type);
         }
-        int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, nullptr, 0, nullptr, nullptr);
+		
+
+        int requiredSize = WideCharToMultiByte(CP_UTF8, 0, filepath.c_str(), -1, nullptr, 0, nullptr, nullptr);
 
         if (requiredSize > 0)
         {
             std::string fp(requiredSize, '\0');
-            if (WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
+            if (WideCharToMultiByte(CP_UTF8, 0, filepath.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
             {
                 return fp;
             }
@@ -166,7 +242,23 @@ void SerializationManager::DeserializeAllEntities(const nlohmann::json& r_j)
     }
 }
 
-void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bool fp)
+//void SerializationManager::ConvertJsonToExtension(nlohmann::json const& r_json, std::string const& r_fileName)
+//{
+//    std::string jsonData{ r_json.dump() };
+//
+//    std::ofstream outFile(r_fileName);
+//    if (outFile)
+//    {
+//        outFile << jsonData;
+//        outFile.close();
+//    }
+//    else
+//    {
+//        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+//    }
+//}
+
+void SerializationManager::SerializeScene(std::string const& filename, bool fp)
 {
     nlohmann::json allEntitiesJson = SerializeAllEntities();
 
@@ -176,10 +268,16 @@ void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bo
     if (fp)
     {
         filepath = filename;
+        filepath.make_preferred();
     }
     else
     {
         filepath = std::string{ "../Assets/Scenes/" } + filename;
+    }
+
+    if (filepath.has_extension())
+    {
+        filepath.replace_extension(".scene");
     }
 
     std::ofstream outFile(filepath);
@@ -191,6 +289,31 @@ void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bo
     else
     {
         std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
+
+void SerializationManager::DeserializeScene(std::string const& r_scenePath)
+{
+    std::filesystem::path filepath = r_scenePath;
+
+    if (!std::filesystem::exists(filepath))
+    {
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return;
+    }
+
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        SerializationManager serializationManager;
+        nlohmann::json allEntitiesJson;
+        inFile >> allEntitiesJson;
+        serializationManager.DeserializeAllEntities(allEntitiesJson);
+        inFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
     }
 }
 
@@ -398,6 +521,34 @@ nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem
     return loadedData;
 }
 
+void SerializationManager::SaveMetaDataToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData)
+{
+    std::ofstream outFile(filepath);
+    if (outFile)
+    {
+        outFile << serializedData.dump(4);
+        outFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
+
+nlohmann::json SerializationManager::LoadMetaDataFromFile(const std::filesystem::path& filepath)
+{
+    nlohmann::json loadedData;
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        inFile >> loadedData;
+        inFile.close();
+    }
+    else {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+    }
+    return loadedData;
+}
 
 
 size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
@@ -440,7 +591,7 @@ size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
     }
     else // following old format (handle old way)
     {
-        std::cout << r_json << std::endl;
+        //std::cout << r_json << std::endl;
         return DeserializeEntity(r_json);
     }
     return MAXSIZE_T;
@@ -788,6 +939,7 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                     val.bulletRange = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletRange"].get<float>();
                                     val.bulletLifeTime = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletLifeTime"].get<float>();
                                     val.bulletForce = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletForce"].get<float>();
+                                    //val.bulletFireAnimationIndex = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletFireAnimationIndex"].get<int>();
                                     vari = val;
                                 }
                                 else if (data[prop.get_name().to_string().c_str()].contains("OrangeCatAttackVariables"))
@@ -796,9 +948,10 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                     val.seismicID = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicID"].get<EntityID>();
                                     val.telegraphID = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["telegraphID"].get<EntityID>();
                                     val.damage = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["damage"].get<int>();
-                                    val.stompRadius = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompRadius"].get<float>();
-                                    val.stompLifeTime = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompLifetime"].get<float>();
-                                    val.stomopForce = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompForce"].get<float>();
+                                    val.seismicRadius = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicRadius"].get<float>();
+                                    val.seismicDelay = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicDelay"].get<float>();
+                                    val.seismicForce = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicForce"].get<float>();
+                                    //val.seismicSlamAnimationIndex = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicSlamAnimationIndex"].get<int>();
                                     vari = val;
                                 }
                                 
@@ -909,3 +1062,5 @@ bool SerializationManager::LoadGUISlider(const EntityID& r_id, const nlohmann::j
     }
     return false;
 }
+
+

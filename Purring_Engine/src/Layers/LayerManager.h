@@ -324,13 +324,15 @@ namespace PE
 			\param[in] components 	The components to scope to
 			\param[in] all 		Whether or not the scope is to all copmonents
 			*************************************************************************************/
-			Iterator(std::vector<EntityID>::const_iterator beg, std::vector<EntityID>::const_iterator en)
+			Iterator(std::vector<EntityID>::const_iterator beg, std::vector<EntityID>::const_iterator en, bool ig)
 			{
 				ite = beg;
 				end = en;
+				ignore = ig;
 				try
 				{ 
-					while (ite != end && !EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive) ++ite;
+					if (!ignore)
+						while (ite != end && (!EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive)) ++ite;
 				}
 				catch (...)
 				{
@@ -385,7 +387,7 @@ namespace PE
 				do
 				{
 					++ite;
-					if (ite != end && EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive)
+					if (ite != end && (ignore || (EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isActive && EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive)))
 						break;
 				} while (ite != end);
 				return *this;
@@ -395,7 +397,7 @@ namespace PE
 			std::vector<EntityID>::const_iterator ite;
 			// end of the vector
 			std::vector<EntityID>::const_iterator end;
-			
+			bool ignore;
 		};
 
 		// ----- Constructors ------ //
@@ -404,10 +406,11 @@ namespace PE
 		\brief Construct a new Scene View object
 
 		*************************************************************************************/
-		InternalView(const Layer& layer)
+		InternalView(const Layer& layer, bool ig = false)
 		{
 			startIte = layer.begin();
 			endIte = layer.end();
+			ignore = ig;
 		}
 		// ----- Public Methods ----- //
 
@@ -419,7 +422,7 @@ namespace PE
 		*************************************************************************************/
 		const Iterator begin() const	// cannot follow coding conventions due to c++ begin() & end() standards
 		{
-			return Iterator(startIte, endIte);
+			return Iterator(startIte, endIte, ignore);
 		}
 
 		/*!***********************************************************************************
@@ -429,11 +432,12 @@ namespace PE
 		*************************************************************************************/
 		const Iterator end() const		// cannot follow coding conventions due to c++ begin() & end() standards
 		{
-			return Iterator(endIte, endIte);
+			return Iterator(endIte, endIte, ignore);
 		}
 
 		std::vector<EntityID>::const_iterator startIte;
 		// end of the vector
 		std::vector<EntityID>::const_iterator endIte;
+		bool ignore{false};
 	};
 }

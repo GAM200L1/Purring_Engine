@@ -177,7 +177,7 @@ namespace PE
 		{
 			for (const auto& layer : LayerView<EntityDescriptor, Transform>(true))
 			{
-				for (const EntityID& id : InternalView(layer))
+				for (const EntityID& id : InternalView(layer, true))
 				{
 					// id 0 is default camera, ignore it
 					if (id == 0)

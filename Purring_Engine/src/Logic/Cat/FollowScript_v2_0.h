@@ -28,13 +28,8 @@ namespace PE
 	{
 		int Size{ 64 }; // fixed size of each object
 		float Rotation{};
-		vec2 CurrentPosition;
-		std::vector<vec2> NextPosition;
-
-		//for attaching through code
-		bool IsAttaching{ false };
-		//int NumberOfAttachers{ 0 };
-		std::vector<EntityID> ToAttach{};
+		vec2 prevPosition;
+		std::vector<vec2> nextPosition;
 
 		//look towards movement
 		bool LookTowardsMovement{ false };
@@ -42,6 +37,9 @@ namespace PE
 		// new followers stack
 		std::vector<EntityID> followers;
 		
+		// saves the follower position for undoing etc.
+		std::vector<vec2> cacheFollowerPosition;
+
 		//sound
 		EntityID SoundID{};
 	};
@@ -50,6 +48,12 @@ namespace PE
 	class FollowScript_v2_0 : public Script
 	{
 	public:
+		std::map<EntityID, FollowScriptData_v2_0> scriptData;
+		
+	public:
+		// ----- Destructor ----- //
+		virtual ~FollowScript_v2_0();
+
 		/*!***********************************************************************************
 		\brief Does nothing
 		*************************************************************************************/
@@ -69,24 +73,24 @@ namespace PE
 		\brief Create followers
 		*************************************************************************************/
 		virtual void OnAttach(EntityID) override;
+
 		/*!***********************************************************************************
 		 \brief Clears the script data
 		*************************************************************************************/
 		virtual void OnDetach(EntityID) override;
 
-		/*!***********************************************************************************
-		 \brief Called when a collision event has occured. 
+	public:
 
-		 \param[in,out] r_event - Collision event data.
-		*************************************************************************************/
-		void CollisionCheck(const Event<CollisionEvents>& r_event);
+		void SavePositions(EntityID id);
+
+		void ResetToSavePositions(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
 
 		 \return std::map<EntityID, FollowScriptData>& Map of the script data
 		*************************************************************************************/
-		std::map<EntityID, FollowScriptData_v2_0>& GetScriptData();
+		std::map<EntityID, FollowScriptData_v2_0>& GetScriptData() { return scriptData; }
 
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
@@ -94,13 +98,26 @@ namespace PE
 		 \param[in,out] id ID of script to return
 		 \return rttr::instance Script instance
 		*************************************************************************************/
-		rttr::instance GetScriptData(EntityID id);
-		
-		// ----- Destructor ----- //
-		virtual ~FollowScript_v2_0();
+		rttr::instance GetScriptData(EntityID id) { return rttr::instance(scriptData.at(id)); }
+
 	private:
-		std::map<EntityID, FollowScriptData_v2_0> m_ScriptData;
+		/*!***********************************************************************************
+		\brief Plays audio for when a cat is picked up by main cat
+		*************************************************************************************/
+		void PlayAdoptCatAudio();
+
+		/*!***********************************************************************************
+		 \brief Called when a collision event has occured. 
+
+		 \param[in,out] r_event - Collision event data.
+		*************************************************************************************/
+		void CollisionCheck(const Event<CollisionEvents>& r_event);
+		
+	private:
 		GameStateController_v2_0* p_gamestateController;
+
+
+
 		// Event keys
 		int m_collisionEventListener{};
 	};

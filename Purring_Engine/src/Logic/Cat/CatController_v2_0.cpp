@@ -19,7 +19,7 @@
 #include "CatHelperFunctions.h"
 #include "FollowScript_v2_0.h"
 
-#include "ECS/SceneView.h"
+#include "Layers/LayerManager.h"
 #include "Logic/LogicSystem.h"
 #include "Logic/FollowScript.h"
 #include <cstdlib>   // For srand and rand
@@ -36,23 +36,8 @@ namespace PE
 	void CatController_v2_0::Init(EntityID id)
 	{
 		m_lostGame = false;
-		for (EntityID catID : SceneView<ScriptComponent>())
-		{
-			auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
-			//if (IsCat(catID))
-			for (auto &[scriptname,state] : r_scripts)
-			{
-				if (scriptname == "CatScript_v2_0")
-				{
-					EnumCatType const& r_catType = *GETSCRIPTDATA(CatScript_v2_0, catID).catType;
-					m_currentCats.emplace_back(std::pair{ catID, r_catType }); // saves all cats, including the caged ones
-					if (r_catType == EnumCatType::MAINCAT)
-						m_mainCatID = catID;
-					else if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
-						(GETSCRIPTDATA(CatScript_v2_0, catID))->finishedExecution = true;
-				}
-			}
-		}
+		UpdateCurrentCats(id);
+		UpdateCachedCats(id);
 	}
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
@@ -82,21 +67,50 @@ namespace PE
 	}
 
 	// getters
-	std::vector<EnumCatType> CatController_v2_0::GetDeployableCats()
+	void CatController_v2_0::UpdateDeployableCats(EntityID mainInstanceID)
 	{
-		std::vector<EnumCatType> deployableCats{};
-		if (EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
+		// checks if it is an active cat
+		auto IsCatAndNotCaged =
+		[&](EntityID id)
 		{
-			deployableCats = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved;
-			//EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved.clear();
+			if (IsCat(id))
+			{
+				if (!IsCatCaged(id))
+					return true;
+			}
+			return false;
+		};
+		
+		m_deployableCats.clear();
+		m_deployableCats.emplace_back(EnumCatType::MAINCAT);
+		for (EntityID catID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
+		{
+			if (IsCatAndNotCaged(catID))
+				m_deployableCats.emplace_back((GETSCRIPTDATA(CatScript_v2_0, catID))->catType);
 		}
-		//for (auto const& [catID, type] : m_cachedCats)
-		//{
-		//	// if cat is alive when caching
-		//	if (!(GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)
-		//		deployableCats.emplace_back(type);
-		//}
-		return deployableCats;
+	}
+
+	void CatController_v2_0::UpdateCurrentCats(EntityID)
+	{
+		m_currentCats.clear();
+		for (const auto& layer : LayerView<ScriptComponent>())
+		{
+			for (EntityID catID : InternalView(layer))
+			{
+				auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
+				//if (IsCat(catID))
+				for (auto& [scriptname, state] : r_scripts)
+				{
+					if (scriptname == "CatScript_v2_0")
+					{
+						EnumCatType const& r_catType = *GETSCRIPTDATA(CatScript_v2_0, catID).catType;
+						m_currentCats.emplace_back(std::pair{ catID, r_catType }); // saves all cats, including the caged ones
+						if (r_catType == EnumCatType::MAINCAT)
+							m_mainCatID = catID;
+					}
+				}
+			}
+		}
 	}
 
 	void CatController_v2_0::KillCat(EntityID id)
@@ -104,23 +118,26 @@ namespace PE
 		if (IsCat(id) && !IsCatCaged(id))
 		{
 			EntityID catToRemove = id;
-			if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+		
+			// if cat was part of the following chain, kill just that cat and remove from followers vector
+			if (IsFollowCat(id))
 			{
-				// if in cat chain stage, kill the last cat in the chain
-				if (!((GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty()))
-				{
-					catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
-					(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
-				}
+				catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
+				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
 			}
 			//else kill cat that has been hit
 			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
+
+			// if cat hit is main cat, game is lost
 			if ((GETSCRIPTDATA(CatScript_v2_0, catToRemove))->catType == EnumCatType::MAINCAT)
+			{
+				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.clear();
 				m_lostGame = true;
+			}
 		}
 	}
 
-	void CatController_v2_0::RemoveCatFromVector(EntityID id)
+	void CatController_v2_0::RemoveCatFromCurrent(EntityID id)
 	{
 		EnumCatType const& r_catType = (GETSCRIPTDATA(CatScript_v2_0, id))->catType;
 		m_currentCats.erase(std::find(m_currentCats.begin(), m_currentCats.end(), std::pair{id, r_catType}));
@@ -136,10 +153,10 @@ namespace PE
 	{
 		return (GETSCRIPTDATA(CatScript_v2_0, catID))->catMaxMovementEnergy;
 	}
-	
-	std::vector<std::pair<EntityID, EnumCatType>> CatController_v2_0::GetCurrentCats(EntityID id)
-	{
-		return m_currentCats;
-	}
 
+	bool CatController_v2_0::IsFollowCat(EntityID catID)
+	{
+		FollowScriptData_v2_0* p_followScript = GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID);
+		return (std::find(p_followScript->followers.begin(), p_followScript->followers.end(), catID) != p_followScript->followers.end());
+	}
 }

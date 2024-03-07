@@ -309,7 +309,10 @@ project "Application"
 	{
 		"%{prj.name}/src/**.h",
         "%{prj.name}/src/**.hpp",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+        "Assets/Animation/**.anim",
+        "Assets/Scenes/**.scene",
+        "Assets/Prefabs/**.prefab"
 	}
 
     includedirs
