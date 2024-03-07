@@ -25,6 +25,17 @@ namespace PE
 	{
 		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);		
+
+		if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->leftSideSlamAnimation))
+		{
+			EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).StopAnimation();
+			EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).ResetAnimation();
+		}
+		if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->rightSideSlamAnimation))
+		{
+			EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).StopAnimation();
+			EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).ResetAnimation();
+		}
 	}
 
 	void BossRatSlamAttack::DrawTelegraphs(EntityID id)
@@ -66,14 +77,29 @@ namespace PE
 			p_data->finishExecution = true;
 		}
 		else if (p_script->m_currentSlamTurnCounter == 0)
-			SlamDown(p_script->currentBoss,dt);
-
-
-		if (m_endExecutionTimer <= 0)
 		{
-			DisableAnimation(p_script->currentBoss);
-			m_endExecutionTime = m_endExecutionTimer;
-			p_data->finishExecution = true;
+			SlamDown(p_script->currentBoss, dt);
+
+			if (m_attackIsLeft)
+			{
+				if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->leftSideSlamAnimation))
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).HasAnimationEnded())
+					{
+						DisableAnimation(p_script->currentBoss);
+					}
+				}
+			}
+			else
+			{
+				if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->rightSideSlamAnimation))
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).HasAnimationEnded())
+					{
+						DisableAnimation(p_script->currentBoss);
+					}
+				}
+			}
 		}
 		//std::cout << "Boss Position: " << EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.x << " " << EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.y << std::endl;
 	}
@@ -132,7 +158,7 @@ namespace PE
 			bossTransform->position.y = m_slamLandLocation.y;
 			if (EntityManager::GetInstance().Has<Collider>(id))
 				EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
-			m_endExecutionTimer -= dt;
+
 			CheckDamage(id);
 			EnableAnimation(id);
 		}
@@ -266,20 +292,43 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->leftSideSlamAnimation))
 				EntityManager::GetInstance().Get<EntityDescriptor>(p_data->leftSideSlamAnimation).isActive = true;
+
+			if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->leftSideSlamAnimation))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).PlayAnimation();
+			}
 		}
 		else
 		{
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->rightSideSlamAnimation))
 				EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive = true;
+
+			if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->rightSideSlamAnimation))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).PlayAnimation();		
+			}
 		}
 	}
 
 	void BossRatSlamAttack::DisableAnimation(EntityID)
 	{
+		//if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->leftSideSlamAnimation))
+		//{
+		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).StopAnimation();
+		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).ResetAnimation();
+		//}
+		//if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->rightSideSlamAnimation))
+		//{
+		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).StopAnimation();
+		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).ResetAnimation();
+		//}
+
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->leftSideSlamAnimation))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->leftSideSlamAnimation).isActive = false;
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->rightSideSlamAnimation))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive = false;
+
+		p_data->finishExecution = true;
 	}
 
 }

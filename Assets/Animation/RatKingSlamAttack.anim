@@ -75,6 +75,7 @@
     ],
     "animationID": "../Assets/Animation/RatKingSlamAttack.anim",
     "frameRate": 30,
+    "isLooping": false,
     "isSpriteSheet": true,
     "spriteSheetKey": "../Assets/Textures/Animations/RatKing_Attack_Slam.png",
     "totalSprites": 6

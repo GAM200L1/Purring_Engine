@@ -64,7 +64,5 @@ namespace PE
 
 		bool m_ratSpawned{ false };
 
-		float m_endExecutionTime{ 1 };
-		float m_endExecutionTimer{ m_endExecutionTime };
 	};
 }

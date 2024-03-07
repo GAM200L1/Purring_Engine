@@ -61,20 +61,20 @@ namespace PE
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
 
-		static bool test{true};
+		//static bool test{true};
 
-		//attack 1
-		if (!test)
-		{
-			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
-		}
-		else
-		{
+		////attack 1
+		//if (!test)
+		//{
+		//	p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
+		//}
+		//else
+		//{
 			p_data->p_currentAttack = new BossRatSlamAttack(p_script->FindFurthestCat());
 			p_script->m_currentSlamTurnCounter = 3;
-		}
+		//}
 
-		test = !test;
+		//test = !test;
 	}
 
 } // End of namespace PE
