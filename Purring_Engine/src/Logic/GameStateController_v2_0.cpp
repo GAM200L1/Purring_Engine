@@ -125,8 +125,8 @@ namespace PE
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_1429x415.png");
 
 		// Play audio BGM and BGM Ambience via GlobalMusicManager
-		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Music_Prefab.json", true);
-		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Ambience_Prefab.json", true);
+		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Music.prefab", true);
+		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Ambience.prefab", true);
 		GlobalMusicManager::GetInstance().StartFadeIn(5.0f);
 
 		ResetPhaseBanner(true);
