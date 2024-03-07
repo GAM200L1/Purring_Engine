@@ -25,6 +25,9 @@
 
 namespace PE
 {
+	// forward declare animation class
+	class Animation;
+
 	class AnimationComponent
 	{
 		// ----- Public functions ----- //
@@ -35,6 +38,13 @@ namespace PE
 		\return Current animation ID for this animation component.
 		*************************************************************************************/
 		inline std::string GetAnimationID() const { return m_currentAnimationID; }
+
+		/*!***********************************************************************************
+		\brief Get the current playing animation for this component.
+
+		\return Current animation for this animation component.
+		*************************************************************************************/
+		inline std::shared_ptr<Animation> GetAnimation() const { return m_currentAnimation; }
 
 		/*!***********************************************************************************
 		\brief Get the current frame time of the animation.
@@ -128,6 +138,47 @@ namespace PE
 		double GetAnimationFrameTime();
 
 		/*!***********************************************************************************
+		 \brief Set animation to play.
+		*************************************************************************************/
+		void PlayAnimation();
+
+		/*!***********************************************************************************
+		 \brief Set animation to pause.
+		*************************************************************************************/
+		void PauseAnimation();
+
+		/*!***********************************************************************************
+		 \brief Stop animation and reset to the start.
+		*************************************************************************************/
+		void StopAnimation();
+
+		/*!***********************************************************************************
+		 \brief Reset animation to the start.
+		*************************************************************************************/
+		void ResetAnimation();
+
+		/*!***********************************************************************************
+		 \brief Set animation has ended.
+
+		 \param[in] ended bool value if the animation has ended.
+		*************************************************************************************/
+		void SetAnimationEnded(bool ended);
+
+		/*!***********************************************************************************
+		 \brief Check if animation has ended.
+
+		 \return bool value if the animation has ended.
+		*************************************************************************************/
+		inline bool HasAnimationEnded() const { return m_animationEnded; }
+
+		/*!***********************************************************************************
+		 \brief Check if animation is playing.
+
+		 \return bool value if the animation is playing.
+		*************************************************************************************/
+		inline bool IsPlaying() const { return m_isPlaying; }
+
+		/*!***********************************************************************************
 		 \brief Serializes the data attached to this component.
 
 		 \param[in] id The id of the entity that owns this component.
@@ -144,11 +195,26 @@ namespace PE
 		*************************************************************************************/
 		AnimationComponent& Deserialize(const nlohmann::json& r_j);
 
+		// need to serialize
 		std::set<std::string> m_animationsID; // Stores all animations for the component // not in use now
 		std::string m_currentAnimationID{}; // current playing animation
-		std::string m_startingAnimationID{}; // starting playing animation
+		std::string m_startingAnimationID{}; // starting playing animation // may not need this as there are starting states
+
+		// new stuff to serialize
+
+
+		// do not need to serialize
 		float m_currentFrameTime{}; // current frame time of the animation
 		unsigned m_currentFrameIndex{}; // current frame index of the animation
+		std::shared_ptr<Animation> m_currentAnimation; // current playing animation
+		bool m_isPlaying{ false }; // is the animation playing, false by default
+		bool m_animationEnded{ false }; // has the animation ended, false by default
+
+		// add later
+		//std::map<std::string, std::shared_ptr<Animation>> m_animationsMap; // Stores all animations for the component - need this for states? not sure if just key is enough
+		// std::map<std::string, std::shared_ptr<Animation>> m_animationStates; // not sure if using shared_ptr or key for the animation
+		// EntryState m_entryState; // entry state of the animation
+		
 	};
 
 	/*!***********************************************************************************
@@ -222,6 +288,14 @@ namespace PE
 		 \param[in] r_currentFrameIndex Current frame index of the animation.
 		*************************************************************************************/
 		void UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex);
+
+		/*!***********************************************************************************
+		 \brief Update the animation based on elapsed time.
+
+		 \param[in] deltaTime Time since last update.
+		 \param[in] r_animationComponent
+		*************************************************************************************/
+		void UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent);
 
 		/*!***********************************************************************************
 			\brief Get the current frame of the animation.
@@ -343,6 +417,20 @@ namespace PE
 		bool LoadAnimation(std::string const& r_filePath);
 
 		/*!***********************************************************************************
+		 \brief Set the looping of the animation.
+
+		 \param[in] looping True if animation is to loop, false otherwise.
+		*************************************************************************************/
+		void SetLooping(bool looping);
+
+		/*!***********************************************************************************
+		 \brief Check if animation is looping.
+
+		 \return True if animation is looping, false otherwise.
+		*************************************************************************************/
+		inline bool IsLooping() const { return m_isLooping; }
+
+		/*!***********************************************************************************
 		 \brief Serializes the data attached to this animation.
 
 		 \return A JSON object with the data of this animation.
@@ -367,6 +455,9 @@ namespace PE
 		unsigned m_totalSprites;
 		unsigned m_frameRate;
 		bool m_isSpriteSheet{ true };
+
+		// new to serialize
+		bool m_isLooping{ true };
 
 		AnimationFrame m_emptyFrame{};
 	};
@@ -444,7 +535,20 @@ namespace PE
 		*************************************************************************************/
 		void SetAnimationSpriteSheetKey(std::string animationID, std::string spriteSheetKey);
 
+		/*!***********************************************************************************
+		 \brief Set all animations to play.
+		*************************************************************************************/
+		void PlayAllAnimations() const;
 
+		/*!***********************************************************************************
+		 \brief Set all animations to pause.
+		*************************************************************************************/
+		void PauseAllAnimations() const;
+
+		/*!***********************************************************************************
+		 \brief Stop and reset all animation.
+		*************************************************************************************/
+		void StopAllAnimations() const;
 
 		// ----- Private Variables ----- //
 	private:
