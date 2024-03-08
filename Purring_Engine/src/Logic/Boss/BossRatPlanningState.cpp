@@ -66,11 +66,12 @@ namespace PE
 		//attack 1
 		if (!test)
 		{
-			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
+			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindClosestCat());
+			p_script->m_currentSlamTurnCounter = 0;
 		}
 		else
 		{
-			p_data->p_currentAttack = new BossRatSlamAttack(p_script->FindFurthestCat());
+			p_data->p_currentAttack = new BossRatSlamAttack();
 			p_script->m_currentSlamTurnCounter = 3;
 		}
 

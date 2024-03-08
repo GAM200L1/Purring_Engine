@@ -21,7 +21,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/Cat/CatController_v2_0.h"
 namespace PE
 {
-	BossRatBashAttack::BossRatBashAttack(EntityID furthestCat) : m_FurthestCat{furthestCat}
+	BossRatBashAttack::BossRatBashAttack(EntityID closestCat) : m_closestCat{ closestCat }
 	{
 		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);
@@ -33,8 +33,8 @@ namespace PE
 	{
 		Transform furthestCatTransform;
 
-		if (EntityManager::GetInstance().Has<Transform>(m_FurthestCat))
-			furthestCatTransform = EntityManager::GetInstance().Get<Transform>(m_FurthestCat);
+		if (EntityManager::GetInstance().Has<Transform>(m_closestCat))
+			furthestCatTransform = EntityManager::GetInstance().Get<Transform>(m_closestCat);
 
 		Transform BossTransform;
 

@@ -21,7 +21,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/Cat/CatController_v2_0.h"
 namespace PE
 {
-	BossRatSlamAttack::BossRatSlamAttack(EntityID furthestCat) : m_FurthestCat{furthestCat}
+	BossRatSlamAttack::BossRatSlamAttack()
 	{
 		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);		

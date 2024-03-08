@@ -23,8 +23,7 @@ namespace PE
 	{
 		//constructors
 	public:
-		BossRatSlamAttack() = delete;
-		BossRatSlamAttack(EntityID furthestCat);
+		BossRatSlamAttack();
 
 		//public functions
 	public:
@@ -47,9 +46,6 @@ namespace PE
 		void EnableAnimation(EntityID);
 		void DisableAnimation(EntityID);
 	private:
-		//need to take a snapshot of the current player positions here
-		//actually no, only need the furtest cat
-		EntityID m_FurthestCat{static_cast<EntityID>(-1)};
 		BossRatScript* p_script;
 		BossRatScriptData* p_data;
 		std::string m_telegraphPrefab{"BossRatSlamAttackTelegraph.prefab"};

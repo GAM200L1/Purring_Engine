@@ -134,6 +134,8 @@ namespace PE
 
 		EntityID FindFurthestCat();
 
+		EntityID FindClosestCat();
+
 		void FindAllObstacles();
 
 		std::vector<EntityID> GetAllObstacles();

@@ -66,9 +66,9 @@ namespace PE
 
 	void BossRatScript::OnAttach(EntityID id)
 	{
-		m_currentSlamTurnCounter = 0;
 		m_scriptData[id] = BossRatScriptData();
 		currentBoss = id;
+		m_currentSlamTurnCounter = 0;
 	}
 
 
@@ -148,6 +148,29 @@ namespace PE
 		//std::cout << "Furthest Cat: " << EntityManager::GetInstance().Get<EntityDescriptor>(FurthestCat).name << "\n";
 
 		return FurthestCat;
+	}
+
+	EntityID BossRatScript::FindClosestCat()
+	{
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+		EntityID ClosestCat{};
+		float ClosestDistance{1000000000};
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			Transform cattransform = EntityManager::GetInstance().Get<Transform>(CatID);
+
+			if (cattransform.position.Distance(EntityManager::GetInstance().Get<Transform>(currentBoss).position) < ClosestDistance)
+			{
+				ClosestDistance = cattransform.position.Distance(EntityManager::GetInstance().Get<Transform>(currentBoss).position);
+				ClosestCat = CatID;
+			}
+
+		}
+
+		//std::cout << "Closest Cat: " << EntityManager::GetInstance().Get<EntityDescriptor>(ClosestCat).name << "\n";
+
+		return ClosestCat;
 	}
 	std::vector<EntityID> BossRatScript::GetAllObstacles()
 	{
