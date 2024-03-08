@@ -36,7 +36,7 @@ namespace PE
 
 		// create seismic //
 		SerializationManager serializationManager;
-		seismicID = serializationManager.LoadFromFile("Seismic_Prefab.json");
+		seismicID = serializationManager.LoadFromFile("Seismic.prefab");
 		
 		EntityManager::GetInstance().Get<EntityDescriptor>(seismicID).layer = 0;
 		EntityManager::GetInstance().Get<EntityDescriptor>(catID).layer = 1;
@@ -53,7 +53,7 @@ namespace PE
 		CatHelperFunctions::ScaleEntity(seismicID, catTransform.width * seismicRadius, catTransform.height * seismicRadius);
 		
 		// create telegraph //
-		telegraphID = serializationManager.LoadFromFile("OrangeCatAttackTelegraph_Prefab.json");
+		telegraphID = serializationManager.LoadFromFile("OrangeCatAttackTelegraph.prefab");
 
 		Hierarchy::GetInstance().AttachChild(catID, telegraphID);
 		EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.Zero();
@@ -201,7 +201,7 @@ namespace PE
 			{
 				CircleCollider& r_seismicCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->seismicID).colliderVariant);
 
-				if (m_seismicPrevAnimationFrame < r_seismicAnimation.GetCurrentFrameIndex() && r_seismicCollider.scaleOffset < 1.f)
+				if (m_seismicPrevAnimationFrame != r_seismicAnimation.GetCurrentFrameIndex() && r_seismicCollider.scaleOffset < 1.f)
 					r_seismicCollider.scaleOffset += 0.25f;
 
 				m_seismicPrevAnimationFrame = r_seismicAnimation.GetCurrentFrameIndex();
@@ -254,25 +254,14 @@ namespace PE
 
 	bool OrangeCatAttack_v2_0EXECUTE::SeismicHitCat(EntityID id1, EntityID id2)
 	{
-		// checks if it is an active cat
-		auto IsCatAndNotCaged =
-		[&](EntityID id)
-		{
-			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id))
-			{
-				if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id))
-					return true;
-			}
-			return false;
-		};
-
-		// kill cat if not in chain level and seismic hits a cat
-		if (id1 == p_attackData->seismicID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
+		CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+		// kill cat if not in chain and seismic hits a cat
+		if (id1 == p_attackData->seismicID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
 		{
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
 			return true;
 		}
-		else if (id2 == p_attackData->seismicID && IsCatAndNotCaged(id1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
+		else if (id2 == p_attackData->seismicID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
 		{
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
 			return true;
@@ -285,12 +274,12 @@ namespace PE
 		// damage rat
 		if (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 		{
-			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, p_attackData->damage);
+			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
 			return true;
 		}
 		else if (id2 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 		{
-			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, p_attackData->damage);
+			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
 			return true;
 		}
 		return false;

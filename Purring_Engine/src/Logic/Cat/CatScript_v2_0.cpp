@@ -31,6 +31,7 @@
 #include "CatPlanningState_v2_0.h"
 #include "CatHelperFunctions.h"
 #include "CatController_v2_0.h"
+#include "FollowScript_v2_0.h"
 
 #include "ECS/EntityFactory.h"
 #include "ResourceManager/ResourceManager.h"
@@ -128,7 +129,7 @@ namespace PE
 
 				if ((GETSCRIPTDATA(CatScript_v2_0, id))->catType == EnumCatType::MAINCAT)
 				{
-					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot_Prefab.json");
+					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot.prefab");
 				}
 				else
 				{
@@ -137,13 +138,13 @@ namespace PE
 					switch (randomInteger)
 					{
 					case 1:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX1_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX1.prefab");
 						break;
 					case 2:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX2_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX2.prefab");
 						break;
 					case 3:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX3_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX3.prefab");
 						break;
 					}
 				}
@@ -378,7 +379,7 @@ namespace PE
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				// if in cat chain level and main cat is moving, animation change to walking
-				if ((p_gsc->GetCurrentLevel() == 0 && m_scriptData[m_mainCatID].catCurrentEnergy < m_scriptData[m_mainCatID].catMaxMovementEnergy) ||
+				if ((!(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty() && m_scriptData[m_mainCatID].catCurrentEnergy < m_scriptData[m_mainCatID].catMaxMovementEnergy) ||
 					// if deployment level, check cats own energy
 					(m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy))
 				{

@@ -1,0 +1,75 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "Collider": {
+                            "collisionLayerIndex": 0,
+                            "data": {
+                                "max": {
+                                    "x": -776.5419921875,
+                                    "y": 302.15216064453125
+                                },
+                                "min": {
+                                    "x": -959.4573974609375,
+                                    "y": 33.84800720214844
+                                },
+                                "positionOffset": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "scaleOffset": {
+                                    "x": 1.0,
+                                    "y": 1.0
+                                }
+                            },
+                            "isTrigger": false,
+                            "type": "AABBCollider"
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 80,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "Obstacle",
+                            "parent": null,
+                            "sceneID": 25
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 0.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": ""
+                        },
+                        "RigidBody": {
+                            "linearDrag": 2.0,
+                            "mass": 10.0,
+                            "type": 0
+                        },
+                        "Transform": {
+                            "height": 268.3041687011719,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": -867.9996948242188,
+                                "y": 168.00009155273438
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 182.9154510498047
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

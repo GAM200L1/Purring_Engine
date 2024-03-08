@@ -80,7 +80,7 @@ namespace PE
 			}
 			return false;
 		};
-
+		
 		m_deployableCats.clear();
 		m_deployableCats.emplace_back(EnumCatType::MAINCAT);
 		for (EntityID catID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
@@ -92,6 +92,7 @@ namespace PE
 
 	void CatController_v2_0::UpdateCurrentCats(EntityID)
 	{
+		m_currentCats.clear();
 		for (const auto& layer : LayerView<ScriptComponent>())
 		{
 			for (EntityID catID : InternalView(layer))
@@ -117,19 +118,22 @@ namespace PE
 		if (IsCat(id) && !IsCatCaged(id))
 		{
 			EntityID catToRemove = id;
-			if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+		
+			// if cat was part of the following chain, kill just that cat and remove from followers vector
+			if (IsFollowCat(id))
 			{
-				// if in cat chain stage, kill the last cat in the chain
-				if (!((GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty()))
-				{
-					catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
-					(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
-				}
+				catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
+				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
 			}
 			//else kill cat that has been hit
 			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
+
+			// if cat hit is main cat, game is lost
 			if ((GETSCRIPTDATA(CatScript_v2_0, catToRemove))->catType == EnumCatType::MAINCAT)
+			{
+				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.clear();
 				m_lostGame = true;
+			}
 		}
 	}
 
@@ -148,5 +152,11 @@ namespace PE
 	int CatController_v2_0::GetMaxMovementEnergy(EntityID catID)
 	{
 		return (GETSCRIPTDATA(CatScript_v2_0, catID))->catMaxMovementEnergy;
+	}
+
+	bool CatController_v2_0::IsFollowCat(EntityID catID)
+	{
+		FollowScriptData_v2_0* p_followScript = GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID);
+		return (std::find(p_followScript->followers.begin(), p_followScript->followers.end(), catID) != p_followScript->followers.end());
 	}
 }

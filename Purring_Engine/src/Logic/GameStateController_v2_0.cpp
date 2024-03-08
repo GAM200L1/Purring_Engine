@@ -34,6 +34,7 @@
 #include "Cat/CatController_v2_0.h"
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/FollowScript_v2_0.h"
+#include "Boss/BossRatScript.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -125,13 +126,13 @@ namespace PE
 
 
 		//start the background music
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
+		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
 		//start the background ambience
-		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
 			EntityManager::GetInstance().Get<AudioComponent>(bga).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(bga);
@@ -441,25 +442,26 @@ namespace PE
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
 
 							//RatScript_v2_0* RatScript = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0);
-							RatScript* _RatScript = GETSCRIPTINSTANCEPOINTER(RatScript);
+							//RatScript* _RatScript = GETSCRIPTINSTANCEPOINTER(RatScript);
 
 							switch (RatType)
 							{
-							case 0: //GUTTER
+							case EnumRatType::GUTTER_V1: //GUTTER V1 (M3)
+							case EnumRatType::GUTTER: //GUTTER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_GutterRat_753x402.png"));
-								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
+								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 								break;
-							case 1: //BRAWLER
+							case EnumRatType::BRAWLER: //BRAWLER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Brawler_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_BrawlerRat_753x402.png"));
 								
-								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
+								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 								break;
-							case 2: //SNIPER
+							case EnumRatType::SNIPER: //SNIPER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Sniper_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_SniperRat_753x402.png"));
-								SetPortraitInformation("UnitPortrait_RatNameFrame_SniperRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
+								SetPortraitInformation("UnitPortrait_RatNameFrame_SniperRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 
 								break;
 								//case 3: //HERALD
@@ -514,16 +516,16 @@ namespace PE
 								switch (randomInteger)
 								{
 								case 1:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX1_Prefab.json");
+									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX1.prefab");
 									break;
 								case 2:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX2_Prefab.json");
+									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX2.prefab");
 									break;
 								case 3:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX3_Prefab.json");
+									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX3.prefab");
 									break;							
 								case 4:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX4_Prefab.json");
+									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX4.prefab");
 									break;
 								}
 
@@ -956,6 +958,7 @@ namespace PE
 	{
 		if (m_isPhaseBannerTransition)
 		{
+			if(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].PhaseBanner).parent.has_value())
 			ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].PhaseBanner).parent.value());
 
 			float fadeInSpeed = std::clamp(m_phaseBannerEnter / m_phaseBannerTransitionTimer, 0.0f, 1.0f);
@@ -1069,31 +1072,9 @@ namespace PE
 		}
 		case 1: // 2nd level
 		{
-
-			/*CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
-			dat.saved.clear();
-			dat.saved.emplace_back(MAINCAT);
-
-			EntityID maincat{};
-			for (auto id : SceneView<ScriptComponent>())
-			{
-				if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
-				{
-					maincat = id;
-					break;
-				}
-			}
-			auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
-
-			for (auto flw : ptr->followers)
-			{
-				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
-				dat.saved.emplace_back(p_data->catType);
-			}
-			ptr->followers.clear();*/
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateDeployableCats(CatManager->mainInstance);
-
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
+			
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;
@@ -1105,27 +1086,9 @@ namespace PE
 		}
 		case 2: // 3rd level
 		{
-			CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
-			dat.saved.clear();
-			dat.saved.emplace_back(MAINCAT);
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
-			EntityID maincat{};
-			for (auto id : SceneView<ScriptComponent>())
-			{
-				if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
-				{
-					maincat = id;
-					break;
-				}
-			}
-			auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
-
-			for (auto flw : ptr->followers)
-			{
-				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
-				dat.saved.emplace_back(p_data->catType);
-			}
-			ptr->followers.clear();
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;
@@ -1169,11 +1132,11 @@ namespace PE
 		//}
 		//case 3: // win game
 		//	WinGame();
-		//	m_leveltoLoad = "MainMenu.json";
+		//	m_leveltoLoad = "MainMenu.scene";
 		//	break;
 		default:
 			WinGame();
-			m_leveltoLoad = "MainMenu.json";
+			m_leveltoLoad = "MainMenu.scene";
 			break;
 		}
 	
@@ -1293,7 +1256,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayClickAudio()
 	{
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX_Prefab.json");
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -1301,7 +1264,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayNegativeFeedback()
 	{
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback_Prefab.json");
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -1309,7 +1272,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayPageAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Menu Transition SFX_Prefab.json");
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Menu Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1317,7 +1280,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayWinAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Win SFX_Prefab.json");
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Win SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1325,7 +1288,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayLoseAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Lose SFX_Prefab.json");
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Lose SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1333,7 +1296,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlaySceneTransition()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX_Prefab.json");
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1341,7 +1304,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayPhaseChangeAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Phase Transition SFX_Prefab.json");
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Phase Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1349,12 +1312,12 @@ namespace PE
 
 	void GameStateController_v2_0::PauseBGM()
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
+		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
-		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
 			EntityManager::GetInstance().Get<AudioComponent>(bga).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bga);
@@ -1362,12 +1325,12 @@ namespace PE
 
 	void GameStateController_v2_0::ResumeBGM()
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
+		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
-		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
 			EntityManager::GetInstance().Get<AudioComponent>(bga).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bga);
@@ -1406,17 +1369,28 @@ namespace PE
 
 		for (auto [RatID, RatType] : RatManager->GetRats(RatManager->mainInstance))
 		{
-			//Finished = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetScriptData()[RatID].finishedExecution;
-			Finished = Finished && GETSCRIPTINSTANCEPOINTER(RatScript)->GetScriptData()[RatID].finishedExecution;
+			if (RatType == EnumRatType::GUTTER_V1) 
+			{
+				// Ensures backwards compatability with the V1 rat
+				Finished = Finished && GETSCRIPTINSTANCEPOINTER(RatScript)->GetScriptData()[RatID].finishedExecution;
+			}
+			else 
+			{
+				// Checks the V2 rat
+				Finished = Finished && GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetScriptData()[RatID].finishedExecution;
+			}
 			//std::cout << "GameStateController_v2_0::CheckFinishExecution() RatID " << RatID << " finished exec " << Finished << " \n";
 		}
 
 		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
 		{
 			if(!GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].isCaged)
-				Finished = Finished && GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
-			std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
+			Finished = Finished && GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
+			//std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
 		}
+
+		Finished = Finished && GETSCRIPTINSTANCEPOINTER(BossRatScript)->m_scriptData[GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss].finishExecution;
+
 
 		if (Finished)
 			NextState();

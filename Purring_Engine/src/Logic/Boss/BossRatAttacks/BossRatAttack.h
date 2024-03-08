@@ -25,7 +25,7 @@ namespace PE
 	public:
 		virtual void DrawTelegraphs(EntityID) = 0;
 		virtual void EnterAttack(EntityID) = 0;
-		virtual void UpdateAttack(EntityID) = 0;
+		virtual void UpdateAttack(EntityID,float) = 0;
 		virtual void ExitAttack(EntityID) = 0;
 		virtual ~BossRatAttack() {}
 	};

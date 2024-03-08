@@ -71,9 +71,74 @@ namespace PE
 		{
 			if (r_currentFrameTime >= m_animationFrames.at(r_currentFrameIndex).m_duration)
 			{
-				// move on the the next frame when current frame duration is reached
-				r_currentFrameIndex = (r_currentFrameIndex + 1) % m_animationFrames.size();
+				if (m_isLooping)
+				{
+					// move on the the next frame when current frame duration is reached
+					r_currentFrameIndex = (r_currentFrameIndex + 1) % m_animationFrames.size();
+				}
+				else
+				{
+					// if not last frame, move on to the next frame
+					if (r_currentFrameIndex < m_animationFrames.size() - 1)
+					{
+						++r_currentFrameIndex;
+					}
+					else // if last frame
+					{
+
+					}
+				}
+
 				r_currentFrameTime = 0.f;
+			}
+		}
+		catch (const std::out_of_range&)
+		{
+			return;
+		}
+	}
+
+	void Animation::UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent)
+	{
+		if (PauseManager::GetInstance().IsPaused())
+			return;
+
+		r_animationComponent.m_currentFrameTime += deltaTime;
+
+		try
+		{
+			if (r_animationComponent.m_currentFrameTime >= m_animationFrames.at(r_animationComponent.m_currentFrameIndex).m_duration)
+			{
+				if (m_isLooping)
+				{
+					// if last frame, set animation ended to true
+					if (r_animationComponent.m_currentFrameIndex < m_animationFrames.size() - 1)
+					{
+						r_animationComponent.SetAnimationEnded(false);
+					}
+					else
+					{
+						r_animationComponent.SetAnimationEnded(true);
+					}
+
+					// move on the the next frame when current frame duration is reached
+					r_animationComponent.m_currentFrameIndex = (r_animationComponent.m_currentFrameIndex + 1) % m_animationFrames.size();					
+				}
+				else
+				{
+					// if not last frame, move on to the next frame
+					if (r_animationComponent.m_currentFrameIndex < m_animationFrames.size() - 1)
+					{
+						++r_animationComponent.m_currentFrameIndex;
+					}
+					else // if last frame, pause animation
+					{
+						r_animationComponent.PauseAnimation();
+						r_animationComponent.SetAnimationEnded(true);
+					}
+				}
+
+				r_animationComponent.m_currentFrameTime = 0.f;
 			}
 		}
 		catch (const std::out_of_range&)
@@ -202,8 +267,11 @@ namespace PE
 
 	void AnimationComponent::SetCurrentAnimationID(std::string animationIndex)
 	{
-		m_currentFrameIndex = 0;
+		ResetAnimation();
+
 		m_currentAnimationID = animationIndex;
+
+		m_currentAnimation = ResourceManager::GetInstance().GetAnimation(m_currentAnimationID);
 	}
 
 	unsigned AnimationComponent::GetAnimationTotalFrames()
@@ -224,6 +292,36 @@ namespace PE
 	double AnimationComponent::GetAnimationFrameTime()
 	{
 		return ResourceManager::GetInstance().GetAnimation(m_currentAnimationID)->GetAnimationFrameTime();
+	}
+
+	void AnimationComponent::PlayAnimation()
+	{
+		m_isPlaying = true;
+	}
+
+	void AnimationComponent::PauseAnimation()
+	{
+		m_isPlaying = false;
+	}
+
+	void AnimationComponent::StopAnimation()
+	{
+		// Pause the animation and reset the frame index and frame time
+		PauseAnimation();
+		ResetAnimation();
+	}
+
+	void AnimationComponent::ResetAnimation()
+	{
+		// Reset the frame index and frame time
+		m_currentFrameIndex = 0;
+		m_currentFrameTime = 0.f;
+		m_animationEnded = false;
+	}
+
+	void AnimationComponent::SetAnimationEnded(bool ended)
+	{
+		m_animationEnded = ended;
 	}
 
 	nlohmann::json AnimationComponent::ToJson(size_t id) const
@@ -257,25 +355,6 @@ namespace PE
 		return j;
 	}
 
-	// Animation Properties
-	nlohmann::json Animation::ToJson() const
-	{
-		nlohmann::json j;
-		j["animationID"] = m_animationID;
-		j["spriteSheetKey"] = m_spriteSheetKey;
-		j["totalSprites"] = m_totalSprites;
-		j["frameRate"] = m_frameRate;
-		j["isSpriteSheet"] = m_isSpriteSheet;
-
-		// Serialize the animation frames
-		for (const auto& frame : m_animationFrames)
-		{
-			j["animationFrames"].push_back(frame.ToJson());
-		}
-
-		return j;
-	}
-
 	bool Animation::LoadAnimation(std::string const& r_filePath)
 	{
 		std::filesystem::path filePath{ r_filePath.c_str() };
@@ -294,6 +373,31 @@ namespace PE
 		return false;
 	}
 
+	void Animation::SetLooping(bool isLooping)
+	{
+		m_isLooping = isLooping;
+	}
+
+	// Animation Properties
+	nlohmann::json Animation::ToJson() const
+	{
+		nlohmann::json j;
+		j["animationID"] = m_animationID;
+		j["spriteSheetKey"] = m_spriteSheetKey;
+		j["totalSprites"] = m_totalSprites;
+		j["frameRate"] = m_frameRate;
+		j["isSpriteSheet"] = m_isSpriteSheet;
+		j["isLooping"] = m_isLooping;
+
+		// Serialize the animation frames
+		for (const auto& frame : m_animationFrames)
+		{
+			j["animationFrames"].push_back(frame.ToJson());
+		}
+
+		return j;
+	}
+
 	Animation& Animation::Deserialize(const nlohmann::json& r_j)
 	{
 		m_animationID = r_j["animationID"].get<std::string>();
@@ -302,7 +406,10 @@ namespace PE
 		m_frameRate = r_j["frameRate"].get<unsigned>();
 
 		if(r_j.contains("isSpriteSheet"))
-		m_isSpriteSheet = r_j["isSpriteSheet"].get<bool>();
+			m_isSpriteSheet = r_j["isSpriteSheet"].get<bool>();
+
+		if (r_j.contains("isLooping"))
+			m_isLooping = r_j["isLooping"].get<bool>();
 
 		if(r_j.contains("animationFrames"))
 		for (const auto& frameJson : r_j["animationFrames"])
@@ -343,46 +450,36 @@ namespace PE
 	{
 		AnimationFrame p_currentFrame;
 
-
-#ifndef GAMERELEASE
-		if (Editor::GetInstance().IsRunTime())
+		for (const auto& layer : LayerView<AnimationComponent>())
 		{
-#endif		
-
-			for (const auto& layer : LayerView<AnimationComponent>())
+			for (EntityID const& id : InternalView(layer))
 			{
-				for (EntityID const& id : InternalView(layer))
+				// update animation and get current frame
+				p_currentFrame = UpdateAnimation(id, deltaTime);
+
+				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
+				// update entity based on frame data
+				// in the future probably check for bools in animation component, then update data accordingly
+				// check if theres animation
+				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
 				{
-					// update animation and get current frame
-					p_currentFrame = UpdateAnimation(id, deltaTime);
-
-					std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
-
-					// update entity based on frame data
-					// in the future probably check for bools in animation component, then update data accordingly
-					// check if theres animation
-					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+					if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
 					{
-						if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
+						// spritesheet animation
+						if (p_animation->IsSpriteSheet())
 						{
-							// spritesheet animation
-							if (p_animation->IsSpriteSheet())
-							{
-								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
-								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
-							}
-							else // texture key animation
-							{
-								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
-							}
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+						}
+						else // texture key animation
+						{
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
 						}
 					}
 				}
-
-#ifndef GAMERELEASE
 			}
-#endif
 		}
 	}
 
@@ -413,7 +510,9 @@ namespace PE
 		// store animations in resource manager instead
 		if (ResourceManager::GetInstance().Animations.find(animationComponent.GetAnimationID()) != ResourceManager::GetInstance().Animations.end())
 		{
-			ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent.m_currentFrameTime, animationComponent.m_currentFrameIndex);
+			if(animationComponent.IsPlaying())
+			ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+
 			return ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->GetCurrentAnimationFrame(animationComponent.m_currentFrameIndex);
 		}
 		return AnimationFrame{};
@@ -429,5 +528,36 @@ namespace PE
 		ResourceManager::GetInstance().GetAnimation(animationID)->SetSpriteSheetKey(spriteSheetKey);
 	}
 
+	void AnimationManager::PlayAllAnimations() const
+	{
+		for (const auto& layer : LayerView<AnimationComponent>())
+		{
+			for (EntityID const& id : InternalView(layer))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).PlayAnimation();
+			}
+		}
+	}
 
+	void AnimationManager::PauseAllAnimations() const
+	{
+		for (const auto& layer : LayerView<AnimationComponent>())
+		{
+			for (EntityID const& id : InternalView(layer))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).PauseAnimation();
+			}
+		}
+	}
+
+	void AnimationManager::StopAllAnimations() const
+	{
+		for (const auto& layer : LayerView<AnimationComponent>())
+		{
+			for (EntityID const& id : InternalView(layer))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).StopAnimation();
+			}
+		}
+	}
 }

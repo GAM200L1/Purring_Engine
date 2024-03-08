@@ -26,201 +26,198 @@
 #include "../GameStateController_v2_0.h"
 #include "CatScript_v2_0.h"
 #include "CatHelperFunctions.h"
+#include "CatController_v2_0.h"
 #include "Hierarchy/HierarchyManager.h"
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE
 {
+	FollowScript_v2_0::~FollowScript_v2_0()
+	{
+		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+	}
+
 	void FollowScript_v2_0::Init(EntityID)
 	{
-		p_gamestateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		
+		p_gamestateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);		
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, FollowScript_v2_0::CollisionCheck, this);
-		if (!EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
-			EntityManager::GetInstance().Assign<CatSaveData>(MAXSIZE_T);
 	}
 
 	void FollowScript_v2_0::Update(EntityID id, float)
 	{
-		if (m_ScriptData[id].IsAttaching)
-		{
-			if (p_gamestateController->currentState == GameStates_v2_0::EXECUTE)
-			for (const auto& flw : m_ScriptData[id].ToAttach)
-			{
-				if (m_ScriptData[id].followers.size() == MAXFOLLOWERS)
-					continue;
-
-				if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript_v2_0") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
-				{
-					if (std::find(m_ScriptData[id].followers.begin(), m_ScriptData[id].followers.end(), flw) == m_ScriptData[id].followers.end())
-						m_ScriptData[id].followers.emplace_back(flw);
-
-					// Plays grabbing cat audio
-					int randomInteger = std::rand() % 2 + 1;
-					SerializationManager m_serializationManager;
-					EntityID sound{};
-
-					switch (randomInteger)
-					{
-					case 1:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX_Prefab.json");
-						break;
-					case 2:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX2_Prefab.json");
-						break;
-					}
-
-					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-					EntityManager::GetInstance().RemoveEntity(sound);
-
-
-					// Flag the cat so it knows it has been attached 
-					CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, flw) };
-					catData->isCaged = false;
-					for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
-					{
-						if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
-						{
-							CatHelperFunctions::ToggleEntity(findCageID, false);
-						}
-					}
-				}
-			}
-			m_ScriptData[id].ToAttach.clear();
-			m_ScriptData[id].IsAttaching = false;
+		if (p_gamestateController->currentState == GameStates_v2_0::DEPLOYMENT) 
+		{ 
+			scriptData[id].prevPosition = CatHelperFunctions::GetEntityPosition(id);
+			return;
 		}
-
-
-		vec2 NewPosition = EntityManager::GetInstance().Get<Transform>(id).position;
-
-		if (!(NewPosition.x == m_ScriptData[id].CurrentPosition.x && NewPosition.y == m_ScriptData[id].CurrentPosition.y))
+		
+		vec2 newPosition = CatHelperFunctions::GetEntityPosition(id);
+		
+		if (!(newPosition.x == scriptData[id].prevPosition.x && newPosition.y == scriptData[id].prevPosition.y))
 		{
 			//for object 1 to 2
 				//to get rotation
-			vec2 directionalvector = NewPosition - m_ScriptData[id].CurrentPosition;
-			float newRotation = atan2(directionalvector.y, directionalvector.x);
+			//vec2 directionalvector = newPosition - scriptData[id].CurrentPosition;
+			//float newRotation = atan2(directionalvector.y, directionalvector.x);
 
-			//setting previous position as the current position of the next cat
-			vec2 savedLocation = m_ScriptData[id].NextPosition[0];
+			////setting previous position as the current position of the next cat
+			//vec2 savedLocation = scriptData[id].NextPosition[0];
 
-			//setting current new position for the next object
-			m_ScriptData[id].NextPosition[0] = EntityManager::GetInstance().Get<Transform>(id).position;
+			////setting current new position for the next object
+			//scriptData[id].NextPosition[0] = EntityManager::GetInstance().Get<Transform>(id).position;
 
-			//checking rotation to set
-			float rotationOffset = newRotation - m_ScriptData[id].Rotation;
+			////checking rotation to set
+			//float rotationOffset = newRotation - scriptData[id].Rotation;
 
-			if (rotationOffset != 0 && m_ScriptData[id].LookTowardsMovement)
-				EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
+			//if (rotationOffset != 0 && scriptData[id].LookTowardsMovement)
+			//	EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
 
-			m_ScriptData[id].Rotation = newRotation;
-			m_ScriptData[id].CurrentPosition = EntityManager::GetInstance().Get<Transform>(id).position;
-		
+			//scriptData[id].Rotation = newRotation;
+			//scriptData[id].current = EntityManager::GetInstance().Get<Transform>(id).position;
+			
+			scriptData[id].nextPosition.clear();
+
+			// adds the current position of the main cat
+			scriptData[id].nextPosition.emplace_back(newPosition);
+
+			// adds the current positions of the following cats
+			for (EntityID followerID : scriptData[id].followers)
+			{
+				scriptData[id].nextPosition.emplace_back(CatHelperFunctions::GetEntityPosition(followerID));
+			}
+
 			int index{ 1 };
 
-			for (auto follower : m_ScriptData[id].followers)
+			for (auto follower : scriptData[id].followers)
 			{
 				//to get rotation new position - current position which we set previously
-				vec2 NewPosition2 = savedLocation; //new position is the position of the previous mouse
+				//vec2 NewPosition2 = savedLocation; //new position is the position of the previous mouse
 				//calculate new rotation since previous location
 
-				vec2 directionalvector2 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
+				vec2 directionalvector = scriptData[id].nextPosition[index - 1] - scriptData[id].nextPosition[index];
 
-				float newRotation2 = atan2(directionalvector2.y, directionalvector2.x);
+				float newRotation = atan2(directionalvector.y, directionalvector.x);
 
 				//saving current position as 
-				savedLocation = m_ScriptData[id].NextPosition[index];
-				m_ScriptData[id].NextPosition[index] = NewPosition2 + vec2(m_ScriptData[id].Size * cosf(newRotation2 - static_cast<float>(M_PI)), m_ScriptData[id].Size * sinf(newRotation2 - static_cast<float>(M_PI)));
+				//savedLocation = scriptData[id].NextPosition[index];
+				EntityManager::GetInstance().Get<Transform>(follower).position = scriptData[id].nextPosition[index-1] + vec2{scriptData[id].Size * cosf(newRotation - static_cast<float>(M_PI)), scriptData[id].Size * sinf(newRotation - static_cast<float>(M_PI))};
 
-				
-				EntityManager::GetInstance().Get<Transform>(follower).position = m_ScriptData[id].NextPosition[index];
 				++index;
-				//checking rotation to set can ignore this for now lets get position to work
 				
-				vec2 directionalvector3 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
-				float newRot = atan2(directionalvector3.y, directionalvector3.x);
-				if (m_ScriptData[id].LookTowardsMovement)
-					EntityManager::GetInstance().Get<Transform>(follower).orientation = newRot;
+				//checking rotation to set can ignore this for now lets get position to work
+				if (scriptData[id].LookTowardsMovement)
+					EntityManager::GetInstance().Get<Transform>(follower).orientation = newRotation;
 				else
 					EntityManager::GetInstance().Get<Transform>(follower).width = EntityManager::GetInstance().Get<Transform>(id).width;
 			}
 		}
+		scriptData[id].prevPosition = newPosition;
 	}
 
 	void FollowScript_v2_0::Destroy(EntityID id)
 	{
-		m_ScriptData[id].followers.clear();
+		scriptData[id].followers.clear();
 	}
 
 	void FollowScript_v2_0::OnAttach(EntityID id)
 	{
-		m_ScriptData[id] = FollowScriptData_v2_0();
-		m_ScriptData[id].NextPosition.resize(MAXFOLLOWERS * 2 + 1);
+		scriptData[id] = FollowScriptData_v2_0();
 	}
 
 	void FollowScript_v2_0::OnDetach(EntityID id)
 	{		
-		auto it = m_ScriptData.find(id);
-		if (it != m_ScriptData.end())
+		auto it = scriptData.find(id);
+		if (it != scriptData.end())
 		{
-			m_ScriptData.erase(id);
+			scriptData.erase(id);
 		}
+	}
+
+	void FollowScript_v2_0::SavePositions(EntityID id)
+	{
+		scriptData[id].cacheFollowerPosition.clear();
+		for (EntityID followerID : scriptData[id].followers)
+		{
+			scriptData[id].cacheFollowerPosition.emplace_back(CatHelperFunctions::GetEntityPosition(followerID));
+		}
+	}
+
+	void FollowScript_v2_0::ResetToSavePositions(EntityID id)
+	{
+		for (int i{ 0 }; i < scriptData[id].followers.size(); ++i)
+		{
+			CatHelperFunctions::PositionEntity(scriptData[id].followers[i], scriptData[id].cacheFollowerPosition[i]);
+		}
+	}
+
+	void FollowScript_v2_0::PlayAdoptCatAudio()
+	{
+		int randomInteger = std::rand() % 2 + 1;
+		SerializationManager m_serializationManager;
+		EntityID sound{};
+
+		switch (randomInteger)
+		{
+		case 1:
+			sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX.prefab");
+			break;
+		case 2:
+			sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX2.prefab");
+			break;
+		}
+
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)
 	{
+		if (p_gamestateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 		if (r_event.GetType() == CollisionEvents::OnTriggerEnter)
 		{
-			OnTriggerEnterEvent event = static_cast<const OnTriggerEnterEvent&>(r_event);
-			EntityID id1{ event.Entity1 }, id2{ event.Entity2 };
+			OnTriggerEnterEvent OTEE = static_cast<const OnTriggerEnterEvent&>(r_event);
+			//EntityID id1{ event.Entity1 }, id2{ event.Entity2 };
 
-			// unable to find the follow script on id1
-			if (!m_ScriptData.count(id1))
-			{
-				// unable to find the follow script on id2
-				if (!m_ScriptData.count(id2))
-					return; // return, none of the entities in this event were relevant
-				
-				// entity id of id2 is the follow script holder, swap values so can reuse code
-				std::swap(id1, id2);
-			}
+			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 
-			if (EntityManager::GetInstance().Has<ScriptComponent>(id2))
+			if (OTEE.Entity1 == p_catController->GetMainCatID() && p_catController->IsCatCaged(OTEE.Entity2))
 			{
-				try
+				scriptData[OTEE.Entity1].followers.emplace_back(OTEE.Entity2);
+				PlayAdoptCatAudio();
+
+				// Flag the cat so it knows it has been attached 
+				CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity2) };
+				catData->isCaged = false;
+				for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
 				{
-					auto data = GETSCRIPTDATA(CatScript_v2_0, id2);
-					if (data->isCaged)
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
 					{
-						m_ScriptData[id1].IsAttaching = true;
-						m_ScriptData[id1].ToAttach.emplace_back(id2);
+						CatHelperFunctions::ToggleEntity(findCageID, false);
 					}
 				}
-				catch (...)
-				{
-					// failed to find the cat script on the target
-				}
+
+				CatHelperFunctions::PositionEntity(OTEE.Entity2, scriptData[OTEE.Entity1].nextPosition.back());
 			}
-			
+			else if (OTEE.Entity2 == p_catController->GetMainCatID() && p_catController->IsCatCaged(OTEE.Entity1))
+			{
+				scriptData[OTEE.Entity2].followers.emplace_back(OTEE.Entity1);
+				PlayAdoptCatAudio();
+
+				// Flag the cat so it knows it has been attached 
+				CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity1) };
+				catData->isCaged = false;
+				for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
+				{
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
+					{
+						CatHelperFunctions::ToggleEntity(findCageID, false);
+					}
+				}
+
+				CatHelperFunctions::PositionEntity(OTEE.Entity1, scriptData[OTEE.Entity2].nextPosition.back());
+			}
 		}
-	}
-
-
-	std::map<EntityID, FollowScriptData_v2_0>& FollowScript_v2_0::GetScriptData()
-	{
-		return m_ScriptData;
-	}
-
-	rttr::instance FollowScript_v2_0::GetScriptData(EntityID id)
-	{
-		return rttr::instance(m_ScriptData.at(id));
-	}
-
-	FollowScript_v2_0::~FollowScript_v2_0()
-	{
-		if (EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
-			EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved.clear();
-		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 	}
 }

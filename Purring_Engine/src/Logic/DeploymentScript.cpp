@@ -30,13 +30,14 @@ namespace PE
 	{
 		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
 		m_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-		m_catPlaced = static_cast<int>(m_catController->GetDeployableCats(m_catController->mainInstance).size()-1);
+		m_catPlaced = 0;
+		m_deployableCats = (m_catController->GetDeployableCats(m_catController->mainInstance).size() - 1);
 		m_gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 	}
 
 	void DeploymentScript::Update(EntityID id, float)
 	{
-		if (m_catPlaced < 0 && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
+		if (m_catPlaced > m_deployableCats && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].DeploymentArea).SetColor(1, 1, 1, 0);
@@ -235,23 +236,23 @@ namespace PE
 					{
 						case EnumCatType::MAINCAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("Meowsalot_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("Meowsalot.prefab"));
 							break;
 						}
 						case EnumCatType::GREYCAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("Grey Cat_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("Grey Cat.prefab"));
 							break;
 						}
 						case EnumCatType::ORANGECAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("OrangeCat_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("OrangeCat.prefab"));
 							break;
 						}
 						//case EnumCatType::FLUFFYCAT:
 						//{
 						//	//to be replaced
-						//	NewCatID = sm.LoadFromFile(("DeploymentTest_Prefab.json"));
+						//	NewCatID = sm.LoadFromFile(("DeploymentTest.prefab"));
 						//	break;
 						//}
 					}
@@ -259,7 +260,7 @@ namespace PE
 					EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;
 
 					m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(std::make_pair(NewCatID, m_catController->GetDeployableCats(m_catController->mainInstance)[m_catPlaced]));
-					--m_catPlaced;
+					++m_catPlaced;
 					return;
 				}
 			

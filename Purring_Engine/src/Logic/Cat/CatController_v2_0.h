@@ -130,9 +130,13 @@ namespace PE
 		*************************************************************************************/
 		inline bool IsCatCaged(EntityID id)
 		{
-			if (!IsCat(id)) { throw; }
-			return (GETSCRIPTDATA(CatScript_v2_0, id))->isCaged;
+			if (IsCat(id))
+				return (GETSCRIPTDATA(CatScript_v2_0, id))->isCaged;
+			else
+				return false;
 		}
+
+		bool IsFollowCat(EntityID catID);
 		
 		// getters
 		/*!***********************************************************************************
@@ -176,6 +180,8 @@ namespace PE
 		 \param[out] std::vector<EnumCatType> - deplyable vector of cats
 		*************************************************************************************/
 		std::vector<EnumCatType> GetDeployableCats(EntityID id) { return m_deployableCats; }
+
+		EntityID GetMainCatID() { return m_mainCatID; }
 
 		/*!***********************************************************************************
 		 \brief Gets script data
