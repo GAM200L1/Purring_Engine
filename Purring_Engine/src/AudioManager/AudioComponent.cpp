@@ -76,6 +76,19 @@ namespace PE
         }
     }
 
+    bool AudioComponent::IsPlaying() const
+    {
+        bool isPlaying = false;
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            if (auto channel = audio->GetChannel())
+            {
+                channel->isPlaying(&isPlaying);
+            }
+        }
+        return isPlaying;
+    }
+
     void AudioComponent::SetVolume(float volume)
     {
         std::cout << "Setting volume for sound with id: " << m_audioKey << " to " << volume << std::endl;
@@ -129,6 +142,28 @@ namespace PE
     void AudioComponent::SetAudioKey(std::string const& newKey)
     {
         m_audioKey = newKey;
+    }
+
+    FMOD::Channel* AudioComponent::GetChannel() const
+    {
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            return audio->GetChannel();
+        }
+        return nullptr;
+    }
+
+    float AudioComponent::GetVolume() const
+    {
+        float volume = 0.0f;
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            if (auto channel = audio->GetChannel())
+            {
+                channel->getVolume(&volume);
+            }
+        }
+        return volume;
     }
 
     nlohmann::json AudioComponent::ToJson() const

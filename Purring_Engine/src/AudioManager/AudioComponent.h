@@ -55,6 +55,12 @@ namespace PE
         void PlayAudioSound();
 
         /*!***********************************************************************************
+        \brief     Checks if the audio sound with the specified identifier is currently playing.
+        \param     r_id The identifier of the audio sound.
+        *************************************************************************************/
+        bool IsPlaying() const;
+
+        /*!***********************************************************************************
         \brief     Sets the volume for the audio sound with the specified identifier.
         \param     r_id The identifier of the audio sound.
         \param     volume The volume level to set.
@@ -115,6 +121,13 @@ namespace PE
         *************************************************************************************/
         bool IsPaused() const { return isPaused; }
 
+        float GetVolume() const;
+
+        /*!***********************************************************************************
+        \brief     Gets the audio channel.
+        \return    The audio channel.
+        *************************************************************************************/
+        FMOD::Channel* GetChannel() const;
 
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
