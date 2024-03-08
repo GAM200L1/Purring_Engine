@@ -41,7 +41,7 @@ namespace PE
 		//bash attack variables
 		float telegraphRadius; // incase we want change, but not used for now
 		float attackDelay{.25f};
-		float activationTime{1.f};
+		float activationTime{.5f};
 
 		//slam attack variables
 		float jumpSpeed{ 1000 };

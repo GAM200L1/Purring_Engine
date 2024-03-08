@@ -26,6 +26,7 @@ namespace PE
 		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);
 
+		m_activationTime = p_data->activationTime;
 	}
 
 	void BossRatChargeAttack::DrawTelegraphs(EntityID id)
@@ -62,6 +63,12 @@ namespace PE
 
 	void BossRatChargeAttack::UpdateAttack(EntityID id, float dt)
 	{	
+		if (m_activationTime > 0)
+		{
+			m_activationTime -= dt;
+			return;
+		}
+
 		if (m_isCharging)
 		{
 			if (EntityManager::GetInstance().Has<Transform>(id))

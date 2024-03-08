@@ -48,5 +48,6 @@ namespace PE
 		float m_travelTime{ .05f };
 		float m_travelTimer{ m_travelTime };
 		bool m_isCharging{};
+		float m_activationTime{};
 	};
 }
