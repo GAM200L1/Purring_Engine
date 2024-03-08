@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4897,7 +4897,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4976,7 +4976,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5012,7 +5012,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5103,7 +5103,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5574,7 +5574,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5670,7 +5670,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5849,31 +5849,31 @@
                         "CurrentAnimationID": ""
                     },
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 3,
                         "data": {
                             "center": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": 350.0005798339844,
+                                "y": 35.99993896484375
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 0.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 2,
                         "Old ID": 104,
                         "Prefab Type": "OrangeCat",
                         "children": [
                             105
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "OrangeCat",
                         "parent": null,
                         "sceneID": 104
@@ -5954,7 +5954,7 @@
                         "Old ID": 105,
                         "Prefab Type": "Cage",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Cage",
                         "parent": 104,
                         "sceneID": 105

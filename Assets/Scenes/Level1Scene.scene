@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4138,7 +4138,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4238,7 +4238,7 @@
                         "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle.anim"
                     },
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 3,
                         "data": {
                             "center": {
                                 "x": 388.60040283203125,
@@ -4251,12 +4251,12 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 2,
                         "Old ID": 60,
                         "Prefab Type": "Grey Cat",
                         "children": [
@@ -4265,7 +4265,7 @@
                         "isActive": true,
                         "name": "Grey Cat",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 62
                     },
                     "Renderer": {
                         "Color": {
@@ -4274,7 +4274,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4390,7 +4390,7 @@
                         "CurrentAnimationID": ""
                     },
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 2,
                         "data": {
                             "center": {
                                 "x": -478.00079345703125,
@@ -4408,14 +4408,14 @@
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 2,
                         "Old ID": 61,
                         "Prefab Type": "Meowsalot",
                         "children": [],
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 62
+                        "sceneID": 61
                     },
                     "Renderer": {
                         "Color": {
@@ -4493,7 +4493,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4964,7 +4964,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5060,7 +5060,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,

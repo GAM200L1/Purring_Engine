@@ -1,58 +1,64 @@
 {
-    "Entity": {
-        "components": {
-            "Collider": {
-                "collisionLayerIndex": 0,
-                "data": {
-                    "center": {
-                        "x": 0.0,
-                        "y": 0.0
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "Collider": {
+                            "collisionLayerIndex": 0,
+                            "data": {
+                                "center": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "positionOffset": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "radius": 50.0,
+                                "scaleOffset": 1.0
+                            },
+                            "isTrigger": true,
+                            "type": "CircleCollider"
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 1,
+                            "Prefab Type": "OrangeCatAttackTelegraph",
+                            "children": [],
+                            "isActive": true,
+                            "name": "OrangeCatAttackTelegraph",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Telegraphs/Telegraph_TransparentDetection_512px.png"
+                        },
+                        "Transform": {
+                            "height": 100.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0
+                        }
                     },
-                    "positionOffset": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "radius": 50.0,
-                    "scaleOffset": 1.0
-                },
-                "isTrigger": true,
-                "type": "CircleCollider"
-            },
-            "EntityDescriptor": {
-                "InteractionLayer": 0,
-                "Layer": 0,
-                "Old ID": 18446744073709551615,
-                "Prefab Type": "OrangeCatAttackTelegraph",
-                "children": [],
-                "isActive": true,
-                "name": "OrangeCatAttackTelegraph",
-                "parent": null,
-                "sceneID": 18446744073709551615
-            },
-            "Renderer": {
-                "Color": {
-                    "a": 1.0,
-                    "b": 1.0,
-                    "g": 1.0,
-                    "r": 1.0
-                },
-                "TextureKey": "../Assets/Textures/Telegraphs/Telegraph_TransparentDetection_512px.png"
-            },
-            "Transform": {
-                "height": 100.0,
-                "orientation": 0.0,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "relativeposition": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "relorientation": 0.0,
-                "width": 100.0
+                    "name": ""
+                }
             }
-        },
-        "name": ""
-    }
+        ]
+    ]
 }
