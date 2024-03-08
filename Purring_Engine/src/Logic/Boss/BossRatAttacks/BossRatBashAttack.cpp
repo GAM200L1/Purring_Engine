@@ -31,10 +31,10 @@ namespace PE
 
 	void BossRatBashAttack::DrawTelegraphs(EntityID id)
 	{
-		Transform furthestCatTransform;
+		Transform closestCatTransform;
 
 		if (EntityManager::GetInstance().Has<Transform>(m_closestCat))
-			furthestCatTransform = EntityManager::GetInstance().Get<Transform>(m_closestCat);
+			closestCatTransform = EntityManager::GetInstance().Get<Transform>(m_closestCat);
 
 		Transform BossTransform;
 
@@ -42,7 +42,7 @@ namespace PE
 			BossTransform = EntityManager::GetInstance().Get<Transform>(id);
 
 		//Direction of Boss to Furthest Cat
-		vec2 direction = furthestCatTransform.position - BossTransform.position;
+		vec2 direction = closestCatTransform.position - BossTransform.position;
 		vec2 unitDirection = direction.GetNormalized();
 
 		SerializationManager sm;
@@ -52,15 +52,15 @@ namespace PE
 		//Draw Telegraphs
 		
 		//atleast 1
-		EntityID telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim.prefab");
+		EntityID telegraph = sm.LoadFromFile(m_telegraphPrefab);
 		m_telegraphPoitions.push_back(telegraph);
 		vec2 NextPosition;
 		
-		Transform* TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
+		Transform* TelegraphTransform;
 
 		if (EntityManager::GetInstance().Has<Transform>(telegraph))
 		{
-
+			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
 			TelegraphTransform->position = NextPosition = BossTransform.position + unitDirection * (BossTransform.width/2 + TelegraphTransform->width /2);
 			m_noOfAttack++;
 			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
@@ -78,23 +78,26 @@ namespace PE
 		//more than 1
 		while (CheckOutsideOfWall(NextPosition))
 		{
-			telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim.prefab");
+			telegraph = sm.LoadFromFile(m_telegraphPrefab);
 			m_telegraphPoitions.push_back(telegraph);
 
-			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
-			TelegraphTransform->position = NextPosition;
-
-			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
+			if (EntityManager::GetInstance().Has<Transform>(telegraph))
 			{
-				m_attackAnimations.push_back(ie);
-				if (EntityManager::GetInstance().Has<AnimationComponent>(ie))
+				TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
+				TelegraphTransform->position = NextPosition;
+
+				for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
 				{
-					EntityManager::GetInstance().Get<AnimationComponent>(ie).PlayAnimation();
+					m_attackAnimations.push_back(ie);
+					if (EntityManager::GetInstance().Has<AnimationComponent>(ie))
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(ie).PlayAnimation();
+					}
 				}
+
+				NextPosition += unitDirection * TelegraphTransform->width;
+
 			}
-
-			NextPosition += unitDirection * TelegraphTransform->width;
-
 			m_noOfAttack++;
 
 			//just incase somehow it goes over all the obstacles

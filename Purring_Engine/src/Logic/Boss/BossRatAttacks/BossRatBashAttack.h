@@ -42,7 +42,7 @@ namespace PE
 		EntityID m_closestCat{static_cast<EntityID>(-1)};
 		BossRatScript* p_script;
 		BossRatScriptData* p_data;
-		std::string m_telegraphPrefab{"RatBossBashAttackTelegraph.prefab"};
+		std::string m_telegraphPrefab{"RatBossBashAttackTelegraphwAnim.prefab"};
 		std::vector<EntityID> m_telegraphPoitions;
 		std::vector<EntityID> m_attackAnimations;
 		int m_noOfAttack{};

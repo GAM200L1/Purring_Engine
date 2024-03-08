@@ -36,7 +36,7 @@ namespace PE
 	private:
 		//need to take a snapshot of the current player positions here
 		//actually no, only need the furtest cat
-		EntityID m_FurthestCat{static_cast<EntityID>(-1)};
+		EntityID m_furthestCat{static_cast<EntityID>(-1)};
 		BossRatScript* p_script;
 		BossRatScriptData* p_data;
 		std::string m_telegraphPrefab{"RatBossChargeAttackTelegraph.prefab"};

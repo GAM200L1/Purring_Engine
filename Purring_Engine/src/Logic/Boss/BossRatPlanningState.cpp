@@ -19,6 +19,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/LogicSystem.h"
 #include "Logic/Boss/BossRatAttacks/BossRatBashAttack.h"
 #include "Logic/Boss/BossRatAttacks/BossRatSlamAttack.h"
+#include "Logic/Boss/BossRatAttacks/BossRatChargeAttack.h"
+
 namespace PE
 {
 	void BossRatPlanningState::StateEnter(EntityID id)
@@ -61,21 +63,23 @@ namespace PE
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
 
-		static bool test{false};
+		//static bool test{false};
 
-		//attack 1
-		if (!test)
-		{
-			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindClosestCat());
-			p_script->m_currentSlamTurnCounter = 0;
-		}
-		else
-		{
-			p_data->p_currentAttack = new BossRatSlamAttack();
-			p_script->m_currentSlamTurnCounter = 3;
-		}
+		////attack 1
+		//if (!test)
+		//{
+		//	p_data->p_currentAttack = new BossRatBashAttack(p_script->FindClosestCat());
+		//	p_script->m_currentSlamTurnCounter = 0;
+		//}
+		//else
+		//{
+		//	p_data->p_currentAttack = new BossRatSlamAttack();
+		//	p_script->m_currentSlamTurnCounter = 3;
+		//}
 
-		test = !test;
+		//test = !test;
+
+		p_data->p_currentAttack = new BossRatChargeAttack(p_script->FindFurthestCat());
 	}
 
 } // End of namespace PE
