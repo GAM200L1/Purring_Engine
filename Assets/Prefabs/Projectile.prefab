@@ -5,7 +5,7 @@
                 "Entity": {
                     "components": {
                         "Collider": {
-                            "collisionLayerIndex": 0,
+                            "collisionLayerIndex": 2,
                             "data": {
                                 "center": {
                                     "x": -259.0,

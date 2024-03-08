@@ -14,7 +14,7 @@
                             "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle.anim"
                         },
                         "Collider": {
-                            "collisionLayerIndex": 2,
+                            "collisionLayerIndex": 0,
                             "data": {
                                 "center": {
                                     "x": 388.60040283203125,

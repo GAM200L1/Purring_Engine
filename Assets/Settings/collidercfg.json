@@ -7,17 +7,17 @@
         {
             "collisionLayerIndex": 0,
             "collisionLayerName": "Layer 0",
-            "collisionLayerSignature": "1111111101"
+            "collisionLayerSignature": "1111111110"
         },
         {
             "collisionLayerIndex": 1,
             "collisionLayerName": "Layer 1",
-            "collisionLayerSignature": "1111111110"
+            "collisionLayerSignature": "1111111111"
         },
         {
             "collisionLayerIndex": 2,
             "collisionLayerName": "Layer 2",
-            "collisionLayerSignature": "1111111011"
+            "collisionLayerSignature": "1111111111"
         },
         {
             "collisionLayerIndex": 3,

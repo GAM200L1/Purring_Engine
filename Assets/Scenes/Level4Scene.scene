@@ -3730,7 +3730,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -781.0421752929688,
@@ -3799,7 +3799,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -654.9474487304688,
@@ -3868,7 +3868,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 807.072021484375,
@@ -3937,7 +3937,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -777.499755859375,
@@ -4006,7 +4006,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 1120.7095947265625,
@@ -4075,7 +4075,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -648.4910888671875,
@@ -4144,7 +4144,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 627.0653686523438,
@@ -4213,7 +4213,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 633.7084350585938,
@@ -4282,7 +4282,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 641.3484497070313,
@@ -4843,7 +4843,7 @@
                         "CurrentAnimationID": ""
                     },
                     "Collider": {
-                        "collisionLayerIndex": 2,
+                        "collisionLayerIndex": 0,
                         "data": {
                             "center": {
                                 "x": 593.9999389648438,
@@ -4946,7 +4946,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -961.0284423828125,

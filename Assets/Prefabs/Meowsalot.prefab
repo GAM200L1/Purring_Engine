@@ -14,7 +14,7 @@
                             "CurrentAnimationID": ""
                         },
                         "Collider": {
-                            "collisionLayerIndex": 2,
+                            "collisionLayerIndex": 0,
                             "data": {
                                 "center": {
                                     "x": -478.00079345703125,

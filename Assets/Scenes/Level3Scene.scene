@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3731,7 +3731,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 49.500396728515625,
@@ -3800,7 +3800,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 523.3238525390625,
@@ -3831,7 +3831,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 24
+                        "sceneID": 41
                     },
                     "Renderer": {
                         "Color": {
@@ -3869,7 +3869,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 256.500244140625,
@@ -3900,7 +3900,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 25
+                        "sceneID": 42
                     },
                     "Renderer": {
                         "Color": {
@@ -3938,7 +3938,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -643.5144653320313,
@@ -3969,7 +3969,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 26
+                        "sceneID": 108
                     },
                     "Renderer": {
                         "Color": {
@@ -4007,7 +4007,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 260.4998779296875,
@@ -4038,7 +4038,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 27
+                        "sceneID": 109
                     },
                     "Renderer": {
                         "Color": {
@@ -4076,7 +4076,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -261.8006896972656,
@@ -4145,7 +4145,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 62.500389099121094,
@@ -4214,7 +4214,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 973.7078857421875,
@@ -4283,7 +4283,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -390.2584228515625,
@@ -4352,7 +4352,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 657.5001831054688,
@@ -4421,7 +4421,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 956.0694580078125,
@@ -4485,7 +4485,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 383.7083740234375,
@@ -4554,7 +4554,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -377.0003662109375,
@@ -4623,7 +4623,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 961.3582153320313,
@@ -4692,7 +4692,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -653.4984741210938,
@@ -4761,7 +4761,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -255.9998779296875,
@@ -4830,7 +4830,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4909,7 +4909,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5000,7 +5000,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5464,7 +5464,7 @@
                         "isActive": true,
                         "name": "Rat",
                         "parent": null,
-                        "sceneID": 41
+                        "sceneID": 25
                     },
                     "Renderer": {
                         "Color": {
@@ -5473,7 +5473,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5560,7 +5560,7 @@
                         "isActive": true,
                         "name": "Rat",
                         "parent": null,
-                        "sceneID": 42
+                        "sceneID": 24
                     },
                     "Renderer": {
                         "Color": {
@@ -5569,7 +5569,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5867,7 +5867,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -133.49990844726563,
@@ -5936,7 +5936,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -5.9998931884765625,
@@ -6005,7 +6005,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 252.5001220703125,
@@ -6109,7 +6109,7 @@
                         "isActive": true,
                         "name": "Rat",
                         "parent": null,
-                        "sceneID": 108
+                        "sceneID": 26
                     },
                     "Renderer": {
                         "Color": {
@@ -6118,7 +6118,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -6199,7 +6199,7 @@
                         "isActive": true,
                         "name": "Rat",
                         "parent": null,
-                        "sceneID": 109
+                        "sceneID": 27
                     },
                     "Renderer": {
                         "Color": {
@@ -6208,7 +6208,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,

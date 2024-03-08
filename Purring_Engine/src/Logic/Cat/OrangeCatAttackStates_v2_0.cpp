@@ -38,8 +38,8 @@ namespace PE
 		SerializationManager serializationManager;
 		seismicID = serializationManager.LoadFromFile("Seismic.prefab");
 		
-		EntityManager::GetInstance().Get<EntityDescriptor>(seismicID).layer = 0;
-		EntityManager::GetInstance().Get<Collider>(seismicID).collisionLayerIndex = 0;
+		/*EntityManager::GetInstance().Get<EntityDescriptor>(seismicID).layer = 0;
+		EntityManager::GetInstance().Get<Collider>(seismicID).collisionLayerIndex = 0;*/
 		CircleCollider& r_seismicCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(seismicID).colliderVariant);
 		r_seismicCollider.scaleOffset = 0.25f;
 
