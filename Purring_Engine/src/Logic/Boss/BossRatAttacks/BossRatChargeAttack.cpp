@@ -42,30 +42,51 @@ namespace PE
 
 		//Direction of Boss to Furthest Cat
 		vec2 direction = furthestCatTransform.position - BossTransform.position;
-		vec2 unitDirection = direction.GetNormalized();
+		vec2 unitDirection = m_chargeDirection = direction.GetNormalized();
 
 		SerializationManager sm;
-		EntityID telegraph = sm.LoadFromFile(m_telegraphPrefab);
+		m_telegraph = sm.LoadFromFile(m_telegraphPrefab);
 
-		if (EntityManager::GetInstance().Has<Transform>(telegraph))
+		if (EntityManager::GetInstance().Has<Transform>(m_telegraph))
 		{
-			Transform* TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
+			Transform* TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(m_telegraph);
 			TelegraphTransform->position  = BossTransform.position + unitDirection * (furthestCatTransform.position.Distance(BossTransform.position) / 2) ;
 			TelegraphTransform->orientation = atan2(unitDirection.y, unitDirection.x);
 		}	
 	}
 	void BossRatChargeAttack::EnterAttack(EntityID)
 	{
+		m_isCharging = true;
+		EntityManager::GetInstance().RemoveEntity(m_telegraph);
 	}
+
 	void BossRatChargeAttack::UpdateAttack(EntityID id, float dt)
 	{	
+		if (m_isCharging)
+		{
+			if (EntityManager::GetInstance().Has<Transform>(id))
+			{
+				Transform* BossTransform = &EntityManager::GetInstance().Get<Transform>(id);
+				BossTransform->position += m_chargeDirection * p_data->chargeSpeed * dt;
+			}
 
-
+			m_travelTime -= dt;
+		}
+		else
+		{
+			p_data->finishExecution = true;
+		}
 	}
 	void BossRatChargeAttack::ExitAttack(EntityID)
 	{
-
 	}
+
+	void BossRatChargeAttack::StopAttack()
+	{
+		if(m_travelTime < 0)
+		m_isCharging = false;
+	}
+
 	BossRatChargeAttack::~BossRatChargeAttack()
 	{
 	}

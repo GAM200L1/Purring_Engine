@@ -27,6 +27,7 @@ namespace PE
 		virtual void EnterAttack(EntityID) = 0;
 		virtual void UpdateAttack(EntityID,float) = 0;
 		virtual void ExitAttack(EntityID) = 0;
+		virtual void StopAttack() {}
 		virtual ~BossRatAttack() {}
 	};
 

@@ -32,6 +32,7 @@ namespace PE
 		virtual void EnterAttack(EntityID);
 		virtual void UpdateAttack(EntityID,float);
 		virtual void ExitAttack(EntityID);
+		virtual void StopAttack();
 		virtual ~BossRatChargeAttack();
 	private:
 		//need to take a snapshot of the current player positions here
@@ -40,6 +41,12 @@ namespace PE
 		BossRatScript* p_script;
 		BossRatScriptData* p_data;
 		std::string m_telegraphPrefab{"RatBossChargeAttackTelegraph.prefab"};
+		vec2 m_chargeDirection{};
+		EntityID m_telegraph;
 
+
+		float m_travelTime{ .05f };
+		float m_travelTimer{ m_travelTime };
+		bool m_isCharging{};
 	};
 }

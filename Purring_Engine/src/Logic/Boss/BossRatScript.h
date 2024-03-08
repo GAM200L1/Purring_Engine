@@ -54,6 +54,11 @@ namespace PE
 		EntityID rightSideSlamAnimation;
 		EntityID slamAreaTelegraph;
 
+		//charge attack variables
+		float chargeSpeed{ 1000 };
+		bool isCharging{ false };
+
+
 		std::map<std::string, std::string> animationStates;
 
 
@@ -154,6 +159,7 @@ namespace PE
 		void OnCollisionStay(const Event<CollisionEvents>& r_collisionStay);
 		void OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter);
 
+		bool IsObstacle(EntityID);
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;

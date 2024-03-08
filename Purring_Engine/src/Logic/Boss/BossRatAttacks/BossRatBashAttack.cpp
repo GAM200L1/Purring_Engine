@@ -71,9 +71,8 @@ namespace PE
 					EntityManager::GetInstance().Get<AnimationComponent>(ie).PlayAnimation();
 				}
 			}
+			NextPosition += unitDirection * TelegraphTransform->width;
 		}
-
-		NextPosition += unitDirection * TelegraphTransform->width;
 
 		//more than 1
 		while (CheckOutsideOfWall(NextPosition))
