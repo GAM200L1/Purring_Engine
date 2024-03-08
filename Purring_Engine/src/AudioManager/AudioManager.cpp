@@ -24,25 +24,25 @@
 namespace PE
 {
     AudioManager::AudioManager()
-        : p_system(nullptr)  // Initialize FMOD system to nullptr
+        : m_system(nullptr)  // Initialize FMOD system to nullptr
     {}
 
     AudioManager::~AudioManager()
     {
-        if (p_system)
-            p_system->release();
+        if (m_system)
+            m_system->release();
     }
 
     bool AudioManager::Init()
     {
-        FMOD_RESULT result = FMOD::System_Create(&p_system);
+        FMOD_RESULT result = FMOD::System_Create(&m_system);
         if (result != FMOD_OK)
         {
             std::cout << "FMOD System_Create failed: " << FMOD_ErrorString(result) << "\n";
             return false;
         }
 
-        result = p_system->init(512, FMOD_INIT_NORMAL, nullptr);
+        result = m_system->init(512, FMOD_INIT_NORMAL, nullptr);
         if (result != FMOD_OK)
         {
             std::cout << "FMOD init failed: " << FMOD_ErrorString(result) << "\n";
@@ -54,14 +54,14 @@ namespace PE
 
     void AudioManager::Update()
     {
-        p_system->update();
+        m_system->update();
     }
 
 /*                                                                                                    Audio Controls
 --------------------------------------------------------------------------------------------------------------------- */
     bool AudioManager::Audio::LoadSound(const std::string& r_path, FMOD::System* p_system)
     {
-        FMOD_RESULT result = p_system->createSound(r_path.c_str(), FMOD_DEFAULT, nullptr, &p_sound);
+        FMOD_RESULT result = p_system->createSound(r_path.c_str(), FMOD_DEFAULT, nullptr, &m_sound);
         return (result == FMOD_OK);
     }
 
