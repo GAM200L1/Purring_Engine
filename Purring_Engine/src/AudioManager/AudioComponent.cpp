@@ -99,7 +99,7 @@ namespace PE
         {
             audio->GetChannel()->setPaused(true);
         }
-        m_isPaused = true;
+        isPaused = true;
     }
 
     void AudioComponent::ResumeSound()
@@ -109,7 +109,7 @@ namespace PE
         {
             audio->GetChannel()->setPaused(false);
         }
-        m_isPaused = false;
+        isPaused = false;
     }
 
     void AudioComponent::StopSound()
