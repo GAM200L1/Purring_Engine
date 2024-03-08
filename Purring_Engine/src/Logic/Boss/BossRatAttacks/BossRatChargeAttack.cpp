@@ -81,6 +81,9 @@ namespace PE
 		}
 		else
 		{
+			m_chargeEndDelay -= dt;
+
+			if(m_chargeEndDelay <=0)
 			p_data->finishExecution = true;
 		}
 	}

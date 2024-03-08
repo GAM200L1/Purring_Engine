@@ -214,23 +214,6 @@ namespace PE
 	{
 		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEnter) };
 
-		//if (IsObstacle(OCEE.Entity1))
-		//{
-		//	if (OCEE.Entity2 == currentBoss)
-		//	{
-		//		if (m_scriptData[currentBoss].p_currentAttack)
-		//			m_scriptData[currentBoss].p_currentAttack->StopAttack();
-		//	}
-		//}
-		//else if (IsObstacle(OCEE.Entity2))
-		//{
-		//	if (OCEE.Entity1 == currentBoss)
-		//	{
-		//		if(m_scriptData[currentBoss].p_currentAttack)
-		//			m_scriptData[currentBoss].p_currentAttack->StopAttack();
-		//	}
-		//}
-
 		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 
 		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
