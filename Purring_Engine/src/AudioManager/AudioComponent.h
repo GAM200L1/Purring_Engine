@@ -113,14 +113,18 @@ namespace PE
         \brief     Sets the audio to loop or not.
         \param     loop True if the audio should loop, false otherwise.
         *************************************************************************************/
-        void SetPause(bool p) { isPaused = p; }
+        void SetPause(bool p) { m_isPaused = p; }
 
         /*!***********************************************************************************
         \brief     Gets whether the audio is looping or not.
         \return    True if the audio is looping, false otherwise.
         *************************************************************************************/
-        bool IsPaused() const { return isPaused; }
+        bool IsPaused() const { return m_isPaused; }
 
+        /*!***********************************************************************************
+        \brief     Gets the volume of the audio sound with the specified identifier.
+        \return    The volume level of the audio sound.
+        *************************************************************************************/
         float GetVolume() const;
 
         /*!***********************************************************************************
@@ -145,6 +149,6 @@ namespace PE
     private:
         std::string m_audioKey;         // The audio file key
         bool m_loop = false;            // Whether the audio should loop or not
-        bool isPaused = false;          // Whether the audio is paused or not
+        bool m_isPaused = false;        // Whether the audio is paused or not
     };
 }

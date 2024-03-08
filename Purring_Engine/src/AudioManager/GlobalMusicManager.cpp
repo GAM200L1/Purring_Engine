@@ -26,17 +26,17 @@ namespace PE
 
     void GlobalMusicManager::Update(float deltaTime)
     {
-        if (isFading)
+        if (m_isFading)
         {
-            fadeProgress += deltaTime / fadeDuration;
+            m_fadeProgress += deltaTime / m_fadeDuration;
 
-            if (fadeProgress >= 1.0f)
+            if (m_fadeProgress >= 1.0f)
             {
-                fadeProgress = 1.0f;
-                isFading = false;
+                m_fadeProgress = 1.0f;
+                m_isFading = false;
             }
 
-            float volume = isFadingIn ? fadeProgress : (1.0f - fadeProgress);
+            float volume = m_isFadingIn ? m_fadeProgress : (1.0f - m_fadeProgress);
 
             SetBackgroundMusicVolume(volume);
         }
@@ -56,7 +56,7 @@ namespace PE
         }
         else
         {
-            std::cerr << "Failed to load audio from prefab: " << prefabPath << std::endl;
+            //std::cerr << "Failed to load audio from prefab: " << prefabPath << std::endl;
         }
 
         // Clean up by removing the entity if needed
@@ -121,7 +121,7 @@ namespace PE
         {
             unsigned int position;
             it->second->GetChannel()->getPosition(&position, FMOD_TIMEUNIT_MS);
-            currentState = { m_currentTrackKey, position };
+            m_currentState = { m_currentTrackKey, position };
         }
     }
 
@@ -138,18 +138,18 @@ namespace PE
 
     void GlobalMusicManager::StartFadeIn(float duration)
     {
-        isFading = true;
-        isFadingIn = true;
-        fadeProgress = 0.0f;
-        fadeDuration = duration;
+        m_isFading = true;
+        m_isFadingIn = true;
+        m_fadeProgress = 0.0f;
+        m_fadeDuration = duration;
     }
 
     void GlobalMusicManager::StartFadeOut(float duration)
     {
-        isFading = true;
-        isFadingIn = false;
-        fadeProgress = 0.0f;
-        fadeDuration = duration;
+        m_isFading = true;
+        m_isFadingIn = false;
+        m_fadeProgress = 0.0f;
+        m_fadeDuration = duration;
     }
 
 

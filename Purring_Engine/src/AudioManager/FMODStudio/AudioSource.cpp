@@ -24,7 +24,7 @@ namespace PE {
         AudioSource::AudioSource()
         {
             // Initialize AudioSource
-            if (playOnAwake)
+            if (m_playOnAwake)
             {
                 Play();
             }
@@ -65,7 +65,7 @@ namespace PE {
 
         void AudioSource::SetClip(const AudioClip& newClip)
         {
-            clip = newClip;
+            m_clip = newClip;
         }
 
         //void AudioSource::SetVolume(float newVolume)
@@ -78,12 +78,12 @@ namespace PE {
 
         void AudioSource::SetPitch(float newPitch)
         {
-            pitch = newPitch;
+            m_pitch = newPitch;
         }
 
         void AudioSource::SetLoop(bool shouldLoop)
         {
-            loop = shouldLoop;
+            m_loop = shouldLoop;
         }
 
     } // namespace Audio
