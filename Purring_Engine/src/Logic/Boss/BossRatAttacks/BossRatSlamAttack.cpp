@@ -271,14 +271,14 @@ namespace PE
 			Transform catTransform = EntityManager::GetInstance().Get<Transform>(CatID);
 			if (m_attackIsLeft)
 			{
-				if (catTransform.position.x < 0)
+				if (catTransform.position.x < (EntityManager::GetInstance().Get<Transform>(p_data->leftSideSlam).position.x + EntityManager::GetInstance().Get<Transform>(p_data->leftSideSlam).width/2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
 				}
 			}
 			else
 			{
-				if (catTransform.position.x >= 0)
+				if (catTransform.position.x >= (EntityManager::GetInstance().Get<Transform>(p_data->rightSideSlam).position.x - EntityManager::GetInstance().Get<Transform>(p_data->rightSideSlam).width / 2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
 				}
