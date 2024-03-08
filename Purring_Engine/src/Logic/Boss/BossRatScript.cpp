@@ -68,7 +68,7 @@ namespace PE
 	{
 		m_scriptData[id] = BossRatScriptData();
 		currentBoss = id;
-		m_currentSlamTurnCounter = 0;
+		currentSlamTurnCounter = 0;
 	}
 
 

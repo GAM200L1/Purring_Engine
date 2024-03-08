@@ -49,13 +49,13 @@ namespace PE
 
 	void BossRatPlanningState::StateExit(EntityID)
 	{
-		if (p_script->m_currentSlamTurnCounter > 0)
-		--p_script->m_currentSlamTurnCounter;
+		if (p_script->currentSlamTurnCounter > 0)
+		--p_script->currentSlamTurnCounter;
 	}
 
 	void BossRatPlanningState::DecideAttack()
 	{
-		if (p_script->m_currentSlamTurnCounter > 0 && p_data->p_currentAttack)
+		if (p_script->currentSlamTurnCounter > 0 && p_data->p_currentAttack)
 			return;
 
 		// Decides which attack to use
@@ -63,25 +63,29 @@ namespace PE
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
 
-		static int counter = 0;
-
-		switch (counter % 3)
+		if (p_data->currentAttackInSet == 3)
 		{
-		case 0:
+			p_data->currentAttackInSet = 0;
+			p_data-> currentAttackSet = rand() % 3;
+		}
+
+		switch (p_script->BossRatAttackSets[p_data->currentAttackSet][p_data->currentAttackInSet])
+		{
+		case BossRatAttacks::BASH:
 			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindClosestCat());
-			p_script->m_currentSlamTurnCounter = 0;
+			p_script->currentSlamTurnCounter = 0;
 			break;
-		case 1:
+		case BossRatAttacks::SLAM:
 			p_data->p_currentAttack = new BossRatSlamAttack();
-			p_script->m_currentSlamTurnCounter = 3;
+			p_script->currentSlamTurnCounter = 3;
 			break;
-		case 2:
+		case BossRatAttacks::CHARGE:
 			p_data->p_currentAttack = new BossRatChargeAttack(p_script->FindFurthestCat());
-			p_script->m_currentSlamTurnCounter = 0;
+			p_script->currentSlamTurnCounter = 0;
 			break;
 		}
 
-		counter++;
+		p_data->currentAttackInSet++;
 	}
 
 } // End of namespace PE

@@ -23,16 +23,51 @@ namespace PE
 	{
 		//constructors
 	public:
+		/*!***********************************************************************************
+		 \brief Delete default constructor as we will always want to take in the furthest cat
+		*************************************************************************************/
 		BossRatChargeAttack() = delete;
+		/*!***********************************************************************************
+		 \brief constructor for the boss rat charge attack
+		 \param[in] id - furthest cat to target
+		*************************************************************************************/
 		BossRatChargeAttack(EntityID furthestCat);
 
 		//public functions
 	public:
+		/*!***********************************************************************************
+		 \brief virtual function to draw telegraphs for attacks at the start of planning phase
+		 \param[in] id - id of the boss
+		 \return void
+		*************************************************************************************/
 		virtual void DrawTelegraphs(EntityID);
+		/*!***********************************************************************************
+		 \brief virtual function that is called at entering boss attack state
+		 \param[in] id - id of the boss
+		 \return void
+		*************************************************************************************/
 		virtual void EnterAttack(EntityID);
+		/*!***********************************************************************************
+		 \brief virtual function that is called on update of boss attack state
+		 \param[in] id - id of the boss
+		 \param[in] float - delta time
+		 \return void
+		*************************************************************************************/
 		virtual void UpdateAttack(EntityID,float);
+		/*!***********************************************************************************
+		 \brief virtual function that is called at exiting the boss attack state
+		 \param[in] id - id of the boss
+		 \return void
+		*************************************************************************************/
 		virtual void ExitAttack(EntityID);
+		/*!***********************************************************************************
+		 \brief virtual function that is called to stop an attack in the middle of someother place
+		 \return void
+		*************************************************************************************/
 		virtual void StopAttack();
+		/*!***********************************************************************************
+		 \brief virtual destructor for the boss rat charge attack
+		*************************************************************************************/
 		virtual ~BossRatChargeAttack();
 	private:
 		//need to take a snapshot of the current player positions here
