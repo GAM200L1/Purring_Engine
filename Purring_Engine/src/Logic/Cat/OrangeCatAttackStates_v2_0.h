@@ -54,20 +54,23 @@ namespace PE
 	public:
 
 		// ----- Destructor ----- //
+		/*!***********************************************************************************
+		\brief Destructor for OrangeCatAttakc_v2_0PLAN
+		*************************************************************************************/
 		virtual ~OrangeCatAttack_v2_0PLAN() { p_attackData = nullptr; }
 
 		/*!***********************************************************************************
-			\brief Set up the state and subscribe to the collision events
+		\brief Set up the state and subscribe to the collision events
 
-			\param[in,out] id - ID of instance of script
+		\param[in,out] id - ID of instance of script
 		*************************************************************************************/
 		virtual void Enter(EntityID id);
 
 		/*!***********************************************************************************
-			\brief Checks if its state should change
+		\brief Checks if its state should change
 
-			\param[in,out] id - ID of instance of script
-			\param[in,out] deltaTime - delta time to update the state with
+		\param[in,out] id - ID of instance of script
+		\param[in,out] deltaTime - delta time to update the state with
 		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime);
 
@@ -142,20 +145,48 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
+		/*!***********************************************************************************
+		\brief Destructor for OrangeCatAttack_v2_0EXECUTE
+		*************************************************************************************/
 		virtual ~OrangeCatAttack_v2_0EXECUTE() { p_attackData = nullptr; }
 
+		/*!***********************************************************************************
+		\brief Set up the state and subscribe to the collision events
+
+		\param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void StateEnter(EntityID id);
 
+		/*!***********************************************************************************
+		\brief Updates state
+
+		\param[in,out] id - ID of instance of script
+		\param[in,out] deltaTime - delta time to update the state with
+		*************************************************************************************/
 		virtual void StateUpdate(EntityID id, float deltaTime);
 
+		/*!***********************************************************************************
+		\brief Unsubscribes from the collision events
+		*************************************************************************************/
 		virtual void StateCleanUp();
 
+		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+
+		 \param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void StateExit(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Gets the name of the state
+
+		 \param[out] std::string name of the state
+		*************************************************************************************/
 		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
-
+		
+		// data
 		EntityID m_catID;
 		OrangeCatAttackVariables* p_attackData;
 
@@ -170,8 +201,21 @@ namespace PE
 
 		int m_collisionEnterEventListener; // stores the handler for collision enter event
 
+	private:
+		// ----- Private Functions ----- //
+		/*!***********************************************************************************
+		 \brief Function to handle Collision Events
+
+		 \param[in] r_CE - Collision event data.
+		*************************************************************************************/
 		void SeismicCollided(const Event<CollisionEvents>& r_CE);
 
+		/*!***********************************************************************************
+		 \brief Function to handle damaging of cats and rats
+
+		 \param[in] id1 - first entity in collision event
+			   [in] id2 - second entity in collision event
+		*************************************************************************************/
 		void SeismicHitCatOrRat(EntityID id1, EntityID id2);
 	};
 }

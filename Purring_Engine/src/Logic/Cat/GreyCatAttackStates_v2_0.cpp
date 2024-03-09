@@ -185,7 +185,7 @@ namespace PE
 	void GreyCatAttack_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		if (MBPE.button != 1)
+		if (MBPE.button == 0)
 			m_mouseClick = true;
 	}
 
@@ -372,7 +372,7 @@ namespace PE
 					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
 					return true;
 				}
-				else if (p_catController->IsCat(id2) && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+				else if (p_catController->IsCatAndNotCaged(id2) && !p_catController->IsFollowCat(id2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
 					return true;
@@ -389,7 +389,7 @@ namespace PE
 					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
 					return true;
 				}
-				else if (p_catController->IsCat(id1) && !p_catController->IsFollowCat(id1) && !p_catController->IsCatCaged(id1))
+				else if (p_catController->IsCatAndNotCaged(id1) && !p_catController->IsFollowCat(id1))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
 					return true;

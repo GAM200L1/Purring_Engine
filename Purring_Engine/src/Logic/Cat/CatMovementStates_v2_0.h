@@ -29,6 +29,9 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
+		/*!**********************************************************************************
+		 \brief Destructor for CatMovement_v2_0PLAN
+		*************************************************************************************/
 		~CatMovement_v2_0PLAN() { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
@@ -139,13 +142,15 @@ namespace PE
 		*************************************************************************************/
 		void OnPathCollision(const Event<CollisionEvents>& r_TE);
 
-
 		/*!**********************************************************************************
 		 \brief Resets the position of the player to the beginning of their drawn path,
 						clears the drawn path, and resets the energy level of the player.
 		*************************************************************************************/
 		void ResetDrawnPath();
 
+		/*!**********************************************************************************
+		 \brief Checks if the path drawn is invalid
+		*************************************************************************************/
 		bool CheckInvalid();
 
 
@@ -165,6 +170,9 @@ namespace PE
 	public:
 		
 		// ----- Destructor ----- //
+		/*!**********************************************************************************
+		 \brief Destructor for CatMovement_v2_0EXECUTE
+		*************************************************************************************/
 		virtual ~CatMovement_v2_0EXECUTE() override { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
@@ -211,6 +219,9 @@ namespace PE
 		void PlayFootStep();
 
 		// ----- Public Getters ----- //
+		/*!**********************************************************************************
+		 \brief Returns name of this state
+		*************************************************************************************/
 		virtual std::string_view GetName() override { return "MovementEXECUTE"; }
 
 

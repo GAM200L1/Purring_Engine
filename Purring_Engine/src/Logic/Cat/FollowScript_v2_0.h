@@ -31,6 +31,8 @@ namespace PE
 		vec2 prevPosition;
 		// vector of positions to set for each cat
 		std::vector<vec2> nextPosition;
+		// vector of x scale to set for each cat
+		std::vector<float> nextXScale;
 
 		// new followers stack
 		std::vector<EntityID> followers;
@@ -46,6 +48,9 @@ namespace PE
 		
 	public:
 		// ----- Destructor ----- //
+		/*!***********************************************************************************
+		 \brief Destructor for Follow_Script_v2_0
+		*************************************************************************************/
 		virtual ~FollowScript_v2_0();
 
 		/*!***********************************************************************************
@@ -74,9 +79,18 @@ namespace PE
 		virtual void OnDetach(EntityID) override;
 
 	public:
+		/*!***********************************************************************************
+		 \brief Caches the positions of all the follower cats
 
+		 \param[in] id - id of the main cat that can pick up cats
+		*************************************************************************************/
 		void SavePositions(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Sets position of all follower cats to cached positions
+
+		 \param[in] id - id of the main cat that can pick up cats
+		*************************************************************************************/
 		void ResetToSavePositions(EntityID id);
 
 		/*!***********************************************************************************

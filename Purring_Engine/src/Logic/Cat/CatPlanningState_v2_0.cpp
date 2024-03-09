@@ -58,15 +58,10 @@ namespace PE
 		}
 		else
 		{
-			if (m_timer >= 2.f) // resets double click when 1 second has passed
+			if (m_timer >= 1.f) // resets double click when 1 second has passed
 			{
 				m_doubleClick = 0;
 				m_timer = 0.f;
-			}
-			else
-			{
-				if (PointCollision(r_catCollider, r_cursorPosition) && m_mouseClicked && !m_mouseClickPrevious)
-					m_doubleClick++;
 			}
 
 			if (m_doubleClick >= 2)
@@ -93,6 +88,7 @@ namespace PE
 		m_timer += deltatime;
 		m_prevCursorPosition = r_cursorPosition;
 		m_mouseClickPrevious = m_mouseClicked;
+		m_collidedPreviously = PointCollision(r_catCollider, r_cursorPosition);
 	}
 
 	void Cat_v2_0PLAN::StateCleanUp()
@@ -116,7 +112,7 @@ namespace PE
 
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
-		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
+		if (!p_data->planningAttack && !GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		if (MBPE.button == 1 && p_data->attackSelected)
 		{
@@ -139,7 +135,12 @@ namespace PE
 	void Cat_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
-		m_mouseClicked = false;
+		if (m_mouseClicked)
+		{
+			if (m_collidedPreviously && PointCollision(std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_data->catID).colliderVariant), CatHelperFunctions::GetCursorPositionInWorld()))
+				++m_doubleClick;
+			m_mouseClicked = false;
+		}
 		m_moving = false;
 	}
 

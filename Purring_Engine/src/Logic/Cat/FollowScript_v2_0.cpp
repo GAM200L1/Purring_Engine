@@ -53,18 +53,23 @@ namespace PE
 		}
 		
 		vec2 const& currPos = CatHelperFunctions::GetEntityPosition(id);
+		float const& prevScaleX = CatHelperFunctions::GetEntityScale(id).x;
 		
 		if (!(currPos.x == scriptData[id].prevPosition.x && currPos.y == scriptData[id].prevPosition.y))
 		{
 			scriptData[id].nextPosition.clear();
+			scriptData[id].nextXScale.clear();
 
 			// adds the current position of the main cat
 			scriptData[id].nextPosition.emplace_back(currPos);
+			// adds current scale of main cat
+			scriptData[id].nextXScale.emplace_back(prevScaleX);
 
-			// adds the current positions of the following cats
+			// adds the current positions and scales of the following cats
 			for (EntityID followerID : scriptData[id].followers)
 			{
 				scriptData[id].nextPosition.emplace_back(CatHelperFunctions::GetEntityPosition(followerID));
+				scriptData[id].nextXScale.emplace_back(CatHelperFunctions::GetEntityScale(followerID).x);
 			}
 
 			int index{ 1 };
@@ -72,19 +77,12 @@ namespace PE
 			for (auto follower : scriptData[id].followers)
 			{
 				vec2 directionalvector = scriptData[id].nextPosition[index - 1] - scriptData[id].nextPosition[index];
-
 				float newRotation = atan2(directionalvector.y, directionalvector.x);
-
-				float followerScale = CatHelperFunctions::GetEntityScale(follower).x * scriptData[id].distanceScale;
+				float xScale{ CatHelperFunctions::GetEntityScale(follower).x * scriptData[id].distanceScale };
 
 				// set position of this follower
-				EntityManager::GetInstance().Get<Transform>(follower).position = scriptData[id].nextPosition[index - 1]
-					+ vec2{ followerScale * cosf(newRotation - static_cast<float>(M_PI)), followerScale * sinf(newRotation - static_cast<float>(M_PI)) };
-
-				//// Ensure the cat is facing the direction of their movement
-				//vec2 newScale{ CatHelperFunctions::GetEntityScale(follower) };
-				//newScale.x = std::abs(newScale.x) * ((directionalvector.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the cat is facing left
-				//CatHelperFunctions::ScaleEntity(follower, newScale.x, newScale.y);
+				EntityManager::GetInstance().Get<Transform>(follower).position = scriptData[id].nextPosition[index - 1] + 
+					vec2{ xScale * cosf(newRotation - static_cast<float>(M_PI)), xScale * sinf(newRotation - static_cast<float>(M_PI)) };
 
 				++index;
 			}

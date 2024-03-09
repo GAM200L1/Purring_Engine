@@ -247,8 +247,10 @@ namespace PE
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
 
 			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID)
+			{
 				// if the seismic hits a cat or rat
 				SeismicHitCatOrRat(OCEE.Entity1, OCEE.Entity2);
+			}
 		}
 	}
 
@@ -263,7 +265,7 @@ namespace PE
 				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
 				return;
 			}
-			else if (p_catController->IsCat(id2) && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+			else if (p_catController->IsCatAndNotCaged(id2) && !p_catController->IsFollowCat(id2))
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
 				return;
@@ -280,7 +282,7 @@ namespace PE
 				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
 				return;
 			}
-			else if (p_catController->IsCat(id1) && !p_catController->IsFollowCat(id1) && !p_catController->IsCatCaged(id1))
+			else if (p_catController->IsCatAndNotCaged(id1) && !p_catController->IsFollowCat(id1))
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
 				return;

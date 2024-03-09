@@ -69,18 +69,6 @@ namespace PE
 	// getters
 	void CatController_v2_0::UpdateDeployableCats(EntityID mainInstanceID)
 	{
-		// checks if it is an active cat
-		auto IsCatAndNotCaged =
-		[&](EntityID id)
-		{
-			if (IsCat(id))
-			{
-				if (!IsCatCaged(id))
-					return true;
-			}
-			return false;
-		};
-		
 		m_deployableCats.clear();
 		m_deployableCats.emplace_back(EnumCatType::MAINCAT);
 		for (EntityID catID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
@@ -115,7 +103,7 @@ namespace PE
 
 	void CatController_v2_0::KillCat(EntityID id)
 	{
-		if (IsCat(id) && !IsCatCaged(id))
+		if (IsCatAndNotCaged(id))
 		{
 			EntityID catToRemove = id;
 		
