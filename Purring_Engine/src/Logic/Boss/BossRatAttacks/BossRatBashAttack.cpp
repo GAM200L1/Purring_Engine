@@ -172,7 +172,7 @@ namespace PE
 		//std::vector<EntityID> childs;
 		for (auto& id : m_telegraphPoitions)
 		{
-			std::cout << "deleting telegraph" << std::endl;
+			//std::cout << "deleting telegraph" << std::endl;
 			//for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 			//{
 			//	childs.push_back(ie);
