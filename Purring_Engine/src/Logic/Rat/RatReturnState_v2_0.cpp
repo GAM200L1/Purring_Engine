@@ -95,13 +95,21 @@ namespace PE
 	}
 
 
-	void RatReturn_v2_0::StateExit(EntityID)
+	void RatReturn_v2_0::StateCleanUp()
 	{
 			DisableTelegraphs();
+			p_data = nullptr;
+			gameStateController = nullptr;
 
 			// Unsubscribe from events
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+	}
+
+
+	void RatReturn_v2_0::StateExit(EntityID)
+	{
+			// empty
 	}
 
 
@@ -169,7 +177,7 @@ namespace PE
 	void RatReturn_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
 	{
 			if (!p_data) { return; }
-			else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+			else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
 			if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
 			{
@@ -191,7 +199,7 @@ namespace PE
 	void RatReturn_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
 	{
 			if (!p_data) { return; }
-			else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+			else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
 			OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
 			// check if entity1 is the rat's detection collider and entity2 is cat

@@ -130,13 +130,16 @@ namespace PE
 
 	void RatHunt_v2_0::StateExit(EntityID id)
 	{
-			targetId = 0;
-			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
+			// empty
 	}
 
 
 	void RatHunt_v2_0::StateCleanUp()
 	{
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(p_data->myID);
+			p_data = nullptr;
+			gameStateController = nullptr;
+
 			// Unsubscribe from events
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
@@ -253,6 +256,7 @@ namespace PE
 #endif // DEBUG_PRINT
 					// cats just passed by us, hunt the closest one down
 					SetHuntTarget( RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) );
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 			}
 			// Check if the current cat is alive // @TODO to replace when we have a method for checking cat's alive status
 			else if (!EntityManager::GetInstance().IsEntityValid(p_data->myID))
@@ -273,6 +277,9 @@ namespace PE
 			}
 			else 
 			{
+#ifdef DEBUG_PRINT
+					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): don't change states, just clear collision\n";
+#endif // DEBUG_PRINT
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 			}
 
@@ -285,7 +292,7 @@ namespace PE
 	void RatHunt_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
 	{
 			if (!p_data) { return; }
-			else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+			else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
 			if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
 			{
@@ -307,7 +314,7 @@ namespace PE
 	void RatHunt_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
 	{
 			if (!p_data) { return; }
-			else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+			else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
 			OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
 			// check if entity1 is the rat's detection collider and entity2 is cat

@@ -43,6 +43,11 @@ namespace PE
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 
 		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+		*************************************************************************************/
+		virtual void StateCleanUp();
+
+		/*!***********************************************************************************
 			\brief does nothing
 		*************************************************************************************/
 		virtual void StateExit(EntityID id) override;

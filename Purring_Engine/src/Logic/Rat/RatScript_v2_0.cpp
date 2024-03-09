@@ -101,7 +101,7 @@ namespace PE
 			if (GameStateJustChanged() && previousGameState != GameStates_v2_0::PAUSE && gameStateController->currentState == GameStates_v2_0::EXECUTE)
 			{
 					// Clear cat collision containers
-					ClearCollisionContainers(id);
+					//ClearCollisionContainers(id);
 					// NOTE: I'm still not too sure about whether it's a good idea to clear this here. 
 					// I'm making the assumption that all decisions the rat makes occurs during the planning pgase 
 			}
@@ -517,6 +517,10 @@ namespace PE
 
 		void RatScript_v2_0::ClearCollisionContainers(EntityID const id) 
 		{
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::ClearCollisionContainers(" << id << ")\n";
+#endif // DEBUG_PRINT
+
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 

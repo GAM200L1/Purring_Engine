@@ -57,7 +57,8 @@ namespace PE
 
 	void RatDeathState_v2_0::StateExit(EntityID)
 	{
-		// This function will probably never get called
+		p_data = nullptr;
+		p_gameStateController = nullptr;
 	}
 
 } // End of namespace PE

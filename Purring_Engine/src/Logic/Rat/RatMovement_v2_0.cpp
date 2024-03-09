@@ -113,6 +113,9 @@ namespace PE
                     // ---- Update telegraph
                     // Rotate the telegraph to face the target
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableTelegraphs(id, targetPosition);
+
+                    // Clear the collision containers
+                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
                 }
 
                 break; // end of BRAWLER rat type
@@ -128,22 +131,26 @@ namespace PE
 
     void RatMovement_v2_0::StateCleanUp()
     {
+        p_data->ratPlayerDistance = 0.f;
+        p_data = nullptr;
+        gameStateController = nullptr;
+
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
     void RatMovement_v2_0::StateExit(EntityID id)
     {
+        // empty
 #ifdef DEBUG_PRINT
         //std::cout << "RatMovement_v2_0::StateExit - Rat ID: " << id << " is exiting the movement state." << std::endl;
 #endif // DEBUG_PRINT
-        p_data->ratPlayerDistance = 0.f;
     }
 
     void RatMovement_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
     {
         if (!p_data) { return; }
-        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+        else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
         if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
         {
@@ -165,7 +172,7 @@ namespace PE
     void RatMovement_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
     {
         if (!p_data) { return; }
-        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+        else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
         OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
         // check if entity1 is the rat's detection collider and entity2 is cat

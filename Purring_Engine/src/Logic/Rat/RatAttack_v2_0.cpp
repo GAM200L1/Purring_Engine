@@ -101,18 +101,19 @@ namespace PE
 
     void RatAttack_v2_0::StateCleanUp()
     {
+        p_data->hitCat = false;
+        p_data = nullptr;
+        gameStateController = nullptr;
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
     void RatAttack_v2_0::StateExit(EntityID id)
     {
-        // Cleanup attack-specific data here
-        gameStateController = nullptr;
+        // empty
 #ifdef DEBUG_PRINT
         //std::cout << "[DEBUG] RatAttack_v2_0::StateExit - Rat ID: " << id << " exiting Attack state." << std::endl;
 #endif // DEBUG_PRINT
-        p_data->hitCat = false;
     }
 
 
@@ -200,7 +201,7 @@ namespace PE
     void RatAttack_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
     {
         if (!p_data) { return; }
-        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+        else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
         if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
         {
@@ -238,7 +239,7 @@ namespace PE
     void RatAttack_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
     {
         if (!p_data) { return; }
-        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+        else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
         OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
         // check if entity1 is the rat's detection collider and entity2 is cat

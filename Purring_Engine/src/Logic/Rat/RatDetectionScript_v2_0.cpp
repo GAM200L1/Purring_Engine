@@ -164,6 +164,8 @@ namespace PE
 
 	void RatCollision_v2_0::StateCleanUp()
 	{
+		p_data = nullptr;
+
 		// Unsubscribe from events
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
