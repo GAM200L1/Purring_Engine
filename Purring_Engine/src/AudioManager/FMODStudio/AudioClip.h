@@ -24,25 +24,51 @@ namespace PE
         {
             std::string clipPath;  // Path to the audio file
 
-            // Constructor to initialize AudioClip with a path
+            /*!***********************************************************************************
+             \brief Constructor to initialize an AudioClip with a specified file path.
+
+             \param[in] path - The path to the audio file.
+            *************************************************************************************/
             AudioClip(const std::string& path) : clipPath(path) {}
 
-            // Default constructor
+            /*!***********************************************************************************
+             \brief Default constructor for creating an empty AudioClip.
+            *************************************************************************************/
             AudioClip() = default;
 
-            // Copy constructor
+            /*!***********************************************************************************
+             \brief Copy constructor for creating a copy of an existing AudioClip.
+
+             \param[in] other - The AudioClip to copy.
+            *************************************************************************************/
             AudioClip(const AudioClip&) = default;
 
-            // Move constructor
+            /*!***********************************************************************************
+             \brief Move constructor for transferring ownership of an AudioClip.
+
+             \param[in] other - The AudioClip to move.
+            *************************************************************************************/
             AudioClip(AudioClip&&) noexcept = default;
 
-            // Copy assignment operator
+            /*!***********************************************************************************
+             \brief Copy assignment operator for assigning the value of one AudioClip to another.
+
+             \param[in] other - The AudioClip to assign from.
+             \return A reference to the modified AudioClip.
+            *************************************************************************************/
             AudioClip& operator=(const AudioClip&) = default;
 
-            // Move assignment operator
+            /*!***********************************************************************************
+             \brief Move assignment operator for transferring ownership of an AudioClip.
+
+             \param[in] other - The AudioClip to move assign from.
+             \return A reference to the modified AudioClip.
+            *************************************************************************************/
             AudioClip& operator=(AudioClip&&) noexcept = default;
 
-            // Destructor
+            /*!***********************************************************************************
+             \brief Default destructor for AudioClip.
+            *************************************************************************************/
             ~AudioClip() = default;
         };
 

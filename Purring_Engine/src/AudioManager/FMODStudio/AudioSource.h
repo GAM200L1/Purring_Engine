@@ -15,40 +15,85 @@
 
 #include "AudioManager/FMODStudio/AudioClip.h"
 
-namespace PE {
-    namespace Audio {
-
-        class AudioSource {
+namespace PE
+{
+    namespace Audio
+    {
+        class AudioSource
+        {
         public:
             AudioSource();
             ~AudioSource();
 
+            /*!***********************************************************************************
+             \brief Plays the audio clip associated with this audio source.
+            *************************************************************************************/
             void Play();
+
+            /*!***********************************************************************************
+             \brief Pauses the currently playing audio clip.
+            *************************************************************************************/
             void Pause();
+
+            /*!***********************************************************************************
+             \brief Unpauses the currently paused audio clip, resuming playback.
+            *************************************************************************************/
             void Unpause();
+
+            /*!***********************************************************************************
+             \brief Plays the audio clip after a specified delay.
+
+             \param[in] delay - The delay in seconds before the audio clip plays.
+            *************************************************************************************/
             void PlayDelayed(float delay);
-            // void PlayOneShot(const AudioClip& clip, float volumeScale = 1.0f);
+
+            /*!***********************************************************************************
+             \brief Stops the currently playing audio clip.
+            *************************************************************************************/
             void Stop();
 
+            /*!***********************************************************************************
+             \brief Sets the audio clip to be played by this audio source.
+
+             \param[in] clip - The audio clip to play.
+            *************************************************************************************/
             void SetClip(const AudioClip& clip);
+
+            /*!***********************************************************************************
+             \brief Sets the volume of the audio source.
+
+             \param[in] volume - The volume level, where 1.0 is the maximum.
+            *************************************************************************************/
             void SetVolume(float volume);
+
+            /*!***********************************************************************************
+             \brief Sets the pitch of the audio source.
+
+             \param[in] pitch - The pitch level, where 1.0 is the normal pitch.
+            *************************************************************************************/
             void SetPitch(float pitch);
+
+            /*!***********************************************************************************
+             \brief Sets whether the audio source should loop the audio clip.
+
+             \param[in] loop - True to loop the clip, false to play it once.
+            *************************************************************************************/
             void SetLoop(bool loop);
 
         private:
-            AudioClip clip;
-            bool isPlaying = false;
-            bool mute = false;
-            bool playOnAwake = false;
-            bool loop = false;
+            AudioClip m_clip;
 
-            uint32_t priority = 128;
-            float volume = 1.0f;
-            float pitch = 1.0f;
-            float stereoPan = 0.0f;
+            bool m_isPlaying = false;
+            bool m_mute = false;
+            bool m_playOnAwake = false;
+            bool m_loop = false;
 
-            // Store the channel ID or sound instance from FmodStudioManager for control
-            int currentChannelId = -1;
+            uint32_t m_priority = 128;
+            float m_volume = 1.0f;
+            float m_pitch = 1.0f;
+            float m_stereoPan = 0.0f;
+
+            int m_currentChannelId = -1;
         };
 
     } // namespace Audio
