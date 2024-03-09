@@ -21,7 +21,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/Cat/CatController_v2_0.h"
 namespace PE
 {
-	BossRatBashAttack::BossRatBashAttack(EntityID furthestCat) : m_FurthestCat{furthestCat}
+	BossRatBashAttack::BossRatBashAttack(EntityID closestCat) : m_closestCat{ closestCat }
 	{
 		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);
@@ -31,62 +31,68 @@ namespace PE
 
 	void BossRatBashAttack::DrawTelegraphs(EntityID id)
 	{
-		Transform furthestCatTransform;
+		Transform closestCatTransform;
 
-		if (EntityManager::GetInstance().Has<Transform>(m_FurthestCat))
-			furthestCatTransform = EntityManager::GetInstance().Get<Transform>(m_FurthestCat);
+		if (EntityManager::GetInstance().Has<Transform>(m_closestCat))
+			closestCatTransform = EntityManager::GetInstance().Get<Transform>(m_closestCat);
 
 		Transform BossTransform;
 
 		if (EntityManager::GetInstance().Has<Transform>(id))
 			BossTransform = EntityManager::GetInstance().Get<Transform>(id);
 
-		//Direction of Boss to Furthest Cat
-		vec2 direction = furthestCatTransform.position - BossTransform.position;
+		//Direction of Boss to Closest Cat
+		vec2 direction = closestCatTransform.position - BossTransform.position;
 		vec2 unitDirection = direction.GetNormalized();
 
 		SerializationManager sm;
 
-
-		//to be put into a while loop, while not hitting obstacle
-		//Draw Telegraphs
-		
 		//atleast 1
-		EntityID telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim.prefab");
+		EntityID telegraph = sm.LoadFromFile(m_telegraphPrefab);
 		m_telegraphPoitions.push_back(telegraph);
 		vec2 NextPosition;
 		
-		Transform* TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
+		Transform* TelegraphTransform;
 
 		if (EntityManager::GetInstance().Has<Transform>(telegraph))
 		{
-
+			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
 			TelegraphTransform->position = NextPosition = BossTransform.position + unitDirection * (BossTransform.width/2 + TelegraphTransform->width /2);
 			m_noOfAttack++;
 			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
 			{
 				m_attackAnimations.push_back(ie);
+				if (EntityManager::GetInstance().Has<AnimationComponent>(ie))
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(ie).PlayAnimation();
+				}
 			}
+			NextPosition += unitDirection * TelegraphTransform->width;
 		}
-
-		NextPosition += unitDirection * TelegraphTransform->width;
 
 		//more than 1
 		while (CheckOutsideOfWall(NextPosition))
 		{
-			telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim.prefab");
+			telegraph = sm.LoadFromFile(m_telegraphPrefab);
 			m_telegraphPoitions.push_back(telegraph);
 
-			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
-			TelegraphTransform->position = NextPosition;
-
-			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
+			if (EntityManager::GetInstance().Has<Transform>(telegraph))
 			{
-				m_attackAnimations.push_back(ie);
+				TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
+				TelegraphTransform->position = NextPosition;
+
+				for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
+				{
+					m_attackAnimations.push_back(ie);
+					if (EntityManager::GetInstance().Has<AnimationComponent>(ie))
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(ie).PlayAnimation();
+					}
+				}
+
+				NextPosition += unitDirection * TelegraphTransform->width;
+
 			}
-
-			NextPosition += unitDirection * TelegraphTransform->width;
-
 			m_noOfAttack++;
 
 			//just incase somehow it goes over all the obstacles
@@ -113,7 +119,19 @@ namespace PE
 		}
 		else
 		{
-			if (m_attackDelay <= 0 && endExecutionTimer == endExecutionTime)
+			for (auto& iz : m_attackAnimations)
+			{
+				if (EntityManager::GetInstance().Has<AnimationComponent>(iz))
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(iz).HasAnimationEnded())
+					{
+						if(EntityManager::GetInstance().Has<EntityDescriptor>(iz))
+							EntityManager::GetInstance().Get<EntityDescriptor>(iz).isActive = false;
+					}
+				}
+			}
+
+			if (m_attackDelay <= 0 && m_endExecutionTimer == m_endExecutionTime)
 			{	
 				EntityID tid = m_telegraphPoitions[m_attacksActivated++];
 				for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(tid).children)
@@ -131,15 +149,14 @@ namespace PE
 
 			if (m_attacksActivated == m_noOfAttack)
 			{
-				if (endExecutionTimer <= 0)
+				if (m_endExecutionTimer <= 0)
 				{
 					m_attackActivationTime = p_data->activationTime;
-					endExecutionTimer = endExecutionTimer;
 					p_data->finishExecution = true;
 				}
 				else
 				{
-					endExecutionTimer -= dt;
+					m_endExecutionTimer -= dt;
 				}
 
 			}
@@ -150,14 +167,8 @@ namespace PE
 	}
 	void BossRatBashAttack::ExitAttack(EntityID)
 	{
-		//std::vector<EntityID> childs;
 		for (auto& id : m_telegraphPoitions)
 		{
-			std::cout << "deleting telegraph" << std::endl;
-			//for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
-			//{
-			//	childs.push_back(ie);
-			//}
 			EntityManager::GetInstance().RemoveEntity(id);
 		}
 		for (auto& iz : m_attackAnimations)
@@ -196,9 +207,11 @@ namespace PE
 
 		for (int i = 0; i < m_attacksActivated; ++i)
 		{
-			//check if animation ended
-			//m_attackAnimations[i]
-
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_attackAnimations[i]))
+			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(m_attackAnimations[i]).isActive)
+					continue;
+			}
 			//check circle circle collision with each cat
 			for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
 			{

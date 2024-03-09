@@ -159,11 +159,12 @@ namespace PE
 
 	vec2 RatHunt_v2_0::PickTargetPosition()
 	{
-		bool hitSomething{};
-		bool continueLoop{true};
-		int loopTimer = 360/15;
 		vec2 ratPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
 		vec2 finalTarget{ RatScript_v2_0::GetEntityPosition(targetId) };
+
+		//bool hitSomething{};
+		//bool continueLoop{ true };
+		//int loopTimer = 360 / 15;
 
 
 		//while (continueLoop)

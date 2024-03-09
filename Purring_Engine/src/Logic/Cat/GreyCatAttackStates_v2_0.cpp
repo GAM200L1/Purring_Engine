@@ -35,6 +35,8 @@ namespace PE
 		SerializationManager serializationManager;
 		projectileID = serializationManager.LoadFromFile("Projectile.prefab");
 		CatHelperFunctions::ToggleEntity(projectileID, false);
+		/*EntityManager::GetInstance().Get<EntityDescriptor>(projectileID).layer = 0;
+		EntityManager::GetInstance().Get<Collider>(projectileID).collisionLayerIndex = 0;*/
 
 		if (isMainCat)
 			EntityManager::GetInstance().Get<Collider>(projectileID).isTrigger = true;
@@ -361,18 +363,8 @@ namespace PE
 		if (id1 != m_catID && id2 != m_catID)
 		{
 			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			// kill cat if it is not following and not in cage and projectile hits cat
-			if (id1 == p_attackData->projectileID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
-			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
-				return true;
-			}
-			else if (id2 == p_attackData->projectileID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
-			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
-				return true;
-			}
-			else if (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+			// kill cat if it is not following and not in cage and projectile hits catif (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+			if (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 			{
 				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
 				return true;
@@ -380,6 +372,16 @@ namespace PE
 			else if (id2 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 			{
 				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+				return true;
+			}
+			else if (id1 == p_attackData->projectileID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
+				return true;
+			}
+			else if (id2 == p_attackData->projectileID && !p_catController->IsFollowCat(id1) && !p_catController->IsCatCaged(id1))
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
 				return true;
 			}
 		}

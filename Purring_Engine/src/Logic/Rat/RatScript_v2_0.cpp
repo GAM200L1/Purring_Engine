@@ -153,7 +153,8 @@ namespace PE
 			if (!EntityManager::GetInstance().IsEntityValid(id)) { return; }
 
 			// Toggle the entity
-			EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
+			if(EntityManager::GetInstance().Has<EntityDescriptor>(id))
+				EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
 		}
 
 		void RatScript_v2_0::PositionEntity(EntityID const transformId, vec2 const& r_position)
