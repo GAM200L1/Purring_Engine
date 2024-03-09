@@ -3413,6 +3413,7 @@ namespace PE {
 										int leftSideSlamAnimationID = static_cast<int> (it->second.leftSideSlamAnimation);
 										int slamTelegraphID = static_cast<int> (it->second.slamTelegraph);
 										int slamAreaTelegraphID = static_cast<int> (it->second.slamAreaTelegraph);
+										float distanceBetweenPoolsID = it->second.distanceBetweenPools;
 
 										ImGui::SeparatorText("Boss Rat Stats");
 										ImGui::Text("Boss Max Health: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bhid", &healthID);
@@ -3434,6 +3435,10 @@ namespace PE {
 										if (jumpSpeedID != m_currentSelectedObject) it->second.jumpSpeed = jumpSpeedID;										
 										ImGui::Text("Slam Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjssid", &slamSpeedID);
 										if (slamSpeedID != m_currentSelectedObject) it->second.slamSpeed = slamSpeedID;
+
+										ImGui::SeparatorText("Dash Attack Stats");
+										ImGui::Text("Distance Between Each Poison: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjdbpid", &distanceBetweenPoolsID);
+										if (distanceBetweenPoolsID != m_currentSelectedObject) it->second.distanceBetweenPools = distanceBetweenPoolsID;
 
 										ImGui::SeparatorText("Entities");
 										ImGui::Text("Left Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssid", &leftSideSlamID);

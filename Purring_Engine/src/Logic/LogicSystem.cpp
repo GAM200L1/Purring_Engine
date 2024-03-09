@@ -60,7 +60,7 @@
 
 #include "Boss/BossRatScript.h"
 #include "Boss/BossRatHealthBarScript.h"
-
+#include "Boss/PoisonPuddle.h"
 #include "ObjectAttachScript.h"
 
 #ifndef GAMERELEASE
@@ -108,6 +108,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(BossRatScript);
 	REGISTER_SCRIPT(ObjectAttachScript);
 	REGISTER_SCRIPT(BossRatHealthBarScript);
+	REGISTER_SCRIPT(PoisonPuddle);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

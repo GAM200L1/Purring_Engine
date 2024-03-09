@@ -439,6 +439,7 @@ RTTR_REGISTRATION
         .property("rightSideSlamAnimation", &PE::BossRatScriptData::rightSideSlamAnimation)
         .property("leftSideSlamAnimation", &PE::BossRatScriptData::leftSideSlamAnimation)
         .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
+        .property("distanceBetweenPools", &PE::BossRatScriptData::distanceBetweenPools)
         .property("animationStates", &PE::BossRatScriptData::animationStates);
 }
 

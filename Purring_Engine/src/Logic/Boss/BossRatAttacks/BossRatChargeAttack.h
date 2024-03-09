@@ -76,6 +76,7 @@ namespace PE
 		BossRatScript* p_script;
 		BossRatScriptData* p_data;
 		std::string m_telegraphPrefab{"RatBossChargeAttackTelegraph.prefab"};
+		std::string m_poisonPuddlePrefab{"PoisonPuddle.prefab"};
 		vec2 m_chargeDirection{};
 		EntityID m_telegraph;
 
@@ -85,5 +86,6 @@ namespace PE
 		bool m_isCharging{};
 		float m_activationTime{};
 		float m_chargeEndDelay{1.f};
+		float distanceTravelled{};
 	};
 }

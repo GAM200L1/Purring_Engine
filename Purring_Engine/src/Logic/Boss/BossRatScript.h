@@ -64,6 +64,7 @@ namespace PE
 		//charge attack variables
 		float chargeSpeed{ 1000 };
 		bool isCharging{ false };
+		float distanceBetweenPools{ 180 };
 
 		std::map<std::string, std::string> animationStates;
 		int collisionEnterEventKey,collisionStayEventKey;
