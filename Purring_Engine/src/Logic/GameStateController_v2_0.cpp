@@ -246,6 +246,7 @@ namespace PE
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
+			DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
 			DeactiveAllMenu();
 
 			ExecutionStateHUD(id, deltaTime);
@@ -971,6 +972,9 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
 		}
 		else
 		{
@@ -978,11 +982,17 @@ namespace PE
 			{
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
 					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(fadeOutSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
 			}
 			else
 			{
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
 					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeOutSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
 			}
 		}
 
