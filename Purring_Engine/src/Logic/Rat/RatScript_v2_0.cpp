@@ -522,21 +522,8 @@ namespace PE
 
 		// ------------ CAT DETECTION ------------ // 
 
-		bool RatScript_v2_0::GetIsCat(EntityID const id) {
-			bool hasCatInName{ false };
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
-			{
-				// Check if the object has cat in the name
-				hasCatInName = EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos;
-			}
-
-			if (!hasCatInName)
-			{
-				// Check if it's considered a cat by the cat controller
-				hasCatInName = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id);
-			}
-
-			return hasCatInName;
+		bool RatScript_v2_0::GetIsNonCagedCat(EntityID const id) {
+				return (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id));
 		}
 
 		void RatScript_v2_0::ClearCollisionContainers(EntityID const id) 

@@ -465,12 +465,12 @@ namespace PE
 		// --- COLLISION DETECTION --- // 
 
 		/*!***********************************************************************************
-		 \brief Returns true if the entity passed in is a cat, false otherwise.
+		 \brief Returns true if the entity passed in is a cat that isn't caged, false otherwise.
 
 		 \param[in] id - EntityID of the entity to check.
 		 \return bool - Returns true if the entity passed in is a cat, false otherwise.
 		*************************************************************************************/
-		static bool GetIsCat(EntityID const id);
+		static bool GetIsNonCagedCat(EntityID const id);
 
 		/*!***********************************************************************************
 		 \brief Clears the containers used to store the cats being collided with.
