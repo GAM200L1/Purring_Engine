@@ -31,8 +31,6 @@ namespace PE
 		vec2 prevPosition;
 		// vector of positions to set for each cat
 		std::vector<vec2> nextPosition;
-		// vector of x scale to set for each cat
-		std::vector<float> nextXScale;
 
 		// new followers stack
 		std::vector<EntityID> followers;

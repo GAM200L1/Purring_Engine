@@ -52,24 +52,19 @@ namespace PE
 			return;
 		}
 		
-		vec2 const& currPos = CatHelperFunctions::GetEntityPosition(id);
-		float const& prevScaleX = CatHelperFunctions::GetEntityScale(id).x;
+		vec2 const& r_currPos = CatHelperFunctions::GetEntityPosition(id);
 		
-		if (!(currPos.x == scriptData[id].prevPosition.x && currPos.y == scriptData[id].prevPosition.y))
+		if (!(r_currPos.x == scriptData[id].prevPosition.x && r_currPos.y == scriptData[id].prevPosition.y))
 		{
 			scriptData[id].nextPosition.clear();
-			scriptData[id].nextXScale.clear();
 
 			// adds the current position of the main cat
-			scriptData[id].nextPosition.emplace_back(currPos);
-			// adds current scale of main cat
-			scriptData[id].nextXScale.emplace_back(prevScaleX);
+			scriptData[id].nextPosition.emplace_back(r_currPos);
 
 			// adds the current positions and scales of the following cats
 			for (EntityID followerID : scriptData[id].followers)
 			{
 				scriptData[id].nextPosition.emplace_back(CatHelperFunctions::GetEntityPosition(followerID));
-				scriptData[id].nextXScale.emplace_back(CatHelperFunctions::GetEntityScale(followerID).x);
 			}
 
 			int index{ 1 };
