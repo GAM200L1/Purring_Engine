@@ -45,44 +45,44 @@ namespace PE
             FmodStudioManager::GetInstance().OnUpdate(dt);
         }
 
-        void AudioSystem::LoadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
+        void AudioSystem::LoadBank(const std::string& r_bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
         {
-            FmodStudioManager::GetInstance().LoadBank(bankName, flags);
+            FmodStudioManager::GetInstance().LoadBank(r_bankName, flags);
         }
 
-        void AudioSystem::LoadEvent(const std::string& eventName)
+        void AudioSystem::LoadEvent(const std::string& r_eventName)
         {
-            FmodStudioManager::GetInstance().LoadEvent(eventName);
+            FmodStudioManager::GetInstance().LoadEvent(r_eventName);
         }
 
-        void AudioSystem::LoadSound(const std::string& soundName, bool is3d, bool isLooping, bool isStream)
+        void AudioSystem::LoadSound(const std::string& r_soundName, bool is3d, bool isLooping, bool isStream)
         {
-            FmodStudioManager::GetInstance().LoadSound(soundName, is3d, isLooping, isStream);
+            FmodStudioManager::GetInstance().LoadSound(r_soundName, is3d, isLooping, isStream);
         }
 
-        void AudioSystem::UnloadSound(const std::string& soundName)
+        void AudioSystem::UnloadSound(const std::string& r_soundName)
         {
-            FmodStudioManager::GetInstance().UnloadSound(soundName);
+            FmodStudioManager::GetInstance().UnloadSound(r_soundName);
         }
 
-        void AudioSystem::SetListenerAttributes(int listener, const glm::vec3& pos, const glm::vec3& velocity)
+        void AudioSystem::SetListenerAttributes(int listener, const glm::vec3& r_pos, const glm::vec3& r_velocity)
         {
-            FmodStudioManager::GetInstance().SetListenerAttributes(listener, pos, velocity);
+            FmodStudioManager::GetInstance().SetListenerAttributes(listener, r_pos, r_velocity);
         }
 
-        int AudioSystem::PlaySound(const std::string& soundName, const glm::vec3& pos, float volumedB)
+        int AudioSystem::PlaySound(const std::string& r_soundName, const glm::vec3& r_pos, float volumedB)
         {
-            return FmodStudioManager::GetInstance().PlaySound(soundName, pos, volumedB);
+            return FmodStudioManager::GetInstance().PlaySound(r_soundName, r_pos, volumedB);
         }
 
-        void AudioSystem::PlayEvent(const std::string& eventName, bool isImmediate)
+        void AudioSystem::PlayEvent(const std::string& r_eventName, bool isImmediate)
         {
-            FmodStudioManager::GetInstance().PlayEvent(eventName, isImmediate);
+            FmodStudioManager::GetInstance().PlayEvent(r_eventName, isImmediate);
         }
 
-        void AudioSystem::StopEvent(const std::string& eventName, bool isImmediate)
+        void AudioSystem::StopEvent(const std::string& r_eventName, bool isImmediate)
         {
-            FmodStudioManager::GetInstance().StopEvent(eventName, isImmediate);
+            FmodStudioManager::GetInstance().StopEvent(r_eventName, isImmediate);
         }
 
         void AudioSystem::StopAllChannels()
@@ -90,9 +90,9 @@ namespace PE
             FmodStudioManager::GetInstance().StopAllChannels();
         }
 
-        void AudioSystem::SetChannel3dPosition(int channelId, const glm::vec3& position)
+        void AudioSystem::SetChannel3dPosition(int channelId, const glm::vec3& r_position)
         {
-            FmodStudioManager::GetInstance().SetChannel3dPosition(channelId, position);
+            FmodStudioManager::GetInstance().SetChannel3dPosition(channelId, r_position);
         }
 
         void AudioSystem::SetChannelVolume(int channelId, float dB)
@@ -105,9 +105,9 @@ namespace PE
             return FmodStudioManager::GetInstance().IsPlaying(channelId);
         }
 
-        bool AudioSystem::IsEventPlaying(const std::string& eventName)
+        bool AudioSystem::IsEventPlaying(const std::string& r_eventName)
         {
-            return FmodStudioManager::GetInstance().IsEventPlaying(eventName);
+            return FmodStudioManager::GetInstance().IsEventPlaying(r_eventName);
         }
 
     } // namespace Audio

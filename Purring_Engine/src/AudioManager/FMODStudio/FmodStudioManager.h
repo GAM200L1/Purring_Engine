@@ -52,77 +52,77 @@ namespace PE
             /*!***********************************************************************************
              \brief Retrieves an FMOD Studio Bank object by name.
 
-             \param[in] bankName - The name of the bank to retrieve.
+             \param[in] r_bankName - The name of the bank to retrieve.
              \return A pointer to the FMOD::Studio::Bank object.
             *************************************************************************************/
-            FMOD::Studio::Bank* GetBank(const std::string& bankName) const;
+            FMOD::Studio::Bank* GetBank(const std::string& r_bankName) const;
 
             /*!***********************************************************************************
              \brief Loads an FMOD Studio bank file.
 
-             \param[in] bankName - The name of the bank to load.
+             \param[in] r_bankName - The name of the bank to load.
              \param[in] flags    - Flags specifying how the bank is to be loaded.
             *************************************************************************************/
-            void LoadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
+            void LoadBank(const std::string& r_bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
 
             /*!***********************************************************************************
              \brief Loads an audio event by name.
 
-             \param[in] eventName - The name of the event to load.
+             \param[in] r_eventName - The name of the event to load.
             *************************************************************************************/
-            void LoadEvent(const std::string& eventName);
+            void LoadEvent(const std::string& r_eventName);
 
             /*!***********************************************************************************
              \brief Loads a sound from file, with options for 3D spatialization, looping, and streaming.
 
-             \param[in] soundName - The name of the sound file to load.
+             \param[in] r_soundName - The name of the sound file to load.
              \param[in] is3d      - Whether the sound should be spatialized.
              \param[in] isLooping - Whether the sound should loop.
              \param[in] isStream  - Whether the sound should be streamed.
             *************************************************************************************/
-            void LoadSound(const std::string& soundName, bool is3d, bool isLooping, bool isStream);
+            void LoadSound(const std::string& r_soundName, bool is3d, bool isLooping, bool isStream);
 
             /*!***********************************************************************************
              \brief Unloads a previously loaded sound.
 
-             \param[in] soundName - The name of the sound to unload.
+             \param[in] r_soundName - The name of the sound to unload.
             *************************************************************************************/
-            void UnloadSound(const std::string& soundName);
+            void UnloadSound(const std::string& r_soundName);
 
             /*!***********************************************************************************
              \brief Sets attributes for a listener in the 3D audio environment.
 
-             \param[in] listener - The index of the listener to modify.
-             \param[in] pos      - The position vector of the listener.
-             \param[in] velocity - The velocity vector of the listener.
+             \param[in] listener    - The index of the listener to modify.
+             \param[in] r_pos       - The position vector of the listener.
+             \param[in] r_velocity  - The velocity vector of the listener.
             *************************************************************************************/
-            void SetListenerAttributes(int listener, const glm::vec3& pos, const glm::vec3& velocity);
+            void SetListenerAttributes(int listener, const glm::vec3& r_pos, const glm::vec3& r_velocity);
 
             /*!***********************************************************************************
              \brief Plays a sound at a specified position in the 3D world.
 
-             \param[in] soundName - The name of the sound to play.
-             \param[in] pos       - The position in the 3D world where the sound should originate.
+             \param[in] r_soundName - The name of the sound to play.
+             \param[in] r_pos       - The position in the 3D world where the sound should originate.
              \param[in] volumedB  - The volume of the sound in decibels.
              \return An integer channel ID for the sound instance.
             *************************************************************************************/
-            int PlaySound(const std::string& soundName, const glm::vec3& pos, float volumedB);
+            int PlaySound(const std::string& r_soundName, const glm::vec3& r_pos, float volumedB);
 
             /*!***********************************************************************************
              \brief Plays an FMOD Studio event.
 
-             \param[in] eventName   - The name of the event to play.
+             \param[in] r_eventName - The name of the event to play.
              \param[in] isImmediate - Whether the event should play immediately without fade.
             *************************************************************************************/
-            void PlayEvent(const std::string& eventName, bool isImmediate);
+            void PlayEvent(const std::string& r_eventName, bool isImmediate);
 
             /*!***********************************************************************************
              \brief Stops an FMOD Studio event.
 
-             \param[in] eventName   - The name of the event to stop.
+             \param[in] r_eventName - The name of the event to stop.
              \param[in] isImmediate - Whether the event should stop immediately without fade.
             *************************************************************************************/
-            void StopEvent(const std::string& eventName, bool isImmediate);
+            void StopEvent(const std::string& r_eventName, bool isImmediate);
 
             /*!***********************************************************************************
              \brief Stops all currently playing audio channels.
@@ -133,17 +133,17 @@ namespace PE
              \brief Sets the 3D position of a channel in the audio environment.
 
              \param[in] channelId - The ID of the channel to modify.
-             \param[in] position  - The new position vector for the channel.
+             \param[in] r_position  - The new position vector for the channel.
             *************************************************************************************/
-            void SetChannel3dPosition(int channelId, const glm::vec3& position);
+            void SetChannel3dPosition(int channelId, const glm::vec3& r_position);
 
             /*!***********************************************************************************
              \brief Sets the volume for an audio channel.
 
-             \param[in] channelId - The ID of the channel to modify.
-             \param[in] dB        - The volume level in decibels.
+             \param[in] channelId   - The ID of the channel to modify.
+             \param[in] r_dB        - The volume level in decibels.
             *************************************************************************************/
-            void SetChannelVolume(int channelId, float dB);
+            void SetChannelVolume(int channelId, float r_dB);
 
             /*!***********************************************************************************
              \brief Checks if a channel is currently playing a sound.
@@ -156,18 +156,18 @@ namespace PE
             /*!***********************************************************************************
              \brief Checks if an FMOD Studio event is currently playing.
 
-             \param[in] eventName - The name of the event to check.
+             \param[in] r_eventName - The name of the event to check.
              \return True if the event is playing, otherwise false.
             *************************************************************************************/
-            bool IsEventPlaying(const std::string& eventName);
+            bool IsEventPlaying(const std::string& r_eventName);
 
             /*!***********************************************************************************
              \brief Converts a volume level in decibels to a linear scale.
 
-             \param[in] dB - The volume level in decibels.
+             \param[in] r_dB - The volume level in decibels.
              \return The volume on a linear scale.
             *************************************************************************************/
-            float dBToVolume(float dB);
+            float dBToVolume(float r_dB);
 
             /*!***********************************************************************************
              \brief Converts a linear volume level to decibels.
