@@ -183,7 +183,7 @@ namespace PE
 
     void RatIdle_v2_0::PatrolLogic(EntityID id, float deltaTime)
     {
-        if (!p_data->shouldPatrol || p_data->patrolPoints.empty()) {return;}
+        if (p_data->patrolPoints.empty()) {return;}
         else if (p_data->finishedExecution) { return; } // Don't update movement further if we're done 
 
         const vec2& currentTarget = p_data->patrolPoints[p_data->patrolIndex];

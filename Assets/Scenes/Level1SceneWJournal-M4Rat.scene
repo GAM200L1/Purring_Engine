@@ -4274,7 +4274,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5098,7 +5098,13 @@
                                     "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
                                     "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                     "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
-                                }
+                                },
+                                "detectionRadius": 200.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 100.0,
+                                "movementSpeed": 200.0,
+                                "ratMaxHealth": 3,
+                                "ratType": 1
                             },
                             "state": 0
                         }
@@ -5185,7 +5191,13 @@
                                     "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
                                     "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                     "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
-                                }
+                                },
+                                "detectionRadius": 200.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 100.0,
+                                "movementSpeed": 200.0,
+                                "ratMaxHealth": 3,
+                                "ratType": 1
                             },
                             "state": 0
                         }

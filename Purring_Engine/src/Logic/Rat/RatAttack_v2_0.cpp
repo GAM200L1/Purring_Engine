@@ -39,7 +39,7 @@ namespace PE
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
 
-        m_delay = p_data->attackDelay;
+        m_delay = 0.1f;
         p_data->attacking = true;  // Set the attacking flag to true
         attackFeedbackOnce = false;
         m_attackDuration = 0; // will be set later when the attack animation plays

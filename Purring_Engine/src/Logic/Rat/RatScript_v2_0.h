@@ -67,7 +67,7 @@ namespace PE
 		std::map<std::string, std::string> animationStates; // animation states of the rat <state name, file name>
 		
 		// rat stats
-		int ratHealth{ 3 };								// health of the rat, needs manual setting
+		int ratHealth{ 0 };								// health of the rat, needs manual setting
 		int ratMaxHealth{ 3 };						// maximum health of the rat
 		std::unordered_set<EntityID> hitBy; // IDs of attacks that the rat has been hit by during this execution phase
 
@@ -77,18 +77,11 @@ namespace PE
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
 
 		// Attack variables
-		int collisionDamage{ 1 };						// damage when touching the rat needs manual setting
-		int attackDamage{ 1 };							// damage when properly attacked by the rat needs manual setting
-
 		float attackRadius{ 101.f };
-		float attackDelay{ 0.f };						// delay before attacking cat, needs manual setting
 		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack
 		bool hitCat{ false };							// a check for whether the rat has hit the player once in the entire execution sequence
 
-		// Rat Idle
-		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
-
-
+		// State change helper variables
 		bool shouldChangeState{};  // Flags that the state should change when [timeBeforeChangingState] is zero
 		bool delaySet{ false }; // Whether the state change has been flagged
 		float timeBeforeChangingState{ 0.f }; // Delay before state should change

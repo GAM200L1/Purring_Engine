@@ -66,6 +66,9 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 
+			// Initialize some variables
+			it->second.ratHealth = it->second.ratMaxHealth;
+
 			// Clear collision containers
 			ClearCollisionContainers(id);
 
