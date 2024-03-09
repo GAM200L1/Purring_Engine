@@ -93,9 +93,9 @@ namespace PE
 
         /*!***********************************************************************************
         \brief     Sets a new audio file key.
-        \param     r_newKey The new audio file key to set.
+        \param     r_audioKey The new audio file key to set.
         *************************************************************************************/
-        void SetAudioKey(const std::string& audiokey);
+        void SetAudioKey(const std::string& r_audioKey);
 
         /*!***********************************************************************************
         \brief     Sets the audio to loop or not.

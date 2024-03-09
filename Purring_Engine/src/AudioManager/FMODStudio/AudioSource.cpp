@@ -63,9 +63,9 @@ namespace PE {
             //}
         }
 
-        void AudioSource::SetClip(const AudioClip& newClip)
+        void AudioSource::SetClip(const AudioClip& r_clip)
         {
-            m_clip = newClip;
+            m_clip = r_clip;
         }
 
         //void AudioSource::SetVolume(float newVolume)

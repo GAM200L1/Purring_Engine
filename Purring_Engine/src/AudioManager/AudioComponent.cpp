@@ -139,9 +139,9 @@ namespace PE
         return m_audioKey;
     }
 
-    void AudioComponent::SetAudioKey(std::string const& newKey)
+    void AudioComponent::SetAudioKey(std::string const& r_audioKey)
     {
-        m_audioKey = newKey;
+        m_audioKey = r_audioKey;
     }
 
     FMOD::Channel* AudioComponent::GetChannel() const
