@@ -34,6 +34,7 @@
 #include "Cat/CatController_v2_0.h"
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/FollowScript_v2_0.h"
+#include "AudioManager/GlobalMusicManager.h"
 #include "Boss/BossRatScript.h"
 
 #ifndef GAMERELEASE
@@ -123,24 +124,16 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_1429x415.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_1429x415.png");
 
-
-
-		//start the background music
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
-		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
-		EntityManager::GetInstance().RemoveEntity(bgm);
-
-		//start the background ambience
-		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
-		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
-			EntityManager::GetInstance().Get<AudioComponent>(bga).PlayAudioSound();
-		EntityManager::GetInstance().RemoveEntity(bga);
+		// Play audio BGM and BGM Ambience via GlobalMusicManager
+		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Music.prefab", true);
+		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Ambience.prefab", true);
+		GlobalMusicManager::GetInstance().StartFadeIn(5.0f);
 
 		ResetPhaseBanner(true);
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
+		GlobalMusicManager::GetInstance().Update(deltaTime);
 
 		if (!m_isRat && m_isPotraitShowing)
 		{
@@ -602,7 +595,9 @@ namespace PE
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
 
-			PauseBGM();
+			GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
+
+			//PauseBGM();
 			PlayPageAudio();
 
 			PauseManager::GetInstance().SetPaused(true);
@@ -623,7 +618,7 @@ namespace PE
 	{
 		if (currentState == GameStates_v2_0::PAUSE)
 		{
-			ResumeBGM();
+			GlobalMusicManager::GetInstance().ResumeBackgroundMusic();  // Restore volume after resuming
 
 			for (auto id : SceneView<GUIButton>())
 			{
@@ -759,7 +754,9 @@ namespace PE
 
 	void GameStateController_v2_0::WinGame()
 	{
-		PauseBGM();
+		//PauseBGM();
+		GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+
 		PlayWinAudio();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
@@ -767,7 +764,9 @@ namespace PE
 
 	void GameStateController_v2_0::LoseGame()
 	{
-		PauseBGM();
+		//PauseBGM();
+		GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+
 		PlayLoseAudio();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
@@ -1056,6 +1055,8 @@ namespace PE
 
 	void GameStateController_v2_0::NextStage(int nextStage)
 	{
+		GlobalMusicManager::GetInstance().StartFadeOut(0.01f);
+
 		PlaySceneTransition();
 
 		switch (nextStage)
@@ -1395,7 +1396,5 @@ namespace PE
 		if (Finished)
 			NextState();
 	}
-
-
 
 }

@@ -470,6 +470,9 @@ namespace PE
 		float m_phaseBannerExit{m_phaseBannerTransitionTimer};
 		float m_phaseBannerStay{};
 		bool m_isPhaseBannerTransition{true};
+
+		float prevVolume;
+
 	};
 }
 
