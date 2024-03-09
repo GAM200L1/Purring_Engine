@@ -38,7 +38,6 @@ namespace PE
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                                                   // Get GSM instance
 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnterAndStay, this);
-        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
 
         m_delay = 0.1f;
@@ -103,7 +102,6 @@ namespace PE
     void RatAttack_v2_0::StateCleanUp()
     {
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
@@ -233,39 +231,7 @@ namespace PE
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTEE.Entity1, p_data->myID);
                 }
             } // end of if (p_data->attacking)
-        }
-        else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
-        {
-            OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
-            // check if entity1 is the rat's detection collider and entity2 is cat
-            if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity2))
-            {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
-            }
-            // check if entity2 is the rat's detection collider and entity1 is cat
-            else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity1))
-            {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
-            }
-            else if (p_data->attacking) // Currently attacking 
-            {
-                // check if entity1 is rat or rat's attack and entity2 is cat
-                if ((OTSE.Entity1 == p_data->myID || OTSE.Entity1 == p_data->attackTelegraphEntityID) &&
-                    RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity2))
-                {
-                    // save the id of the cat that has been checked so that it wont be checked again
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTSE.Entity2, p_data->myID);
-                }
-                // check if entity2 is rat or rat's attack and entity1 is cat
-                else if ((OTSE.Entity2 == p_data->myID || OTSE.Entity2 == p_data->attackTelegraphEntityID) &&
-                    RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity1))
-                {
-                    // save the id of the cat that has been checked so that it wont be checked again
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTSE.Entity1, p_data->myID);
-                }
-            } // end of if (p_data->attacking)
-                
-        } // end of if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
+        } // end of if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
     }
 
 

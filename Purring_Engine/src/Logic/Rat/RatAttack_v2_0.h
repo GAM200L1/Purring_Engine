@@ -114,7 +114,7 @@ namespace PE
         bool telegraphEnabled{ false };
 
         // Event listener IDs 
-        int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+        int m_collisionEventListener{}, m_collisionExitEventListener{};
 
         // ----- PRIVATE METHODS ----- //
     private:

@@ -423,8 +423,6 @@ namespace PE
 
 		// ----- Private Members ----- //
 	private:
-			// Event listener IDs 
-			int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 			GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
 			GameStates_v2_0 previousGameState; // The game state in the previous frame
 

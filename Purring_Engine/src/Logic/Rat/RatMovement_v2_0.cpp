@@ -45,7 +45,6 @@ namespace PE
 
         // Subscribe to the collision trigger events for the 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovement_v2_0::OnTriggerEnterAndStay, this);
-        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovement_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatMovement_v2_0::OnTriggerExit, this);
     }
 
@@ -130,7 +129,6 @@ namespace PE
     void RatMovement_v2_0::StateCleanUp()
     {
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
@@ -159,20 +157,6 @@ namespace PE
             else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTEE.Entity1))
             {
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
-            }
-        }
-        else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
-        {
-            OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
-            // check if entity1 is the rat's detection collider and entity2 is cat
-            if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity2))
-            {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
-            }
-            // check if entity2 is the rat's detection collider and entity1 is cat
-            else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity1))
-            {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
             }
         }
     }

@@ -48,7 +48,6 @@ namespace PE
         m_planningRunOnce = false;
 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatIdle_v2_0::OnTriggerEnterAndStay, this);
-        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatIdle_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatIdle_v2_0::OnTriggerExit, this);
 
         // ----- Reset -----
@@ -227,7 +226,6 @@ namespace PE
     {
         // Unsubscribe from events
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
@@ -356,26 +354,6 @@ namespace PE
                 std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") enter: rat detection collider - " << OTEE.Entity2 << ", cat - " << OTEE.Entity1 << "\n";
 #endif // DEBUG_PRINT
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
-            }
-        }
-        else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
-        {
-            OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
-            // check if entity1 is the rat's detection collider and entity2 is cat
-            if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity2))
-            {
-#ifdef DEBUG_PRINT
-                //std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") stay: rat detection collider - " << OTSE.Entity1 << ", cat - " << OTSE.Entity2 << "\n";
-#endif // DEBUG_PRINT
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
-            }
-            // check if entity2 is the rat's detection collider and entity1 is cat
-            else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity1))
-            {
-#ifdef DEBUG_PRINT
-                //std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") stay: rat detection collider - " << OTSE.Entity2 << ", cat - " << OTSE.Entity1 << "\n";
-#endif // DEBUG_PRINT
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
             }
         }
     }
