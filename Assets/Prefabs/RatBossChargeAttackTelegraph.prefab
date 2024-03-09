@@ -6,12 +6,12 @@
                     "components": {
                         "EntityDescriptor": {
                             "InteractionLayer": 0,
-                            "Layer": 3,
+                            "Layer": 0,
                             "Old ID": 1,
-                            "Prefab Type": "Cage",
+                            "Prefab Type": "",
                             "children": [],
                             "isActive": true,
-                            "name": "Cage",
+                            "name": "RatBossChargeAttackTelegraph",
                             "parent": null,
                             "sceneID": 1
                         },
@@ -22,21 +22,21 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
+                            "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Charge_350x160.png"
                         },
                         "Transform": {
-                            "height": 100.0,
+                            "height": 160.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 227.2007598876953,
-                                "y": 10.200397491455078
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "relativeposition": {
-                                "x": 1.6002922058105469,
+                                "x": 0.0,
                                 "y": 0.0
                             },
                             "relorientation": 0.0,
-                            "width": 100.0
+                            "width": 350.0
                         }
                     },
                     "name": ""

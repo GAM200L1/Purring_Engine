@@ -33,8 +33,8 @@ namespace PE
 		CreateCheckStateManager(id);
 		FindAllObstacles();
 
-		m_scriptData[id].m_collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
-		m_scriptData[id].m_collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+		m_scriptData[id].collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+		m_scriptData[id].collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 	}
 
 
@@ -54,7 +54,7 @@ namespace PE
 
 		if (m_scriptData[id].currenthealth <= 0)
 		{
-			//do something
+			//do something, call end cutscene most likely and end bgm here
 		}
 
 		CreateCheckStateManager(id);
@@ -66,9 +66,9 @@ namespace PE
 
 	void BossRatScript::OnAttach(EntityID id)
 	{
-		m_currentSlamTurnCounter = 0;
 		m_scriptData[id] = BossRatScriptData();
 		currentBoss = id;
+		currentSlamTurnCounter = 0;
 	}
 
 
@@ -79,8 +79,8 @@ namespace PE
 		if (it != m_scriptData.end())
 		{
 			m_scriptData.erase(id);
-			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionEnterEventKey)
-			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionStayEventKey)
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionEnterEventKey)
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionStayEventKey)
 		}
 	}
 
@@ -110,14 +110,14 @@ namespace PE
 
 	void BossRatScript::FindAllObstacles()
 	{
-		m_Obstacles.clear();
+		m_obstacles.clear();
 		for (const auto& layer : LayerView<EntityDescriptor, Collider>(true))
 		{
 			for (const EntityID& id : InternalView(layer))
 			{
 				std::string nameTest = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
 				if(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos)
-				m_Obstacles.push_back(id);
+				m_obstacles.push_back(id);
 			}
 		}
 	}
@@ -145,18 +145,53 @@ namespace PE
 
 		}
 
-		//std::cout << "Furthest Cat: " << EntityManager::GetInstance().Get<EntityDescriptor>(FurthestCat).name << "\n";
-
 		return FurthestCat;
+	}
+
+	EntityID BossRatScript::FindClosestCat()
+	{
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+		EntityID ClosestCat{};
+		float ClosestDistance{1000000000};
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			Transform cattransform = EntityManager::GetInstance().Get<Transform>(CatID);
+
+			if (cattransform.position.Distance(EntityManager::GetInstance().Get<Transform>(currentBoss).position) < ClosestDistance)
+			{
+				ClosestDistance = cattransform.position.Distance(EntityManager::GetInstance().Get<Transform>(currentBoss).position);
+				ClosestCat = CatID;
+			}
+
+		}
+		return ClosestCat;
 	}
 	std::vector<EntityID> BossRatScript::GetAllObstacles()
 	{
-		return m_Obstacles;
+		return m_obstacles;
 	}
 
 	void BossRatScript::OnCollisionStay(const Event<CollisionEvents>& r_collisionStay)
 	{
 		OnCollisionStayEvent OCEE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionStay) };
+
+		if (IsObstacle(OCEE.Entity1))
+		{
+			if (OCEE.Entity2 == currentBoss)
+			{
+				if (m_scriptData[currentBoss].p_currentAttack)
+					m_scriptData[currentBoss].p_currentAttack->StopAttack();
+			}
+		}
+		else if (IsObstacle(OCEE.Entity2))
+		{
+			if (OCEE.Entity1 == currentBoss)
+			{
+				if (m_scriptData[currentBoss].p_currentAttack)
+					m_scriptData[currentBoss].p_currentAttack->StopAttack();
+			}
+		}
 
 		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 
@@ -184,5 +219,9 @@ namespace PE
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
 			}
 		}
+	}
+	bool BossRatScript::IsObstacle(EntityID id)
+	{
+	 return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);;
 	}
 } // End of namespace PE

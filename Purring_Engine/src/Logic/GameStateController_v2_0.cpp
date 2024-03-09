@@ -425,7 +425,7 @@ namespace PE
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(RatID).colliderVariant);
 
 						//debug
-						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
+						//std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
 
 						// Check if the rat/cat has been clicked
 						if (PointCollision(col, cursorPosition))
@@ -433,7 +433,7 @@ namespace PE
 							m_isRat = true;
 							m_isPotraitShowing = true;
 							//debug
-							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
+							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
 							//add a switch statement here
 							//need specific texture
 							m_lastSelectedEntity = RatID;
@@ -739,6 +739,8 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
+			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_exexcutePhaseBanner);
@@ -754,6 +756,8 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
+			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);

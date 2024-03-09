@@ -22,6 +22,13 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 
 namespace PE
 {
+	enum class BossRatAttacks
+	{
+		BASH,
+		SLAM,
+		CHARGE
+	};
+
 	struct BossRatScriptData
 	{
 		~BossRatScriptData()
@@ -41,7 +48,7 @@ namespace PE
 		//bash attack variables
 		float telegraphRadius; // incase we want change, but not used for now
 		float attackDelay{.25f};
-		float activationTime{1.f};
+		float activationTime{.5f};
 
 		//slam attack variables
 		float jumpSpeed{ 1000 };
@@ -54,21 +61,32 @@ namespace PE
 		EntityID rightSideSlamAnimation;
 		EntityID slamAreaTelegraph;
 
+		//charge attack variables
+		float chargeSpeed{ 1000 };
+		bool isCharging{ false };
+
 		std::map<std::string, std::string> animationStates;
+		int collisionEnterEventKey,collisionStayEventKey;
 
-
-		int m_collisionEnterEventKey,m_collisionStayEventKey;
+		int currentAttackSet{ 1 };
+		int currentAttackInSet{ 3 };
 	};
+
 
 	class BossRatScript : public Script
 	{
-		// If you wish to have persistent data, store it in the script class
-
 		// ----- Public Members ----- //
 	public:
 		std::map<EntityID, BossRatScriptData> m_scriptData;
 		EntityID currentBoss;
-		int m_currentSlamTurnCounter{};
+		int currentSlamTurnCounter{};
+
+		BossRatAttacks BossRatAttackSets[3][3]
+		{
+			{BossRatAttacks::CHARGE,BossRatAttacks::SLAM,BossRatAttacks::BASH},
+			{BossRatAttacks::BASH,BossRatAttacks::SLAM,BossRatAttacks::CHARGE},
+			{BossRatAttacks::SLAM,BossRatAttacks::BASH,BossRatAttacks::CHARGE}
+		};
 		// ----- Constructors ----- //
 	public:
 		/*!***********************************************************************************
@@ -130,12 +148,34 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Cause the Boss Rat King to take damage
+		 \param[in] int damage to take
+		 \return void
+		*************************************************************************************/
 		void TakeDamage(int damage);
 
+		/*!***********************************************************************************
+		 \brief Find the furthest cat from the boss currently
+		 \return EntityID of the furthest cat
+		*************************************************************************************/
 		EntityID FindFurthestCat();
 
+		/*!***********************************************************************************
+		 \brief Find the closest cat from the boss currently
+		 \return EntityID of the closest cat
+		*************************************************************************************/
+		EntityID FindClosestCat();
+
+		/*!***********************************************************************************
+		 \brief update the obstacle vectors
+		*************************************************************************************/
 		void FindAllObstacles();
 
+		/*!***********************************************************************************
+		 \brief get the list of all obstacles
+		 \return std::vector<EntityID> of all obstacles
+		*************************************************************************************/
 		std::vector<EntityID> GetAllObstacles();
 
 		// ----- Private Members ----- //
@@ -144,18 +184,31 @@ namespace PE
 
 		/*!***********************************************************************************
 		 \brief Creates the state manager if it has not been created.
-
 		 \param[in] id EntityID of the entity to create the state manager for.
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Callback function to be subscribed to collision stay events
+		 \param[in] r_collisionStay const reference to the collision event received
+		*************************************************************************************/
 		void OnCollisionStay(const Event<CollisionEvents>& r_collisionStay);
+		/*!***********************************************************************************
+		 \brief Callback function to be subscribed to collision enter events
+		 \param[in] r_collisionEnter const reference to the collision event received
+		*************************************************************************************/
 		void OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter);
 
+		/*!***********************************************************************************
+		 \brief Check if an object is a obstacle
+		 \param[in] id EntityID to check if it is an obstacle
+		 \return bool whether an object is an obstacle
+		*************************************************************************************/
+		bool IsObstacle(EntityID);
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
-		std::vector<EntityID> m_Obstacles;
+		std::vector<EntityID> m_obstacles;
 		//do i want to store all the obstacles here?
 	}; // end of class 
 

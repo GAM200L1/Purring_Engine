@@ -30,7 +30,7 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		
-		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
+		//EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
 
 		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
 

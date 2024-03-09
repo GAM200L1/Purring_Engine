@@ -3730,7 +3730,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -781.0421752929688,
@@ -3799,7 +3799,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -654.9474487304688,
@@ -3868,7 +3868,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 807.072021484375,
@@ -3937,7 +3937,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -777.499755859375,
@@ -4006,7 +4006,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 1120.7095947265625,
@@ -4075,7 +4075,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -648.4910888671875,
@@ -4144,7 +4144,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 627.0653686523438,
@@ -4213,7 +4213,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 633.7084350585938,
@@ -4282,7 +4282,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 641.3484497070313,
@@ -4567,7 +4567,7 @@
                         "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
                     },
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 1,
                         "data": {
                             "center": {
                                 "x": -409.0,
@@ -4603,7 +4603,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4613,7 +4613,7 @@
                     "ScriptComponent": {
                         "BossRatScript": {
                             "data": {
-                                "activationTime": 1.0,
+                                "activationTime": 0.5,
                                 "animationStates": {},
                                 "attackDelay": 0.25,
                                 "jumpSpeed": 1500.0,
@@ -4861,7 +4861,7 @@
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 1,
+                        "Layer": 2,
                         "Old ID": 61,
                         "Prefab Type": "Meowsalot",
                         "children": [],
@@ -4946,7 +4946,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -961.0284423828125,

@@ -21,7 +21,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/Cat/CatController_v2_0.h"
 namespace PE
 {
-	BossRatSlamAttack::BossRatSlamAttack(EntityID furthestCat) : m_FurthestCat{furthestCat}
+	BossRatSlamAttack::BossRatSlamAttack()
 	{
 		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);		
@@ -45,7 +45,7 @@ namespace PE
 		if(EntityManager::GetInstance().Has<EntityDescriptor>(p_data->slamTelegraph))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->slamTelegraph).isActive = true;
 
-		if (p_script->m_currentSlamTurnCounter == 2)
+		if (p_script->currentSlamTurnCounter == 2)
 		{
 			DrawDamageTelegraph(p_script->currentBoss);
 		}
@@ -57,26 +57,26 @@ namespace PE
 	{
 		HideTelegraph(p_script->currentBoss);
 
-		if (p_script->m_currentSlamTurnCounter == 0)
+		if (p_script->currentSlamTurnCounter == 0)
 			HideDamageTelegraph(p_script->currentBoss);
 	}
 
 	void BossRatSlamAttack::UpdateAttack(EntityID id, float dt)
 	{	
-		if (p_script->m_currentSlamTurnCounter == 2)
+		if (p_script->currentSlamTurnCounter == 2)
 		{
 			JumpUp(p_script->currentBoss,dt);
 			if(m_ratSpawned)
 			p_data->finishExecution = true;
 		
 		}
-		else if (p_script->m_currentSlamTurnCounter == 1)
+		else if (p_script->currentSlamTurnCounter == 1)
 		{
 			UpdateSlamTelegraph(p_script->currentBoss, dt);
 			if (m_slamTelegraphAnimated)
 			p_data->finishExecution = true;
 		}
-		else if (p_script->m_currentSlamTurnCounter == 0)
+		else if (p_script->currentSlamTurnCounter == 0)
 		{
 			SlamDown(p_script->currentBoss, dt);
 
@@ -101,7 +101,6 @@ namespace PE
 				}
 			}
 		}
-		//std::cout << "Boss Position: " << EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.x << " " << EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.y << std::endl;
 	}
 
 	void BossRatSlamAttack::ExitAttack(EntityID)
@@ -151,6 +150,11 @@ namespace PE
 		Transform* bossTransform = &EntityManager::GetInstance().Get<Transform>(p_script->currentBoss);
 		bossTransform->position.x = m_slamLandLocation.x;
 
+		if (m_slamAttackDelay > 0)
+		{
+			m_slamAttackDelay -= dt;
+			return;
+		}
 		if (bossTransform->position.y > m_slamLandLocation.y)
 			bossTransform->position.y -= p_data->slamSpeed * dt;
 		else
@@ -210,7 +214,7 @@ namespace PE
 	{
 		if (EntityManager::GetInstance().Has<Graphics::Renderer>(p_data->leftSideSlam) && EntityManager::GetInstance().Has<Graphics::Renderer>(p_data->rightSideSlam) && EntityManager::GetInstance().Has<Graphics::Renderer>(p_data->slamAreaTelegraph))
 		{
-			if (p_script->m_currentSlamTurnCounter == 2)
+			if (p_script->currentSlamTurnCounter == 2)
 			{
 				EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->leftSideSlam).SetColor(229.f/255.f,198.f/255.f,88.f/255.f);
 				EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->rightSideSlam).SetColor(229.f / 255.f, 198.f / 255.f, 88.f / 255.f);
@@ -221,7 +225,7 @@ namespace PE
 					EntityManager::GetInstance().Get<Transform>(p_data->slamAreaTelegraph).width = EntityManager::GetInstance().Get<Transform>(p_data->slamAreaTelegraph).height  = m_slamSize;
 				}
 			}
-			else if (p_script->m_currentSlamTurnCounter == 1)
+			else if (p_script->currentSlamTurnCounter == 1)
 			{
 				EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->leftSideSlam).SetColor(229.f / 255.f, 88.f / 255.f, 88.f / 255.f);
 				EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->rightSideSlam).SetColor(229.f / 255.f, 88.f / 255.f, 88.f / 255.f);
@@ -241,7 +245,6 @@ namespace PE
 			{
 				slamTransform->height -= m_slamShrinkSpeed * dt;
 				slamTransform->width = slamTransform->height;
-				//slamTransform->orientation -= dt;
 			}
 			else
 			{
@@ -271,14 +274,14 @@ namespace PE
 			Transform catTransform = EntityManager::GetInstance().Get<Transform>(CatID);
 			if (m_attackIsLeft)
 			{
-				if (catTransform.position.x < 0)
+				if (catTransform.position.x < (EntityManager::GetInstance().Get<Transform>(p_data->leftSideSlam).position.x + EntityManager::GetInstance().Get<Transform>(p_data->leftSideSlam).width/2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
 				}
 			}
 			else
 			{
-				if (catTransform.position.x >= 0)
+				if (catTransform.position.x >= (EntityManager::GetInstance().Get<Transform>(p_data->rightSideSlam).position.x - EntityManager::GetInstance().Get<Transform>(p_data->rightSideSlam).width / 2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
 				}
@@ -312,16 +315,6 @@ namespace PE
 
 	void BossRatSlamAttack::DisableAnimation(EntityID)
 	{
-		//if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->leftSideSlamAnimation))
-		//{
-		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).StopAnimation();
-		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).ResetAnimation();
-		//}
-		//if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->rightSideSlamAnimation))
-		//{
-		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).StopAnimation();
-		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).ResetAnimation();
-		//}
 
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->leftSideSlamAnimation))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->leftSideSlamAnimation).isActive = false;

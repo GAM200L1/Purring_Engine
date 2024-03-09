@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3383,7 +3383,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 950.5000610351563,
@@ -3438,7 +3438,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -520.9998168945313,
@@ -3507,7 +3507,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 10.00006103515625,
@@ -3576,7 +3576,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 387.4999694824219,
@@ -3645,7 +3645,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 954.0003051757813,
@@ -3714,7 +3714,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 954.0001831054688,
@@ -3783,7 +3783,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -650.99951171875,
@@ -3852,7 +3852,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 536.49951171875,
@@ -3921,7 +3921,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 264.99993896484375,
@@ -3990,7 +3990,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -390.00030517578125,
@@ -4138,7 +4138,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4238,7 +4238,7 @@
                         "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle.anim"
                     },
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 5,
                         "data": {
                             "center": {
                                 "x": 388.60040283203125,
@@ -4251,12 +4251,12 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 2,
                         "Old ID": 60,
                         "Prefab Type": "Grey Cat",
                         "children": [
@@ -4265,7 +4265,7 @@
                         "isActive": true,
                         "name": "Grey Cat",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 62
                     },
                     "Renderer": {
                         "Color": {
@@ -4274,7 +4274,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4408,14 +4408,14 @@
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 2,
                         "Old ID": 61,
                         "Prefab Type": "Meowsalot",
                         "children": [],
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 62
+                        "sceneID": 61
                     },
                     "Renderer": {
                         "Color": {
@@ -4493,7 +4493,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4964,7 +4964,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5060,7 +5060,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,

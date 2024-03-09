@@ -1,107 +1,113 @@
 {
-    "Entity": {
-        "components": {
-            "AnimationComponent": {
-                "AnimationIDs": [
-                    "../Assets/Animation/AnimationOrange_Attack.anim",
-                    "../Assets/Animation/AnimationOrange_Death.anim",
-                    "../Assets/Animation/AnimationOrange_Idle.anim",
-                    "../Assets/Animation/AnimationOrange_walk.anim"
-                ],
-                "CurrentAnimationID": ""
-            },
-            "Collider": {
-                "collisionLayerIndex": 0,
-                "data": {
-                    "center": {
-                        "x": 320.0006103515625,
-                        "y": 71.99998474121094
-                    },
-                    "positionOffset": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "radius": 32.0,
-                    "scaleOffset": 1.0
-                },
-                "isTrigger": false,
-                "type": "CircleCollider"
-            },
-            "EntityDescriptor": {
-                "InteractionLayer": 0,
-                "Layer": 0,
-                "Old ID": 18446744073709551615,
-                "Prefab Type": "OrangeCat",
-                "children": [],
-                "isActive": true,
-                "name": "OrangeCat",
-                "parent": null,
-                "sceneID": 18446744073709551615
-            },
-            "Renderer": {
-                "Color": {
-                    "a": 1.0,
-                    "b": 1.0,
-                    "g": 1.0,
-                    "r": 1.0
-                },
-                "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
-            },
-            "RigidBody": {
-                "linearDrag": 2.0,
-                "mass": 10.0,
-                "type": 1
-            },
-            "ScriptComponent": {
-                "CatScript_v2_0": {
-                    "data": {
-                        "animationStates": {
-                            "Attack": "../Assets/Animation/AnimationOrange_Attack.anim",
-                            "Death": "../Assets/Animation/AnimationOrange_Death.anim",
-                            "Idle": "../Assets/Animation/AnimationOrange_Idle.anim",
-                            "Walk": "../Assets/Animation/AnimationOrange_walk.anim"
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "AnimationComponent": {
+                            "AnimationIDs": [
+                                "../Assets/Animation/AnimationOrange_Attack.anim",
+                                "../Assets/Animation/AnimationOrange_Death.anim",
+                                "../Assets/Animation/AnimationOrange_Idle.anim",
+                                "../Assets/Animation/AnimationOrange_walk.anim"
+                            ],
+                            "CurrentAnimationID": ""
                         },
-                        "attackVariants": {
-                            "OrangeCatAttackVariables": {
-                                "damage": 2,
-                                "seismicDelay": 0.0,
-                                "seismicForce": 500.0,
-                                "seismicID": 0,
-                                "seismicRadius": 3.0,
-                                "seismicSlamAnimationIndex": 4,
-                                "telegraphID": 0
+                        "Collider": {
+                            "collisionLayerIndex": 0,
+                            "data": {
+                                "center": {
+                                    "x": 320.0006103515625,
+                                    "y": 71.99998474121094
+                                },
+                                "positionOffset": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "radius": 32.0,
+                                "scaleOffset": 1.0
+                            },
+                            "isTrigger": false,
+                            "type": "CircleCollider"
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 2,
+                            "Old ID": 1,
+                            "Prefab Type": "OrangeCat",
+                            "children": [],
+                            "isActive": true,
+                            "name": "OrangeCat",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                        },
+                        "RigidBody": {
+                            "linearDrag": 2.0,
+                            "mass": 10.0,
+                            "type": 1
+                        },
+                        "ScriptComponent": {
+                            "CatScript_v2_0": {
+                                "data": {
+                                    "animationStates": {
+                                        "Attack": "../Assets/Animation/AnimationOrange_Attack.anim",
+                                        "Death": "../Assets/Animation/AnimationOrange_Death.anim",
+                                        "Idle": "../Assets/Animation/AnimationOrange_Idle.anim",
+                                        "Walk": "../Assets/Animation/AnimationOrange_walk.anim"
+                                    },
+                                    "attackVariants": {
+                                        "OrangeCatAttackVariables": {
+                                            "damage": 2,
+                                            "seismicDelay": 0.0,
+                                            "seismicForce": 500.0,
+                                            "seismicID": 0,
+                                            "seismicRadius": 3.0,
+                                            "seismicSlamAnimationIndex": 4,
+                                            "telegraphID": 0
+                                        }
+                                    },
+                                    "catID": 0,
+                                    "catMaxMovementEnergy": 6,
+                                    "catType": 2,
+                                    "finishedExecution": false,
+                                    "forgivenessOffset": 1.0,
+                                    "isCaged": false,
+                                    "maxDistance": 50.0,
+                                    "minDistance": 10.0,
+                                    "movementSpeed": 300.0,
+                                    "nodeSize": 10.0,
+                                    "toggleDeathAnimation": false
+                                },
+                                "state": 0
                             }
                         },
-                        "catID": 0,
-                        "catMaxMovementEnergy": 6,
-                        "catType": 2,
-                        "finishedExecution": false,
-                        "forgivenessOffset": 1.0,
-                        "isCaged": false,
-                        "maxDistance": 50.0,
-                        "minDistance": 10.0,
-                        "movementSpeed": 300.0,
-                        "nodeSize": 10.0,
-                        "toggleDeathAnimation": false
+                        "Transform": {
+                            "height": 64.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 320.0006103515625,
+                                "y": 71.99998474121094
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 64.0
+                        }
                     },
-                    "state": 0
+                    "name": ""
                 }
-            },
-            "Transform": {
-                "height": 64.0,
-                "orientation": 0.0,
-                "position": {
-                    "x": 320.0006103515625,
-                    "y": 71.99998474121094
-                },
-                "relativeposition": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "relorientation": 0.0,
-                "width": 64.0
             }
-        },
-        "name": ""
-    }
+        ]
+    ]
 }

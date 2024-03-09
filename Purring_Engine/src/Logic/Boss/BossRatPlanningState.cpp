@@ -19,6 +19,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/LogicSystem.h"
 #include "Logic/Boss/BossRatAttacks/BossRatBashAttack.h"
 #include "Logic/Boss/BossRatAttacks/BossRatSlamAttack.h"
+#include "Logic/Boss/BossRatAttacks/BossRatChargeAttack.h"
+
 namespace PE
 {
 	void BossRatPlanningState::StateEnter(EntityID id)
@@ -47,34 +49,41 @@ namespace PE
 
 	void BossRatPlanningState::StateExit(EntityID)
 	{
-		if (p_script->m_currentSlamTurnCounter > 0)
-		--p_script->m_currentSlamTurnCounter;
+		if (p_script->currentSlamTurnCounter > 0)
+		--p_script->currentSlamTurnCounter;
 	}
 
 	void BossRatPlanningState::DecideAttack()
 	{
-		if (p_script->m_currentSlamTurnCounter > 0 && p_data->p_currentAttack)
+		if (p_script->currentSlamTurnCounter > 0 && p_data->p_currentAttack)
 			return;
 
-		// Decides which attack to use
-		//will add the other attacks later, fixed on bash for now
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
 
-		static bool test{false};
-
-		//attack 1
-		if (!test)
+		if (p_data->currentAttackInSet == 3)
 		{
-			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
-		}
-		else
-		{
-			p_data->p_currentAttack = new BossRatSlamAttack(p_script->FindFurthestCat());
-			p_script->m_currentSlamTurnCounter = 3;
+			p_data->currentAttackInSet = 0;
+			p_data-> currentAttackSet = rand() % 3;
 		}
 
-		test = !test;
+		switch (p_script->BossRatAttackSets[p_data->currentAttackSet][p_data->currentAttackInSet])
+		{
+		case BossRatAttacks::BASH:
+			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindClosestCat());
+			p_script->currentSlamTurnCounter = 0;
+			break;
+		case BossRatAttacks::SLAM:
+			p_data->p_currentAttack = new BossRatSlamAttack();
+			p_script->currentSlamTurnCounter = 3;
+			break;
+		case BossRatAttacks::CHARGE:
+			p_data->p_currentAttack = new BossRatChargeAttack(p_script->FindFurthestCat());
+			p_script->currentSlamTurnCounter = 0;
+			break;
+		}
+
+		p_data->currentAttackInSet++;
 	}
 
 } // End of namespace PE
