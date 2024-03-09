@@ -73,18 +73,26 @@ namespace PE
 			{
 				vec2 directionalvector = scriptData[id].nextPosition[index - 1] - scriptData[id].nextPosition[index];
 				float newRotation = atan2(directionalvector.y, directionalvector.x);
-				float xScale{ CatHelperFunctions::GetEntityScale(follower).x * scriptData[id].distanceScale };
+				float xScale{ std::abs(CatHelperFunctions::GetEntityScale(follower).x) * scriptData[id].distanceScale };
 
 				// set position of this follower
 				EntityManager::GetInstance().Get<Transform>(follower).position = scriptData[id].nextPosition[index - 1] + 
 					vec2{ xScale * cosf(newRotation - static_cast<float>(M_PI)), xScale * sinf(newRotation - static_cast<float>(M_PI)) };
+
+				if (p_gamestateController->currentState == GameStates_v2_0::EXECUTE)
+				{
+					// Ensure the cat is facing the direction of their movement
+					vec2 newScale{ CatHelperFunctions::GetEntityScale(follower) };
+					newScale.x = std::abs(newScale.x) * ((directionalvector.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the cat is facing left
+					CatHelperFunctions::ScaleEntity(follower, newScale.x, newScale.y);
+				}
 
 				++index;
 			}
 		}
 		
 		// save the previous position of the main cat
-		scriptData[id].prevPosition = currPos;
+		scriptData[id].prevPosition = r_currPos;
 	}
 
 	void FollowScript_v2_0::Destroy(EntityID id)
@@ -159,19 +167,21 @@ namespace PE
 			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 			CatScript_v2_0Data* p_catData{ nullptr };
 
-			if (OTEE.Entity1 == p_catController->GetMainCatID() && p_catController->IsCatCaged(OTEE.Entity2))
+			if (OTEE.Entity1 == p_catController->GetMainCatID() && p_catController->IsCat(OTEE.Entity2) && p_catController->IsCatCaged(OTEE.Entity2))
 			{
 				// add to followers list
 				scriptData[OTEE.Entity1].followers.emplace_back(OTEE.Entity2);
 				p_catData = GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity2);
+
 				// set cat position to the end of the chain
 				CatHelperFunctions::PositionEntity(OTEE.Entity2, scriptData[OTEE.Entity1].nextPosition.back());
 			}
-			else if (OTEE.Entity2 == p_catController->GetMainCatID() && p_catController->IsCatCaged(OTEE.Entity1))
+			else if (OTEE.Entity2 == p_catController->GetMainCatID() && p_catController->IsCat(OTEE.Entity1) && p_catController->IsCatCaged(OTEE.Entity1))
 			{
 				// add to followers list
 				scriptData[OTEE.Entity2].followers.emplace_back(OTEE.Entity1);
 				p_catData = GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity1);
+
 				// set cat position to the end of the chain
 				CatHelperFunctions::PositionEntity(OTEE.Entity1, scriptData[OTEE.Entity2].nextPosition.back());
 			}
