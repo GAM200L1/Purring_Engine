@@ -431,6 +431,8 @@ namespace PE
 		std::string m_level3SceneName{ "Level3Scene.scene" };
 		std::string m_level4SceneName{ "Level4Scene.scene" };
 		std::string m_leveltoLoad{ "Level1Scene.scene" };
+		bool m_nextTurnOnce = false;
+
 
 		//Texture Keys
 		std::string m_currentLevelBackground;
@@ -470,6 +472,9 @@ namespace PE
 		float m_phaseBannerExit{m_phaseBannerTransitionTimer};
 		float m_phaseBannerStay{};
 		bool m_isPhaseBannerTransition{true};
+
+		float prevVolume;
+
 	};
 }
 

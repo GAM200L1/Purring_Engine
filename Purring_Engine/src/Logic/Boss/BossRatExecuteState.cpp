@@ -27,17 +27,16 @@ namespace PE
 		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
+		if (p_data->p_currentAttack)
 		p_data->p_currentAttack->EnterAttack(id);
 	}
 
 
 	void BossRatExecuteState::StateUpdate(EntityID id, float deltaTime)
 	{
-
+		if (p_data->p_currentAttack)
 		p_data->p_currentAttack->UpdateAttack(id,deltaTime);
 
-		// Can conduct state checks and call for state changes here
-				// Can conduct state checks and call for state changes here
 		if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 		{
 			p_data->p_stateManager->ChangeState(new BossRatPlanningState(), id);
@@ -47,6 +46,7 @@ namespace PE
 
 	void BossRatExecuteState::StateExit(EntityID id)
 	{
+		if (p_data->p_currentAttack)
 		p_data->p_currentAttack->ExitAttack(id);
 	}
 

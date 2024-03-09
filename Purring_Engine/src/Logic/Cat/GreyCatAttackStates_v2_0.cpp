@@ -35,6 +35,8 @@ namespace PE
 		SerializationManager serializationManager;
 		projectileID = serializationManager.LoadFromFile("Projectile.prefab");
 		CatHelperFunctions::ToggleEntity(projectileID, false);
+		/*EntityManager::GetInstance().Get<EntityDescriptor>(projectileID).layer = 0;
+		EntityManager::GetInstance().Get<Collider>(projectileID).collisionLayerIndex = 0;*/
 
 		if (isMainCat)
 			EntityManager::GetInstance().Get<Collider>(projectileID).isTrigger = true;

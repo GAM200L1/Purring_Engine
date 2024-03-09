@@ -1,0 +1,53 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "AnimationComponent": {
+                            "AnimationIDs": [
+                                "../Assets/Animation/RatKingSlamAttack.anim"
+                            ],
+                            "CurrentAnimationID": "../Assets/Animation/RatKingSlamAttack.anim"
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 93,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "BossRatSlamAttackAnimation",
+                            "parent": null,
+                            "sceneID": 35
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": ""
+                        },
+                        "Transform": {
+                            "height": 512.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 257.9999084472656,
+                                "y": 34.999961853027344
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 512.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

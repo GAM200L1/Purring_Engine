@@ -29,6 +29,10 @@ namespace PE
 		REGISTER_UI_FUNCTION(PlayGameMM, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(QuitGameMM, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(ReturnFromMMAYS, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMCloseHTP, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMOpenHTP, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMHTPPage1, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMHTPPage2, PE::MainMenuController);
 	}
 
 	void MainMenuController::Init(EntityID id)
@@ -285,6 +289,67 @@ namespace PE
 		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].AreYouSureCanvas);
 		PlayClickAudio();
 	}
+
+	void MainMenuController::MMCloseHTP(EntityID)
+	{
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas);
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMOpenHTP(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageTwo);
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+		}
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMHTPPage2(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageTwo);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageOne);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+			}
+			else if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg2")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+		}
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMHTPPage1(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageOne);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageTwo);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+			else if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg2")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+			}
+		}
+		PlayClickAudio();
+	}
+
 
 	void MainMenuController::PlayClickAudio()
 	{
