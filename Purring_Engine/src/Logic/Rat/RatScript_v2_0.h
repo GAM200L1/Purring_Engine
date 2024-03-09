@@ -31,7 +31,7 @@ namespace PE
 		GUTTER,
 		BRAWLER,
 		SNIPER,
-		HERALD
+		RAT_TYPE_COUNT // Use this to get the number of rat types
 	};
 
 	enum class EnumRatAnimations : char
@@ -119,6 +119,20 @@ namespace PE
 		State* p_queuedState{ nullptr }; // State to load
 
 	public:
+
+		/*!***********************************************************************************
+		\brief Helper function to get the name of the rat based on its type.
+
+		\param ratType - Rat type to get the name of.
+		*************************************************************************************/
+		static std::string GetRatName(EnumRatType ratType);
+
+		/*!***********************************************************************************
+		\brief Helper function to get the name of the rat based on its type.
+
+		\param ratTypeIndex - Index of rat type to get the name of.
+		*************************************************************************************/
+		static std::string GetRatName(char ratTypeIndex);
 
 		/*!***********************************************************************************
 		\brief Setter for the pointer to the state the rat should be set to. 

@@ -39,6 +39,23 @@ namespace PE
 
 		// ---------- FUNCTION DEFINITIONS ---------- //
 
+		std::string RatScript_v2_0_Data::GetRatName(EnumRatType ratType)
+		{
+				switch (ratType)
+				{
+				case EnumRatType::GUTTER_V1:
+				case EnumRatType::GUTTER: { return std::string{ "Gutter Rat" }; }
+				case EnumRatType::BRAWLER: { return std::string{ "Brawler Rat" }; }
+				case EnumRatType::SNIPER: { return std::string{ "Sniper Rat" }; }
+				default: { return std::string{ "Rat" }; }
+				}
+		}
+
+		std::string RatScript_v2_0_Data::GetRatName(char ratTypeIndex)
+		{
+				return GetRatName(static_cast<EnumRatType>(ratTypeIndex));
+		}
+
 		void RatScript_v2_0::Init(EntityID id)
 		{
 			gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);

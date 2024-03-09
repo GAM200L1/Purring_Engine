@@ -3531,53 +3531,46 @@ namespace PE {
 
 								if (it != p_Script->GetScriptData().end())
 								{
-									if (ImGui::CollapsingHeader("Rat Settings", ImGuiTreeNodeFlags_DefaultOpen))
+									if (ImGui::CollapsingHeader("RatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
-									}
-
-									if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-									{
-										if (it->second.patrolPoints.empty())
+										// --- Set the rat type
+										ImGui::Text("Rat Type"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f);
+										if (ImGui::BeginCombo("##ratType", RatScript_v2_0_Data::GetRatName(it->second.ratType).c_str())) // The second param is the value previewed before the user clicks on it
 										{
-											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
-											it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
+											char maxValue{ static_cast<char>(EnumRatType::RAT_TYPE_COUNT) };
+											bool selected{ false };
+											for (char i{ 1 }; i < maxValue; ++i)
+											{
+												if (ImGui::Selectable(RatScript_v2_0_Data::GetRatName(i).c_str(), &selected))
+												{
+													it->second.ratType = static_cast<EnumRatType>(i);
+												}
+											}
+											ImGui::EndCombo();
 										}
+										ImGui::Separator();
 
-										for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
-										{
-											ImGui::PushID(static_cast<int>(i)); // Use i as the ID
-											ImGui::Text("Point %zu:", i + 1); // Display point number
-											ImGui::SameLine();
-											float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
-											ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
-											it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
-											ImGui::PopID();
-										}
 
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+										// --- Start of rat variables
+										ImGui::Text("Movement speed:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratSpeed", &(it->second.movementSpeed));
+										ImGui::Text("Movement range:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratRange", &(it->second.maxMovementRange));
+										ImGui::Text("Maximum health:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputInt("##ratHealth", &(it->second.ratMaxHealth));
+										ImGui::Text("Detection radius:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratDetect", &(it->second.detectionRadius));
+										ImGui::Text("Max hunting turns:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputInt("##ratHunt", &(it->second.maxHuntTurns));
+										// --- End of rat variables
 
-										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
-										if (ImGui::Button("Add Patrol Point"))
-										{
-											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
-										}
-										ImGui::PopStyleColor(1); // Pop button color style
 
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+										// --- Rat animation states
 
-										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
-										if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
-										{
-											it->second.patrolPoints.pop_back();
-										}
-										ImGui::PopStyleColor(1); // Pop button color style
-									}
-									ImGui::Separator();
-									int num{};
-									ImGui::Text("Add Animation state"); ImGui::SameLine();
-									bool worked{ false };
-									if (ImGui::Button("+"))
+										int num{};
+										ImGui::Text("Add Animation state"); ImGui::SameLine();
+										bool worked{ false };
+										if (ImGui::Button("+"))
 									{
 										std::string str = "NewState";
 										while (!worked)
@@ -3593,9 +3586,9 @@ namespace PE {
 											}
 										}
 									}
-									static std::pair<std::string, std::string> whoToRemove;
-									static bool rmFlag{ false };
-									for (auto& [k, v] : it->second.animationStates)
+										static std::pair<std::string, std::string> whoToRemove;
+										static bool rmFlag{ false };
+										for (auto& [k, v] : it->second.animationStates)
 									{
 										ImGui::Text("State: "); ImGui::SameLine();
 										std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
@@ -3638,17 +3631,68 @@ namespace PE {
 										}
 										ImGui::Separator();
 									}
-									if (rmFlag)
+										if (rmFlag)
 									{
 										it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
 										it->second.animationStates.erase(whoToRemove.first);
 										whoToRemove.first = "";
 										whoToRemove.second = "";
 										rmFlag = false;
+									}								
+
+										// --- End of rat animation states
+
+
+										// --- Rat Patrolling Settings
+										//ImGui::Text("Rat Patrolling Settings");
+										//ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
+										//ImGui::Separator();
+
+										// Dynamic list for adding patrol point positions
+										//if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+										//{
+										//	if (it->second.patrolPoints.empty())
+										//	{
+										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
+										//		it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
+										//	}
+
+										//	for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
+										//	{
+										//		ImGui::PushID(static_cast<int>(i)); // Use i as the ID
+										//		ImGui::Text("Point %zu:", i + 1); // Display point number
+										//		ImGui::SameLine();
+										//		float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
+										//		ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
+										//		it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
+										//		ImGui::PopID();
+										//	}
+
+										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
+										//	if (ImGui::Button("Add Patrol Point"))
+										//	{
+										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
+										//	}
+										//	ImGui::PopStyleColor(1); // Pop button color style
+
+										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
+										//	if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
+										//	{
+										//		it->second.patrolPoints.pop_back();
+										//	}
+										//	ImGui::PopStyleColor(1); // Pop button color style
+										//}
+										//ImGui::Separator();
+
 									}
-								
-								}
-							}
+
+								} // end of if (ImGui::CollapsingHeader("RatScript_v2_0...
+
+							} // end of if(key == "RatScript_v2_0")
 
 							if (key == "CatScript_v2_0")
 							{
