@@ -81,6 +81,7 @@ namespace PE
 		std::map<EntityID, BossRatScriptData> m_scriptData;
 		EntityID currentBoss{};
 		int currentSlamTurnCounter{};
+		std::map<EntityID,int> poisonPuddles;
 
 		BossRatAttacks BossRatAttackSets[3][3]
 		{

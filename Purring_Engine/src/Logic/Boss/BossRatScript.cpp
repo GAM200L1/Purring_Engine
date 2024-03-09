@@ -82,6 +82,8 @@ namespace PE
 			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionEnterEventKey)
 			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionStayEventKey)
 		}
+
+		poisonPuddles.clear();
 	}
 
 

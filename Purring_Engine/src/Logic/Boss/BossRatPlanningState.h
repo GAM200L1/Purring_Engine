@@ -62,6 +62,7 @@ namespace PE
 		*************************************************************************************/
 		void DecideAttack();
 
+		void PoisonPuddleUpdate();
 	private:
 		BossRatScriptData* p_data; // pointer to script instance data
 		BossRatScript* p_script; // pointer to script

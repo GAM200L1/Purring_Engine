@@ -30,11 +30,6 @@
                             },
                             "TextureKey": "../Assets/Textures/Animations/RatKing_Attack_Puddle.png"
                         },
-                        "ScriptComponent": {
-                            "PoisonPuddle": {
-                                "state": 0
-                            }
-                        },
                         "Transform": {
                             "height": 128.0,
                             "orientation": 0.0,

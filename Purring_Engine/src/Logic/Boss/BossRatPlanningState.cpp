@@ -33,6 +33,7 @@ namespace PE
 		p_script->FindAllObstacles();
 		if(p_data->p_currentAttack)
 		p_data->p_currentAttack->DrawTelegraphs(id);
+		PoisonPuddleUpdate();
 	}
 
 
@@ -84,6 +85,27 @@ namespace PE
 		}
 
 		p_data->currentAttackInSet++;
+	}
+
+	void BossRatPlanningState::PoisonPuddleUpdate()
+	{
+		for (auto& [id, timer] : p_script->poisonPuddles)
+		{
+			--timer;
+		}
+
+		for (auto it = p_script->poisonPuddles.cbegin(); it != p_script->poisonPuddles.cend() /* not hoisted */; /* no increment */)
+		{
+			if (it->second <= 0)
+			{
+				EntityManager::GetInstance().RemoveEntity(it->first);
+				p_script->poisonPuddles.erase(it++);    // or "it = m.erase(it)" since C++11
+			}
+			else
+			{
+				++it;
+			}
+		}
 	}
 
 } // End of namespace PE

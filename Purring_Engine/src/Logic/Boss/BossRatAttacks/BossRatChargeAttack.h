@@ -69,6 +69,7 @@ namespace PE
 		 \brief virtual destructor for the boss rat charge attack
 		*************************************************************************************/
 		virtual ~BossRatChargeAttack();
+
 	private:
 		//need to take a snapshot of the current player positions here
 		//actually no, only need the furtest cat
@@ -86,6 +87,6 @@ namespace PE
 		bool m_isCharging{};
 		float m_activationTime{};
 		float m_chargeEndDelay{1.f};
-		float distanceTravelled{};
+		float m_distanceTravelled{};
 	};
 }
