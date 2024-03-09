@@ -101,7 +101,7 @@ namespace PE {
 		*************************************************************************************/
 		int AddListener(T type, const Func& func)
 		{
-			m_Listerners[type].push_back(func);
+			m_Listerners[type].push_back(std::make_pair(m_NextListenerID,func));
 			int handle = m_NextListenerID++;
 			m_ListenerHandles[handle] = { type, *(long*)(char*)&(func) };
 			return handle;
@@ -119,9 +119,9 @@ namespace PE {
 				const auto& listenerInfo = it->second;
 				auto& listeners = m_Listerners[listenerInfo.first];
 				//trying to erase a specific element in a vector by iterator
-				listeners.erase(std::remove_if(listeners.begin(), listeners.end(), [=](auto& fc)
+				listeners.erase(std::remove_if(listeners.begin(), listeners.end(), [=](auto& pr)
 					{
-						return (*(long*)(char*)&fc == listenerInfo.second);
+						return (pr.first == handle && *(long*)(char*)&(pr.second) == listenerInfo.second);
 					}
 				), listeners.end());
 				m_ListenerHandles.erase(it);
@@ -143,13 +143,13 @@ namespace PE {
 			//loop through all listerners if the event is not handled we process it.
 			for (auto& listener : m_Listerners.at(event.GetType()))
 			{
-				if(listener)
-				if (!event.Handled()) listener(event);
+				if(listener.second)
+				if (!event.Handled()) listener.second(event);
 			}
 		}
 		// ----- Private variables ----- // 
 	private:
-		std::map<T, std::vector<Func>> m_Listerners; // subscribed events
+		std::map<T, std::vector<std::pair<int,Func>>> m_Listerners; // subscribed events
 		int m_NextListenerID = 0;
 		std::map<int, std::pair<T, long int>> m_ListenerHandles;
 	};
