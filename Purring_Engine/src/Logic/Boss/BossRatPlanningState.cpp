@@ -58,8 +58,6 @@ namespace PE
 		if (p_script->currentSlamTurnCounter > 0 && p_data->p_currentAttack)
 			return;
 
-		// Decides which attack to use
-		//will add the other attacks later, fixed on bash for now
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
 

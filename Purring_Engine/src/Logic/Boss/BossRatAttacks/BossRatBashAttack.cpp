@@ -41,16 +41,12 @@ namespace PE
 		if (EntityManager::GetInstance().Has<Transform>(id))
 			BossTransform = EntityManager::GetInstance().Get<Transform>(id);
 
-		//Direction of Boss to Furthest Cat
+		//Direction of Boss to Closest Cat
 		vec2 direction = closestCatTransform.position - BossTransform.position;
 		vec2 unitDirection = direction.GetNormalized();
 
 		SerializationManager sm;
 
-
-		//to be put into a while loop, while not hitting obstacle
-		//Draw Telegraphs
-		
 		//atleast 1
 		EntityID telegraph = sm.LoadFromFile(m_telegraphPrefab);
 		m_telegraphPoitions.push_back(telegraph);
@@ -171,14 +167,8 @@ namespace PE
 	}
 	void BossRatBashAttack::ExitAttack(EntityID)
 	{
-		//std::vector<EntityID> childs;
 		for (auto& id : m_telegraphPoitions)
 		{
-			std::cout << "deleting telegraph" << std::endl;
-			//for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
-			//{
-			//	childs.push_back(ie);
-			//}
 			EntityManager::GetInstance().RemoveEntity(id);
 		}
 		for (auto& iz : m_attackAnimations)

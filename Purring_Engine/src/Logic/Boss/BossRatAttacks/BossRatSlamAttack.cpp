@@ -101,7 +101,6 @@ namespace PE
 				}
 			}
 		}
-		//std::cout << "Boss Position: " << EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.x << " " << EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.y << std::endl;
 	}
 
 	void BossRatSlamAttack::ExitAttack(EntityID)
@@ -246,7 +245,6 @@ namespace PE
 			{
 				slamTransform->height -= m_slamShrinkSpeed * dt;
 				slamTransform->width = slamTransform->height;
-				//slamTransform->orientation -= dt;
 			}
 			else
 			{
@@ -317,16 +315,6 @@ namespace PE
 
 	void BossRatSlamAttack::DisableAnimation(EntityID)
 	{
-		//if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->leftSideSlamAnimation))
-		//{
-		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).StopAnimation();
-		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).ResetAnimation();
-		//}
-		//if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->rightSideSlamAnimation))
-		//{
-		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).StopAnimation();
-		//	EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).ResetAnimation();
-		//}
 
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->leftSideSlamAnimation))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->leftSideSlamAnimation).isActive = false;

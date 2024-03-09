@@ -54,7 +54,7 @@ namespace PE
 
 		if (m_scriptData[id].currenthealth <= 0)
 		{
-			//do something
+			//do something, call end cutscene most likely and end bgm here
 		}
 
 		CreateCheckStateManager(id);
@@ -145,8 +145,6 @@ namespace PE
 
 		}
 
-		//std::cout << "Furthest Cat: " << EntityManager::GetInstance().Get<EntityDescriptor>(FurthestCat).name << "\n";
-
 		return FurthestCat;
 	}
 
@@ -167,9 +165,6 @@ namespace PE
 			}
 
 		}
-
-		//std::cout << "Closest Cat: " << EntityManager::GetInstance().Get<EntityDescriptor>(ClosestCat).name << "\n";
-
 		return ClosestCat;
 	}
 	std::vector<EntityID> BossRatScript::GetAllObstacles()
