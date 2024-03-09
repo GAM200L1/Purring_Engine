@@ -46,6 +46,8 @@ namespace PE
 		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovement_v2_0PLAN::OnPathCollision, this);
 
+		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
+
 		if (p_data->catType == EnumCatType::MAINCAT)
 		{
 			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
@@ -117,8 +119,6 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::CleanUp()
 	{
-		// Return if this cat is not the main cat
-		//if (!p_data->isMainCat) { return; }
 		REMOVE_MOUSE_EVENT_LISTENER(m_clickEventListener);
 		REMOVE_MOUSE_EVENT_LISTENER(m_releaseEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
@@ -129,7 +129,6 @@ namespace PE
 		EndPathDrawing(id);
 		// set follow cats to their previous positions
 		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
-		
 	}
 
 
@@ -245,20 +244,20 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::ResetDrawnPath()
 	{
+		// reset follower cats positions
 		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
 
+		// reset main cat position
 		CatHelperFunctions::PositionEntity(p_data->catID, p_data->resetPosition);
 	
 		// reset to max energy
 		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
 		m_mouseClickPrevious = false;
 		
-
 		// Clear all the path data
 		if (!p_data->pathPositions.empty())
 		{
 			CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions.front());
-			//follow_data->prevPosition = p_data->pathPositions.front();
 		}
 		p_data->pathPositions.clear();
 
@@ -270,23 +269,13 @@ namespace PE
 		}
 
 		// Add the player's starting position as a node
-		try
-		{
-			Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(p_data->catID) };
-			p_data->pathPositions.emplace_back(r_transform.position);
-		}
-		catch (...)
-		{
-			p_data->pathPositions.emplace_back(vec2{ 0.f, 0.f });
-			return;
-		}
+		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
 	}
 
 	bool CatMovement_v2_0PLAN::CheckInvalid()
 	{
 		return m_invalidPath;
 	}
-
 
 	void CatMovement_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
@@ -348,12 +337,11 @@ namespace PE
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		/*if (p_data->catType != EnumCatType::MAINCAT && CatHelperFunctions::IsFirstLevel())
-		{ return; }*/// if cat is following cat in the chain )
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
 		// Check if pause state 
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) { return; } // if cat is following cat in the chain
 
 		// Check if the player is still moving
 		if (!m_doneMoving)
@@ -424,15 +412,16 @@ namespace PE
 			{
 				//auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
 				// triggers state change for cats in the chain to sync animations
+				GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
 				for (EntityID followersID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
 				{
-					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(followersID);
+					//GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(followersID);
 					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(followersID, 0.5f);
 				}
 				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
 			}
-			// for other levels where cats move independently
-			else if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id))
+			// for non-main cats that move independently
+			else
 			{
 				// Wait a second before changing state
 				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
@@ -449,7 +438,6 @@ namespace PE
 	{
 		StopMoving(id);
 		p_data->pathPositions.clear();
-		//EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
 	}
 
 	void CatMovement_v2_0EXECUTE::StopMoving(EntityID id)

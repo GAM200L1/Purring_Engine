@@ -52,14 +52,14 @@ namespace PE
 			return;
 		}
 		
-		vec2 newPosition = CatHelperFunctions::GetEntityPosition(id);
+		vec2 const& currPos = CatHelperFunctions::GetEntityPosition(id);
 		
-		if (!(newPosition.x == scriptData[id].prevPosition.x && newPosition.y == scriptData[id].prevPosition.y))
+		if (!(currPos.x == scriptData[id].prevPosition.x && currPos.y == scriptData[id].prevPosition.y))
 		{
 			scriptData[id].nextPosition.clear();
 
 			// adds the current position of the main cat
-			scriptData[id].nextPosition.emplace_back(newPosition);
+			scriptData[id].nextPosition.emplace_back(currPos);
 
 			// adds the current positions of the following cats
 			for (EntityID followerID : scriptData[id].followers)
@@ -75,20 +75,23 @@ namespace PE
 
 				float newRotation = atan2(directionalvector.y, directionalvector.x);
 
-				//saving current position as 
-				//savedLocation = scriptData[id].NextPosition[index];
-				EntityManager::GetInstance().Get<Transform>(follower).position = scriptData[id].nextPosition[index - 1] +vec2{ scriptData[id].Size * cosf(newRotation - static_cast<float>(M_PI)), scriptData[id].Size * sinf(newRotation - static_cast<float>(M_PI)) };
+				float followerScale = CatHelperFunctions::GetEntityScale(follower).x * scriptData[id].distanceScale;
+
+				// set position of this follower
+				EntityManager::GetInstance().Get<Transform>(follower).position = scriptData[id].nextPosition[index - 1]
+					+ vec2{ followerScale * cosf(newRotation - static_cast<float>(M_PI)), followerScale * sinf(newRotation - static_cast<float>(M_PI)) };
+
+				//// Ensure the cat is facing the direction of their movement
+				//vec2 newScale{ CatHelperFunctions::GetEntityScale(follower) };
+				//newScale.x = std::abs(newScale.x) * ((directionalvector.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the cat is facing left
+				//CatHelperFunctions::ScaleEntity(follower, newScale.x, newScale.y);
 
 				++index;
-				
-				//checking rotation to set can ignore this for now lets get position to work
-				if (scriptData[id].LookTowardsMovement)
-					EntityManager::GetInstance().Get<Transform>(follower).orientation = newRotation;
-				else
-					EntityManager::GetInstance().Get<Transform>(follower).width = EntityManager::GetInstance().Get<Transform>(id).width;
 			}
 		}
-		scriptData[id].prevPosition = newPosition;
+		
+		// save the previous position of the main cat
+		scriptData[id].prevPosition = currPos;
 	}
 
 	void FollowScript_v2_0::Destroy(EntityID id)
@@ -115,6 +118,7 @@ namespace PE
 		scriptData[id].cacheFollowerPosition.clear();
 		for (EntityID followerID : scriptData[id].followers)
 		{
+			// save position of follower cats
 			scriptData[id].cacheFollowerPosition.emplace_back(CatHelperFunctions::GetEntityPosition(followerID));
 		}
 	}

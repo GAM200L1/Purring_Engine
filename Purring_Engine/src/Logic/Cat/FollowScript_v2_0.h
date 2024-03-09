@@ -23,25 +23,19 @@
 
 namespace PE
 {
-	constexpr size_t MAXFOLLOWERS = 4;
 	struct FollowScriptData_v2_0 
 	{
-		int Size{ 64 }; // fixed size of each object
-		float Rotation{};
+		// scaling value, multiplied with object scale to decide how far from main cat it should be
+		float distanceScale{ 0.75f };
+		// previous position of main cat
 		vec2 prevPosition;
+		// vector of positions to set for each cat
 		std::vector<vec2> nextPosition;
-
-		//look towards movement
-		bool LookTowardsMovement{ false };
 
 		// new followers stack
 		std::vector<EntityID> followers;
-		
 		// saves the follower position for undoing etc.
 		std::vector<vec2> cacheFollowerPosition;
-
-		//sound
-		EntityID SoundID{};
 	};
 
 
@@ -114,8 +108,9 @@ namespace PE
 		void CollisionCheck(const Event<CollisionEvents>& r_event);
 		
 	private:
+		// data
 		GameStateController_v2_0* p_gamestateController;
-		
+
 		// Event keys
 		int m_collisionEventListener{};
 	};

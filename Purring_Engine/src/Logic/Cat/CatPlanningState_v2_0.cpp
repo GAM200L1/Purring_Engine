@@ -28,13 +28,11 @@ namespace PE
 {
 	void Cat_v2_0PLAN::StateEnter(EntityID id)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
+
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		
 		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
-
-		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
-
-		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) { return; } // if cat is following cat in the chain )
 
 		// initializes the cat movement planning sub state
 		p_catMovement->Enter(id);
@@ -47,9 +45,9 @@ namespace PE
 	}
 
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
-	{
-		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) { return; } // if cat is following cat in the chain )
-		
+	{	
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
+
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 
