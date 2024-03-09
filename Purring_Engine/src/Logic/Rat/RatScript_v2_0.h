@@ -455,12 +455,28 @@ namespace PE
 
 		// --- OBJECT CREATION --- //
 
+		/*!***********************************************************************************
+		 \brief Load the detection radius collider prefab and return its EntityID.
+
+		 \param[in] r_data - Reference to this rat's data.
+
+		 \return EntityID - ID of created entity.
+		*************************************************************************************/
 		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
 
-		EntityID CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data);
+		/*!***********************************************************************************
+		 \brief Load the movement telegraph prefab and store it in the rat data.
 
+		 \param[in, out] r_data - Reference to this rat's data.
+		*************************************************************************************/
 		void CreateRatPathTelegraph(RatScript_v2_0_Data& r_data);
 
-		void CreateRatAttackTelegraph(RatScript_v2_0_Data& r_data);
+		/*!***********************************************************************************
+		 \brief Create an instance of the appropriate attack object for the rat according 
+					to its type and store it in the rat data.
+
+		 \param[in, out] r_data - Reference to this rat's data. 
+		*************************************************************************************/
+		void InstantiateRatAttack(RatScript_v2_0_Data& r_data);
 	}; // end of class 
 }

@@ -30,6 +30,9 @@
 #include "../Rat/RatAttack_v2_0.h"
 #include "../Rat/RatDeathState_v2_0.h"
 
+#include "GutterRatAttack_v2_0.h"
+#include "SniperRatAttack_v2_0.h"
+
 #include "../Cat/CatController_v2_0.h"
 
 //#define DEBUG_PRINT
@@ -75,7 +78,9 @@ namespace PE
 			// Create a detection radius and configure
 			it->second.detectionRadiusId = CreateDetectionRadius(it->second);
 			CreateRatPathTelegraph(it->second);
-			CreateRatAttackTelegraph(it->second);
+
+			// Create the corresponding attack data object
+			InstantiateRatAttack(it->second);
 
 			// Store the position to return to
 			it->second.originalPosition = GetEntityPosition(id);
@@ -152,6 +157,7 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
+					delete it->second.attackData;
 					m_scriptData.erase(id);
 			}
 		}
@@ -405,10 +411,13 @@ namespace PE
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 
+				// Disable all telegraphs and invisible objects
 				ToggleEntity(it->second.detectionRadiusId, false);
 				ToggleEntity(it->second.pivotEntityID, false);
 				ToggleEntity(it->second.telegraphArrowEntityID, false);
-				ToggleEntity(it->second.attackTelegraphEntityID, false);
+
+				// Disable attack objects
+				if (it->second.attackData) { it->second.attackData->DisableAttackObjects(); }
 		}
 
 
@@ -875,23 +884,23 @@ namespace PE
 				
 				PositionEntityRelative(r_data.telegraphArrowEntityID, vec2{ ratScale.x * 0.7f, 0.f });
 		}
-		
 
-		void RatScript_v2_0::CreateRatAttackTelegraph(RatScript_v2_0_Data& r_data)
+
+		void RatScript_v2_0::InstantiateRatAttack(RatScript_v2_0_Data& r_data)
 		{
-				SerializationManager serializationManager;
-
-				// create cross attack telegraph
-				r_data.attackTelegraphEntityID = serializationManager.LoadFromFile("GutterRatAttackTelegraph.prefab");
-
-				//Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.attackTelegraphEntityID);
-				// The attack needs to render under the rat, and childing the attack to the rat  
-				// will cause it to adopt the render layer of the rat
-
-				ToggleEntity(r_data.attackTelegraphEntityID, false); // set to inactive, it will only show during planning phase if the cat is in the area
-				ScaleEntity(r_data.attackTelegraphEntityID, r_data.attackRadius, r_data.attackRadius);
-				PositionEntity(r_data.attackTelegraphEntityID, vec2{0.f, 0.f});
-				PositionEntityRelative(r_data.attackTelegraphEntityID, vec2{0.f, 0.f});
+				switch (r_data.ratType) 
+				{
+				case EnumRatType::SNIPER:
+				{
+						r_data.attackData = new SniperRatAttack_v2_0{ r_data.myID };
+						break;
+				}
+				default:
+				{
+						r_data.attackData = new GutterRatAttack_v2_0{ r_data.myID };
+						break;
+				}
+				}
 		}
 
 } // End of namespace PE

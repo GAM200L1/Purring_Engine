@@ -39,6 +39,11 @@ namespace PE
 		DEATH
 	};
 
+
+	// Forward declaration of attack base class
+	struct AttackDataBase_v2_0;
+
+
 	struct RatScript_v2_0_Data
 	{
 		~RatScript_v2_0_Data()
@@ -52,11 +57,11 @@ namespace PE
 		EntityID detectionRadiusId{};
 		EntityID pivotEntityID{ 0 };					// id of parent obj to rotate to adjust the orientation of the telegraphs
 		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
-		EntityID attackTelegraphEntityID{ 0 };			// id of cross attack telegraph
 		StateMachine* p_stateManager;
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 		EnumRatType ratType{ EnumRatType::GUTTER };
+		AttackDataBase_v2_0* attackData{ nullptr };
 
 		// animation
 		AnimationComponent* p_ratAnimationComponent = nullptr;
@@ -73,7 +78,6 @@ namespace PE
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
 
 		// Attack variables
-		float attackRadius{ 101.f };
 		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack
 		bool hitCat{ false };							// a check for whether the rat has hit the player once in the entire execution sequence
 
@@ -153,5 +157,68 @@ namespace PE
 		}
 
 	}; // end of struct RatScript_v2_0_Data
+
+
+	struct AttackDataBase_v2_0
+	{
+		// ----- Public variables ----- // 
+
+		EntityID mainID{}; // ID of the rat these attacks belong to
+
+		// ----- Constructors ----- // 
+
+		/*!***********************************************************************************
+		\brief Constructs the base attack object.
+
+		\param _mainID - ID of the rat that this attack belongs to.
+		*************************************************************************************/
+		AttackDataBase_v2_0(EntityID _mainID) : mainID{ _mainID } { /* Empty by design */ }
+
+		/*!***********************************************************************************
+		\brief Destructor.
+		*************************************************************************************/
+		virtual ~AttackDataBase_v2_0() { /* Empty by design */ }
+
+		// ----- Public methods ----- // 
+
+		/*!***********************************************************************************
+		\brief Initializes the attack (e.g. position objects at the start position etc.).
+					Does nothing by default.
+		*************************************************************************************/
+		virtual void InitAttack() {}
+
+		/*!***********************************************************************************
+		\brief Executes the attack. Called once every frame during update.
+					Returns true when the attack is done executing.
+
+		\param deltaTime - Time in seconds since the last frame.
+
+		\return Returns true when the attack is done executing, false otherwise.
+		*************************************************************************************/
+		virtual bool ExecuteAttack(float deltaTime) = 0;
+
+		/*!***********************************************************************************
+		\brief Spawns the objects required for this attack.
+		*************************************************************************************/
+		virtual void CreateAttackObjects() = 0;
+
+		/*!***********************************************************************************
+		\brief Disable all the attack objects. Called when the attack state ends and
+					when the rat dies.
+		*************************************************************************************/
+		virtual void DisableAttackObjects() = 0;
+
+		/*!***********************************************************************************
+		\brief Checks if the collision involved the attack objects and relevant entities and
+				handles it (e.g. calls the "LoseHealth" function on the victim entity).
+
+		\param entity1 - One of the entities involved in the collision event.
+		\param entity2 - One of the entities involved in the collision event.
+
+		\return Returns true if the collision involved the attack object and/or the rat and a cat,
+				false otherwise.
+		*************************************************************************************/
+		virtual bool OnCollisionEnter(EntityID entity1, EntityID entity2) = 0;
+	}; // end of struct AttackDataBase_v2_0
 
 } // end of namespace PE

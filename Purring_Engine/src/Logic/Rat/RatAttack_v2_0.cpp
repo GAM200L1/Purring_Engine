@@ -40,15 +40,14 @@ namespace PE
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
 
+        // Reset variables
         m_delay = 0.1f;
         p_data->attacking = true;  // Set the attacking flag to true
-        attackFeedbackOnce = false;
+        m_attackFeedbackOnce = false;
         m_attackDuration = 0; // will be set later when the attack animation plays
-
-        // Position the attack telegraph
-        RatScript_v2_0::PositionEntity(p_data->attackTelegraphEntityID, RatScript_v2_0::GetEntityPosition(p_data->myID));
-
         p_data->attackedCats.clear();
+
+        if (p_data->attackData) { p_data->attackData->InitAttack(); }
     }
 
     void RatAttack_v2_0::StateUpdate(EntityID id, float deltaTime)
@@ -68,27 +67,8 @@ namespace PE
             }
             else if (p_data->attacking)
             {
-#ifdef DEBUG_PRINT
-                //std::cout << "RatAttack_v2_0::StateUpdate(" << id << "): p_data->attacking true" << std::endl;
-#endif // DEBUG_PRINT
-                RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, true);
-                m_attackDuration -= deltaTime;
-
-                if (!attackFeedbackOnce)
+                if (p_data->attackData && p_data->attackData->ExecuteAttack(deltaTime))
                 {
-                    attackFeedbackOnce = true;
-                    RatScript_v2_0::PlayAttackAudio();
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(p_data->myID, EnumRatAnimations::ATTACK);
-                    m_attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(p_data->myID);
-                }
-                else if (m_attackDuration <= 0.f)
-                {
-#ifdef DEBUG_PRINT
-                    std::cout << "RatAttack_v2_0::StateUpdate(" << id << "): animation is done" << std::endl;
-#endif // DEBUG_PRINT
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(p_data->myID, EnumRatAnimations::IDLE);
-
-                    RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
                     p_data->attacking = false;
                     p_data->finishedExecution = true;
 
@@ -101,6 +81,7 @@ namespace PE
 
     void RatAttack_v2_0::StateCleanUp()
     {
+        if (p_data->attackData) { p_data->attackData->DisableAttackObjects(); }
         p_data->hitCat = false;
         p_data = nullptr;
         gameStateController = nullptr;
@@ -216,21 +197,9 @@ namespace PE
             {
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
             }
-            else if (p_data->attacking) // Currently attacking 
+            else if (p_data->attacking && p_data->attackData) // Currently attacking 
             {
-                // check if entity1 is rat or rat's attack and entity2 is cat
-                if ((OTEE.Entity1 == p_data->myID || OTEE.Entity1 == p_data->attackTelegraphEntityID) &&
-                    RatScript_v2_0::GetIsNonCagedCat(OTEE.Entity2))
-                {
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTEE.Entity2, p_data->myID);
-                }
-                // check if entity2 is rat or rat's attack and entity1 is cat
-                else if ((OTEE.Entity2 == p_data->myID || OTEE.Entity2 == p_data->attackTelegraphEntityID) &&
-                    RatScript_v2_0::GetIsNonCagedCat(OTEE.Entity1))
-                {
-                    // save the id of the cat that has been checked so that it wont be checked again
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTEE.Entity1, p_data->myID);
-                }
+                p_data->attackData->OnCollisionEnter(OTEE.Entity1, OTEE.Entity2);
             } // end of if (p_data->attacking)
         } // end of if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
     }

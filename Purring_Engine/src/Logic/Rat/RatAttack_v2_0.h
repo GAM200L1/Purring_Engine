@@ -110,8 +110,7 @@ namespace PE
         float m_delay{};
         float m_attackDuration{};
 
-        bool attackFeedbackOnce{};
-        bool telegraphEnabled{ false };
+        bool m_attackFeedbackOnce{};
 
         // Event listener IDs 
         int m_collisionEventListener{}, m_collisionExitEventListener{};
