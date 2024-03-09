@@ -57,7 +57,7 @@ namespace PE
 
              \param[in] clip - The audio clip to play.
             *************************************************************************************/
-            void SetClip(const AudioClip& clip);
+            void SetClip(const AudioClip& r_clip);
 
             /*!***********************************************************************************
              \brief Sets the volume of the audio source.

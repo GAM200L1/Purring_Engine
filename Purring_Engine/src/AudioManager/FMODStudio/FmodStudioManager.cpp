@@ -72,24 +72,24 @@ namespace PE
         //}
 
 
-        FMOD::Studio::Bank* FmodStudioManager::GetBank(const std::string& bankName) const
+        FMOD::Studio::Bank* FmodStudioManager::GetBank(const std::string& r_bankName) const
         {
-            auto it = banks.find(bankName);
+            auto it = banks.find(r_bankName);
             return it != banks.end() ? it->second : nullptr;
         }
 
-        void FmodStudioManager::LoadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
+        void FmodStudioManager::LoadBank(const std::string& r_bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags)
         {
-            if (GetBank(bankName))
+            if (GetBank(r_bankName))
             {
                 return; // Bank already loaded
             }
 
-            FMOD::Studio::Bank* bank;
-            auto result = studioSystem->loadBankFile(bankName.c_str(), flags, &bank);
+            FMOD::Studio::Bank* p_bank;
+            auto result = studioSystem->loadBankFile(r_bankName.c_str(), flags, &p_bank);
             if (result == FMOD_OK)
             {
-                banks[bankName] = bank;
+                banks[r_bankName] = p_bank;
             }
             else
             {
@@ -97,27 +97,27 @@ namespace PE
             }
         }
 
-        void FmodStudioManager::LoadEvent(const std::string& eventName)
+        void FmodStudioManager::LoadEvent(const std::string& r_eventName)
         {
-            if (events.find(eventName) != events.end())
+            if (events.find(r_eventName) != events.end())
                 return; // Event already loaded
 
-            FMOD::Studio::EventDescription* eventDescription = nullptr;
-            FMOD_RESULT result = studioSystem->getEvent(eventName.c_str(), &eventDescription);
-            if (result == FMOD_OK && eventDescription)
+            FMOD::Studio::EventDescription* p_eventDescription = nullptr;
+            FMOD_RESULT result = studioSystem->getEvent(r_eventName.c_str(), &p_eventDescription);
+            if (result == FMOD_OK && p_eventDescription)
             {
-                FMOD::Studio::EventInstance* eventInstance = nullptr;
-                eventDescription->createInstance(&eventInstance);
-                if (eventInstance)
+                FMOD::Studio::EventInstance* p_eventInstance = nullptr;
+                p_eventDescription->createInstance(&p_eventInstance);
+                if (p_eventInstance)
                 {
-                    events[eventName] = eventInstance;
+                    events[r_eventName] = p_eventInstance;
                 }
             }
         }
 
-        void FmodStudioManager::LoadSound(const std::string& soundName, bool is3d, bool isLooping, bool isStream)
+        void FmodStudioManager::LoadSound(const std::string& r_soundName, bool is3d, bool isLooping, bool isStream)
         {
-            if (sounds.find(soundName) != sounds.end())
+            if (sounds.find(r_soundName) != sounds.end())
                 return; // Sound already loaded
 
             FMOD_MODE mode = FMOD_DEFAULT;
@@ -125,17 +125,17 @@ namespace PE
             mode |= isLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
             mode |= isStream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;
 
-            FMOD::Sound* sound = nullptr;
-            FMOD_RESULT result = coreSystem->createSound(soundName.c_str(), mode, nullptr, &sound);
-            if (result == FMOD_OK && sound)
+            FMOD::Sound* p_sound = nullptr;
+            FMOD_RESULT result = coreSystem->createSound(r_soundName.c_str(), mode, nullptr, &p_sound);
+            if (result == FMOD_OK && p_sound)
             {
-                sounds[soundName] = sound;
+                sounds[r_soundName] = p_sound;
             }
         }
 
-        void FmodStudioManager::UnloadSound(const std::string& soundName)
+        void FmodStudioManager::UnloadSound(const std::string& r_soundName)
         {
-            auto it = sounds.find(soundName);
+            auto it = sounds.find(r_soundName);
             if (it != sounds.end())
             {
                 it->second->release();
@@ -143,35 +143,35 @@ namespace PE
             }
         }
 
-        void FmodStudioManager::SetListenerAttributes(int listener, const glm::vec3& pos, const glm::vec3& velocity)
+        void FmodStudioManager::SetListenerAttributes(int listener, const glm::vec3& r_pos, const glm::vec3& velocity)
         {
-            FMOD_3D_ATTRIBUTES attributes = { {pos.x, pos.y, pos.z}, {velocity.x, velocity.y, velocity.z} };
+            FMOD_3D_ATTRIBUTES attributes = { {r_pos.x, r_pos.y, r_pos.z}, {velocity.x, velocity.y, velocity.z} };
             studioSystem->setListenerAttributes(listener, &attributes);
         }
 
-        int FmodStudioManager::PlaySound(const std::string& soundName, const glm::vec3& pos, float volumedB)
+        int FmodStudioManager::PlaySound(const std::string& r_soundName, const glm::vec3& r_pos, float volumedB)
         {
-            auto it = sounds.find(soundName);
+            auto it = sounds.find(r_soundName);
             if (it == sounds.end())
                 return -1; // Sound not found
 
-            FMOD::Channel* channel = nullptr;
-            coreSystem->playSound(it->second, nullptr, true, &channel);
-            if (channel)
+            FMOD::Channel* p_channel = nullptr;
+            coreSystem->playSound(it->second, nullptr, true, &p_channel);
+            if (p_channel)
             {
-                FMOD_VECTOR position = { pos.x, pos.y, pos.z };
-                channel->set3DAttributes(&position, nullptr);
-                channel->setVolume(dBToVolume(volumedB));
-                channel->setPaused(false);
-                channels[nextChannelId] = channel;
+                FMOD_VECTOR position = { r_pos.x, r_pos.y, r_pos.z };
+                p_channel->set3DAttributes(&position, nullptr);
+                p_channel->setVolume(dBToVolume(volumedB));
+                p_channel->setPaused(false);
+                channels[nextChannelId] = p_channel;
                 return nextChannelId++;
             }
             return -1;
         }
 
-        void FmodStudioManager::PlayEvent(const std::string& eventName, bool isImmediate)
+        void FmodStudioManager::PlayEvent(const std::string& r_eventName, bool isImmediate)
         {
-            auto it = events.find(eventName);
+            auto it = events.find(r_eventName);
             if (it == events.end())
                 return; // Event not found
 
@@ -183,9 +183,9 @@ namespace PE
             }
         }
 
-        void FmodStudioManager::StopEvent(const std::string& eventName, bool isImmediate)
+        void FmodStudioManager::StopEvent(const std::string& r_eventName, bool isImmediate)
         {
-            auto it = events.find(eventName);
+            auto it = events.find(r_eventName);
             if (it == events.end())
                 return; // Event not found
 
@@ -202,23 +202,23 @@ namespace PE
             channels.clear();
         }
 
-        void FmodStudioManager::SetChannel3dPosition(int channelId, const glm::vec3& position)
+        void FmodStudioManager::SetChannel3dPosition(int channelId, const glm::vec3& r_position)
         {
             auto it = channels.find(channelId);
             if (it == channels.end())
                 return; // Channel not found
 
-            FMOD_VECTOR pos = { position.x, position.y, position.z };
+            FMOD_VECTOR pos = { r_position.x, r_position.y, r_position.z };
             it->second->set3DAttributes(&pos, nullptr);
         }
 
-        void FmodStudioManager::SetChannelVolume(int channelId, float dB)
+        void FmodStudioManager::SetChannelVolume(int channelId, float r_dB)
         {
             auto it = channels.find(channelId);
             if (it == channels.end())
                 return; // Channel not found
 
-            float volume = dBToVolume(dB);
+            float volume = dBToVolume(r_dB);
             it->second->setVolume(volume);
         }
 
@@ -233,9 +233,9 @@ namespace PE
             return isPlaying;
         }
 
-        bool FmodStudioManager::IsEventPlaying(const std::string& eventName)
+        bool FmodStudioManager::IsEventPlaying(const std::string& r_eventName)
         {
-            auto it = events.find(eventName);
+            auto it = events.find(r_eventName);
             if (it == events.end())
                 return false; // Event not found
 
@@ -245,9 +245,9 @@ namespace PE
         }
 
         // fade in fade out feature that jarran requested
-        float FmodStudioManager::dBToVolume(float dB)
+        float FmodStudioManager::dBToVolume(float r_dB)
         {
-            return std::pow(10.0f, dB / 20.0f);
+            return std::pow(10.0f, r_dB / 20.0f);
         }
 
         float FmodStudioManager::VolumeTodB(float volume)

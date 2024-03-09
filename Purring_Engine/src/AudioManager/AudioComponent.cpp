@@ -44,35 +44,35 @@ namespace PE
         std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
         if (audio)
         {
-            FMOD::System* system = AudioManager::GetInstance().GetFMODSystem();
-            FMOD::Channel* channel = nullptr;
-            FMOD_RESULT result = system->playSound(audio->GetSound(), nullptr, false, &channel);
+            FMOD::System* p_system = AudioManager::GetInstance().GetFMODSystem();
+            FMOD::Channel* p_channel = nullptr;
+            FMOD_RESULT result = p_system->playSound(audio->GetSound(), nullptr, false, &p_channel);
 
             if (result == FMOD_OK)
             {
-                audio->SetChannel(channel);
-                std::cout << "Sound played successfully with id: " << m_audioKey << std::endl;
+                audio->SetChannel(p_channel);
+                //std::cout << "Sound played successfully with id: " << m_audioKey << std::endl;
 
                 // Set the loop mode based on the m_loop flag
                 FMOD_MODE loopMode = m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
-                channel->setMode(loopMode);
+                p_channel->setMode(loopMode);
 
                 // If looping, set the loop count to -1 for infinite looping
                 if (m_loop)
                 {
-                    channel->setLoopCount(-1);
-                    std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
+                    p_channel->setLoopCount(-1);
+                    //std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
                 }
             }
             else
             {
-                std::string errorStr = FMOD_ErrorString(result);
-                ShowErrorMessage("Failed to play sound with id: " + m_audioKey + ". Error: " + errorStr, "Playback Error");
+                //std::string errorStr = FMOD_ErrorString(result);
+                //ShowErrorMessage("Failed to play sound with id: " + m_audioKey + ". Error: " + errorStr, "Playback Error");
             }
         }
         else
         {
-            ShowErrorMessage("Sound not found in ResourceManager for id: " + m_audioKey, "Resource Error");
+            //ShowErrorMessage("Sound not found in ResourceManager for id: " + m_audioKey, "Resource Error");
         }
     }
 
@@ -81,9 +81,9 @@ namespace PE
         bool isPlaying = false;
         if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
         {
-            if (auto channel = audio->GetChannel())
+            if (auto p_channel = audio->GetChannel())
             {
-                channel->isPlaying(&isPlaying);
+                p_channel->isPlaying(&isPlaying);
             }
         }
         return isPlaying;
@@ -91,17 +91,17 @@ namespace PE
 
     void AudioComponent::SetVolume(float volume)
     {
-        std::cout << "Setting volume for sound with id: " << m_audioKey << " to " << volume << std::endl;
+        //std::cout << "Setting volume for sound with id: " << m_audioKey << " to " << volume << std::endl;
 
         std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
         if (audio && audio->GetChannel())
         {
             audio->GetChannel()->setVolume(volume);
-            std::cout << "Volume set successfully for sound with id: " << m_audioKey << std::endl;
+            //std::cout << "Volume set successfully for sound with id: " << m_audioKey << std::endl;
         }
         else
         {
-            std::cout << "Failed to set volume for sound with id: " << m_audioKey << " (sound or channel not found)" << std::endl;
+            //std::cout << "Failed to set volume for sound with id: " << m_audioKey << " (sound or p_channel not found)" << std::endl;
         }
     }
 
@@ -139,9 +139,9 @@ namespace PE
         return m_audioKey;
     }
 
-    void AudioComponent::SetAudioKey(std::string const& newKey)
+    void AudioComponent::SetAudioKey(std::string const& r_audioKey)
     {
-        m_audioKey = newKey;
+        m_audioKey = r_audioKey;
     }
 
     FMOD::Channel* AudioComponent::GetChannel() const
@@ -158,9 +158,9 @@ namespace PE
         float volume = 0.0f;
         if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
         {
-            if (auto channel = audio->GetChannel())
+            if (auto p_channel = audio->GetChannel())
             {
-                channel->getVolume(&volume);
+                p_channel->getVolume(&volume);
             }
         }
         return volume;

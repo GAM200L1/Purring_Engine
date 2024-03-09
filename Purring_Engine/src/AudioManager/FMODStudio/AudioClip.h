@@ -27,9 +27,9 @@ namespace PE
             /*!***********************************************************************************
              \brief Constructor to initialize an AudioClip with a specified file path.
 
-             \param[in] path - The path to the audio file.
+             \param[in] r_path - The path to the audio file.
             *************************************************************************************/
-            AudioClip(const std::string& path) : clipPath(path) {}
+            AudioClip(const std::string& r_path) : clipPath(r_path) {}
 
             /*!***********************************************************************************
              \brief Default constructor for creating an empty AudioClip.
@@ -41,14 +41,14 @@ namespace PE
 
              \param[in] other - The AudioClip to copy.
             *************************************************************************************/
-            AudioClip(const AudioClip&) = default;
+            AudioClip(const AudioClip& r_other) = default;
 
             /*!***********************************************************************************
              \brief Move constructor for transferring ownership of an AudioClip.
 
              \param[in] other - The AudioClip to move.
             *************************************************************************************/
-            AudioClip(AudioClip&&) noexcept = default;
+            AudioClip(AudioClip&& r_other) noexcept = default;
 
             /*!***********************************************************************************
              \brief Copy assignment operator for assigning the value of one AudioClip to another.

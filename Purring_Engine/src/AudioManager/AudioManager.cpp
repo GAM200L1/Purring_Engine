@@ -38,14 +38,14 @@ namespace PE
         FMOD_RESULT result = FMOD::System_Create(&m_system);
         if (result != FMOD_OK)
         {
-            std::cout << "FMOD System_Create failed: " << FMOD_ErrorString(result) << "\n";
+            //std::cout << "FMOD System_Create failed: " << FMOD_ErrorString(result) << "\n";
             return false;
         }
 
         result = m_system->init(512, FMOD_INIT_NORMAL, nullptr);
         if (result != FMOD_OK)
         {
-            std::cout << "FMOD init failed: " << FMOD_ErrorString(result) << "\n";
+            //std::cout << "FMOD init failed: " << FMOD_ErrorString(result) << "\n";
             return false;
         }
 
