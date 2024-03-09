@@ -16,11 +16,15 @@
 #include "prpch.h"
 #include "RatReturnState_v2_0.h"
 
+//#define DEBUG_PRINT
+
 namespace PE
 {
 	void RatReturn_v2_0::StateEnter(EntityID id)
 	{
+#ifdef DEBUG_PRINT
 		std::cout << "RatReturn_v2_0::StateEnter()\n";
+#endif // DEBUG_PRINT 
 		p_data = GETSCRIPTDATA(RatScript_v2_0, id);
 		gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		previousGameState = gameStateController->currentState;
@@ -127,14 +131,18 @@ namespace PE
 			// Check if there are any cats in the detection range
 			if (!(p_data->catsInDetectionRadius.empty()))
 			{
-					std::cout << "RatIdle_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat in range\n";
+#ifdef DEBUG_PRINT
+					std::cout << "RatReturn_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat in range\n";
+#endif // DEBUG_PRINT
 					// there's a cat in the detection range, move to attack it
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
 			}
 			// Check if any cats exited the detection range in the last turn
 			else if (!(p_data->catsExitedDetectionRadius.empty()))
 			{
-					std::cout << "RatIdle_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat exited range\n";
+#ifdef DEBUG_PRINT
+					std::cout << "RatReturn_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat exited range\n";
+#endif // DEBUG_PRINT
 					// Check for the closest cat
 					EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) };
 
@@ -145,7 +153,9 @@ namespace PE
 			else if (RatScript_v2_0::GetEntityPosition(p_data->myID).DistanceSquared(p_data->originalPosition) < 
 					(p_data->minDistanceToTarget * p_data->minDistanceToTarget))
 			{
-					std::cout << "RatIdle_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat reached\n";
+#ifdef DEBUG_PRINT
+					std::cout << "RatReturn_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat reached\n";
+#endif // DEBUG_PRINT
 					// Stop moving back to our original position
 					RatScript_v2_0::PositionEntity(p_data->myID, p_data->originalPosition);
 

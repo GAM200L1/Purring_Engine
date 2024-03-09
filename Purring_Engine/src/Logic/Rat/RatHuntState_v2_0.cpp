@@ -233,34 +233,44 @@ namespace PE
 
 	void RatHunt_v2_0::CheckIfShouldChangeStates()
 	{
+#ifdef DEBUG_PRINT
 			std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft = " << huntingTurnsLeft << "\n";
+#endif // DEBUG_PRINT
 
 			// ----- Picking where to move
 			// Check if there are any cats in the detection range
 			if (!(p_data->catsInDetectionRadius.empty()))
 			{
+#ifdef DEBUG_PRINT
 					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats in range\n";
+#endif // DEBUG_PRINT
 					// there's a cat in the detection range, move to attack it
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
 			}
 			// Check if any cats exited the detection range in the last turn
 			else if (!(p_data->catsExitedDetectionRadius.empty()))
 			{
+#ifdef DEBUG_PRINT
 					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats exited range\n";
+#endif // DEBUG_PRINT
 					// cats just passed by us, hunt the closest one down
 					SetHuntTarget( RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) );
 			}
 			// Check if the current cat is alive // @TODO to replace when we have a method for checking cat's alive status
 			else if (!EntityManager::GetInstance().IsEntityValid(p_data->myID))
 			{
+#ifdef DEBUG_PRINT
 					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat is dead\n";
+#endif // DEBUG_PRINT
 					// the cat we're chasing is dead, return to the original position
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
 			}
 			// Check if we should switch to the returning state
 			else if (huntingTurnsLeft == 0)
 			{
+#ifdef DEBUG_PRINT
 					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft == 0\n";
+#endif // DEBUG_PRINT
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
 			}
 			else 
@@ -268,7 +278,9 @@ namespace PE
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 			}
 
+#ifdef DEBUG_PRINT
 			std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): --- end huntingTurnsLeft = " << huntingTurnsLeft << "\n";
+#endif // DEBUG_PRINT
 	}
 
 

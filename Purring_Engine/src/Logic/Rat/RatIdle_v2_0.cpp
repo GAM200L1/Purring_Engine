@@ -31,7 +31,7 @@
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
 
-#define DEBUG_PRINT
+//#define DEBUG_PRINT
 
 namespace PE
 {
@@ -145,11 +145,8 @@ namespace PE
             {
             case RatType::IDLE:
                 // Idle logic doing nothing
-
-                //std::cout << "Idle";
                 break;
             case RatType::PATROL:
-                //std::cout << "Patrolling Update\n";
                 PatrolLogic(id, deltaTime);
                 break;
             default: break;
@@ -195,7 +192,9 @@ namespace PE
         // Update to next target if we have reached
         if (HasReachedDestination(id, currentTarget))
         {
+#ifdef DEBUG_PRINT
             //std::cout << "Reached patrol point index: " << p_data->patrolIndex << std::endl;
+#endif // DEBUG_PRINT
 
             if (p_data->returnToFirstPoint)
             {
@@ -217,8 +216,10 @@ namespace PE
             }
         }
 
+#ifdef DEBUG_PRINT
         //const Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
         //std::cout << "Rat Position: X=" << ratTransform.position.x << ", Y=" << ratTransform.position.y << std::endl;
+#endif // DEBUG_PRINT
     }
 
 

@@ -32,7 +32,7 @@
 
 #include "../Cat/CatController_v2_0.h"
 
-#define DEBUG_PRINT
+//#define DEBUG_PRINT
 
 namespace PE
 {
@@ -113,21 +113,6 @@ namespace PE
 
 			previousGameState = gameStateController->currentState;
 			it->second.hasRatStateChanged = false;
-			// // Check if state change is requested and the delay has passed
-			// if (it->second.shouldChangeState && it->second.timeBeforeChangingState <= 0.f) {
-			// 	// Perform the state change
-			// 	if (it->second.p_stateManager->GetCurrentState()->GetName() == "Movement_v2_0") {
-			// 		it->second.p_stateManager->ChangeState(new RatAttack_v2_0(), id);
-			// 		std::cout << "Transitioned to Attack State for Rat ID: " << id << std::endl;
-			// 	}
-			// 	// Reset state change flags
-			// 	it->second.shouldChangeState = false;
-			// 	it->second.delaySet = false;
-			// }
-			// else if (it->second.shouldChangeState) {
-			// 	// Countdown the delay before state change
-			// 	it->second.timeBeforeChangingState -= deltaTime;
-			// }
 		}
 
 
@@ -429,7 +414,9 @@ namespace PE
 
 		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
 		{
+#ifdef DEBUG_PRINT
 			//std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << p_nextState->GetName() << ", " << stateChangeDelay << ")\n";
+#endif // DEBUG_PRINT
 
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
@@ -441,7 +428,9 @@ namespace PE
 
 			// Set the state that is queued up
 			it->second.SetQueuedState(p_nextState, false);
+#ifdef DEBUG_PRINT
 			//std::cout << "State change requested for Rat ID: " << id << " to state " << p_nextState->GetName() << " with delay: " << stateChangeDelay << " seconds." << std::endl;
+#endif // DEBUG_PRINT
 		}
 
 
@@ -810,7 +799,9 @@ namespace PE
 				// Change the state
 				if (it->second.p_stateManager)
 				{
+#ifdef DEBUG_PRINT
 						std::cout << "RatScript_v2_0::ChangeRatState(" << id << ", " << it->second.GetQueuedState()->GetName() << ")\n";
+#endif // DEBUG_PRINT
 						it->second.p_stateManager->ChangeState(it->second.GetQueuedState(), id);
 				}
 

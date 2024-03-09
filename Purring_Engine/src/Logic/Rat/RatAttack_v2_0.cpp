@@ -28,6 +28,8 @@
 #include "Logic/FollowScript.h"
 #include "../Cat/CatController_v2_0.h"
 
+//#define DEBUG_PRINT
+
 namespace PE
 {
     void RatAttack_v2_0::StateEnter(EntityID id)
@@ -48,16 +50,12 @@ namespace PE
         RatScript_v2_0::PositionEntity(p_data->attackTelegraphEntityID, RatScript_v2_0::GetEntityPosition(p_data->myID));
 
         p_data->attackedCats.clear();
-        //std::cout << "[DEBUG] RatAttack_v2_0::StateEnter - Rat ID: " << id << " transitioning to Attack state." << std::endl;
     }
 
     void RatAttack_v2_0::StateUpdate(EntityID id, float deltaTime)
     {
-        //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Rat ID: " << id << " is updating with attacking status: " << p_data->attacking << std::endl;
-
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
         {
-            //std::cout << "[DEBUG] RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
             return;
         }
 
@@ -65,13 +63,15 @@ namespace PE
             if (m_delay > 0.f && p_data->attacking)
             {
                 m_delay -= deltaTime;
+#ifdef DEBUG_PRINT
                 //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate(" << id << ") - Delay countdown: " << m_delay << std::endl;
+#endif // DEBUG_PRINT
             }
             else if (p_data->attacking)
             {
+#ifdef DEBUG_PRINT
                 //std::cout << "RatAttack_v2_0::StateUpdate(" << id << "): p_data->attacking true" << std::endl;
-
-                //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack initiated, enabling telegraph." << std::endl;
+#endif // DEBUG_PRINT
                 RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, true);
                 m_attackDuration -= deltaTime;
 
@@ -84,7 +84,9 @@ namespace PE
                 }
                 else if (m_attackDuration <= 0.f)
                 {
+#ifdef DEBUG_PRINT
                     std::cout << "RatAttack_v2_0::StateUpdate(" << id << "): animation is done" << std::endl;
+#endif // DEBUG_PRINT
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(p_data->myID, EnumRatAnimations::IDLE);
 
                     RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
@@ -109,14 +111,16 @@ namespace PE
     {
         // Cleanup attack-specific data here
         gameStateController = nullptr;
+#ifdef DEBUG_PRINT
         //std::cout << "[DEBUG] RatAttack_v2_0::StateExit - Rat ID: " << id << " exiting Attack state." << std::endl;
+#endif // DEBUG_PRINT
         p_data->hitCat = false;
     }
 
 
     void RatScript_v2_0::DealDamageToCat(EntityID collidedCat, EntityID rat)
     {
-        // A
+        // Ensure that we do not attack the same cat twice in the same frame
         auto ratIt = m_scriptData.find(rat);
         if (ratIt != m_scriptData.end())
         {
@@ -144,7 +148,9 @@ namespace PE
         // Check if there are any cats in the detection range
         if (!(p_data->catsInDetectionRadius.empty()))
         {
+#ifdef DEBUG_PRINT
             std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): cats in detection radius\n";
+#endif // DEBUG_PRINT
 
             // there's a cat in the detection range, move to attack it again
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
@@ -152,7 +158,10 @@ namespace PE
         // Check if any cats exited the detection range
         else if (!(p_data->catsExitedDetectionRadius.empty()))
         {
+#ifdef DEBUG_PRINT
             std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): cats exited radius\n";
+#endif // DEBUG_PRINT
+
             // Check for the closest cat
             EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) };
 
@@ -162,7 +171,9 @@ namespace PE
         // No cats in detection range
         else
         {
+#ifdef DEBUG_PRINT
             std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): no cats in detection radius\n";
+#endif // DEBUG_PRINT
 
             // the cat we're chasing is dead, return to the original position
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);

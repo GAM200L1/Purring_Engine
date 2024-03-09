@@ -31,6 +31,8 @@
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
 
+//#define DEBUG_PRINT
+
 namespace PE
 {
     RatMovement_v2_0::RatMovement_v2_0() : gameStateController{ nullptr }, p_data{ nullptr } {}
@@ -51,7 +53,9 @@ namespace PE
     {
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
         {
+#ifdef DEBUG_PRINT
             //std::cout << "RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
+#endif // DEBUG_PRINT
             return;
         }
 
@@ -132,7 +136,9 @@ namespace PE
 
     void RatMovement_v2_0::StateExit(EntityID id)
     {
+#ifdef DEBUG_PRINT
         //std::cout << "RatMovement_v2_0::StateExit - Rat ID: " << id << " is exiting the movement state." << std::endl;
+#endif // DEBUG_PRINT
         p_data->ratPlayerDistance = 0.f;
     }
 
