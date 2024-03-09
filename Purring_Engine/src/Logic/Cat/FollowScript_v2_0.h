@@ -115,9 +115,7 @@ namespace PE
 		
 	private:
 		GameStateController_v2_0* p_gamestateController;
-
-
-
+		
 		// Event keys
 		int m_collisionEventListener{};
 	};

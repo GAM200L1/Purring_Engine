@@ -48,9 +48,7 @@ namespace PE
 
 		if (p_data->catType == EnumCatType::MAINCAT)
 		{
-			FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, id);
 			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
-			p_data->followCatPositions = follow_data->nextPosition;
 		}
 		
 		ResetDrawnPath();
@@ -129,6 +127,9 @@ namespace PE
 	void CatMovement_v2_0PLAN::Exit(EntityID id)
 	{
 		EndPathDrawing(id);
+		// set follow cats to their previous positions
+		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+		
 	}
 
 
@@ -244,17 +245,7 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::ResetDrawnPath()
 	{
-		FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, p_data->catID);
-
-		for (auto s : follow_data->followers)
-		{
-			auto dat = GETSCRIPTDATA(CatScript_v2_0, s);
-
-			if ((dat->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
-			{
-				CatHelperFunctions::PositionEntity(dat->catID, dat->resetPosition);
-			} // if cat is following cat in the chain )
-		}
+		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
 
 		CatHelperFunctions::PositionEntity(p_data->catID, p_data->resetPosition);
 	
@@ -267,19 +258,9 @@ namespace PE
 		if (!p_data->pathPositions.empty())
 		{
 			CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions.front());
-			follow_data->prevPosition = p_data->pathPositions.front();
+			//follow_data->prevPosition = p_data->pathPositions.front();
 		}
 		p_data->pathPositions.clear();
-
-
-
-		//set it to current so that it doesnt update followers
-		//i only update followers if current position does not match the transform position
-		/*follow_data->NextPosition = p_data->followCatPositions;
-		for (int i = 1; i < follow_data->NumberOfFollower; i++)
-		{
-			EntityManager::GetInstance().Get<Transform>(follow_data->FollowingObject[i]).position = p_data->followCatPositions[i];
-		}*/
 
 		// Disable all the path nodes
 		for (EntityID& nodeId : p_data->pathQuads)
@@ -315,8 +296,6 @@ namespace PE
 			MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
 			if (MBPE.button != 1)
 				m_mouseClick = true; // Flag that the mouse has been clicked
-		
-
 		}
 	}
 
