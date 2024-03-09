@@ -93,7 +93,7 @@ namespace PE
 							EntityManager::GetInstance().Get<AnimationComponent>(puddle).PlayAnimation();
 						}
 					}
-					p_script->poisonPuddles.insert(std::pair<EntityID,float>(puddle,3));
+					p_script->poisonPuddles.insert(std::pair<EntityID,int>(puddle,3));
 					m_distanceTravelled = 0;
 				}
 			}
@@ -108,6 +108,7 @@ namespace PE
 			p_data->finishExecution = true;
 		}
 	}
+	
 	void BossRatChargeAttack::ExitAttack(EntityID)
 	{
 	}
