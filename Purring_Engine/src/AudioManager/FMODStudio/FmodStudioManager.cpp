@@ -85,11 +85,11 @@ namespace PE
                 return; // Bank already loaded
             }
 
-            FMOD::Studio::Bank* bank;
-            auto result = studioSystem->loadBankFile(r_bankName.c_str(), flags, &bank);
+            FMOD::Studio::Bank* p_bank;
+            auto result = studioSystem->loadBankFile(r_bankName.c_str(), flags, &p_bank);
             if (result == FMOD_OK)
             {
-                banks[r_bankName] = bank;
+                banks[r_bankName] = p_bank;
             }
             else
             {
@@ -102,15 +102,15 @@ namespace PE
             if (events.find(r_eventName) != events.end())
                 return; // Event already loaded
 
-            FMOD::Studio::EventDescription* eventDescription = nullptr;
-            FMOD_RESULT result = studioSystem->getEvent(r_eventName.c_str(), &eventDescription);
-            if (result == FMOD_OK && eventDescription)
+            FMOD::Studio::EventDescription* p_eventDescription = nullptr;
+            FMOD_RESULT result = studioSystem->getEvent(r_eventName.c_str(), &p_eventDescription);
+            if (result == FMOD_OK && p_eventDescription)
             {
-                FMOD::Studio::EventInstance* eventInstance = nullptr;
-                eventDescription->createInstance(&eventInstance);
-                if (eventInstance)
+                FMOD::Studio::EventInstance* p_eventInstance = nullptr;
+                p_eventDescription->createInstance(&p_eventInstance);
+                if (p_eventInstance)
                 {
-                    events[r_eventName] = eventInstance;
+                    events[r_eventName] = p_eventInstance;
                 }
             }
         }
@@ -125,11 +125,11 @@ namespace PE
             mode |= isLooping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
             mode |= isStream ? FMOD_CREATESTREAM : FMOD_CREATECOMPRESSEDSAMPLE;
 
-            FMOD::Sound* sound = nullptr;
-            FMOD_RESULT result = coreSystem->createSound(r_soundName.c_str(), mode, nullptr, &sound);
-            if (result == FMOD_OK && sound)
+            FMOD::Sound* p_sound = nullptr;
+            FMOD_RESULT result = coreSystem->createSound(r_soundName.c_str(), mode, nullptr, &p_sound);
+            if (result == FMOD_OK && p_sound)
             {
-                sounds[r_soundName] = sound;
+                sounds[r_soundName] = p_sound;
             }
         }
 
@@ -155,15 +155,15 @@ namespace PE
             if (it == sounds.end())
                 return -1; // Sound not found
 
-            FMOD::Channel* channel = nullptr;
-            coreSystem->playSound(it->second, nullptr, true, &channel);
-            if (channel)
+            FMOD::Channel* p_channel = nullptr;
+            coreSystem->playSound(it->second, nullptr, true, &p_channel);
+            if (p_channel)
             {
                 FMOD_VECTOR position = { r_pos.x, r_pos.y, r_pos.z };
-                channel->set3DAttributes(&position, nullptr);
-                channel->setVolume(dBToVolume(volumedB));
-                channel->setPaused(false);
-                channels[nextChannelId] = channel;
+                p_channel->set3DAttributes(&position, nullptr);
+                p_channel->setVolume(dBToVolume(volumedB));
+                p_channel->setPaused(false);
+                channels[nextChannelId] = p_channel;
                 return nextChannelId++;
             }
             return -1;
