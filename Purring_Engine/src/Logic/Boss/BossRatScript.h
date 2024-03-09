@@ -66,7 +66,7 @@ namespace PE
 		bool isCharging{ false };
 
 		std::map<std::string, std::string> animationStates;
-		int m_collisionEnterEventKey,m_collisionStayEventKey;
+		int collisionEnterEventKey,collisionStayEventKey;
 
 		int currentAttackSet{ 1 };
 		int currentAttackInSet{ 3 };
@@ -208,7 +208,7 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
-		std::vector<EntityID> m_Obstacles;
+		std::vector<EntityID> m_obstacles;
 		//do i want to store all the obstacles here?
 	}; // end of class 
 

@@ -33,8 +33,8 @@ namespace PE
 		CreateCheckStateManager(id);
 		FindAllObstacles();
 
-		m_scriptData[id].m_collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
-		m_scriptData[id].m_collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+		m_scriptData[id].collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+		m_scriptData[id].collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 	}
 
 
@@ -79,8 +79,8 @@ namespace PE
 		if (it != m_scriptData.end())
 		{
 			m_scriptData.erase(id);
-			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionEnterEventKey)
-			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionStayEventKey)
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionEnterEventKey)
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionStayEventKey)
 		}
 	}
 
@@ -110,14 +110,14 @@ namespace PE
 
 	void BossRatScript::FindAllObstacles()
 	{
-		m_Obstacles.clear();
+		m_obstacles.clear();
 		for (const auto& layer : LayerView<EntityDescriptor, Collider>(true))
 		{
 			for (const EntityID& id : InternalView(layer))
 			{
 				std::string nameTest = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
 				if(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos)
-				m_Obstacles.push_back(id);
+				m_obstacles.push_back(id);
 			}
 		}
 	}
@@ -174,7 +174,7 @@ namespace PE
 	}
 	std::vector<EntityID> BossRatScript::GetAllObstacles()
 	{
-		return m_Obstacles;
+		return m_obstacles;
 	}
 
 	void BossRatScript::OnCollisionStay(const Event<CollisionEvents>& r_collisionStay)
