@@ -15,10 +15,10 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "RatController_v2_0.h"
-#include "RatScript_v2_0.h"
-//#include "../RatScript.h"
 
 #include "../Logic/LogicSystem.h"
+
+//#define DEBUG_PRINT 
 
 namespace PE
 {
@@ -58,6 +58,7 @@ namespace PE
 
 				RefreshRats(id); // Refresh the cached rats
 
+#ifdef DEBUG_PRINT
 				if (!ratsPrinted)
 				{
 					auto const& myVec{ GetRats(id) };
@@ -67,6 +68,7 @@ namespace PE
 					}
 					ratsPrinted = true;
 				}
+#endif
 		}
 
 
