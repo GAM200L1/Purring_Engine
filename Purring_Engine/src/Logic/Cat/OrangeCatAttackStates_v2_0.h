@@ -172,8 +172,6 @@ namespace PE
 
 		void SeismicCollided(const Event<CollisionEvents>& r_CE);
 
-		bool SeismicHitCat(EntityID id1, EntityID id2);
-
-		bool SeismicHitRat(EntityID id1, EntityID id2);
+		void SeismicHitCatOrRat(EntityID id1, EntityID id2);
 	};
 }

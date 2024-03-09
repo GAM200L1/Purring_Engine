@@ -123,7 +123,7 @@ namespace PE
 		}
 
 		/*!***********************************************************************************
-		 \brief Checks if cat is caged. Throws if not a cat
+		 \brief Checks if cat is caged.
 
 		 \param[in] id - catID to check
 		 \param[out] bool - true if cat is caged, false if not
@@ -136,6 +136,12 @@ namespace PE
 				return false;
 		}
 
+		/*!***********************************************************************************
+		 \brief Checks if cat is a cat following the main cat
+
+		 \param[in] id - catID to check
+		 \param[out] bool - true if cat is following, false if not
+		*************************************************************************************/
 		bool IsFollowCat(EntityID catID);
 		
 		// getters

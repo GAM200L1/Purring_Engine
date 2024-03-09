@@ -26,6 +26,7 @@
 #include "Logic/Rat/RatController_v2_0.h"
 #include "CatScript_v2_0.h"
 #include "CatHelperFunctions.h"
+#include "Logic/Boss/BossRatScript.h"
 
 namespace PE
 {
@@ -246,41 +247,48 @@ namespace PE
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
 
 			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID)
-			// if the seismic hits a cat or rat
-				(SeismicHitCat(OCEE.Entity1, OCEE.Entity2) || SeismicHitRat(OCEE.Entity1, OCEE.Entity2));
+				// if the seismic hits a cat or rat
+				SeismicHitCatOrRat(OCEE.Entity1, OCEE.Entity2);
 		}
 	}
 
-	bool OrangeCatAttack_v2_0EXECUTE::SeismicHitCat(EntityID id1, EntityID id2)
+	void OrangeCatAttack_v2_0EXECUTE::SeismicHitCatOrRat(EntityID id1, EntityID id2)
 	{
 		CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-		// kill cat if not in chain and seismic hits a cat
-		if (id1 == p_attackData->seismicID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+		// kill cat if it is not following and not in cage and projectile hits catif (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+		if (id1 == p_attackData->seismicID)
 		{
-			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
-			return true;
+			if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+			{
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
+				return;
+			}
+			else if (p_catController->IsCat(id2) && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
+				return;
+			}
+			else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
+			{
+				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+			}
 		}
-		else if (id2 == p_attackData->seismicID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+		else if (id2 == p_attackData->seismicID)
 		{
-			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
-			return true;
+			if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
+			{
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+				return;
+			}
+			else if (p_catController->IsCat(id1) && !p_catController->IsFollowCat(id1) && !p_catController->IsCatCaged(id1))
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
+				return;
+			}
+			else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
+			{
+				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+			}
 		}
-		return false;
-	}
-
-	bool OrangeCatAttack_v2_0EXECUTE::SeismicHitRat(EntityID id1, EntityID id2)
-	{
-		// damage rat
-		if (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
-		{
-			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
-			return true;
-		}
-		else if (id2 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
-		{
-			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
-			return true;
-		}
-		return false;
 	}
 }
