@@ -432,7 +432,7 @@ namespace PE
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(RatID).colliderVariant);
 
 						//debug
-						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
+						//std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
 
 						// Check if the rat/cat has been clicked
 						if (PointCollision(col, cursorPosition))
@@ -440,7 +440,7 @@ namespace PE
 							m_isRat = true;
 							m_isPotraitShowing = true;
 							//debug
-							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
+							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
 							//add a switch statement here
 							//need specific texture
 							m_lastSelectedEntity = RatID;
