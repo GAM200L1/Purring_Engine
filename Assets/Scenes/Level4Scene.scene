@@ -101,7 +101,7 @@
                         "isActive": false,
                         "name": "PauseCanvas",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 15
                     },
                     "Transform": {
                         "height": 100.0,
@@ -414,7 +414,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 15
+                        "sceneID": 16
                     },
                     "Transform": {
                         "height": 100.0,
@@ -688,7 +688,7 @@
                         "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
-                        "sceneID": 12
+                        "sceneID": 13
                     },
                     "Transform": {
                         "height": 100.0,
@@ -795,6 +795,8 @@
                                 "PauseMenuCanvas": 3,
                                 "PhaseBanner": 17,
                                 "Portrait": 47,
+                                "RatKingJournal": 103,
+                                "RatKingPortrait": 101,
                                 "RatPortrait": 53,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
@@ -853,7 +855,7 @@
                         "isActive": false,
                         "name": "HowToPlayCanvas",
                         "parent": null,
-                        "sceneID": 13
+                        "sceneID": 14
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1190,8 +1192,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 0.0,
-                        "Width": 0.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1206,7 +1208,8 @@
                             44,
                             47,
                             62,
-                            63
+                            63,
+                            103
                         ],
                         "isActive": false,
                         "name": "HUDCanvas",
@@ -1249,7 +1252,7 @@
                         "isActive": false,
                         "name": "FoliageCanvas",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 10
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1322,7 +1325,7 @@
                         "isActive": false,
                         "name": "PawOverlay",
                         "parent": 24,
-                        "sceneID": 44
+                        "sceneID": 47
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1363,7 +1366,7 @@
                         "isActive": false,
                         "name": "MapOverlay",
                         "parent": 24,
-                        "sceneID": 11
+                        "sceneID": 13
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1404,7 +1407,7 @@
                         "isActive": false,
                         "name": "EndTurnButton",
                         "parent": 24,
-                        "sceneID": 13
+                        "sceneID": 14
                     },
                     "GUI": {
                         "disabled": false,
@@ -1481,7 +1484,7 @@
                         "isActive": false,
                         "name": "EndPlanningText",
                         "parent": 24,
-                        "sceneID": 62
+                        "sceneID": 93
                     },
                     "TextComponent": {
                         "Color": {
@@ -1615,7 +1618,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 17
+                        "sceneID": 18
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1892,7 +1895,7 @@
                         "isActive": false,
                         "name": "LoseCanvas",
                         "parent": null,
-                        "sceneID": 18
+                        "sceneID": 19
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2305,7 +2308,7 @@
                         "isActive": true,
                         "name": "TurnCounterCanvas",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 11
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2337,7 +2340,7 @@
                         "isActive": false,
                         "name": "PauseButton",
                         "parent": 24,
-                        "sceneID": 47
+                        "sceneID": 62
                     },
                     "GUI": {
                         "disabled": false,
@@ -2414,7 +2417,7 @@
                         "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
-                        "sceneID": 14
+                        "sceneID": 43
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3044,7 +3047,7 @@
                         "isActive": false,
                         "name": "AreYouSureRestartCanvas",
                         "parent": null,
-                        "sceneID": 16
+                        "sceneID": 17
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3318,7 +3321,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 19
+                        "sceneID": 20
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3391,7 +3394,7 @@
                         "isActive": true,
                         "name": "DeploymentArea",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 21
                     },
                     "Renderer": {
                         "Color": {
@@ -3459,7 +3462,7 @@
                         "isActive": true,
                         "name": "DeployTexture",
                         "parent": null,
-                        "sceneID": 21
+                        "sceneID": 22
                     },
                     "Renderer": {
                         "Color": {
@@ -3505,7 +3508,7 @@
                         "isActive": false,
                         "name": "NoGoAreas",
                         "parent": null,
-                        "sceneID": 22
+                        "sceneID": 23
                     },
                     "Renderer": {
                         "Color": {
@@ -3761,7 +3764,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 24
+                        "sceneID": 29
                     },
                     "Renderer": {
                         "Color": {
@@ -3830,7 +3833,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 30
+                        "sceneID": 31
                     },
                     "Renderer": {
                         "Color": {
@@ -4175,7 +4178,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 32
+                        "sceneID": 33
                     },
                     "Renderer": {
                         "Color": {
@@ -4244,7 +4247,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 29
+                        "sceneID": 30
                     },
                     "Renderer": {
                         "Color": {
@@ -4313,7 +4316,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 31
+                        "sceneID": 32
                     },
                     "Renderer": {
                         "Color": {
@@ -4365,7 +4368,7 @@
                         "isActive": true,
                         "name": "PhaseBannerCanvas",
                         "parent": null,
-                        "sceneID": 11
+                        "sceneID": 12
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4444,7 +4447,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 23
+                        "sceneID": 24
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4592,9 +4595,9 @@
                             99
                         ],
                         "isActive": true,
-                        "name": "BossRatTemp",
+                        "name": "Rat King",
                         "parent": null,
-                        "sceneID": 34
+                        "sceneID": 35
                     },
                     "Renderer": {
                         "Color": {
@@ -4675,8 +4678,8 @@
                         "height": 530.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -419.9999694824219,
-                            "y": -312.00006103515625
+                            "x": -300.0,
+                            "y": -183.0
                         },
                         "relativeposition": {
                             "x": -300.0,
@@ -4701,7 +4704,7 @@
                         "isActive": false,
                         "name": "JournalButton",
                         "parent": 24,
-                        "sceneID": 43
+                        "sceneID": 44
                     },
                     "GUI": {
                         "disabled": false,
@@ -4868,7 +4871,7 @@
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 36
+                        "sceneID": 37
                     },
                     "Renderer": {
                         "Color": {
@@ -4977,7 +4980,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 33
+                        "sceneID": 34
                     },
                     "Renderer": {
                         "Color": {
@@ -5324,7 +5327,7 @@
                         "isActive": false,
                         "name": "BossRatSlamAttackAnimationLeft",
                         "parent": null,
-                        "sceneID": 35
+                        "sceneID": 36
                     },
                     "Renderer": {
                         "Color": {
@@ -5365,7 +5368,7 @@
                         "isActive": false,
                         "name": "SlamAreaRight",
                         "parent": null,
-                        "sceneID": 37
+                        "sceneID": 38
                     },
                     "Renderer": {
                         "Color": {
@@ -5406,7 +5409,7 @@
                         "isActive": false,
                         "name": "SlamAreaLeft",
                         "parent": null,
-                        "sceneID": 38
+                        "sceneID": 39
                     },
                     "Renderer": {
                         "Color": {
@@ -5453,7 +5456,7 @@
                         "isActive": false,
                         "name": "BossRatSlamAttackAnimationRight",
                         "parent": null,
-                        "sceneID": 39
+                        "sceneID": 100
                     },
                     "Renderer": {
                         "Color": {
@@ -5535,7 +5538,7 @@
                         "isActive": false,
                         "name": "Land Area",
                         "parent": null,
-                        "sceneID": 100
+                        "sceneID": 101
                     },
                     "Renderer": {
                         "Color": {
@@ -5559,6 +5562,126 @@
                         },
                         "relorientation": 0.0,
                         "width": 512.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 103,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Rat King Journal",
+                        "parent": 24,
+                        "sceneID": 11
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/RatJournal_RatKing_770x440.png"
+                    },
+                    "Transform": {
+                        "height": 456.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -321.0,
+                            "y": -221.99996948242188
+                        },
+                        "relativeposition": {
+                            "x": -321.0,
+                            "y": -221.99996948242188
+                        },
+                        "relorientation": 0.0,
+                        "width": 740.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 0.0,
+                        "Width": 0.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 101,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            105
+                        ],
+                        "isActive": false,
+                        "name": "Rat King Portrait",
+                        "parent": null,
+                        "sceneID": 9
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 105,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "UI Object",
+                        "parent": 101,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_RatNameFrame_RatKing_277x119.png"
+                    },
+                    "Transform": {
+                        "height": 123.3252944946289,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -839.9998168945313,
+                            "y": -197.99996948242188
+                        },
+                        "relativeposition": {
+                            "x": -839.9998168945313,
+                            "y": -197.99996948242188
+                        },
+                        "relorientation": 0.0,
+                        "width": 276.0084228515625
                     }
                 },
                 "name": ""

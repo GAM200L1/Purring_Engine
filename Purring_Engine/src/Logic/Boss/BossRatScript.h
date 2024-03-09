@@ -78,7 +78,7 @@ namespace PE
 		// ----- Public Members ----- //
 	public:
 		std::map<EntityID, BossRatScriptData> m_scriptData;
-		EntityID currentBoss;
+		EntityID currentBoss{};
 		int currentSlamTurnCounter{};
 
 		BossRatAttacks BossRatAttackSets[3][3]
