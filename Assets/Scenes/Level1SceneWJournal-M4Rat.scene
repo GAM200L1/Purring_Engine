@@ -1190,8 +1190,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1208,7 +1208,7 @@
                             62,
                             63
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 5
@@ -1319,7 +1319,7 @@
                         "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PawOverlay",
                         "parent": 24,
                         "sceneID": 14
@@ -1360,7 +1360,7 @@
                         "Old ID": 29,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "MapOverlay",
                         "parent": 24,
                         "sceneID": 1
@@ -1401,7 +1401,7 @@
                         "Old ID": 28,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "EndTurnButton",
                         "parent": 24,
                         "sceneID": 8
@@ -1478,7 +1478,7 @@
                         "Old ID": 30,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "EndPlanningText",
                         "parent": 24,
                         "sceneID": 47
@@ -2179,7 +2179,7 @@
                             "y": 461.0
                         },
                         "relativeposition": {
-                            "x": 643.0,
+                            "x": 783.0,
                             "y": 461.0
                         },
                         "relorientation": 0.0,
@@ -2214,7 +2214,7 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2000000476837158,
+                        "Size": 1.5,
                         "Text": "Plan Movement",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2227,7 +2227,7 @@
                             "y": 473.4999084472656
                         },
                         "relativeposition": {
-                            "x": 765.0,
+                            "x": 779.0,
                             "y": 473.4999084472656
                         },
                         "relorientation": 0.0,
@@ -2262,7 +2262,7 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.399999976158142,
+                        "Size": 1.2999999523162842,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2275,7 +2275,7 @@
                             "y": 473.4997863769531
                         },
                         "relativeposition": {
-                            "x": 430.99981689453125,
+                            "x": 534.0,
                             "y": 473.4997863769531
                         },
                         "relorientation": 0.0,
@@ -2334,7 +2334,7 @@
                         "Old ID": 44,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PauseButton",
                         "parent": 24,
                         "sceneID": 43
@@ -2411,7 +2411,7 @@
                         "Old ID": 47,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
                         "sceneID": 11
@@ -3383,7 +3383,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 950.5000610351563,
@@ -3438,7 +3438,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -520.9998168945313,
@@ -3507,7 +3507,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 10.00006103515625,
@@ -3576,7 +3576,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 387.4999694824219,
@@ -3645,7 +3645,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 954.0003051757813,
@@ -3714,7 +3714,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 954.0001831054688,
@@ -3783,7 +3783,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -650.99951171875,
@@ -3852,7 +3852,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 536.49951171875,
@@ -3921,7 +3921,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": 264.99993896484375,
@@ -3990,7 +3990,7 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 4,
                         "data": {
                             "max": {
                                 "x": -390.00030517578125,
@@ -4109,15 +4109,15 @@
                     },
                     "GUIRenderer": {
                         "Color": {
-                            "a": 0.0,
+                            "a": 1.0,
                             "b": 1.0,
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_1429x415.png"
+                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_933x302.png"
                     },
                     "Transform": {
-                        "height": 400.0,
+                        "height": 302.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -4128,7 +4128,7 @@
                             "y": 273.00006103515625
                         },
                         "relorientation": 0.0,
-                        "width": 1200.0
+                        "width": 933.0
                     }
                 },
                 "name": ""
@@ -4152,7 +4152,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 33
+                        "sceneID": 61
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4184,7 +4184,7 @@
                         "isActive": true,
                         "name": "FPSTextObject",
                         "parent": 71,
-                        "sceneID": 34
+                        "sceneID": 82
                     },
                     "ScriptComponent": {
                         "FpsScript": {
@@ -4238,7 +4238,7 @@
                         "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle.anim"
                     },
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 5,
                         "data": {
                             "center": {
                                 "x": 388.60040283203125,
@@ -4251,12 +4251,12 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 2,
                         "Old ID": 60,
                         "Prefab Type": "Grey Cat",
                         "children": [
@@ -4265,7 +4265,7 @@
                         "isActive": true,
                         "name": "Grey Cat",
                         "parent": null,
-                        "sceneID": 18
+                        "sceneID": 19
                     },
                     "Renderer": {
                         "Color": {
@@ -4408,14 +4408,14 @@
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 2,
                         "Old ID": 61,
                         "Prefab Type": "Meowsalot",
                         "children": [],
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 19
+                        "sceneID": 18
                     },
                     "Renderer": {
                         "Color": {
@@ -4925,7 +4925,7 @@
                         "Old ID": 62,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Journal",
                         "parent": 24,
                         "sceneID": 0
@@ -4940,18 +4940,18 @@
                         "TextureKey": "../Assets/Textures/CatJournal_Meowsalot_753x402.png"
                     },
                     "Transform": {
-                        "height": 251.0,
+                        "height": 530.0,
                         "orientation": 0.0,
                         "position": {
                             "x": -419.9999694824219,
                             "y": -312.00006103515625
                         },
                         "relativeposition": {
-                            "x": -419.9999694824219,
-                            "y": -312.00006103515625
+                            "x": -300.0,
+                            "y": -183.0
                         },
                         "relorientation": 0.0,
-                        "width": 470.0
+                        "width": 753.0
                     }
                 },
                 "name": ""
@@ -4966,7 +4966,7 @@
                         "Old ID": 63,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "JournalButton",
                         "parent": 24,
                         "sceneID": 13
@@ -5067,13 +5067,13 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 1,
                         "Layer": 1,
-                        "Old ID": 94,
+                        "Old ID": 93,
                         "Prefab Type": "GutterRat",
                         "children": [],
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 94
+                        "sceneID": 34
                     },
                     "Renderer": {
                         "Color": {
@@ -5160,13 +5160,13 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 1,
                         "Layer": 1,
-                        "Old ID": 93,
+                        "Old ID": 94,
                         "Prefab Type": "GutterRat",
                         "children": [],
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 93
+                        "sceneID": 32
                     },
                     "Renderer": {
                         "Color": {
