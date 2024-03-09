@@ -18,6 +18,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/Script.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/Boss/BossRatAttacks/BossRatAttack.h"
+#include "Events/EventHandler.h"
 
 namespace PE
 {
@@ -31,15 +32,32 @@ namespace PE
 
 		//other boss stats
 
-		int health = 20;
+		float maxHealth = 20;
+		float currenthealth = maxHealth;
 		StateMachine* p_stateManager;
 		BossRatAttack* p_currentAttack;
 		bool finishExecution{true};
 
 		//bash attack variables
-		float TelegraphRaadius;
+		float telegraphRadius; // incase we want change, but not used for now
 		float attackDelay{.25f};
 		float activationTime{1.f};
+
+		//slam attack variables
+		float jumpSpeed{ 1000 };
+		float slamSpeed{ 1000 };
+		bool isInSky{ false };
+		EntityID leftSideSlam; //need to be serialized
+		EntityID rightSideSlam;
+		EntityID slamTelegraph;
+		EntityID leftSideSlamAnimation;
+		EntityID rightSideSlamAnimation;
+		EntityID slamAreaTelegraph;
+
+		std::map<std::string, std::string> animationStates;
+
+
+		int m_collisionEnterEventKey,m_collisionStayEventKey;
 	};
 
 	class BossRatScript : public Script
@@ -50,7 +68,7 @@ namespace PE
 	public:
 		std::map<EntityID, BossRatScriptData> m_scriptData;
 		EntityID currentBoss;
-
+		int m_currentSlamTurnCounter{};
 		// ----- Constructors ----- //
 	public:
 		/*!***********************************************************************************
@@ -131,7 +149,8 @@ namespace PE
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
 
-
+		void OnCollisionStay(const Event<CollisionEvents>& r_collisionStay);
+		void OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter);
 
 	private:
 		// ----- Private Variables ----- //

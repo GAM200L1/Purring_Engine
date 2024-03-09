@@ -66,6 +66,10 @@ namespace PE
 			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
 			{
 				m_attackAnimations.push_back(ie);
+				if (EntityManager::GetInstance().Has<AnimationComponent>(ie))
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(ie).PlayAnimation();
+				}
 			}
 		}
 
@@ -83,6 +87,10 @@ namespace PE
 			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
 			{
 				m_attackAnimations.push_back(ie);
+				if (EntityManager::GetInstance().Has<AnimationComponent>(ie))
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(ie).PlayAnimation();
+				}
 			}
 
 			NextPosition += unitDirection * TelegraphTransform->width;
@@ -113,7 +121,19 @@ namespace PE
 		}
 		else
 		{
-			if (m_attackDelay <= 0 && endExecutionTimer == endExecutionTime)
+			for (auto& iz : m_attackAnimations)
+			{
+				if (EntityManager::GetInstance().Has<AnimationComponent>(iz))
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(iz).HasAnimationEnded())
+					{
+						if(EntityManager::GetInstance().Has<EntityDescriptor>(iz))
+							EntityManager::GetInstance().Get<EntityDescriptor>(iz).isActive = false;
+					}
+				}
+			}
+
+			if (m_attackDelay <= 0 && m_endExecutionTimer == m_endExecutionTime)
 			{	
 				EntityID tid = m_telegraphPoitions[m_attacksActivated++];
 				for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(tid).children)
@@ -131,15 +151,14 @@ namespace PE
 
 			if (m_attacksActivated == m_noOfAttack)
 			{
-				if (endExecutionTimer <= 0)
+				if (m_endExecutionTimer <= 0)
 				{
 					m_attackActivationTime = p_data->activationTime;
-					endExecutionTimer = endExecutionTimer;
 					p_data->finishExecution = true;
 				}
 				else
 				{
-					endExecutionTimer -= dt;
+					m_endExecutionTimer -= dt;
 				}
 
 			}
@@ -153,7 +172,7 @@ namespace PE
 		//std::vector<EntityID> childs;
 		for (auto& id : m_telegraphPoitions)
 		{
-			std::cout << "deleting telegraph" << std::endl;
+			//std::cout << "deleting telegraph" << std::endl;
 			//for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 			//{
 			//	childs.push_back(ie);
@@ -196,9 +215,11 @@ namespace PE
 
 		for (int i = 0; i < m_attacksActivated; ++i)
 		{
-			//check if animation ended
-			//m_attackAnimations[i]
-
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_attackAnimations[i]))
+			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(m_attackAnimations[i]).isActive)
+					continue;
+			}
 			//check circle circle collision with each cat
 			for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
 			{

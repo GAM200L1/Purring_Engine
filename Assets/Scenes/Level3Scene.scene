@@ -2179,7 +2179,7 @@
                             "y": 461.0
                         },
                         "relativeposition": {
-                            "x": 643.0,
+                            "x": 783.0,
                             "y": 461.0
                         },
                         "relorientation": 0.0,
@@ -2214,8 +2214,8 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2000000476837158,
-                        "Text": "Plan Movement",
+                        "Size": 1.5,
+                        "Text": "Executing",
                         "VAlignment": 4,
                         "VOverflow": 2
                     },
@@ -2227,7 +2227,7 @@
                             "y": 473.4999084472656
                         },
                         "relativeposition": {
-                            "x": 765.0,
+                            "x": 779.0,
                             "y": 473.4999084472656
                         },
                         "relorientation": 0.0,
@@ -2262,7 +2262,7 @@
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.399999976158142,
+                        "Size": 1.2999999523162842,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2275,7 +2275,7 @@
                             "y": 473.4997863769531
                         },
                         "relativeposition": {
-                            "x": 430.99981689453125,
+                            "x": 534.0,
                             "y": 473.4997863769531
                         },
                         "relorientation": 0.0,
@@ -3400,7 +3400,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/DeploymentArea_Level3_580x394.png"
+                        "TextureKey": "../Assets/Textures/DeploymentArea_Level3_445x394.png"
                     },
                     "ScriptComponent": {
                         "DeploymentScript": {
@@ -3416,7 +3416,7 @@
                         "height": 394.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -670.5003051757813,
+                            "x": -738.7003173828125,
                             "y": 219.4998779296875
                         },
                         "relativeposition": {
@@ -3424,7 +3424,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 580.0
+                        "width": 445.0
                     }
                 },
                 "name": ""
@@ -4873,22 +4873,22 @@
                         "Old ID": 17,
                         "Prefab Type": "PhaseBanner",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PhaseBanner",
                         "parent": 16,
                         "sceneID": 17
                     },
                     "GUIRenderer": {
                         "Color": {
-                            "a": 0.0,
+                            "a": 1.0,
                             "b": 1.0,
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_1429x415.png"
+                        "TextureKey": "../Assets/Textures/PhaseSplash_Deployment_933x302.png"
                     },
                     "Transform": {
-                        "height": 400.0,
+                        "height": 302.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -4899,43 +4899,7 @@
                             "y": 273.00006103515625
                         },
                         "relorientation": 0.0,
-                        "width": 1200.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 71,
-                        "Prefab Type": "Canvas Object",
-                        "children": [],
-                        "isActive": true,
-                        "name": "PhaseBannerCanvas",
-                        "parent": null,
-                        "sceneID": 19
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 933.0
                     }
                 },
                 "name": ""
@@ -5144,7 +5108,25 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 102
+                                "FollowObjectID": 102,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
                             },
                             "state": 0
                         }
@@ -5279,7 +5261,25 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 103
+                                "FollowObjectID": 103,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
                             },
                             "state": 0
                         }
@@ -5641,18 +5641,18 @@
                         "TextureKey": "../Assets/Textures/CatJournal_Meowsalot_753x402.png"
                     },
                     "Transform": {
-                        "height": 251.0,
+                        "height": 530.0,
                         "orientation": 0.0,
                         "position": {
                             "x": -419.9999694824219,
                             "y": -312.00006103515625
                         },
                         "relativeposition": {
-                            "x": -419.9999694824219,
-                            "y": -312.00006103515625
+                            "x": -300.0,
+                            "y": -183.0
                         },
                         "relorientation": 0.0,
-                        "width": 470.0
+                        "width": 753.0
                     }
                 },
                 "name": ""
@@ -6321,7 +6321,25 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 108
+                                "FollowObjectID": 108,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
                             },
                             "state": 0
                         }
@@ -6456,7 +6474,25 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 109
+                                "FollowObjectID": 109,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
                             },
                             "state": 0
                         }

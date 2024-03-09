@@ -100,8 +100,8 @@
 #include "Logic/MainMenuController.h"
 #include "Logic/IntroCutsceneController.h"
 
-
-
+#include "Logic/Boss/BossRatScript.h"
+#include "Logic/ObjectAttachScript.h"
 
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Logic/Cat/CatScript_v2_0.h"
@@ -271,7 +271,10 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::MainMenuControllerData>("MainMenuController")
         .property("AreYouSureCanvas", &PE::MainMenuControllerData::AreYouSureCanvas)
         .property("MainMenuCanvas", &PE::MainMenuControllerData::MainMenuCanvas)
-        .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
+        .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen)
+        .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
+        .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
+        .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);    
@@ -303,6 +306,9 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
         .property("NumberOfCamera", &PE::CameraManagerScriptData::NumberOfCamera)
         .property("CameraIDs", &PE::CameraManagerScriptData::CameraIDs);
+
+    rttr::registration::class_<PE::ObjectAttachScriptData>("ObjectAttachScript")
+        .property("ObjectToAttachTo", &PE::ObjectAttachScriptData::ObjectToAttachTo);
 
     rttr::registration::class_<PE::CatScriptData>("CatScript")
         .property("isMainCat", &PE::CatScriptData::isMainCat)
@@ -417,6 +423,21 @@ RTTR_REGISTRATION
         //.property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScript_v2_0_Data::animationStates);
 
+
+    rttr::registration::class_<PE::BossRatScriptData>("BossRatScript")
+        .property("maxHealth", &PE::BossRatScriptData::maxHealth)
+        .property("attackDelay", &PE::BossRatScriptData::attackDelay)
+        .property("activationTime", &PE::BossRatScriptData::activationTime)
+        .property("telegraphRadius", &PE::BossRatScriptData::telegraphRadius)
+        .property("jumpSpeed", &PE::BossRatScriptData::jumpSpeed)
+        .property("slamSpeed", &PE::BossRatScriptData::slamSpeed)
+        .property("leftSideSlam", &PE::BossRatScriptData::leftSideSlam)
+        .property("rightSideSlam", &PE::BossRatScriptData::rightSideSlam)
+        .property("slamTelegraph", &PE::BossRatScriptData::slamTelegraph)
+        .property("rightSideSlamAnimation", &PE::BossRatScriptData::rightSideSlamAnimation)
+        .property("leftSideSlamAnimation", &PE::BossRatScriptData::leftSideSlamAnimation)
+        .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
+        .property("animationStates", &PE::BossRatScriptData::animationStates);
 }
 
 PE::CoreApplication::CoreApplication()

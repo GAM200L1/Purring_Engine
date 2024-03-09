@@ -61,7 +61,7 @@
             "textureKey": ""
         },
         {
-            "duration": 0.0,
+            "duration": 0.1666666716337204,
             "maxUV": [
                 1.0,
                 1.0
@@ -73,10 +73,10 @@
             "textureKey": ""
         }
     ],
-    "animationID": "../Assets/Animation/RatKingBashAttack.anim",
+    "animationID": "../Assets/Animation/RatKingSlamAttack.anim",
     "frameRate": 30,
     "isLooping": false,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/RatKing_Attack_Spikes.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/RatKing_Attack_Slam.png",
     "totalSprites": 6
 }

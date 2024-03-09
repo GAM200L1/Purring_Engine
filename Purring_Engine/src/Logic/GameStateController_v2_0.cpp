@@ -76,6 +76,11 @@ namespace PE
 				m_isTransitioningIn = true;
 				m_timeSinceTransitionStarted = 0;
 				m_timeSinceTransitionEnded = m_transitionTimer;
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png"));
+				}
 			}
 			else // if not first level
 			{
@@ -91,7 +96,7 @@ namespace PE
 
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner))
 				{
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_1429x415.png"));
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png"));
 				}
 
 			}
@@ -120,9 +125,9 @@ namespace PE
 		m_currentLevelBackground = ResourceManager::GetInstance().LoadTexture(m_currentLevelBackground);
 		m_currentLevelSepiaBackground = ResourceManager::GetInstance().LoadTexture(m_currentLevelSepiaBackground);
 		m_defaultPotraitTextureKey = ResourceManager::GetInstance().LoadTexture("UnitPortrait_Default_256px.png");
-		m_planningPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_1429x415.png");
-		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_1429x415.png");
-		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_1429x415.png");
+		m_planningPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png");
+		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
+		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
 		// Play audio BGM and BGM Ambience via GlobalMusicManager
 		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Music.prefab", true);
@@ -130,7 +135,9 @@ namespace PE
 		GlobalMusicManager::GetInstance().StartFadeIn(5.0f);
 
 		ResetPhaseBanner(true);
+		m_nextTurnOnce = false;
 	}
+	
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
 		GlobalMusicManager::GetInstance().Update(deltaTime);
@@ -225,7 +232,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
 			PhaseBannerTransition(id, deltaTime);
-			UpdateTurnCounter("Plan Movement");
+			UpdateTurnCounter("Planning");
 			prevState = currentState;
 			break;
 		}
@@ -243,7 +250,7 @@ namespace PE
 
 			ExecutionStateHUD(id, deltaTime);
 			PhaseBannerTransition(id, deltaTime);
-			UpdateTurnCounter("Executing...");
+			UpdateTurnCounter("Executing");
 			CheckFinishExecution();
 			prevState = currentState;
 			break;
@@ -725,18 +732,19 @@ namespace PE
 
 	void GameStateController_v2_0::NextState(EntityID)
 	{
-		if (currentState == GameStates_v2_0::PLANNING)
+		if (currentState == GameStates_v2_0::PLANNING && !m_nextTurnOnce)
 		{
 			SetGameState(GameStates_v2_0::EXECUTE);
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
+			m_nextTurnOnce = true;
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_exexcutePhaseBanner);
 			}
 		}
-		else if (currentState == GameStates_v2_0::EXECUTE)
+		else if (currentState == GameStates_v2_0::EXECUTE && !m_nextTurnOnce)
 		{
 			CurrentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
@@ -745,6 +753,7 @@ namespace PE
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
+			m_nextTurnOnce = true;
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);
@@ -877,6 +886,7 @@ namespace PE
 		if (fadeInSpeed >= 1)
 		{
 			DeactiveObject(m_scriptData[id].ExecuteCanvas);
+			m_nextTurnOnce = false;
 		}
 	}
 
@@ -917,6 +927,7 @@ namespace PE
 		if (fadeInSpeed >= 1)
 		{
 			DeactiveObject(m_scriptData[id].HUDCanvas);
+			m_nextTurnOnce = false;
 		}
 	}
 
@@ -1099,42 +1110,20 @@ namespace PE
 			m_leveltoLoad = m_level3SceneName;
 			break;
 		}
-		//case 3: // boss level
-		//{
-		//	CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
-		//	dat.saved.clear();
-		//	dat.saved.emplace_back(MAINCAT);
+		case 3: // boss level
+		{
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
-		//	EntityID maincat{};
-		//	for (auto id : SceneView<ScriptComponent>())
-		//	{
-		//		if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
-		//		{
-		//			maincat = id;
-		//			break;
-		//		}
-		//	}
-		//	auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
+			m_isTransitioning = true;
+			m_isTransitioningIn = false;
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
 
-		//	for (auto flw : ptr->followers)
-		//	{
-		//		auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
-		//		dat.saved.emplace_back(p_data->catType);
-		//	}
-		//	ptr->followers.clear();
-		//	m_isTransitioning = true;
-		//	m_isTransitioningIn = false;
-		//	m_timeSinceTransitionStarted = 0;
-		//	m_timeSinceTransitionEnded = m_transitionTimer;
-
-		//	m_currentLevel = nextStage;
-		//	m_leveltoLoad = m_level4SceneName;
-		//	break;
-		//}
-		//case 3: // win game
-		//	WinGame();
-		//	m_leveltoLoad = "MainMenu.scene";
-		//	break;
+			m_currentLevel = nextStage;
+			m_leveltoLoad = m_level4SceneName;
+			break;
+		}
 		default:
 			WinGame();
 			m_leveltoLoad = "MainMenu.scene";
@@ -1345,7 +1334,7 @@ namespace PE
 			{
 				if (EntityManager::GetInstance().Has<TextComponent>(id2))
 				{
-					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn: " + std::to_string(CurrentTurn));
+					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn " + std::to_string(CurrentTurn));
 				}
 				continue;
 			}

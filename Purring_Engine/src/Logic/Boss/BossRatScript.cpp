@@ -32,6 +32,9 @@ namespace PE
 	{
 		CreateCheckStateManager(id);
 		FindAllObstacles();
+
+		m_scriptData[id].m_collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+		m_scriptData[id].m_collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 	}
 
 
@@ -49,7 +52,7 @@ namespace PE
 			return;
 		}
 
-		if (m_scriptData[id].health <= 0)
+		if (m_scriptData[id].currenthealth <= 0)
 		{
 			//do something
 		}
@@ -63,6 +66,7 @@ namespace PE
 
 	void BossRatScript::OnAttach(EntityID id)
 	{
+		m_currentSlamTurnCounter = 0;
 		m_scriptData[id] = BossRatScriptData();
 		currentBoss = id;
 	}
@@ -75,6 +79,8 @@ namespace PE
 		if (it != m_scriptData.end())
 		{
 			m_scriptData.erase(id);
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionEnterEventKey)
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].m_collisionStayEventKey)
 		}
 	}
 
@@ -118,7 +124,7 @@ namespace PE
 
 	void BossRatScript::TakeDamage(int damage)
 	{
-		--m_scriptData[currentBoss].health;
+		--m_scriptData[currentBoss].currenthealth;
 	}
 
 	EntityID BossRatScript::FindFurthestCat()
@@ -146,5 +152,37 @@ namespace PE
 	std::vector<EntityID> BossRatScript::GetAllObstacles()
 	{
 		return m_Obstacles;
+	}
+
+	void BossRatScript::OnCollisionStay(const Event<CollisionEvents>& r_collisionStay)
+	{
+		OnCollisionStayEvent OCEE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionStay) };
+
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			if (OCEE.Entity1 == currentBoss  && OCEE.Entity2 == CatID
+				|| OCEE.Entity2 == currentBoss && OCEE.Entity1 == CatID)
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+			}
+		}
+	}
+
+	void BossRatScript::OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter)
+	{
+		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEnter) };
+
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			if (OCEE.Entity1 == currentBoss && OCEE.Entity2 == CatID
+				|| OCEE.Entity2 == currentBoss && OCEE.Entity1 == CatID)
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+			}
+		}
 	}
 } // End of namespace PE
