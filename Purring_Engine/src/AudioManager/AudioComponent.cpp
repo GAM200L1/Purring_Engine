@@ -51,7 +51,7 @@ namespace PE
             if (result == FMOD_OK)
             {
                 audio->SetChannel(channel);
-                std::cout << "Sound played successfully with id: " << m_audioKey << std::endl;
+                //std::cout << "Sound played successfully with id: " << m_audioKey << std::endl;
 
                 // Set the loop mode based on the m_loop flag
                 FMOD_MODE loopMode = m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
@@ -61,18 +61,18 @@ namespace PE
                 if (m_loop)
                 {
                     channel->setLoopCount(-1);
-                    std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
+                    //std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
                 }
             }
             else
             {
-                std::string errorStr = FMOD_ErrorString(result);
-                ShowErrorMessage("Failed to play sound with id: " + m_audioKey + ". Error: " + errorStr, "Playback Error");
+                //std::string errorStr = FMOD_ErrorString(result);
+                //ShowErrorMessage("Failed to play sound with id: " + m_audioKey + ". Error: " + errorStr, "Playback Error");
             }
         }
         else
         {
-            ShowErrorMessage("Sound not found in ResourceManager for id: " + m_audioKey, "Resource Error");
+            //ShowErrorMessage("Sound not found in ResourceManager for id: " + m_audioKey, "Resource Error");
         }
     }
 
@@ -91,17 +91,17 @@ namespace PE
 
     void AudioComponent::SetVolume(float volume)
     {
-        std::cout << "Setting volume for sound with id: " << m_audioKey << " to " << volume << std::endl;
+        //std::cout << "Setting volume for sound with id: " << m_audioKey << " to " << volume << std::endl;
 
         std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
         if (audio && audio->GetChannel())
         {
             audio->GetChannel()->setVolume(volume);
-            std::cout << "Volume set successfully for sound with id: " << m_audioKey << std::endl;
+            //std::cout << "Volume set successfully for sound with id: " << m_audioKey << std::endl;
         }
         else
         {
-            std::cout << "Failed to set volume for sound with id: " << m_audioKey << " (sound or channel not found)" << std::endl;
+            //std::cout << "Failed to set volume for sound with id: " << m_audioKey << " (sound or channel not found)" << std::endl;
         }
     }
 
