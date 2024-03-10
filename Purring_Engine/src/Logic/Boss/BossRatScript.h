@@ -64,6 +64,7 @@ namespace PE
 		//charge attack variables
 		float chargeSpeed{ 1000 };
 		bool isCharging{ false };
+		float distanceBetweenPools{ 180 };
 
 		std::map<std::string, std::string> animationStates;
 		int collisionEnterEventKey,collisionStayEventKey;
@@ -78,10 +79,11 @@ namespace PE
 		// ----- Public Members ----- //
 	public:
 		std::map<EntityID, BossRatScriptData> m_scriptData;
-		EntityID currentBoss;
+		EntityID currentBoss{};
 		int currentSlamTurnCounter{};
+		std::map<EntityID,int> poisonPuddles;
 
-		BossRatAttacks BossRatAttackSets[3][3]
+		BossRatAttacks bossRatAttackSets[3][3]
 		{
 			{BossRatAttacks::CHARGE,BossRatAttacks::SLAM,BossRatAttacks::BASH},
 			{BossRatAttacks::BASH,BossRatAttacks::SLAM,BossRatAttacks::CHARGE},

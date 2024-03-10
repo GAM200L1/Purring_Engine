@@ -68,12 +68,12 @@ namespace PE
 			{
 				EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
-					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PlayAudioSound(AudioComponent::AudioType::BGM);
 				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 
 				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
 				EntityManager::GetInstance().RemoveEntity(bgm);
 				m_startCutscene = false;
 			}
@@ -158,7 +158,7 @@ namespace PE
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
@@ -166,7 +166,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 

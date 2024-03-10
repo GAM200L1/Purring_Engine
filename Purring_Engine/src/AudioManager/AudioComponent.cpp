@@ -39,40 +39,37 @@ namespace PE
         MessageBoxA(NULL, r_message.c_str(), r_title.c_str(), MB_ICONERROR | MB_OK);
     }
 
-    void AudioComponent::PlayAudioSound()
+    void AudioComponent::PlayAudioSound(AudioType type)
     {
         std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
         if (audio)
         {
             FMOD::System* p_system = AudioManager::GetInstance().GetFMODSystem();
             FMOD::Channel* p_channel = nullptr;
-            FMOD_RESULT result = p_system->playSound(audio->GetSound(), nullptr, false, &p_channel);
+            FMOD::ChannelGroup* targetGroup = nullptr;
 
+            if (type == AudioType::BGM)
+            {
+                targetGroup = AudioManager::GetInstance().GetBGMGroup();
+            }
+            else // type == AudioType::SFX
+            {
+                targetGroup = AudioManager::GetInstance().GetSFXGroup();
+            }
+
+            FMOD_RESULT result = p_system->playSound(audio->GetSound(), targetGroup, false, &p_channel);
             if (result == FMOD_OK)
             {
                 audio->SetChannel(p_channel);
-                //std::cout << "Sound played successfully with id: " << m_audioKey << std::endl;
-
-                // Set the loop mode based on the m_loop flag
-                FMOD_MODE loopMode = m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
-                p_channel->setMode(loopMode);
-
-                // If looping, set the loop count to -1 for infinite looping
-                if (m_loop)
-                {
-                    p_channel->setLoopCount(-1);
-                    //std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
-                }
             }
             else
             {
-                //std::string errorStr = FMOD_ErrorString(result);
-                //ShowErrorMessage("Failed to play sound with id: " + m_audioKey + ". Error: " + errorStr, "Playback Error");
+                // Handle playback error
             }
         }
         else
         {
-            //ShowErrorMessage("Sound not found in ResourceManager for id: " + m_audioKey, "Resource Error");
+            // Handle case where audio is not found
         }
     }
 

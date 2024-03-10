@@ -344,7 +344,7 @@ namespace PE
 				EntityID sound = serializationManager.LoadFromFile(r_soundPrefab);
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 				{
-						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				}
 				EntityManager::GetInstance().RemoveEntity(sound);
 		}
@@ -537,6 +537,26 @@ namespace PE
 				it->second.catsInDetectionRadius.clear();
 				it->second.catsExitedDetectionRadius.clear();
 				it->second.hitBy.clear();
+		}
+
+
+		void RatScript_v2_0::ClearDeadCats(std::set<EntityID>& catSet)
+		{
+				// Store the indices of the dead cats 
+				std::vector<EntityID> deadCats{};
+				for (EntityID const& id : catSet)
+				{
+						if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id)))
+						{
+								deadCats.emplace_back(id);
+						}
+				}
+
+				// Remove the cats from the set
+				for (EntityID const& id : deadCats)
+				{
+						catSet.erase(id);
+				}
 		}
 
 		void RatScript_v2_0::CatEntered(EntityID const id, EntityID const catID)

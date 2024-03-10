@@ -130,8 +130,8 @@ namespace PE
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
 		// Play audio BGM and BGM Ambience via GlobalMusicManager
-		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Music.prefab", true);
-		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Ambience.prefab", true);
+		GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music.prefab", true);
+		GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Ambience.prefab", true);
 		GlobalMusicManager::GetInstance().StartFadeIn(5.0f);
 
 		ResetPhaseBanner(true);
@@ -194,6 +194,7 @@ namespace PE
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			FadeAllObject(m_scriptData[id].RatKingJournal, 0);
 			FadeAllObject(m_scriptData[id].Journal, 0);
 
 			PhaseBannerTransition(id, deltaTime);
@@ -246,6 +247,7 @@ namespace PE
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
+			DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
 			DeactiveAllMenu();
 
 			ExecutionStateHUD(id, deltaTime);
@@ -384,12 +386,22 @@ namespace PE
 
 		if (KTE.keycode == GLFW_KEY_F4)
 		{
-			NextStage(1);
+			NextStage(0);
 		}		
 		
 		if (KTE.keycode == GLFW_KEY_F5)
 		{
-			NextStage(0);
+			NextStage(1);
+		}
+
+		if (KTE.keycode == GLFW_KEY_F6)
+		{
+			NextStage(2);
+		}
+
+		if (KTE.keycode == GLFW_KEY_F7)
+		{
+			NextStage(3);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F9)
@@ -412,14 +424,50 @@ namespace PE
 			{
 				RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
 				CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+				BossRatScript* BossRat = GETSCRIPTINSTANCEPOINTER(BossRatScript);
+				EntityID BossID = BossRat->currentBoss;
+			
+				//get mouse position
+				vec2 cursorPosition{};
+				GetMouseCurrentPosition(cursorPosition);
+
+				//for boss
+				if (BossID != 0)
+				{
+					if (EntityManager::GetInstance().Has<Transform>(BossID) && EntityManager::GetInstance().Has<Collider>(BossID))
+					{
+						//activate ratbossportrait
+						//Get collider of the rat
+						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(BossID).colliderVariant);
+						if (PointCollision(col, cursorPosition))
+						{
+							m_isPotraitShowing = true;
+							m_bossRatSelected = true;
+							m_isRat = true;
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Rat King_256px.png"));
+							ActiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
+							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
+							DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
+							return;
+						}
+						else
+						{
+							m_bossRatSelected = false;
+							m_isRat = false;
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
+							DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
+						}
+					}
+				}
+
 				//for rats
 				for (auto [RatID, RatType] : RatManager->GetRats(RatManager->mainInstance))
 				{
 					if (EntityManager::GetInstance().Has<Transform>(RatID) && EntityManager::GetInstance().Has<Collider>(RatID))
 					{
-						//get mouse position
-						vec2 cursorPosition{};
-						GetMouseCurrentPosition(cursorPosition);
+						////get mouse position
+						//vec2 cursorPosition{};
+						//GetMouseCurrentPosition(cursorPosition);
 
 						//Get collider of the rat
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(RatID).colliderVariant);
@@ -433,7 +481,7 @@ namespace PE
 							m_isRat = true;
 							m_isPotraitShowing = true;
 							//debug
-							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
+							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << "EntityID: "<< RatID << std::endl;
 							//add a switch statement here
 							//need specific texture
 							m_lastSelectedEntity = RatID;
@@ -496,13 +544,13 @@ namespace PE
 				{
 					if (EntityManager::GetInstance().Has<Transform>(CatID) && EntityManager::GetInstance().Has<Collider>(CatID))
 					{
-						//get mouse position
-						vec2 cursorPosition{};
-						GetMouseCurrentPosition(cursorPosition);
+						////get mouse position
+						//vec2 cursorPosition{};
+						//GetMouseCurrentPosition(cursorPosition);
 						//Get collider of the rat
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(CatID).colliderVariant);
 						//debug
-						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
+						//std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
 						// Check if the rat/cat has been clicked
 						if (PointCollision(col, cursorPosition))
 						{
@@ -530,11 +578,11 @@ namespace PE
 								}
 
 							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 							EntityManager::GetInstance().RemoveEntity(sound);
 
 							//debug
-							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
+							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
 							//add a switch statement here
 							//need specific texture
 							//set cat portrait active
@@ -593,7 +641,6 @@ namespace PE
 
 		}
 	}
-
 
 	void GameStateController_v2_0::SetPauseStateV2(EntityID)
 	{
@@ -879,11 +926,28 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
 		}
 		else
 		{
-			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeInSpeed);
+			if (m_bossRatSelected)
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(fadeInSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+			}
+			else
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeInSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
+			}
 		}
 
 
@@ -920,11 +984,28 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
 		}
 		else
 		{
-			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeOutSpeed);
+			if (m_bossRatSelected)
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(fadeOutSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+			}
+			else
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeOutSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
+			}
 		}
 
 
@@ -1218,6 +1299,21 @@ namespace PE
 					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = static_cast<float>(Current);
 				}
 			}
+
+			if (Max == 2 && EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "HealthFrame")
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_HealthBar_TwoSeg_180x46.png"));
+				}
+			}
+			else if (Max == 3 && EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "HealthFrame")
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_EnergyBar_ThreeSeg_180x46.png"));
+				}
+			}
 		}
 		else
 		for (auto catid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
@@ -1252,7 +1348,7 @@ namespace PE
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
@@ -1260,7 +1356,7 @@ namespace PE
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
@@ -1268,7 +1364,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Menu Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
@@ -1276,7 +1372,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Win SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
@@ -1284,7 +1380,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Lose SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
@@ -1292,7 +1388,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
@@ -1300,7 +1396,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Phase Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 

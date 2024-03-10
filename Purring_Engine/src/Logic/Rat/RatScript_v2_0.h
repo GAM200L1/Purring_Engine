@@ -352,6 +352,13 @@ namespace PE
 		void ClearCollisionContainers(EntityID const id);
 
 		/*!***********************************************************************************
+				\brief Clears dead cats from the set passed in.
+
+				\param[in,out] catSet - Container of cats to clear dead cats from.
+		*************************************************************************************/
+		static void ClearDeadCats(std::set<EntityID>& catSet);
+
+		/*!***********************************************************************************
 		 \brief Called when a cat is within the rat's detection radius.
 
 		 \param[in] id - EntityID of the rat whose detection radius was entered.

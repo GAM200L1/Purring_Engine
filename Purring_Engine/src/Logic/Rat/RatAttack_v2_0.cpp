@@ -130,8 +130,8 @@ namespace PE
     void RatAttack_v2_0::ChangeStates()
     {
         // Clear dead cats from the collision sets
-        ClearDeadCats(p_data->catsInDetectionRadius);
-        ClearDeadCats(p_data->catsExitedDetectionRadius);
+        RatScript_v2_0::ClearDeadCats(p_data->catsInDetectionRadius);
+        RatScript_v2_0::ClearDeadCats(p_data->catsExitedDetectionRadius);
 
         // Check if there are any cats in the detection range
         if (!(p_data->catsInDetectionRadius.empty()))
@@ -168,24 +168,6 @@ namespace PE
         }
     }
 
-    void RatAttack_v2_0::ClearDeadCats(std::set<EntityID>& catSet)
-    {
-        // Store the indices of the dead cats 
-        std::vector<EntityID> deadCats{};
-        for (EntityID const& id : catSet) 
-        {
-            if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id))) 
-            {
-                deadCats.emplace_back(id);
-            }
-        }
-
-        // Remove the cats from the set
-        for (EntityID const& id : deadCats) 
-        {
-            catSet.erase(id);
-        }
-    }
 
     void RatAttack_v2_0::OnCollisionEnter(const Event<CollisionEvents>& r_event)
     {
@@ -212,6 +194,9 @@ namespace PE
             
             if (p_data->attacking && p_data->p_attackData) // Currently attacking 
             {
+#ifdef DEBUG_PRINT
+                std::cout << "GutterRatAttack_v2_0::OnCollisionEnter(" << p_data->myID << "): between ent " << EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name << " and " << EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name << std::endl;
+#endif // DEBUG_PRINT
                 p_data->p_attackData->OnCollisionEnter(OTEE.Entity1, OTEE.Entity2);
             } // end of if (p_data->attacking)
         }

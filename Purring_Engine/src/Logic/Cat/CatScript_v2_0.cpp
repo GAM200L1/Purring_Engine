@@ -150,7 +150,7 @@ namespace PE
 				}
 
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				EntityManager::GetInstance().RemoveEntity(sound);
 			}
 

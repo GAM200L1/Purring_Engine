@@ -235,10 +235,12 @@ RTTR_REGISTRATION
         .property("HowToPlayPageTwo", &PE::GameStateController_v2_0Data::HowToPlayPageTwo)
         .property("CatPortrait", &PE::GameStateController_v2_0Data::CatPortrait)
         .property("RatPortrait", &PE::GameStateController_v2_0Data::RatPortrait)
+        .property("RatKingPortrait", &PE::GameStateController_v2_0Data::RatKingPortrait)
         .property("Portrait", &PE::GameStateController_v2_0Data::Portrait)
         .property("Background", &PE::GameStateController_v2_0Data::Background)
         .property("TransitionPanel", &PE::GameStateController_v2_0Data::TransitionPanel)
         .property("Journal", &PE::GameStateController_v2_0Data::Journal)
+        .property("RatKingJournal", &PE::GameStateController_v2_0Data::RatKingJournal)
         .property("JournalButton", &PE::GameStateController_v2_0Data::JournalButton)
         .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
@@ -427,6 +429,7 @@ RTTR_REGISTRATION
         .property("rightSideSlamAnimation", &PE::BossRatScriptData::rightSideSlamAnimation)
         .property("leftSideSlamAnimation", &PE::BossRatScriptData::leftSideSlamAnimation)
         .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
+        .property("distanceBetweenPools", &PE::BossRatScriptData::distanceBetweenPools)
         .property("animationStates", &PE::BossRatScriptData::animationStates);
 }
 

@@ -67,13 +67,6 @@ namespace PE
         *************************************************************************************/
         virtual void StateExit(EntityID id) override;
 
-        /*!***********************************************************************************
-            \brief Clears dead cats from the set passed in.
-
-            \param[in,out] catSet - Container of cats to clear dead cats from.
-        *************************************************************************************/
-        void ClearDeadCats(std::set<EntityID>& catSet);
-
 
         // --- COLLISION DETECTION --- // 
 
