@@ -5099,7 +5099,6 @@ namespace PE {
 						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 						SaveAndPlayScene();
 
-						GETANIMATIONMANAGER()->PlayAllAnimations();
 						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 					}
 					ImGui::SameLine();
@@ -5845,7 +5844,6 @@ namespace PE {
 		{
 			m_isRunTime = true;	
 			toDisable = true;
-			GETANIMATIONMANAGER()->PlayAllAnimations();
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
@@ -5854,7 +5852,6 @@ namespace PE {
 		{
 			m_isRunTime = false;
 			toDisable = false;
-			GETANIMATIONMANAGER()->PauseAllAnimations();
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
