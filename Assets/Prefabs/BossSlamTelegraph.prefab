@@ -7,36 +7,36 @@
                         "EntityDescriptor": {
                             "InteractionLayer": 0,
                             "Layer": 0,
-                            "Old ID": 1,
+                            "Old ID": 99,
                             "Prefab Type": "",
                             "children": [],
-                            "isActive": true,
-                            "name": "RatBossChargeAttackTelegraph",
+                            "isActive": false,
+                            "name": "BossSlamTelegraph",
                             "parent": null,
-                            "sceneID": 1
+                            "sceneID": 99
                         },
                         "Renderer": {
                             "Color": {
                                 "a": 1.0,
-                                "b": 0.2862745225429535,
-                                "g": 0.3333333432674408,
-                                "r": 0.8156862854957581
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Charge_350x160.png"
+                            "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Slam_100x140.png"
                         },
                         "Transform": {
-                            "height": 160.0,
+                            "height": 100.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -300.0001220703125,
+                                "y": 122.49993896484375
                             },
                             "relativeposition": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": 116.9998779296875,
+                                "y": 95.49993896484375
                             },
                             "relorientation": 0.0,
-                            "width": 350.0
+                            "width": 100.0
                         }
                     },
                     "name": ""
