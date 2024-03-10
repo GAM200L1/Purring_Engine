@@ -88,10 +88,10 @@ namespace PE
 						Transform* puddleTransform = &EntityManager::GetInstance().Get<Transform>(puddle);
 						puddleTransform->position = BossTransform->position;
 
-						if (EntityManager::GetInstance().Has<AnimationComponent>(puddle))
-						{
-							EntityManager::GetInstance().Get<AnimationComponent>(puddle).PlayAnimation();
-						}
+						//if (EntityManager::GetInstance().Has<AnimationComponent>(puddle))
+						//{
+						//	EntityManager::GetInstance().Get<AnimationComponent>(puddle).PlayAnimation();
+						//}
 					}
 					p_script->poisonPuddles.insert(std::pair<EntityID,int>(puddle,3));
 					m_distanceTravelled = 0;

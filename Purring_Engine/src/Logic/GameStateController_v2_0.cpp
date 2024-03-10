@@ -194,6 +194,7 @@ namespace PE
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			FadeAllObject(m_scriptData[id].RatKingJournal, 0);
 			FadeAllObject(m_scriptData[id].Journal, 0);
 
 			PhaseBannerTransition(id, deltaTime);
@@ -385,12 +386,22 @@ namespace PE
 
 		if (KTE.keycode == GLFW_KEY_F4)
 		{
-			NextStage(1);
+			NextStage(0);
 		}		
 		
 		if (KTE.keycode == GLFW_KEY_F5)
 		{
-			NextStage(0);
+			NextStage(1);
+		}
+
+		if (KTE.keycode == GLFW_KEY_F6)
+		{
+			NextStage(2);
+		}
+
+		if (KTE.keycode == GLFW_KEY_F7)
+		{
+			NextStage(3);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F9)
