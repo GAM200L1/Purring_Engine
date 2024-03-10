@@ -4561,27 +4561,23 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack.anim",
-                            "../Assets/Animation/AnimationRat_Death.anim",
-                            "../Assets/Animation/AnimationRat_Hurt.anim",
-                            "../Assets/Animation/AnimationRat_Idle.anim",
-                            "../Assets/Animation/AnimationRat_walk.anim"
+                            "../Assets/Animation/AnimationRatKing_Idle.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRatKing_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 473.0000305175781,
-                                "y": 37.0
+                                "x": 482.0000305175781,
+                                "y": 8.0
                             },
                             "positionOffset": {
-                                "x": 8.0,
-                                "y": 10.0
+                                "x": 17.0,
+                                "y": -19.0
                             },
-                            "radius": 128.0,
-                            "scaleOffset": 1.0
+                            "radius": 101.12000274658203,
+                            "scaleOffset": 0.7900000214576721
                         },
                         "isTrigger": false,
                         "type": "CircleCollider"
@@ -4606,7 +4602,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_King_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
