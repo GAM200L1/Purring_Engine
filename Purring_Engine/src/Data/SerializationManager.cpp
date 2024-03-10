@@ -550,7 +550,7 @@ nlohmann::json SerializationManager::LoadMetaDataFromFile(const std::filesystem:
     return loadedData;
 }
 
-
+#pragma warning (disable : 4702)
 size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
 {
     if (r_json.contains("Prefab")) // following multi prefab method
@@ -596,7 +596,7 @@ size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
     }
     return MAXSIZE_T;
 }
-
+#pragma warning (default : 4702)
 void SerializationManager::LoadLoaders()
 {
     m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
