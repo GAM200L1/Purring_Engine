@@ -66,7 +66,7 @@ namespace PE
 		bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
 
 		// Event listener IDs 
-		int m_collisionEventListener{}, m_collisionExitEventListener{};
+		int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 
 	private:
 		/*!***********************************************************************************

@@ -113,7 +113,7 @@ namespace PE
         bool m_attackFeedbackOnce{};
 
         // Event listener IDs 
-        int m_collisionEventListener{}, m_collisionExitEventListener{};
+        int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 
         // ----- PRIVATE METHODS ----- //
     private:

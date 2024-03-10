@@ -205,6 +205,6 @@ namespace PE
 	private:
 		RatDetectionScript_v2_0_Data* p_data; // pointer to script instance data
 		// Event listener IDs 
-		int m_collisionEventListener{}, m_collisionExitEventListener{};
+		int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 	};
 } // end of namespace

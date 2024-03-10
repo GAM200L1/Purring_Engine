@@ -38,6 +38,7 @@ namespace PE
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                                                   // Get GSM instance
 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnterAndStay, this);
+        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
 
         // Reset variables
@@ -86,6 +87,7 @@ namespace PE
         p_data = nullptr;
         gameStateController = nullptr;
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
@@ -201,7 +203,26 @@ namespace PE
             {
                 p_data->attackData->OnCollisionEnter(OTEE.Entity1, OTEE.Entity2);
             } // end of if (p_data->attacking)
-        } // end of if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
+        }
+        else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
+        {
+            OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
+            // check if entity1 is the rat's detection collider and entity2 is cat
+            if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity2))
+            {
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
+            }
+            // check if entity2 is the rat's detection collider and entity1 is cat
+            else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity1))
+            {
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
+            }
+            else if (p_data->attacking) // Currently attacking 
+            {
+                p_data->attackData->OnCollisionEnter(OTSE.Entity1, OTSE.Entity2);
+            } // end of if (p_data->attacking)
+                
+        } // end of if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
     }
 
 
