@@ -344,7 +344,7 @@ namespace PE
 				EntityID sound = serializationManager.LoadFromFile(r_soundPrefab);
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 				{
-						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				}
 				EntityManager::GetInstance().RemoveEntity(sound);
 		}

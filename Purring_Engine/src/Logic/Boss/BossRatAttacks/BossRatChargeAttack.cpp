@@ -27,6 +27,7 @@ namespace PE
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);
 
 		m_activationTime = p_data->activationTime;
+		m_distanceTravelled = p_data->distanceBetweenPools;
 	}
 
 	void BossRatChargeAttack::DrawTelegraphs(EntityID id)
@@ -55,6 +56,7 @@ namespace PE
 			TelegraphTransform->orientation = atan2(unitDirection.y, unitDirection.x);
 		}	
 	}
+	
 	void BossRatChargeAttack::EnterAttack(EntityID)
 	{
 		m_isCharging = true;
@@ -75,6 +77,25 @@ namespace PE
 			{
 				Transform* BossTransform = &EntityManager::GetInstance().Get<Transform>(id);
 				BossTransform->position += m_chargeDirection * p_data->chargeSpeed * dt;
+
+				m_distanceTravelled += p_data->chargeSpeed * dt;
+				if (m_distanceTravelled >= p_data->distanceBetweenPools)
+				{
+					SerializationManager sm;
+					EntityID puddle = sm.LoadFromFile(m_poisonPuddlePrefab);
+					if (EntityManager::GetInstance().Has<Transform>(puddle))
+					{
+						Transform* puddleTransform = &EntityManager::GetInstance().Get<Transform>(puddle);
+						puddleTransform->position = BossTransform->position;
+
+						//if (EntityManager::GetInstance().Has<AnimationComponent>(puddle))
+						//{
+						//	EntityManager::GetInstance().Get<AnimationComponent>(puddle).PlayAnimation();
+						//}
+					}
+					p_script->poisonPuddles.insert(std::pair<EntityID,int>(puddle,3));
+					m_distanceTravelled = 0;
+				}
 			}
 
 			m_travelTime -= dt;
@@ -87,6 +108,7 @@ namespace PE
 			p_data->finishExecution = true;
 		}
 	}
+	
 	void BossRatChargeAttack::ExitAttack(EntityID)
 	{
 	}

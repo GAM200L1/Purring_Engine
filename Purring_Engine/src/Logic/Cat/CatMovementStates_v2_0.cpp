@@ -209,7 +209,7 @@ namespace PE
 		SerializationManager m_serializationManager;
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Movement Planning SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 
 		// Add the position to the path positions list
@@ -316,7 +316,7 @@ namespace PE
 				SerializationManager m_serializationManager;
 				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Path Denial SFX1.prefab");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				EntityManager::GetInstance().RemoveEntity(sound);
 			}
 		}
@@ -447,7 +447,7 @@ namespace PE
 		{
 			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 1.prefab");
 			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 			EntityManager::GetInstance().RemoveEntity(buttonpress);
 			break;
 		}
@@ -455,7 +455,7 @@ namespace PE
 		{
 			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 2.prefab");
 			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 			EntityManager::GetInstance().RemoveEntity(buttonpress);
 			break;
 		}
@@ -463,7 +463,7 @@ namespace PE
 		{
 			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 3.prefab");
 			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 			EntityManager::GetInstance().RemoveEntity(buttonpress);
 			break;
 		}
