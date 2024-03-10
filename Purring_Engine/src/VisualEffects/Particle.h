@@ -18,6 +18,7 @@
 #include "ECS/EntityFactory.h"
 #include "Hierarchy/HierarchyManager.h"
 #include "Graphics/Renderer.h"
+#include "Physics/RigidBody.h"
 
 namespace PE
 {
@@ -31,84 +32,70 @@ namespace PE
 
 	struct Particle
 	{
-		//EntityID spawnerID;
-		EntityID particleID;
-		float lifetime = 0.f;
-		vec2 directionVector{ 0.f, 1.f };
+		Particle(const EnumParticleType& r_tp, const vec2& r_p, const vec2& r_scl, const vec2& r_dir, const vec2& r_dScl, const float& r_dr, const float& r_lifetime)
+			: type(r_tp), directionVector(r_dir), deltaScale(r_dScl), deltaOrientation(r_dr), lifetime(r_lifetime)
+		{
+			transform.position = r_p;
+			transform.height = r_scl.y;
+			transform.width = r_scl.x;
+		}
+		
+		void Reset(const EnumParticleType& r_tp, const vec2& r_p, const vec2& r_scl, const vec2& r_dir, const vec2& r_dScl, const float& r_dr, const float& r_lifetime)
+		{
+			type = r_tp;
+			transform.position = r_p;
+			transform.height = r_scl.y;
+			transform.width = r_scl.x;
+
+			// change in postion
+			directionVector = r_dir;
+			// change in scale
+			deltaScale = r_dScl;
+			// chane in orientation
+			deltaOrientation = r_dr;
+
+			lifetime = r_lifetime;
+		}
+
+		bool Update(const float& dt)
+		{
+			transform.position += directionVector * dt;
+			transform.orientation += deltaOrientation * dt;
+			transform.width += deltaScale.x * dt;
+			transform.height += deltaScale.y * dt;
+
+			if (type == ANIMATED)
+			{
+				++spriteID;
+				if (spriteID > maxSpriteID)
+					spriteID = 0;
+			}
+
+			if (!transform.width || !transform.height)
+				lifetime = 0.f;
+			lifetime -= dt;
+			// future, update sprite id?				
+			return (lifetime <= 0.f)? true : false; 
+		}
 
 		EnumParticleType type;
 
-		Particle() = delete; // no default creation, all values to be based off an existing emitter
+		Transform transform;
+		
 
-		Particle(EntityID spawnerId, EnumParticleType particleType)
-		{
-			particleID = EntityFactory::GetInstance().CreateEntity();
-			type = particleType;
-			
-			// assigns a transform to the particle
-			if (!EntityManager::GetInstance().Has<Transform>(particleID))
-			{
-				EntityFactory::GetInstance().Assign(particleID, { EntityManager::GetInstance().GetComponentID<Transform>() });
-			}
-			// assigns a renderer to the particle
-			if (!EntityManager::GetInstance().Has<Graphics::Renderer>(particleID))
-			{
-				EntityFactory::GetInstance().Assign(particleID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
-			}
-			// assigns an animation component to the particle if it is animated
-			if (type == EnumParticleType::ANIMATED && !EntityManager::GetInstance().Has<AnimationComponent>(particleID))
-			{
-				EntityFactory::GetInstance().Assign(particleID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
-			}
+#ifdef ENABLE_PARTICLE_PHYSICS
+		RigidBody rigidbody;
+#endif // ENABLE_PARTICLE_PHYSICS
 
-			// sets parent ID as spawner ID
-			Hierarchy::GetInstance().AttachChild(spawnerId, particleID);
-		}
+		
 
-		void SetActive(bool isActive)
-		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(particleID).isActive = isActive;
-		}
+		vec2 directionVector{ 0.f, 1.f };
+		vec2 deltaScale{ 0.f, 0.f };
+		float deltaOrientation{ 0.f };
+		float lifetime = 0.f;
 
-		void ResetParticle(vec2 const& r_startRelPosition, vec2 const& r_directionVector, float particleWidth, float particleHeight, float startRotation, float startLifetime)
-		{
-			// sets the starting position of the object relative to the position of the emitter
-			EntityManager::GetInstance().Get<Transform>(particleID).relPosition = r_startRelPosition;
+		int maxSpriteID{ 0 };
 
-			// Sets the starting size of the particle
-			EntityManager::GetInstance().Get<Transform>(particleID).width = particleWidth;
-			EntityManager::GetInstance().Get<Transform>(particleID).height = particleHeight;
-
-			EntityManager::GetInstance().Get<Transform>(particleID).relOrientation = startRotation;
-
-			directionVector = r_directionVector;
-
-			// Sets the lifetime of the particle
-			lifetime = startLifetime;
-		}
-
-		void UpdatePosition(float speedPerFrame)
-		{
-			EntityManager::GetInstance().Get<Transform>(particleID).relPosition += directionVector * speedPerFrame;
-		}
-
-		void UpdateRotation(float rotationDifference)
-		{
-			EntityManager::GetInstance().Get<Transform>(particleID).relOrientation += rotationDifference;
-		}
-
-		void UpdateScale(float widthDifference, float heightDifference)
-		{
-			EntityManager::GetInstance().Get<Transform>(particleID).width += widthDifference;
-			EntityManager::GetInstance().Get<Transform>(particleID).height += heightDifference;
-		}
-
-		void UpdateColor(vec4 const& colorDifference)
-		{
-			glm::vec4 const& particleColor = EntityManager::GetInstance().Get<Graphics::Renderer>(particleID).GetColor();
-			EntityManager::GetInstance().Get<Graphics::Renderer>(particleID).SetColor(particleColor.x + colorDifference.x, particleColor.y + colorDifference.y, particleColor.z + colorDifference.z, particleColor.w + colorDifference.w);
-		}
-
-		// void UpdateAnimation()
+		int spriteID{ 0 };
 	};
 }

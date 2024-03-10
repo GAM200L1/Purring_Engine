@@ -93,7 +93,7 @@ namespace PE
 
 				// when lifetime of individual particle is depleted reset lifetime
 				vec2 const& r_particleStartPosition{ GeneratePosition(startEmissionRadius) };
-				r_particle.ResetParticle(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
+				//r_particle.Reset(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
 			}
 			else
 			{
@@ -101,10 +101,11 @@ namespace PE
 				{
 					//r_particle.UpdateAnimation();
 				}
-				r_particle.UpdatePosition(startSpeed * deltaTime);
-				r_particle.UpdateRotation(orientationChangeSpeed * deltaTime);
-				r_particle.UpdateScale(scaleChangeSpeed.x * deltaTime, scaleChangeSpeed.y * deltaTime);
-				r_particle.UpdateColor(colorChangeSpeed * deltaTime);
+				r_particle.Update(deltaTime);
+				//r_particle.UpdatePosition(startSpeed * deltaTime);
+				//r_particle.UpdateRotation(orientationChangeSpeed * deltaTime);
+				//r_particle.UpdateScale(scaleChangeSpeed.x * deltaTime, scaleChangeSpeed.y * deltaTime);
+				//r_particle.UpdateColor(colorChangeSpeed * deltaTime);
 			}
 		}
 	}
@@ -122,7 +123,7 @@ namespace PE
 		for (Particle& r_particle : particles)
 		{
 			vec2 const& r_particleStartPosition{ GeneratePosition(startEmissionRadius) };
-			r_particle.ResetParticle(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
+			r_particle.Reset(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
 		}
 	}
 

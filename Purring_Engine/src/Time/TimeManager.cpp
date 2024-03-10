@@ -108,7 +108,7 @@ namespace PE
 		if (!(m_accumulator >= m_fixedTimeStep))
 		{
 			// save systemFrametime for fixed time systems and reset
-			for (SystemID systemID{}; systemID < GRAPHICS; ++systemID)
+			for (SystemID systemID{}; systemID < SYSTEMCOUNT; ++systemID)
 			{
 				m_systemFrameTime[systemID] += m_systemAccumulatedFrameTime[systemID];
 				m_systemAccumulatedFrameTime[systemID] = 0.f;

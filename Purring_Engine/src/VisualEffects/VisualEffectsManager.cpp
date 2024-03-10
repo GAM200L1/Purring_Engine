@@ -19,6 +19,7 @@
 #include "ECS/SceneView.h"
 #include "ECS/Entity.h"
 #include "ParticleSystem.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -35,16 +36,19 @@ namespace PE
 	void VisualEffectsManager::UpdateSystem(float deltaTime)
 	{
 		// runs particle system
-		for (EntityID ParticleSystemID : SceneView<Transform, ParticleSystem>())
+		for (auto& layer : LayerView<Transform, ParticleSystem>())
 		{
-			ParticleSystem& r_particleSystem = EntityManager::GetInstance().Get<ParticleSystem>(ParticleSystemID);
-
-			if (!r_particleSystem.isActive)
+			for (EntityID ParticleSystemID : InternalView(layer))
 			{
-				// if particle system is not active, do not update it
-				continue;
+				ParticleSystem& r_particleSystem = EntityManager::GetInstance().Get<ParticleSystem>(ParticleSystemID);
+
+				if (!r_particleSystem.isActive)
+				{
+					// if particle system is not active, do not update it
+					continue;
+				}
+				r_particleSystem.Update(deltaTime);
 			}
-			r_particleSystem.Update(deltaTime);
 		}
 	}
 	
