@@ -69,9 +69,9 @@
                                             "attacKDirection": 0,
                                             "bulletDelay": 0.0,
                                             "bulletFireAnimationIndex": 3,
-                                            "bulletForce": 500.0,
+                                            "bulletForce": 650.0,
                                             "bulletLifeTime": 1.0,
-                                            "bulletRange": 3.0,
+                                            "bulletRange": 4.0,
                                             "damage": 2,
                                             "projectileID": 0,
                                             "teleGraphIDs": []
