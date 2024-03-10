@@ -289,6 +289,11 @@ nlohmann::json PE::ScriptComponent::ToJson(EntityID id) const
 				unsigned val = var.get_value<unsigned>();
 				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
 			}
+			else if (var.get_type().get_name() == "enumPE::EnumRatType")
+			{
+					PE::EnumRatType val = var.get_value<EnumRatType>();
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
 			else
 			{
 				std::cout << var.get_type().get_name() << std::endl;

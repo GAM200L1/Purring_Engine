@@ -12,14 +12,14 @@
                                 "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                 "../Assets/Animation/AnimationGutterRat_Walk.anim"
                             ],
-                            "CurrentAnimationID": ""
+                            "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
                         },
                         "Collider": {
                             "collisionLayerIndex": 1,
                             "data": {
                                 "center": {
-                                    "x": -287.0000915527344,
-                                    "y": -76.00019073486328
+                                    "x": 0.0,
+                                    "y": 0.0
                                 },
                                 "positionOffset": {
                                     "x": 0.0,
@@ -32,7 +32,7 @@
                             "type": "CircleCollider"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 0,
+                            "InteractionLayer": 1,
                             "Layer": 1,
                             "Old ID": 1,
                             "Prefab Type": "GutterRat",
@@ -49,7 +49,7 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                            "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,
@@ -65,7 +65,13 @@
                                         "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
                                         "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                         "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
-                                    }
+                                    },
+                                    "detectionRadius": 200.0,
+                                    "maxHuntTurns": 2,
+                                    "maxMovementRange": 200.0,
+                                    "movementSpeed": 250.0,
+                                    "ratMaxHealth": 2,
+                                    "ratType": 1
                                 },
                                 "state": 0
                             }
@@ -74,8 +80,8 @@
                             "height": 64.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": -287.0000915527344,
-                                "y": -76.00019073486328
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "relativeposition": {
                                 "x": 0.0,
