@@ -32,6 +32,10 @@ namespace PE
 	{
 		// ----- Public functions ----- //
 	public:
+
+		friend class AnimationManager;
+		friend class Animation;
+
 		/*!***********************************************************************************
 		\brief Get the current playing animation index for this component.
 
@@ -44,7 +48,7 @@ namespace PE
 
 		\return Current animation for this animation component.
 		*************************************************************************************/
-		inline std::shared_ptr<Animation> GetAnimation() const { return m_currentAnimation; }
+		std::shared_ptr<Animation> GetAnimation() const;
 
 		/*!***********************************************************************************
 		\brief Get the current frame time of the animation.
@@ -72,14 +76,14 @@ namespace PE
 
 		\param[in] time Time to set to.
 		*************************************************************************************/
-		void SetCurrentFrameTime(float time) { m_currentFrameTime = time; }
+		inline void SetCurrentFrameTime(float time) { m_currentFrameTime = time; }
 
 		/*!***********************************************************************************
 		\brief Set current frame index of the animation.
 
 		\param[in] index Index to set to.
 		*************************************************************************************/
-		void SetCurrentFrameIndex(unsigned index) { m_currentFrameIndex = index; }
+		inline void SetCurrentFrameIndex(unsigned index) { m_currentFrameIndex = index; }
 
 		/*!***********************************************************************************
 		\brief Check if animationsID container is empty.
@@ -195,6 +199,11 @@ namespace PE
 		*************************************************************************************/
 		AnimationComponent& Deserialize(const nlohmann::json& r_j);
 
+#ifndef GAMERELEASE
+		bool isPlayingEditor{ false }; // is the animation playing in editor mode, false by default
+#endif // !GAMERELEASE
+
+		private:
 		// need to serialize
 		std::set<std::string> m_animationsID; // Stores all animations for the component // not in use now
 		std::string m_currentAnimationID{}; // current playing animation
@@ -206,8 +215,7 @@ namespace PE
 		// do not need to serialize
 		float m_currentFrameTime{}; // current frame time of the animation
 		unsigned m_currentFrameIndex{}; // current frame index of the animation
-		std::shared_ptr<Animation> m_currentAnimation; // current playing animation
-		bool m_isPlaying{ false }; // is the animation playing, false by default
+		bool m_isPlaying{ true }; // is the animation playing, true by default
 		bool m_animationEnded{ false }; // has the animation ended, false by default
 
 		// add later
