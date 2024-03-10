@@ -14,24 +14,6 @@ bin
 bin-int
 *.vcxproj
 *.filters
-imgui.ini
-/vendor
-
-# look inside Assets
-!Assets
-
-# ignore everything in Assets/
-Assets/* 
-
-# dont ignore these folders in Assets/
-!Assets/Prefabs
-!Assets/Settings
-!Assets/Scenes
-!Assets/RubricTestScenes
-
-Assets/Prefabs/savestate.json
-Assets/Settings/config.json
-
 *.sln
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -420,3 +402,24 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# custom ignores
+imgui.ini
+/vendor
+
+# look inside Assets
+!Assets
+
+# ignore everything in Assets/
+Assets/* 
+
+# do not ignore these folders in Assets/
+!Assets/Prefabs
+!Assets/Settings
+!Assets/Scenes
+!Assets/Animation
+
+# do not ignore .meta files in Assets/
+!Assets/**/*.meta
+
+Assets/Scenes/Savestate/savestate.scene

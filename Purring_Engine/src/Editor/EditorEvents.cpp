@@ -19,6 +19,8 @@
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
 #include "UndoStack.h"
+#include "Utilities/FileUtilities.h"
+
 extern SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
@@ -33,33 +35,35 @@ namespace PE {
 						KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
 				}
 
-				if (KTE.keycode == GLFW_KEY_F1)
+				if (IsEditorActive())
+				{
+					if (KTE.keycode == GLFW_KEY_F1)
 						m_showConsole = !m_showConsole;
 
-				if (KTE.keycode == GLFW_KEY_F2)
+					if (KTE.keycode == GLFW_KEY_F2)
 						m_showObjectList = !m_showObjectList;
 
-				if (KTE.keycode == GLFW_KEY_F3)
+					if (KTE.keycode == GLFW_KEY_F3)
 						m_showLogs = !m_showLogs;
 
-				if (KTE.keycode == GLFW_KEY_F4)
+					if (KTE.keycode == GLFW_KEY_F4)
 						m_showSceneView = !m_showSceneView;
 
-				if (KTE.keycode == GLFW_KEY_F5)
-					m_showResourceWindow = !m_showResourceWindow;
+					if (KTE.keycode == GLFW_KEY_F5)
+						m_showResourceWindow = !m_showResourceWindow;
 
-				if (KTE.keycode == GLFW_KEY_F6)
-					m_showPerformanceWindow = !m_showPerformanceWindow;
+					if (KTE.keycode == GLFW_KEY_F6)
+						m_showPerformanceWindow = !m_showPerformanceWindow;
 
-				if (KTE.keycode == GLFW_KEY_F7)
+					if (KTE.keycode == GLFW_KEY_F7)
 						m_showComponentWindow = !m_showComponentWindow;
 
-				if (KTE.keycode == GLFW_KEY_F8)
-					m_showPhysicsWindow = !m_showPhysicsWindow;
+					if (KTE.keycode == GLFW_KEY_F8)
+						m_showPhysicsWindow = !m_showPhysicsWindow;
 
-				if (KTE.keycode == GLFW_KEY_F9)
-					m_showAnimationWindow = !m_showAnimationWindow;
-
+					if (KTE.keycode == GLFW_KEY_F9)
+						m_showAnimationWindow = !m_showAnimationWindow;
+				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
@@ -73,7 +77,7 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_SHIFT) && KTE.keycode == GLFW_KEY_F10)
 				{
-					m_showTestWindows = !m_showTestWindows;
+					m_showLayerWindow = !m_showLayerWindow;
 				}
 				else if (KTE.keycode == GLFW_KEY_F10)
 				{
@@ -112,7 +116,7 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_R))
 				{
-
+					if(m_sceneViewFocused)
 					if (KTE.keycode == GLFW_KEY_X)
 					{
 						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE_X;
@@ -129,6 +133,7 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 				{
+					if (m_sceneViewFocused)
 					if (KTE.keycode == GLFW_KEY_X)
 					{
 						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE_X;
@@ -145,6 +150,7 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_T))
 				{
+					if (m_sceneViewFocused)
 					if (KTE.keycode == GLFW_KEY_X)
 					{
 						m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE_X;
@@ -158,5 +164,10 @@ namespace PE {
 					m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 					}
 				}
+		}
+
+		void Editor::OnWindowFocusEvent(const PE::Event<PE::WindowEvents>& r_e)
+		{
+			GetFileNamesInParentPath(m_parentPath, m_files);
 		}
 }

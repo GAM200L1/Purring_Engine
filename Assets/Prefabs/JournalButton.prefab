@@ -1,0 +1,77 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "InteractionLayer": 0,
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "JournalButton",
+                "children": [],
+                "isActive": true,
+                "name": "JournalButton",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "GUI": {
+                "disabled": false,
+                "m_UIType": 0,
+                "m_defaultColor": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    0.0
+                ],
+                "m_defaultTexture": "../Assets/Textures/Resources/UnitPortrait_Default_256px.png",
+                "m_disabledColor": [
+                    0.501960813999176,
+                    0.501960813999176,
+                    0.501960813999176,
+                    0.0
+                ],
+                "m_disabledTexture": "../Assets/Textures/UnitPortrait_Default_256px.png",
+                "m_hoveredColor": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.0
+                ],
+                "m_hoveredTexture": "../Assets/Textures/UnitPortrait_Default_256px.png",
+                "m_onClicked": "",
+                "m_onHoverEnter": "JournalHoverEnter",
+                "m_onHoverExit": "JournalHoverExit",
+                "m_onHovered": "",
+                "m_pressedColor": [
+                    0.6000000238418579,
+                    0.6000000238418579,
+                    0.6000000238418579,
+                    0.0
+                ],
+                "m_pressedTexture": "../Assets/Textures/UnitPortrait_Default_256px.png"
+            },
+            "GUIRenderer": {
+                "Color": {
+                    "a": 0.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "TextureKey": "../Assets/Textures/Resources/UnitPortrait_Default_256px.png"
+            },
+            "Transform": {
+                "height": 257.89459228515625,
+                "orientation": 0.0,
+                "position": {
+                    "x": -805.0001220703125,
+                    "y": -352.5001525878906
+                },
+                "relativeposition": {
+                    "x": -805.0001220703125,
+                    "y": -352.5001525878906
+                },
+                "relorientation": 0.0,
+                "width": 250.0
+            }
+        },
+        "name": ""
+    }
+}

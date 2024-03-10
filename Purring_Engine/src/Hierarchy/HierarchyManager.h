@@ -70,6 +70,14 @@ namespace PE
 		const std::vector<EntityID>& GetParentOrder() const { return m_parentOrder; }
 
 		/*!***********************************************************************************
+		 \brief Get the Hierarchy Order vector object mainly used in Editor.cpp by the object
+		 window
+
+		 \return const std::vector<EntityID>& the cached vector
+		*************************************************************************************/
+		const std::vector<EntityID>& GetHierarchyOrder() const { return m_hierarchyOrder; }
+
+		/*!***********************************************************************************
 		 \brief Helper function to get the children of the input entity
 		 
 		 \param[in] r_parent 	EntityID of the parent to fetch children of
@@ -206,7 +214,7 @@ namespace PE
 
 		std::map<EntityID, EntityID> m_sceneOrder;
 		std::vector<EntityID> m_parentOrder; // wiped every frame? used to keep track of update order for parents, might change to list if i start inserting more...
-
+		std::vector<EntityID> m_hierarchyOrder;
 
 		std::map<float, EntityID> m_sceneHierarchy;
 	};

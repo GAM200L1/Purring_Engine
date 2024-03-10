@@ -121,11 +121,6 @@ namespace PE {
 				//trying to erase a specific element in a vector by iterator
 				listeners.erase(std::remove_if(listeners.begin(), listeners.end(), [=](auto& fc)
 					{
-						if ((*(long*)(char*)&fc == listenerInfo.second)) 
-						{
-							//std::cout<< "found" << std::endl;
-						}
-
 						return (*(long*)(char*)&fc == listenerInfo.second);
 					}
 				), listeners.end());
@@ -146,7 +141,7 @@ namespace PE {
 				return;
 
 			//loop through all listerners if the event is not handled we process it.
-			for (auto&& listener : m_Listerners.at(event.GetType()))
+			for (auto& listener : m_Listerners.at(event.GetType()))
 			{
 				if(listener)
 				if (!event.Handled()) listener(event);

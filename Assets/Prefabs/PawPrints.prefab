@@ -1,0 +1,40 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "PawPrints",
+                "children": [],
+                "isActive": true,
+                "name": "PawPrints",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "Renderer": {
+                "Color": {
+                    "a": 1.0,
+                    "b": 0.10697674751281738,
+                    "g": 0.281427800655365,
+                    "r": 1.0
+                },
+                "TextureKey": "../Assets/Textures/Telegraphs/Telegraph_Move_512px.png"
+            },
+            "Transform": {
+                "height": 60.0,
+                "orientation": -1.5700000524520874,
+                "position": {
+                    "x": 55.42379379272461,
+                    "y": 41.672393798828125
+                },
+                "relativeposition": {
+                    "x": 4.999975204467773,
+                    "y": 65.99996185302734
+                },
+                "relorientation": 0.0,
+                "width": 60.0
+            }
+        },
+        "name": ""
+    }
+}

@@ -1,0 +1,172 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 1,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Empty Object",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "ScriptComponent": {
+                        "CatController_v2_0": {
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": true,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 2,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 3,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Empty Object",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {},
+                                "catCurrentEnergy": 21,
+                                "catID": 0,
+                                "catIsDead": false,
+                                "catMaxMovementEnergy": 21,
+                                "delaySet": false,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "isMainCat": false,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "pathQuads": [],
+                                "shouldChangeState": false,
+                                "startedPlanning": false,
+                                "timeBeforeChangingState": 0.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}

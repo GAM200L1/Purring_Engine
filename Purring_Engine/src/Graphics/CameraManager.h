@@ -175,6 +175,21 @@ namespace PE
             static inline EntityID GetUiCameraId() { return m_uiCameraId; }
 
             /*!***********************************************************************************
+             \brief  Returns a vec2 object with a position in world coordinates converted to 
+                window coordinates (with the origin at the center of the window). This function  
+                takes the ratio of the viewport to the window's dimensions into account.
+
+             \param[in] x x-coordinate of the position in viewport coordinates (with the origin
+                at the center of the window) to convert to world coordinates.
+             \param[in] y y-coordinate of the position in viewport coordinates (with the origin
+                at the center of the window) to convert to world coordinates.
+
+             \return vec2 - Converted position in window coordinates (with the origin at 
+                the center of the window).
+            *************************************************************************************/
+            vec2 GetWorldToWindowPosition(float const x, float const y) const;            
+
+            /*!***********************************************************************************
              \brief  Returns a vec2 object with a position in window coordinates (with the origin
                 at the center of the window) converted to world coordinates. This function takes 
                 the ratio of the viewport to the window's dimensions into account.
@@ -193,12 +208,12 @@ namespace PE
                 at the center of the window) converted to screen coordinates for the UI. This 
                 function takes the ratio of the viewport to the window's dimensions into account.
 
-             \param[in] x x-coordinate of the position in viewport coordinates (with the origin
-                at the center of the window) to convert to world coordinates.
-             \param[in] y y-coordinate of the position in viewport coordinates (with the origin
-                at the center of the window) to convert to world coordinates.
+             \param[in] x x-coordinate of the position in window coordinates (with the origin
+                at the center of the window) to convert to screen coordinates.
+             \param[in] y y-coordinate of the position in window coordinates (with the origin
+                at the center of the window) to convert to screen coordinates.
 
-             \return vec2 - Converted position in world coordinates.
+             \return vec2 - Converted position in screen coordinates.
             *************************************************************************************/
             static vec2 GetUiWindowToScreenPosition(float const x, float const y);
 

@@ -1,0 +1,74 @@
+{
+    "animationFrames": [
+        {
+            "duration": 0.1666666716337204,
+            "maxUV": [
+                0.1666666716337204,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "duration": 0.1666666716337204,
+            "maxUV": [
+                0.3333333432674408,
+                1.0
+            ],
+            "minUV": [
+                0.1666666716337204,
+                0.0
+            ]
+        },
+        {
+            "duration": 0.1666666716337204,
+            "maxUV": [
+                0.5,
+                1.0
+            ],
+            "minUV": [
+                0.3333333432674408,
+                0.0
+            ]
+        },
+        {
+            "duration": 0.1666666716337204,
+            "maxUV": [
+                0.6666666865348816,
+                1.0
+            ],
+            "minUV": [
+                0.5,
+                0.0
+            ]
+        },
+        {
+            "duration": 0.1666666716337204,
+            "maxUV": [
+                0.8333333134651184,
+                1.0
+            ],
+            "minUV": [
+                0.6666666865348816,
+                0.0
+            ]
+        },
+        {
+            "duration": 0.1666666716337204,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.8333333134651184,
+                0.0
+            ]
+        }
+    ],
+    "animationID": "../Assets/Animation/AnimationRat_Idle.anim",
+    "frameRate": 30,
+    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png",
+    "totalSprites": 6
+}

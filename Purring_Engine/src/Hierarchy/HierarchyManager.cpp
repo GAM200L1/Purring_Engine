@@ -20,6 +20,8 @@
 
 #include "HierarchyManager.h"
 #include "Logging/Logger.h"
+#include "Graphics/Text.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -76,6 +78,7 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(r_child).relOrientation = EntityManager::GetInstance().Get<Transform>(r_child).orientation - EntityManager::GetInstance().Get<Transform>(r_parent).orientation;
 		if (!EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).isActive)
 			EntityManager::GetInstance().Get<EntityDescriptor>(r_child).DisableEntity();
+		
 		
 		UpdateRenderOrder(r_parent);
 	}
@@ -169,19 +172,48 @@ namespace PE
 	{
 		m_parentOrder.clear();
 		m_sceneOrder.clear();
-		for (const EntityID& id : SceneView<EntityDescriptor, Transform>())
+		m_hierarchyOrder.clear();
+		try
 		{
-			// id 0 is default camera, ignore it
-			if (id == 0)
-				continue;
-			// only if it is base layer
-			if (!HasParent(id))
+			for (const auto& layer : LayerView<EntityDescriptor, Transform>(true))
 			{
-				m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+				for (const EntityID& id : InternalView(layer, true))
+				{
+					// id 0 is default camera, ignore it
+					if (id == 0)
+						continue;
+					// only if it is base layer
+					if (!HasParent(id))
+					{
+						m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+					}
+				}
 			}
+			for (auto [k, v] : m_sceneOrder)
+				m_hierarchyOrder.emplace_back(v);
+
+			m_sceneOrder.clear();
+			for (const auto& layer : LayerView<EntityDescriptor, Transform>())
+			{
+				for (const EntityID& id : InternalView(layer))
+				{
+					// id 0 is default camera, ignore it
+					if (id == 0)
+						continue;
+					// only if it is base layer
+					if (!HasParent(id))
+					{
+						m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+					}
+				}
+			}
+			for (auto [k, v] : m_sceneOrder)
+				m_parentOrder.emplace_back(v);
 		}
-		for (auto [k,v] : m_sceneOrder)
-			m_parentOrder.emplace_back(v);
+		catch (...)
+		{
+			engine_logger.AddLog(false, "Failed to access entities", __FUNCTION__);
+		}
 	}
 
 	void Hierarchy::UpdateTransform()
@@ -201,32 +233,32 @@ namespace PE
 	{
 		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children.size() + 1);
 		EntityID prevSceneID{ ULLONG_MAX };
-		std::map<EntityID, EntityDescriptor*> descs;
+		std::map<EntityID, std::pair<EntityDescriptor*, EntityID>> descs;
 		for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children)
 		{
 			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
 			if (desc.sceneID == ULLONG_MAX || desc.sceneID == prevSceneID)
 				desc.sceneID = prevSceneID + 1;
-			descs[desc.sceneID] = &desc;
+			descs[desc.sceneID] = std::make_pair(&desc, id);
 			prevSceneID = desc.sceneID;
 		}
 
 		unsigned cnt{ 1 };
-		for (auto [k,desc] : descs)
+		for (auto [k, desc] : descs)
 		{
 
 			// how to handle when the layer of the child is diff from parents??
 			// currently ignoring
 			const float order = min + (delta * cnt);
 
-			if (desc->renderOrder <= min || desc->renderOrder >= max || (desc->renderOrder != order))
-				m_sceneHierarchy.erase(desc->renderOrder);
-			desc->renderOrder = order;
-			m_sceneHierarchy[desc->renderOrder] = desc->oldID;
+			if (desc.first->renderOrder <= min || desc.first->renderOrder >= max || (desc.first->renderOrder != order))
+				m_sceneHierarchy.erase(desc.first->renderOrder);
+			desc.first->renderOrder = order;
+			m_sceneHierarchy[desc.first->renderOrder] = desc.second;
 
-			if (desc->children.size())
+			if (desc.first->children.size())
 			{
-				RenderOrderUpdateHelper(desc->oldID, desc->renderOrder, desc->renderOrder + delta);
+				RenderOrderUpdateHelper(desc.second, desc.first->renderOrder, desc.first->renderOrder + delta);
 			}
 			++cnt;
 		}
@@ -298,7 +330,11 @@ namespace PE
 				if(GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
 					m_renderOrderUI.emplace_back(v);
 			}
-			
+			else if (EntityManager::GetInstance().Has<PE::TextComponent>(v))
+			{
+				if (GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
+					m_renderOrderUI.emplace_back(v);
+			}
 		}
 		//std::cout << "-- Scene Hierarchy --" << std::endl;
 		//for (auto[k,v] : sceneHierarchy)
