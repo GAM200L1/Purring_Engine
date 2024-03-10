@@ -454,6 +454,7 @@ namespace PE
 						{
 							m_bossRatSelected = false;
 							m_isRat = false;
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
 						}
 					}
