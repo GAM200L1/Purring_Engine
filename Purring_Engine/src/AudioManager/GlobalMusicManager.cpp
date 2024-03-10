@@ -43,25 +43,32 @@ namespace PE
 
     }
 
-    void GlobalMusicManager::PlayAudioPrefab(const std::string& prefabPath, bool loop)
+    void GlobalMusicManager::PlayBGM(const std::string& prefabPath, bool loop)
     {
-        // Load the prefab and create an AudioComponent from it
         EntityID audioEntity = m_serializationManager.LoadFromFile(prefabPath);
         if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
         {
             auto audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
             audioComponent.SetLoop(loop);
-            audioComponent.PlayAudioSound();
-            m_audioComponents[prefabPath] = std::make_shared<AudioComponent>(audioComponent); // Store a copy of audioComponent in the map
+            audioComponent.PlayAudioSound(AudioComponent::AudioType::BGM);
+            m_audioComponents[prefabPath] = std::make_shared<AudioComponent>(audioComponent);
         }
-        else
-        {
-            //std::cerr << "Failed to load audio from prefab: " << prefabPath << std::endl;
-        }
-
-        // Clean up by removing the entity if needed
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
+
+    void GlobalMusicManager::PlaySFX(const std::string& prefabPath, bool loop)
+    {
+        EntityID audioEntity = m_serializationManager.LoadFromFile(prefabPath);
+        if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
+        {
+            auto audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
+            audioComponent.SetLoop(loop);
+            audioComponent.PlayAudioSound(AudioComponent::AudioType::SFX);
+            m_audioComponents[prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+        }
+        EntityManager::GetInstance().RemoveEntity(audioEntity);
+    }
+
 
     void GlobalMusicManager::PauseBackgroundMusic()
     {
