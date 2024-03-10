@@ -93,6 +93,7 @@ namespace PE
 			RatScript_v2_0::GetIsNonCagedCat(entity2))
 		{
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity2, this->mainID);
+			RatScript_v2_0::ToggleEntity(spikeballID, false);
 			return true;
 		}
 		// check if entity2 is rat or rat's attack and entity1 is cat
@@ -101,6 +102,7 @@ namespace PE
 		{
 			// save the id of the cat that has been checked so that it wont be checked again
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity1, this->mainID);
+			RatScript_v2_0::ToggleEntity(spikeballID, false);
 			return true;
 		}
 		return false;
