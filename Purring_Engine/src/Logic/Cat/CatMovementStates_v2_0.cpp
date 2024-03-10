@@ -196,7 +196,7 @@ namespace PE
 		// Invalidate the path if the position is out of bounds of the window
 		if (!coordinatesInWindow) {
 			m_invalidPath = true;
-			SetPathColor(1.f, 0.f, 0.f, 1.f);
+			SetPathColor(m_invalidPathColor);
 			return false;
 		}
 
@@ -233,12 +233,12 @@ namespace PE
 	}
 
 
-	void CatMovement_v2_0PLAN::SetPathColor(float const r, float const g, float const b, float const a)
+	void CatMovement_v2_0PLAN::SetPathColor(vec4 const& r_color)
 	{
 		// Set the color of all the nodes
 		for (EntityID& nodeID : p_data->pathQuads)
 		{
-			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(r, g, b, a);
+			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(r_color.x, r_color.y, r_color.z, r_color.w);
 		}
 	}
 
@@ -268,8 +268,9 @@ namespace PE
 		for (EntityID& nodeId : p_data->pathQuads)
 		{
 			CatHelperFunctions::ToggleEntity(nodeId, false);
-			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(); // Reset to white
 		}
+
+		SetPathColor(m_defaultPathColor);
 
 		// Add the player's starting position as a node
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
@@ -309,7 +310,7 @@ namespace PE
 				|| (OCEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OCEE.Entity1)))
 			{
 				// The entity is colliding with is an obstacle
-				SetPathColor(1.f, 0.f, 0.f, 1.f); // Set the color of the path nodes to red
+				SetPathColor(m_invalidPathColor); // Set the color of the path nodes to red
 				m_invalidPath = true;
 
 				SerializationManager m_serializationManager;

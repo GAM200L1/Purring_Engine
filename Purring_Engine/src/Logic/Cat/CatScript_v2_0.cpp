@@ -302,7 +302,7 @@ namespace PE
 		// create the entity
 		EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Graphics::Renderer>() };
 
-		EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(1.f, 1.f, 1.f, 1.f); // sets the color of the node to white
+		EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(0.506f, 0.490f, 0.490f, 1.f); // sets the color of the node to white
 
 		EntityManager::GetInstance().Get<Transform>(nodeId).width = m_scriptData[id].nodeSize;
 		EntityManager::GetInstance().Get<Transform>(nodeId).height = m_scriptData[id].nodeSize;
