@@ -97,6 +97,7 @@ namespace PE
 
 	void FollowScript_v2_0::Destroy(EntityID id)
 	{
+		scriptData.clear();
 		scriptData[id].followers.clear();
 	}
 

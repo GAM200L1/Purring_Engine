@@ -244,8 +244,11 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::ResetDrawnPath()
 	{
-		// reset follower cats positions
-		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+		if (p_data->catType == EnumCatType::MAINCAT)
+		{
+			// reset follower cats positions
+			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+		}
 
 		// reset main cat position
 		CatHelperFunctions::PositionEntity(p_data->catID, p_data->resetPosition);
