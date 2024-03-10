@@ -40,6 +40,21 @@ namespace PE
 			}
 
 			/*!***********************************************************************************
+			\brief Returns the rotation of the transform of the entity passed in.
+
+			\param[in] transformId - ID of the entity to retrieve the rotation of.
+			*************************************************************************************/
+			static float GetEntityOrientation(EntityID const id)
+			{
+				try
+				{
+					Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
+					return r_transform.orientation;
+				}
+				catch (...) { return float{}; }
+			}
+
+			/*!***********************************************************************************
 			 \brief Returns the scale of the transform of the entity passed in.
 
 			 \param[in] transformId - ID of the entity to retrieve the scale of.
@@ -161,15 +176,7 @@ namespace PE
 			static bool IsObstacle(EntityID const id)
 			{
 				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
-			}
-
-			/*!***********************************************************************************
-			 \brief To check if the game is in cat chain level as following cats are restricted
-					in this level
-
-			 \param[out] bool - whether it is the first level in the game
-			*************************************************************************************/
-			
+			}			
 		};
 	
 }
