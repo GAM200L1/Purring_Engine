@@ -29,7 +29,7 @@ namespace PE
 		float attackDuration{}; // Time in seconds before the attack is considered done
 
 		// --- Attack variables
-		
+		vec2 shotTargetPosition{}; // Position to aim the bullet at. Set during the movement state.
 		
 		// ----- Constructors ----- //
 
@@ -85,5 +85,13 @@ namespace PE
 				false otherwise.
 		*************************************************************************************/
 		virtual bool OnCollisionEnter(EntityID entity1, EntityID entity2) override;
+
+		/*!***********************************************************************************
+		\brief Picks a target position to move towards during the movement state and returns it.
+				Calls RatScript_v2_0::SetTarget();
+
+		\return vec2 - Target position to move towards during the movement state.
+		*************************************************************************************/
+		virtual vec2 PickTargetPosition() override;
 	}; // end of SniperRatAttack_v2_0
 } // end of namespace PE

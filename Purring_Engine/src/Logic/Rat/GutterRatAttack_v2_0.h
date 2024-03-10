@@ -86,5 +86,13 @@ namespace PE
 				false otherwise.
 		*************************************************************************************/
 		virtual bool OnCollisionEnter(EntityID entity1, EntityID entity2) override;
+
+		/*!***********************************************************************************
+		\brief Picks a target position to move towards during the movement state and returns it.
+				Calls RatScript_v2_0::SetTarget();
+
+		\return vec2 - Target position to move towards during the movement state.
+		*************************************************************************************/
+		virtual vec2 PickTargetPosition() override;
 	}; // end of GutterRatAttack_v2_0
 } // end of namespace PE

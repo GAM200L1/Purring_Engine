@@ -52,4 +52,11 @@ namespace PE
 		// @TODO
 		return false;
 	}
+
+
+	vec2 SniperRatAttack_v2_0::PickTargetPosition()
+	{
+		// @TODO - Krystal
+		return vec2{};
+	}
 } // end of namespace PE

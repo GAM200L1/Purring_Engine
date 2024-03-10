@@ -101,4 +101,19 @@ namespace PE
 
 		return false;
 	}
+
+
+	vec2 GutterRatAttack_v2_0::PickTargetPosition()
+	{
+			// Retrieve the rat's data
+			RatScript_v2_0_Data* p_data{GETSCRIPTDATA(RatScript_v2_0, mainID)};
+
+			// Pick the closest cat to move 
+			// ASSUMPTION: container of cats in detection radius has at least 1 element. 
+			EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsInDetectionRadius) };
+
+			// Set the position for the rat to move to
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, closestCat, false);
+			return p_data->targetPosition;
+	}
 } // end of namespace PE

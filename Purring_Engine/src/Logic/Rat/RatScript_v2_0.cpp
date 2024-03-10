@@ -901,6 +901,9 @@ namespace PE
 						break;
 				}
 				}
+
+				// Create the objects needed for the attack
+				r_data.attackData->CreateAttackObjects();
 		}
 
 } // End of namespace PE

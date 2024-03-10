@@ -190,13 +190,15 @@ namespace PE
 
     vec2 RatMovement_v2_0::PickTargetPosition()
     {
-        // Pick the closest cat to move 
-        // ASSUMPTION: container of cats in detection radius has at least 1 element. 
-        EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsInDetectionRadius) };
-
-        // Set the position for the rat to move to
-        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, closestCat, false);
-        return p_data->targetPosition;
+        if (p_data && p_data->attackData)
+        {
+            return p_data->attackData->PickTargetPosition();
+        } 
+        else
+        {
+            std::cout << "RatMovement_v2_0::PickTargetPosition() couldn't pick a target position\n";
+            return RatScript_v2_0::GetEntityPosition(p_data->myID);
+        }
     }
 
 }

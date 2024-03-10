@@ -219,6 +219,14 @@ namespace PE
 				false otherwise.
 		*************************************************************************************/
 		virtual bool OnCollisionEnter(EntityID entity1, EntityID entity2) = 0;
+
+		/*!***********************************************************************************
+		\brief Picks a target position to move towards during the movement state and returns it.
+				Calls RatScript_v2_0::SetTarget();
+
+		\return vec2 - Target position to move towards during the movement state.
+		*************************************************************************************/
+		virtual vec2 PickTargetPosition() = 0;
 	}; // end of struct AttackDataBase_v2_0
 
 } // end of namespace PE
