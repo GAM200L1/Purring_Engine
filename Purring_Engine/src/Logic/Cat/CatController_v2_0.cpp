@@ -69,24 +69,16 @@ namespace PE
 	// getters
 	void CatController_v2_0::UpdateDeployableCats(EntityID mainInstanceID)
 	{
-		// checks if it is an active cat
-		auto IsCatAndNotCaged =
-		[&](EntityID id)
-		{
-			if (IsCat(id))
-			{
-				if (!IsCatCaged(id))
-					return true;
-			}
-			return false;
-		};
-		
 		m_deployableCats.clear();
-		m_deployableCats.emplace_back(EnumCatType::MAINCAT);
-		for (EntityID catID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
+		for (auto [id, type] : m_currentCats)
 		{
-			if (IsCatAndNotCaged(catID))
-				m_deployableCats.emplace_back((GETSCRIPTDATA(CatScript_v2_0, catID))->catType);
+			if (IsCatAndNotCaged(id) && !IsFollowCat(id))
+				m_deployableCats.emplace_back(type);
+		}
+		for (auto [id, type] : m_currentCats)
+		{
+			if (IsFollowCat(id))
+				m_deployableCats.emplace_back(type);
 		}
 	}
 
@@ -115,25 +107,23 @@ namespace PE
 
 	void CatController_v2_0::KillCat(EntityID id)
 	{
-		if (IsCat(id) && !IsCatCaged(id))
+		if (IsCatAndNotCaged(id))
 		{
 			EntityID catToRemove = id;
 		
 			// if cat was part of the following chain, kill just that cat and remove from followers vector
-			if (IsFollowCat(id))
+			if ((m_mainCatID == id && !(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty()) || IsFollowCat(id))
 			{
 				catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
 				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
 			}
-			//else kill cat that has been hit
-			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
-
-			// if cat hit is main cat, game is lost
-			if ((GETSCRIPTDATA(CatScript_v2_0, catToRemove))->catType == EnumCatType::MAINCAT)
+			else if (id == m_mainCatID && (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty())
 			{
-				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.clear();
 				m_lostGame = true;
 			}
+
+			// toggle death animation for cat that has been hit
+			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
 		}
 	}
 
