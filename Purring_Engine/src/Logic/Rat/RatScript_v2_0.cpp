@@ -573,6 +573,47 @@ namespace PE
 		}
 
 
+		bool RatScript_v2_0::CheckDetectionTriggerEntered(EntityID const ratId, EntityID const entity1, EntityID const entity2)
+		{
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return false; }
+
+				// check if entity1 is the rat's detection collider and entity2 is cat
+				if ((entity1 == it->second.detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(entity2))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(it->second.myID, entity2);
+						return true;
+				}
+				// check if entity2 is the rat's detection collider and entity1 is cat
+				else if ((entity2 == it->second.detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(entity1))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(it->second.myID, entity1);
+						return true;
+				}
+				return false;
+		}
+
+
+		bool RatScript_v2_0::CheckDetectionTriggerExited(EntityID const ratId, EntityID const entity1, EntityID const entity2)
+		{
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return false; }
+
+				// check if entity1 is the rat's detection collider and entity2 is cat
+				if ((entity1 == it->second.detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(entity2))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(ratId, entity2);
+						return true;
+				}
+				// check if entity2 is the rat's detection collider and entity1 is cat
+				else if ((entity2 == it->second.detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(entity1))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(ratId, entity1);
+						return true;
+				}
+				return false;
+		}
+
 
 		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
 

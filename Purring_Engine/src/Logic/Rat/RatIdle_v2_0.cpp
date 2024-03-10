@@ -301,42 +301,14 @@ namespace PE
         if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
         {
             OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
-            // check if entity1 is the rat's detection collider and entity2 is cat
-            if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTEE.Entity2))
-            {
-#ifdef DEBUG_PRINT
-                std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") enter: rat detection collider - " << OTEE.Entity1 << ", cat - " << OTEE.Entity2 << "\n";
-#endif // DEBUG_PRINT
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity2);
-            }
-            // check if entity2 is the rat's detection collider and entity1 is cat
-            else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTEE.Entity1))
-            {
-#ifdef DEBUG_PRINT
-                std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") enter: rat detection collider - " << OTEE.Entity2 << ", cat - " << OTEE.Entity1 << "\n";
-#endif // DEBUG_PRINT
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
-            }
+            // check if a cat has entered the rat's detection collider
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTEE.Entity1, OTEE.Entity2);
         }
         else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
         {
             OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
-            // check if entity1 is the rat's detection collider and entity2 is cat
-            if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity2))
-            {
-#ifdef DEBUG_PRINT
-                //std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") stay: rat detection collider - " << OTSE.Entity1 << ", cat - " << OTSE.Entity2 << "\n";
-#endif // DEBUG_PRINT
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
-            }
-            // check if entity2 is the rat's detection collider and entity1 is cat
-            else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTSE.Entity1))
-            {
-#ifdef DEBUG_PRINT
-                //std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") stay: rat detection collider - " << OTSE.Entity2 << ", cat - " << OTSE.Entity1 << "\n";
-#endif // DEBUG_PRINT
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
-            }
+            // check if a cat has entered the rat's detection collider
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTSE.Entity1, OTSE.Entity2);
         }
     }
 
@@ -347,22 +319,8 @@ namespace PE
         else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
         OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
-        // check if entity1 is the rat's detection collider and entity2 is cat
-        if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTEE.Entity2))
-        {
-#ifdef DEBUG_PRINT
-            //std::cout << "RatIdle_v2_0::OnTriggerExit(" << p_data->myID << ") exit: rat detection collider - " << OTEE.Entity1 << ", cat - " << OTEE.Entity2 << "\n";
-#endif // DEBUG_PRINT
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
-        }
-        // check if entity2 is the rat's detection collider and entity1 is cat
-        else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(OTEE.Entity1))
-        {
-#ifdef DEBUG_PRINT
-            //std::cout << "RatIdle_v2_0::OnTriggerExit(" << p_data->myID << ") exit: rat detection collider - " << OTEE.Entity2 << ", cat - " << OTEE.Entity1 << "\n";
-#endif // DEBUG_PRINT
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
-        }
+        // check if a cat has exited the rat's detection collider
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerExited(p_data->myID, OTEE.Entity1, OTEE.Entity2);
     }
 
 

@@ -367,6 +367,32 @@ namespace PE
 		*************************************************************************************/
 		void CatExited(EntityID const id, EntityID const catID);
 
+		/*!***********************************************************************************
+		\brief Checks if the collision event involved the rat's detection radius and a cat,
+				calls the CatEntered() function if true.
+
+		\param[in] ratId - EntityID of the rat to check the detection radius of.
+		\param entity1 - One of the entities involved in the trigger event.
+		\param entity2 - One of the entities involved in the trigger event.
+
+		\return Returns true if the collision involved the rat's detection radius and a cat,
+				false otherwise.
+		*************************************************************************************/
+		bool CheckDetectionTriggerEntered(EntityID const ratId, EntityID const entity1, EntityID const entity2);
+
+		/*!***********************************************************************************
+		\brief Checks if the collision event involved the rat's detection radius and a cat,
+				calls the CatExited() function if true.
+
+		\param[in] ratId - EntityID of the rat to check the detection radius of.
+		\param entity1 - One of the entities involved in the trigger event.
+		\param entity2 - One of the entities involved in the trigger event.
+
+		\return Returns true if the collision involved the rat's detection radius and a cat,
+				false otherwise.
+		*************************************************************************************/
+		bool CheckDetectionTriggerExited(EntityID const ratId, EntityID const entity1, EntityID const entity2);
+
 
 		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
 
