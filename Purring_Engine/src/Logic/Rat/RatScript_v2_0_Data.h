@@ -61,7 +61,7 @@ namespace PE
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 		EnumRatType ratType{ EnumRatType::GUTTER };
-		AttackDataBase_v2_0* attackData{ nullptr };
+		AttackDataBase_v2_0* p_attackData{ nullptr };
 
 		// animation
 		AnimationComponent* p_ratAnimationComponent = nullptr;
