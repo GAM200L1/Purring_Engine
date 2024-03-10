@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4830,7 +4830,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4909,7 +4909,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5000,7 +5000,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5135,11 +5135,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1051.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1051.9998779296875,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -5176,7 +5176,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1051.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5288,11 +5288,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1043.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1043.9998779296875,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -5329,7 +5329,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1043.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5364,13 +5364,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1051.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5405,13 +5405,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1043.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -6348,11 +6348,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1067.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1067.999755859375,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -6389,7 +6389,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1067.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -6501,11 +6501,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1063.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1063.9998779296875,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -6542,7 +6542,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1063.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -6577,13 +6577,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1067.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -6618,13 +6618,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1063.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
