@@ -615,6 +615,31 @@ namespace PE
 		}
 
 
+		bool RatScript_v2_0::CheckRatTouchingCat(EntityID const ratId, EntityID const entity1, EntityID const entity2)
+		{
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return false; }
+
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::CheckRatTouchingCat(" << ratId << "): collision between ent " << entity1 << " and " << entity2 << std::endl;
+#endif // DEBUG_PRINT
+
+				// check if entity1 is rat and entity2 is cat
+				if ((entity1 == it->second.myID) && RatScript_v2_0::GetIsNonCagedCat(entity2))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity2, it->second.myID);
+						return true;
+				}
+				// check if entity2 is rat and entity1 is cat
+				else if ((entity2 == it->second.myID) && RatScript_v2_0::GetIsNonCagedCat(entity1))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity1, it->second.myID);
+						return true;
+				}
+				return false;
+		}
+
+
 		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
 
 

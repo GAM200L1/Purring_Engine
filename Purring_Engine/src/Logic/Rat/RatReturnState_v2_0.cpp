@@ -30,6 +30,7 @@ namespace PE
 		previousGameState = gameStateController->currentState;
 		m_planningRunOnce = false;
 
+		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatReturn_v2_0::OnCollisionEnter, this);
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatReturn_v2_0::OnTriggerEnterAndStay, this);
 		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatReturn_v2_0::OnTriggerEnterAndStay, this);
 		m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatReturn_v2_0::OnTriggerExit, this);
@@ -104,6 +105,7 @@ namespace PE
 
 			// Unsubscribe from events
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+			REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
 	}
@@ -176,6 +178,21 @@ namespace PE
 			}
 	}
 
+
+	void RatReturn_v2_0::OnCollisionEnter(const Event<CollisionEvents>& r_event)
+	{
+			if (!p_data) { return; }
+			else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+
+			if (r_event.GetType() == CollisionEvents::OnCollisionEnter)
+			{
+					OnCollisionEnterEvent OCEE = dynamic_cast<OnCollisionEnterEvent const&>(r_event);
+					// check if rat and cat have collided
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingCat(p_data->myID, OCEE.Entity1, OCEE.Entity2);
+			}
+	}
+
+	
 	void RatReturn_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
 	{
 			if (!p_data) { return; }

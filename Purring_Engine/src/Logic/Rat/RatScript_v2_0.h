@@ -393,6 +393,19 @@ namespace PE
 		*************************************************************************************/
 		bool CheckDetectionTriggerExited(EntityID const ratId, EntityID const entity1, EntityID const entity2);
 
+		/*!***********************************************************************************
+		\brief Checks if the collision event involves the rat's collider and a cat,
+				calls DealDamageToCat() function if true.
+
+		\param[in] ratId - EntityID of the rat to check the detection radius of.
+		\param entity1 - One of the entities involved in the collision event.
+		\param entity2 - One of the entities involved in the collision event.
+
+		\return Returns true if the collision involves the rat's collider and a cat,
+				false otherwise.
+		*************************************************************************************/
+		bool CheckRatTouchingCat(EntityID const ratId, EntityID const entity1, EntityID const entity2);
+
 
 		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
 

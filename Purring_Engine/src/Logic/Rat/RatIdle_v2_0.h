@@ -125,6 +125,15 @@ namespace PE
         void CheckIfShouldChangeStates();
 
         /*!***********************************************************************************
+         \brief Called when a collision enter or stay event has occurred. If an event has
+          occurred between this script's rat's collider and a cat, the parent rat
+          is notified.
+
+         \param[in] r_event - Event data.
+        *************************************************************************************/
+        void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+
+        /*!***********************************************************************************
          \brief Called when a trigger enter or stay event has occured. If an event has
           occurred between this script's rat's detection collider and a cat, the parent rat
           is notified.
@@ -152,7 +161,7 @@ namespace PE
         bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
 
         // Event listener IDs 
-        int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+        int m_collisionEventListener{}, m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 
         // ----- PRIVATE METHODS ---- //
     private:
