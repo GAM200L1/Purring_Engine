@@ -43,7 +43,7 @@
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,
-                            "mass": 10.0,
+                            "mass": 1.0,
                             "type": 1
                         },
                         "Transform": {

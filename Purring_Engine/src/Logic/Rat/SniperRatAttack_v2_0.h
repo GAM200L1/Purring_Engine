@@ -26,12 +26,12 @@ namespace PE
 		// --- Misc variables
 		// Ensures that the attack feedback only plays once. Set to true once it has been played.
 		bool attackFeedbackOnce{ false }; 
-		float attackDuration{}; // Time in seconds before the attack is considered done
+		float attackDuration{ 0.5f }; // Time in seconds before the attack is considered done
 
 		// --- Attack variables
 		EntityID spikeballID{ 0 }; // id of the projectile
 		vec2 shotTargetPosition{}; // Position to aim the bullet at. Set during the movement state.
-		float bulletForce{ 1000.f };
+		float bulletForce{ 500.f };
 		float bulletRange{ 3.f };
 
 		

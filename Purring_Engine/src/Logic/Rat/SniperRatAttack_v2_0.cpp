@@ -24,6 +24,8 @@ namespace PE
 {
 	void SniperRatAttack_v2_0::InitAttack()
 	{
+		m_bulletImpulse = vec2{ 0.f, 0.f };
+
 		// calculate the impulse of the buller
 		m_direction = shotTargetPosition - RatScript_v2_0::GetEntityPosition(mainID);
 		m_bulletImpulse = m_direction.GetNormalized() * bulletForce;

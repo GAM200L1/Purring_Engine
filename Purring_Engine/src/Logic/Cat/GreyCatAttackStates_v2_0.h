@@ -50,8 +50,8 @@ namespace PE
 		// projectile variables
 		float bulletDelay{ 0.f }; // for after the bullet fire frame if slight 
 		float bulletRange{ 3.f };
-		float bulletLifeTime{ 1.f };
-		float bulletForce{ 1000.f };
+		float bulletLifeTime{ 0.5f };
+		float bulletForce{ 750.f };
 
 		// for syncing
 		unsigned int bulletFireAnimationIndex{ 3 };
