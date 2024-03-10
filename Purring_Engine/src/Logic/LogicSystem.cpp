@@ -60,7 +60,6 @@
 
 #include "Boss/BossRatScript.h"
 #include "Boss/BossRatHealthBarScript.h"
-
 #include "ObjectAttachScript.h"
 
 #ifndef GAMERELEASE

@@ -3148,9 +3148,11 @@ namespace PE {
 										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
 										int CatPortID = static_cast<int> (it->second.CatPortrait);
 										int RatPortID = static_cast<int> (it->second.RatPortrait);
+										int RatKingPortraitID = static_cast<int> (it->second.RatKingPortrait);
 										int PortID = static_cast<int> (it->second.Portrait);
 										int BackgroundID = static_cast<int> (it->second.Background);
 										int JournalID = static_cast<int> (it->second.Journal);
+										int RatKingJournalID = static_cast<int> (it->second.RatKingJournal);
 										int JournalButtonID = static_cast<int> (it->second.JournalButton);
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
@@ -3214,6 +3216,12 @@ namespace PE {
 
 										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
 										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }
+
+										ImGui::Text("Rat King Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rkpid", &RatKingPortraitID);
+										if (RatKingPortraitID != m_currentSelectedObject) { it->second.RatKingPortrait = RatKingPortraitID; }
+
+										ImGui::Text("Rat King Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rkjid", &RatKingJournalID);
+										if (RatKingJournalID != m_currentSelectedObject) { it->second.RatKingJournal = RatKingJournalID; }
 
 										for (int i = 0; i < 5; i++)
 										{
@@ -3405,6 +3413,7 @@ namespace PE {
 										int leftSideSlamAnimationID = static_cast<int> (it->second.leftSideSlamAnimation);
 										int slamTelegraphID = static_cast<int> (it->second.slamTelegraph);
 										int slamAreaTelegraphID = static_cast<int> (it->second.slamAreaTelegraph);
+										float distanceBetweenPoolsID = it->second.distanceBetweenPools;
 
 										ImGui::SeparatorText("Boss Rat Stats");
 										ImGui::Text("Boss Max Health: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bhid", &healthID);
@@ -3426,6 +3435,10 @@ namespace PE {
 										if (jumpSpeedID != m_currentSelectedObject) it->second.jumpSpeed = jumpSpeedID;										
 										ImGui::Text("Slam Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjssid", &slamSpeedID);
 										if (slamSpeedID != m_currentSelectedObject) it->second.slamSpeed = slamSpeedID;
+
+										ImGui::SeparatorText("Dash Attack Stats");
+										ImGui::Text("Distance Between Each Poison: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjdbpid", &distanceBetweenPoolsID);
+										if (distanceBetweenPoolsID != m_currentSelectedObject) it->second.distanceBetweenPools = distanceBetweenPoolsID;
 
 										ImGui::SeparatorText("Entities");
 										ImGui::Text("Left Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssid", &leftSideSlamID);

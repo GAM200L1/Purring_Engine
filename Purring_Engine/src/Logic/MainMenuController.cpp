@@ -22,6 +22,7 @@
 #include "SceneManager/SceneManager.h"
 #include "Graphics/Text.h"
 #include "PauseManager.h"
+#include "GameStateController_v2_0.h"
 namespace PE
 {
 	MainMenuController::MainMenuController()
@@ -272,6 +273,7 @@ namespace PE
 
 	void MainMenuController::PlayGameMM(EntityID)
 	{
+		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 		SceneManager::GetInstance().LoadScene("IntroCutsceneScene.scene");
 		PlayPositiveFeedback();
 	}

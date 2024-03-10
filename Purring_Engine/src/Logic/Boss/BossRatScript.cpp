@@ -30,18 +30,19 @@ namespace PE
 
 	void BossRatScript::Init(EntityID id)
 	{
-		CreateCheckStateManager(id);
 		FindAllObstacles();
 
 		m_scriptData[id].collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 		m_scriptData[id].collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+
+		m_scriptData[id].currentAttackInSet = 3;
 	}
 
 
 	void BossRatScript::Update(EntityID id, float deltaTime)
 	{
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE) 
+		if (p_gsc->currentState == GameStates_v2_0::PAUSE || p_gsc->currentState == GameStates_v2_0::DEPLOYMENT) 
 		{
 			return;
 		}
@@ -82,6 +83,8 @@ namespace PE
 			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionEnterEventKey)
 			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionStayEventKey)
 		}
+
+		poisonPuddles.clear();
 	}
 
 
