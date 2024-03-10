@@ -26,7 +26,7 @@ namespace PE
 	struct FollowScriptData_v2_0 
 	{
 		// scaling value, multiplied with object scale to decide how far from main cat it should be
-		float distanceScale{ 0.75f };
+		float distanceScale{ 1.f };
 		// previous position of main cat
 		vec2 prevPosition;
 		// vector of positions to set for each cat

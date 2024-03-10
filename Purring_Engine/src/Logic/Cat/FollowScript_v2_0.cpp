@@ -71,10 +71,6 @@ namespace PE
 
 			for (auto follower : scriptData[id].followers)
 			{
-				if (EntityManager::GetInstance().Get<Collider>(follower).isTrigger)
-				{
-					bool b = true;
-				}
 				vec2 directionalvector = scriptData[id].nextPosition[index - 1] - scriptData[id].nextPosition[index];
 				float newRotation = atan2(directionalvector.y, directionalvector.x);
 				float xScale{ std::abs(CatHelperFunctions::GetEntityScale(follower).x) * scriptData[id].distanceScale };

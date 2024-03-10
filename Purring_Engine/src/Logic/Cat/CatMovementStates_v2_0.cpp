@@ -407,25 +407,8 @@ namespace PE
 		}
 		else
 		{
-			// for cat chain level
-			if (id == m_mainCatID)
-			{
-				//auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-				// triggers state change for cats in the chain to sync animations
-				GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
-				for (EntityID followersID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
-				{
-					//GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(followersID);
-					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(followersID, 0.5f);
-				}
-				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
-			}
-			// for non-main cats that move independently
-			else
-			{
-				// Wait a second before changing state
-				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
-			}
+			// Wait a second before changing state
+			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
 		}
 	}
 

@@ -336,20 +336,40 @@ namespace PE
 	template<typename AttackEXECUTE>
 	void CatScript_v2_0::ExecuteStatesHandler(EntityID id, float deltaTime)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) 
+		{ 
+			m_scriptData[id].finishedExecution = true;
+			return; 
+		}
+		
 		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
+		
+		if (id == m_mainCatID)
+		{
+			for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
+			{
+				if (r_stateName == "MovementEXECUTE")
+					PlayAnimation(follower, "Walk");
+				else if (r_stateName == "AttackEXECUTE" || r_stateName == "PLANNING")
+					PlayAnimation(follower, "Idle");
+			}
+		}
 
 		auto ChangeToAttack = 
 		[&](EntityID animateID)
 		{
-			// if cat is following cat or cage cat in the chain
-			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)))
-			{
-				// change to attack execute state if it is a cat that can attack
-				m_scriptData[animateID].p_stateManager->ChangeState(new AttackEXECUTE{}, animateID);
-			}
+			// change to attack execute state if it is a cat that can attack
+			m_scriptData[animateID].p_stateManager->ChangeState(new AttackEXECUTE{}, animateID);
 
 			// reset and play attack animation
 			m_scriptData[animateID].p_catAnimation->SetCurrentFrameIndex(0);
+			if (animateID == m_mainCatID)
+			{
+				for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
+				{
+					m_scriptData[follower].p_catAnimation->SetCurrentFrameIndex(0);
+				}
+			}
 			if (m_scriptData[animateID].attackSelected)
 			{
 				// if attack has been selected play attack execute animation
@@ -362,6 +382,8 @@ namespace PE
 			{
 				// if no attack has been selected play idle animation
 				PlayAnimation(animateID, "Idle");
+
+				// bool to inform controller that execution for this cat is finished
 				m_scriptData[animateID].finishedExecution = true;
 				m_scriptData[animateID].executionAnimationFinished = true;
 			}
@@ -380,16 +402,21 @@ namespace PE
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				// if in cat chain level and main cat is moving, animation change to walking
-				if ((!(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty() && m_scriptData[m_mainCatID].catCurrentEnergy < m_scriptData[m_mainCatID].catMaxMovementEnergy) ||
-					// if deployment level, check cats own energy
-					(m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy))
+				// if there are follower cats and main cat is moving, animation change to walking
+				if (m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy)
 				{
 					// change to movement execute state
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
 					
 					// reset and play movement animation
 					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+					if (id == m_mainCatID)
+					{
+						for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
+						{
+							m_scriptData[follower].p_catAnimation->SetCurrentFrameIndex(0);
+						}
+					}
 					PlayAnimation(id, "Walk");
 				}
 				else // if not moving, immediately set to attack state
@@ -420,6 +447,13 @@ namespace PE
 			{
 				m_scriptData[id].executionAnimationFinished = true; // if attack animation finished set to true
 				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+				if (id == m_mainCatID)
+				{
+					for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
+					{
+						m_scriptData[follower].p_catAnimation->SetCurrentFrameIndex(0);
+					}
+				}
 			}
 		}
 	}
