@@ -50,7 +50,7 @@ namespace PE
         m_attackDuration = 0; // will be set later when the attack animation plays
         p_data->attackedCats.clear();
 
-        if (p_data->attackData) { p_data->attackData->InitAttack(); }
+        if (p_data->p_attackData) { p_data->p_attackData->InitAttack(); }
     }
 
     void RatAttack_v2_0::StateUpdate(EntityID id, float deltaTime)
@@ -60,7 +60,8 @@ namespace PE
             return;
         }
 
-        if (gameStateController->currentState == GameStates_v2_0::EXECUTE) { 
+        if (gameStateController->currentState == GameStates_v2_0::EXECUTE) 
+        { 
             if (m_delay > 0.f && p_data->attacking)
             {
                 m_delay -= deltaTime;
@@ -70,22 +71,24 @@ namespace PE
             }
             else if (p_data->attacking)
             {
-                if (p_data->attackData && p_data->attackData->ExecuteAttack(deltaTime))
+                if (p_data->p_attackData && p_data->p_attackData->ExecuteAttack(deltaTime))
                 {
+                    p_data->p_attackData->DisableAttackObjects();
                     p_data->attacking = false;
                     p_data->finishedExecution = true;
-
-                    ChangeStates();
                 }
-            } // if (p_data->attacking)
-        } // if (gameStateController->currentState == GameStates_v2_0::EXECUTE) 
+            } // end of if (p_data->attacking)
+        } // end of if (gameStateController->currentState == GameStates_v2_0::EXECUTE) 
+        else if (gameStateController->currentState == GameStates_v2_0::PLANNING)
+        {
+            // Change states during the next planning phase
+            ChangeStates();
+        } // end of if (gameStateController->currentState == GameStates_v2_0::PLANNING) 
         
     }
 
     void RatAttack_v2_0::StateCleanUp()
     {
-        if (p_data->attackData) { p_data->attackData->DisableAttackObjects(); }
-        p_data->hitCat = false;
         p_data = nullptr;
         gameStateController = nullptr;
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
@@ -207,9 +210,9 @@ namespace PE
             // check if a cat has entered the rat's detection collider
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTEE.Entity1, OTEE.Entity2);
             
-            if (p_data->attacking && p_data->attackData) // Currently attacking 
+            if (p_data->attacking && p_data->p_attackData) // Currently attacking 
             {
-                p_data->attackData->OnCollisionEnter(OTEE.Entity1, OTEE.Entity2);
+                p_data->p_attackData->OnCollisionEnter(OTEE.Entity1, OTEE.Entity2);
             } // end of if (p_data->attacking)
         }
         else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
@@ -219,9 +222,9 @@ namespace PE
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTSE.Entity1, OTSE.Entity2);
             
             // Check if the 
-            if (p_data->attacking && p_data->attackData) // Currently attacking 
+            if (p_data->attacking && p_data->p_attackData) // Currently attacking 
             {
-                p_data->attackData->OnCollisionEnter(OTSE.Entity1, OTSE.Entity2);
+                p_data->p_attackData->OnCollisionEnter(OTSE.Entity1, OTSE.Entity2);
             } // end of if (p_data->attacking)
         } // end of if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
     }

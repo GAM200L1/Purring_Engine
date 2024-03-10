@@ -18,7 +18,7 @@
 #include "RatScript_v2_0.h"
 #include "GutterRatAttack_v2_0.h"
 
-#define DEBUG_PRINT
+//#define DEBUG_PRINT
 
 namespace PE
 {
@@ -84,6 +84,10 @@ namespace PE
 
 	bool GutterRatAttack_v2_0::OnCollisionEnter(EntityID entity1, EntityID entity2)
 	{
+#ifdef DEBUG_PRINT
+			std::cout << "GutterRatAttack_v2_0::OnCollisionEnter(" << this->mainID << "): between ent " << entity1 << " and " << entity2 << std::endl;
+#endif // DEBUG_PRINT
+
 		// check if entity1 is rat or rat's attack and entity2 is cat
 		if ((entity1 == this->mainID || entity1 == this->attackTelegraphEntityID) &&
 			RatScript_v2_0::GetIsNonCagedCat(entity2))

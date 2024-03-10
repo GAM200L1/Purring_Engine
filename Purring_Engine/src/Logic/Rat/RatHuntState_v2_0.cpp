@@ -62,6 +62,9 @@ namespace PE
 						--huntingTurnsLeft;
 						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
 
+						// Play animation
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::WALK);
+
 #ifdef DEBUG_PRINT
 						std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute\n";
 #endif // DEBUG_PRINT
@@ -82,6 +85,8 @@ namespace PE
 						}
 						else 
 						{
+								// Play animation
+								GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
 #ifdef DEBUG_PRINT
 								std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute - finished moving\n";
 #endif // DEBUG_PRINT
@@ -108,6 +113,9 @@ namespace PE
 #endif // DEBUG_PRINT
 					m_planningRunOnce = true;
 					p_data->finishedExecution = false;
+
+					// Play animation
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
 
 					// Check if any of the conditions to change states has been met
 					if (!(p_data->hasRatStateChanged))

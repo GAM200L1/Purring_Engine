@@ -201,9 +201,9 @@ namespace PE
     {
         if (p_data)
         {
-            if (p_data->attackData)
+            if (p_data->p_attackData)
             {
-                return p_data->attackData->PickTargetPosition();
+                return p_data->p_attackData->PickTargetPosition();
             }
             else
             {

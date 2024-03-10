@@ -157,7 +157,7 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
-					delete it->second.attackData;
+					delete it->second.p_attackData;
 					m_scriptData.erase(id);
 			}
 		}
@@ -417,7 +417,7 @@ namespace PE
 				ToggleEntity(it->second.telegraphArrowEntityID, false);
 
 				// Disable attack objects
-				if (it->second.attackData) { it->second.attackData->DisableAttackObjects(); }
+				if (it->second.p_attackData) { it->second.p_attackData->DisableAttackObjects(); }
 		}
 
 
@@ -960,18 +960,18 @@ namespace PE
 				{
 				case EnumRatType::SNIPER:
 				{
-						r_data.attackData = new SniperRatAttack_v2_0{ r_data.myID };
+						r_data.p_attackData = new SniperRatAttack_v2_0{ r_data.myID };
 						break;
 				}
 				default:
 				{
-						r_data.attackData = new GutterRatAttack_v2_0{ r_data.myID };
+						r_data.p_attackData = new GutterRatAttack_v2_0{ r_data.myID };
 						break;
 				}
 				}
 
 				// Create the objects needed for the attack
-				r_data.attackData->CreateAttackObjects();
+				r_data.p_attackData->CreateAttackObjects();
 		}
 
 } // End of namespace PE
