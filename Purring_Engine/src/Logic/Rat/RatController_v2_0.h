@@ -8,7 +8,7 @@
  \par      email:      krystal.y@digipen.edu
 
  \brief
-	This file contains declarations for functions used for rats.
+	This file contains declarations for functions used to manage tje rats in the scene.
 
  All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 

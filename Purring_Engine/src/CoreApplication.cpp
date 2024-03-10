@@ -407,24 +407,14 @@ RTTR_REGISTRATION
         .property("fillColorHalf", &PE::HealthBarScript_v2_0_Data::fillColorHalf)
         .property("fillColorAlmostEmpty", &PE::HealthBarScript_v2_0_Data::fillColorAlmostEmpty);
 
-    rttr::registration::class_<PE::RatDetectionScript_v2_0_Data>("RatDetectionScript_v2_0")
-        .property("MyID", &PE::RatDetectionScript_v2_0_Data::myID)
-        .property("MainRatID", &PE::RatDetectionScript_v2_0_Data::mainRatID)
-        .property("StoredParentRat", &PE::RatDetectionScript_v2_0_Data::storedParentRat)
-        .property("DetectionRadius", &PE::RatDetectionScript_v2_0_Data::detectionRadius);
-
     rttr::registration::class_<PE::RatScript_v2_0_Data>("RatScript_v2_0")
-        //.property("mainCatID", &PE::RatScriptData::mainCatID)
-        //.property("health", &PE::RatScriptData::health)
-        //.property("movementSpeed", &PE::RatScriptData::movementSpeed)
-        //.property("detectionRadius", &PE::RatScriptData::detectionRadius)
-        //.property("attackDiameter", &PE::RatScriptData::attackDiameter)
-        //.property("attackDuration", &PE::RatScriptData::attackDuration)
-        //.property("collisionDamage", &PE::RatScriptData::collisionDamage)
-        //.property("attackDamage", &PE::RatScriptData::attackDamage)
-        //.property("attackDelay", &PE::RatScriptData::attackDelay)
+        .property("ratType", &PE::RatScript_v2_0_Data::ratType)
+        .property("ratMaxHealth", &PE::RatScript_v2_0_Data::ratMaxHealth)
+        .property("detectionRadius", &PE::RatScript_v2_0_Data::detectionRadius)
+        .property("movementSpeed", &PE::RatScript_v2_0_Data::movementSpeed)
+        .property("maxMovementRange", &PE::RatScript_v2_0_Data::maxMovementRange)
+        .property("maxHuntTurns", &PE::RatScript_v2_0_Data::maxHuntTurns)
         .property("animationStates", &PE::RatScript_v2_0_Data::animationStates);
-
 
     rttr::registration::class_<PE::BossRatScriptData>("BossRatScript")
         .property("maxHealth", &PE::BossRatScriptData::maxHealth)

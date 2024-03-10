@@ -28,15 +28,36 @@
 #include "../Rat/RatHuntState_v2_0.h"
 #include "../Rat/RatReturnState_v2_0.h"
 #include "../Rat/RatAttack_v2_0.h"
+#include "../Rat/RatDeathState_v2_0.h"
+
+#include "GutterRatAttack_v2_0.h"
+#include "SniperRatAttack_v2_0.h"
 
 #include "../Cat/CatController_v2_0.h"
 
-#define DEBUG_PRINT
+//#define DEBUG_PRINT
 
 namespace PE
 {
 
 		// ---------- FUNCTION DEFINITIONS ---------- //
+
+		std::string RatScript_v2_0_Data::GetRatName(EnumRatType ratType)
+		{
+				switch (ratType)
+				{
+				case EnumRatType::GUTTER_V1:
+				case EnumRatType::GUTTER: { return std::string{ "Gutter Rat" }; }
+				case EnumRatType::BRAWLER: { return std::string{ "Brawler Rat" }; }
+				case EnumRatType::SNIPER: { return std::string{ "Sniper Rat" }; }
+				default: { return std::string{ "Rat" }; }
+				}
+		}
+
+		std::string RatScript_v2_0_Data::GetRatName(char ratTypeIndex)
+		{
+				return GetRatName(static_cast<EnumRatType>(ratTypeIndex));
+		}
 
 		void RatScript_v2_0::Init(EntityID id)
 		{
@@ -48,13 +69,21 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 
+			// Initialize some variables
+			it->second.ratHealth = it->second.ratMaxHealth;
+
 			// Clear collision containers
 			ClearCollisionContainers(id);
 
 			// Create a detection radius and configure
 			it->second.detectionRadiusId = CreateDetectionRadius(it->second);
-			it->second.attackRadiusId = CreateAttackRangeRadius(it->second);
 			CreateRatPathTelegraph(it->second);
+
+			// Create the corresponding attack data object
+			InstantiateRatAttack(it->second);
+
+			// Store the position to return to
+			it->second.originalPosition = GetEntityPosition(id);
 
 			// Store the animation component
 			m_scriptData[id].p_ratAnimationComponent = &EntityManager::GetInstance().Get<AnimationComponent>(id);
@@ -77,7 +106,7 @@ namespace PE
 			if (GameStateJustChanged() && previousGameState != GameStates_v2_0::PAUSE && gameStateController->currentState == GameStates_v2_0::EXECUTE)
 			{
 					// Clear cat collision containers
-					ClearCollisionContainers(id);
+					//ClearCollisionContainers(id);
 					// NOTE: I'm still not too sure about whether it's a good idea to clear this here. 
 					// I'm making the assumption that all decisions the rat makes occurs during the planning pgase 
 			}
@@ -89,21 +118,6 @@ namespace PE
 
 			previousGameState = gameStateController->currentState;
 			it->second.hasRatStateChanged = false;
-			// // Check if state change is requested and the delay has passed
-			// if (it->second.shouldChangeState && it->second.timeBeforeChangingState <= 0.f) {
-			// 	// Perform the state change
-			// 	if (it->second.p_stateManager->GetCurrentState()->GetName() == "Movement_v2_0") {
-			// 		it->second.p_stateManager->ChangeState(new RatAttack_v2_0(), id);
-			// 		std::cout << "Transitioned to Attack State for Rat ID: " << id << std::endl;
-			// 	}
-			// 	// Reset state change flags
-			// 	it->second.shouldChangeState = false;
-			// 	it->second.delaySet = false;
-			// }
-			// else if (it->second.shouldChangeState) {
-			// 	// Countdown the delay before state change
-			// 	it->second.timeBeforeChangingState -= deltaTime;
-			// }
 		}
 
 
@@ -143,6 +157,7 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
+					delete it->second.p_attackData;
 					m_scriptData.erase(id);
 			}
 		}
@@ -150,7 +165,7 @@ namespace PE
 		void RatScript_v2_0::ToggleEntity(EntityID id, bool setToActive)
 		{
 			// Exit if the entity is not valid
-			if (!EntityManager::GetInstance().IsEntityValid(id)) { return; }
+			if (id == 0 || !EntityManager::GetInstance().IsEntityValid(id)) { return; }
 
 			// Toggle the entity
 			if(EntityManager::GetInstance().Has<EntityDescriptor>(id))
@@ -159,53 +174,48 @@ namespace PE
 
 		void RatScript_v2_0::PositionEntity(EntityID const transformId, vec2 const& r_position)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.position = r_position;
 			}
-			catch (...) { return; }
 		}
 
 		void RatScript_v2_0::PositionEntityRelative(EntityID const transformId, vec2 const& r_position)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.relPosition = r_position;
 			}
-			catch (...) { return; }
 		}
 
 		void RatScript_v2_0::ScaleEntity(EntityID const transformId, float const width, float const height)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.width = width;
 				r_transform.height = height;
 			}
-			catch (...) { return; }
 		}
 
 		void RatScript_v2_0::RotateEntity(EntityID const transformId, float const orientation)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.orientation = orientation;
 			}
-			catch (...) { return; }
 		}
 
 		void RatScript_v2_0::RotateEntityRelative(EntityID const transformId, float const orientation)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.relOrientation = orientation;
 			}
-			catch (...) { return; }
 		}
 
 
@@ -394,11 +404,28 @@ namespace PE
 
 				ToggleEntity(it->second.telegraphArrowEntityID, false); // disable the telegraph
 		}
+		
+
+		void RatScript_v2_0::DisableAllSpawnedEntities(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				// Disable all telegraphs and invisible objects
+				ToggleEntity(it->second.detectionRadiusId, false);
+				ToggleEntity(it->second.pivotEntityID, false);
+				ToggleEntity(it->second.telegraphArrowEntityID, false);
+
+				// Disable attack objects
+				if (it->second.p_attackData) { it->second.p_attackData->DisableAttackObjects(); }
+		}
 
 
 		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
 		{
+#ifdef DEBUG_PRINT
 			//std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << p_nextState->GetName() << ", " << stateChangeDelay << ")\n";
+#endif // DEBUG_PRINT
 
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
@@ -410,7 +437,9 @@ namespace PE
 
 			// Set the state that is queued up
 			it->second.SetQueuedState(p_nextState, false);
+#ifdef DEBUG_PRINT
 			//std::cout << "State change requested for Rat ID: " << id << " to state " << p_nextState->GetName() << " with delay: " << stateChangeDelay << " seconds." << std::endl;
+#endif // DEBUG_PRINT
 		}
 
 
@@ -462,6 +491,7 @@ namespace PE
 				{
 				case EnumRatType::GUTTER:
 				case EnumRatType::BRAWLER:
+				case EnumRatType::SNIPER:
 				{
 						idleBehaviour = RatType::IDLE;
 						break;
@@ -484,35 +514,49 @@ namespace PE
 		}
 
 
+		void RatScript_v2_0::ChangeStateToDeath(EntityID const id, float const stateChangeDelay) 
+		{
+			TriggerStateChange(id, new RatDeathState_v2_0, stateChangeDelay);
+		}
+
 		// ------------ CAT DETECTION ------------ // 
 
-		bool RatScript_v2_0::GetIsCat(EntityID const id) {
-			bool hasCatInName{ false };
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
-			{
-				// Check if the object has cat in the name
-				hasCatInName = EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos;
-			}
-
-			if (!hasCatInName)
-			{
-				// Check if it's considered a cat by the cat controller
-				hasCatInName = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id);
-			}
-
-			return hasCatInName;
+		bool RatScript_v2_0::GetIsNonCagedCat(EntityID const id) {
+				return (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id));
 		}
 
 		void RatScript_v2_0::ClearCollisionContainers(EntityID const id) 
 		{
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::ClearCollisionContainers(" << id << ")\n";
+#endif // DEBUG_PRINT
+
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 
 				it->second.catsInDetectionRadius.clear();
 				it->second.catsExitedDetectionRadius.clear();
+				it->second.hitBy.clear();
+		}
 
-				it->second.attackRangeInDetectionRadius.clear();
-				it->second.attackRangeExitedDetectionRadius.clear();
+
+		void RatScript_v2_0::ClearDeadCats(std::set<EntityID>& catSet)
+		{
+				// Store the indices of the dead cats 
+				std::vector<EntityID> deadCats{};
+				for (EntityID const& id : catSet)
+				{
+						if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id)))
+						{
+								deadCats.emplace_back(id);
+						}
+				}
+
+				// Remove the cats from the set
+				for (EntityID const& id : deadCats)
+				{
+						catSet.erase(id);
+				}
 		}
 
 		void RatScript_v2_0::CatEntered(EntityID const id, EntityID const catID)
@@ -522,6 +566,10 @@ namespace PE
 
 			// Check if the cat is alive
 			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
+
+			if (it->second.catsInDetectionRadius.find(catID) == it->second.catsInDetectionRadius.end()) {
+					PlayDetectionAudio();
+			}
 
 			// Store the cat in the container
 			it->second.catsInDetectionRadius.insert(catID);
@@ -545,35 +593,72 @@ namespace PE
 			it->second.catsInDetectionRadius.erase(catID);
 		}
 
-		void RatScript_v2_0::CatEnteredAttackRadius(EntityID const id, EntityID const catID)
+
+		bool RatScript_v2_0::CheckDetectionTriggerEntered(EntityID const ratId, EntityID const entity1, EntityID const entity2)
 		{
-			auto it = m_scriptData.find(id);
-			if (it == m_scriptData.end()) { return; }
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return false; }
 
-			// Check if the cat is alive
-			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
-
-			it->second.attackRangeInDetectionRadius.emplace(catID);
-
-			// Remove the cats in the exit container from the enter container
-			it->second.attackRangeExitedDetectionRadius.erase(catID);
+				// check if entity1 is the rat's detection collider and entity2 is cat
+				if ((entity1 == it->second.detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(entity2))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(it->second.myID, entity2);
+						return true;
+				}
+				// check if entity2 is the rat's detection collider and entity1 is cat
+				else if ((entity2 == it->second.detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(entity1))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(it->second.myID, entity1);
+						return true;
+				}
+				return false;
 		}
 
-		void RatScript_v2_0::CatExitedAttackRadius(EntityID const id, EntityID const catID)
+
+		bool RatScript_v2_0::CheckDetectionTriggerExited(EntityID const ratId, EntityID const entity1, EntityID const entity2)
 		{
-			auto it = m_scriptData.find(id);
-			if (it == m_scriptData.end()) { return; }
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return false; }
 
-			// Check if the cat is alive
-			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
-
-			// Store the cat in the container
-			it->second.attackRangeExitedDetectionRadius.emplace(catID);
-
-			// Remove the cats in the exit container from the enter container
-			it->second.attackRangeInDetectionRadius.erase(catID);
+				// check if entity1 is the rat's detection collider and entity2 is cat
+				if ((entity1 == it->second.detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(entity2))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(ratId, entity2);
+						return true;
+				}
+				// check if entity2 is the rat's detection collider and entity1 is cat
+				else if ((entity2 == it->second.detectionRadiusId) && RatScript_v2_0::GetIsNonCagedCat(entity1))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(ratId, entity1);
+						return true;
+				}
+				return false;
 		}
 
+
+		bool RatScript_v2_0::CheckRatTouchingCat(EntityID const ratId, EntityID const entity1, EntityID const entity2)
+		{
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return false; }
+
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::CheckRatTouchingCat(" << ratId << "): collision between ent " << entity1 << " and " << entity2 << std::endl;
+#endif // DEBUG_PRINT
+
+				// check if entity1 is rat and entity2 is cat
+				if ((entity1 == it->second.myID) && RatScript_v2_0::GetIsNonCagedCat(entity2))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity2, it->second.myID);
+						return true;
+				}
+				// check if entity2 is rat and entity1 is cat
+				else if ((entity2 == it->second.myID) && RatScript_v2_0::GetIsNonCagedCat(entity1))
+				{
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity1, it->second.myID);
+						return true;
+				}
+				return false;
+		}
 
 
 		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
@@ -634,47 +719,24 @@ namespace PE
 
 
 
-		void RatScript_v2_0::SetTarget(EntityID id, EntityID targetId, bool const capMaximum)
+		bool RatScript_v2_0::SetTarget(EntityID id, EntityID targetId, bool const capMaximum)
 		{
 				auto it = m_scriptData.find(id);
-				if (it == m_scriptData.end()) { return; }
+				if (it == m_scriptData.end()) { return false; }
 
 #ifdef DEBUG_PRINT
 				std::cout << "RatScript_v2_0::SetTarget(" << id << "): target id: " << targetId << ", ";
 #endif // DEBUG_PRINT
 
 				it->second.targetedCat = targetId;
-				vec2 targetPosition = RatScript_v2_0::GetEntityPosition(it->second.targetedCat);
-				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
-
-#ifdef DEBUG_PRINT
-				std::cout << "r_targetPosition: (" << targetPosition.x << ", " << targetPosition.y << "), capmax ? " << capMaximum << "\n";
-#endif // DEBUG_PRINT
-
-				// Calculate the distance and direction from the rat to the player cat
-				it->second.ratPlayerDistance = (targetPosition - ratPosition).Length();
-				if (capMaximum && it->second.ratPlayerDistance > it->second.maxMovementRange)
-				{
-						it->second.ratPlayerDistance = it->second.maxMovementRange;
-				}
-				it->second.directionFromRatToPlayerCat = (targetPosition - ratPosition).GetNormalized();
-				it->second.targetPosition = ratPosition + it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
-
-#ifdef DEBUG_PRINT
-				std::cout << "--- RatScript_v2_0::SetTarget(" << id << ") stats: \n"
-						<< "ratPosition: (" << ratPosition.x << ", " << ratPosition.y << ")\n"
-						<< "ratPlayerDistance: " << it->second.ratPlayerDistance << " (versus max range " << it->second.maxMovementRange << ")\n"
-						<< "directionFromRatToPlayerCat: (" << it->second.directionFromRatToPlayerCat.x << ", " << it->second.directionFromRatToPlayerCat.y << ")\n"
-						<< "targetPosition: (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n"
-						<< "--- end stats for SetTarget(" << id << ") ---" << std::endl;
-#endif // DEBUG_PRINT
+				return SetTarget(id, RatScript_v2_0::GetEntityPosition(targetId), capMaximum);
 		}
 
 
-		void RatScript_v2_0::SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum)
+		bool RatScript_v2_0::SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum)
 		{
 				auto it = m_scriptData.find(id);
-				if (it == m_scriptData.end()) { return; }
+				if (it == m_scriptData.end()) { return false; }
 
 #ifdef DEBUG_PRINT
 				std::cout << "RatScript_v2_0::SetTarget(" << id << ") r_targetPosition: (" << r_targetPosition.x << ", " << r_targetPosition.y << "), capmax? " << capMaximum << "\n";
@@ -683,14 +745,24 @@ namespace PE
 				it->second.targetedCat = 0U;
 				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
 
-				// Calculate the distance and direction from the rat to the player cat
-				it->second.ratPlayerDistance = (r_targetPosition - ratPosition).Length();
-				if (capMaximum && it->second.ratPlayerDistance > it->second.maxMovementRange)
+				vec2 ratToTarget{ r_targetPosition - ratPosition };
+				if (CompareFloats(ratToTarget.x, 0.f) && CompareFloats(ratToTarget.y, 0.f))
 				{
-					it->second.ratPlayerDistance = it->second.maxMovementRange;
+						// If the rat is where the target is, just zero everything out
+						it->second.ratPlayerDistance = 0.f;
+						it->second.directionFromRatToPlayerCat.Zero();
+						it->second.targetPosition = ratPosition;
 				}
-				it->second.directionFromRatToPlayerCat = (r_targetPosition - ratPosition).GetNormalized();
-				it->second.targetPosition = ratPosition + it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
+				else
+				{
+						it->second.ratPlayerDistance = ratToTarget.Length();
+						if (capMaximum && it->second.ratPlayerDistance > it->second.maxMovementRange)
+						{
+								it->second.ratPlayerDistance = it->second.maxMovementRange;
+						}
+						it->second.directionFromRatToPlayerCat = ratToTarget.GetNormalized();
+						it->second.targetPosition = ratPosition + it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
+				}
 
 #ifdef DEBUG_PRINT
 				std::cout << "--- RatScript_v2_0::SetTarget(" << id << ") stats: \n"
@@ -700,6 +772,8 @@ namespace PE
 						<< "targetPosition: (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n"
 						<< "--- end stats for SetTarget(" << id << ") ---" << std::endl;
 #endif // DEBUG_PRINT
+
+				return (it->second.ratPlayerDistance > it->second.minDistanceToTarget);
 		}
 
 
@@ -708,7 +782,7 @@ namespace PE
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return false; }
 #ifdef DEBUG_PRINT
-				std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): ratPlayerDistance: " << it->second.ratPlayerDistance << ", curr pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
+				//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): ratPlayerDistance: " << it->second.ratPlayerDistance << ", curr pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
 #endif // DEBUG_PRINT
 				if (it->second.ratPlayerDistance > 0.f)
 				{
@@ -717,12 +791,12 @@ namespace PE
 						RatScript_v2_0::PositionEntity(id, newPosition);
 						it->second.ratPlayerDistance -= amountToMove;
 
+#ifdef DEBUG_PRINT
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
 						//		<< " moved to new position: (" << newPosition.x << ", " << newPosition.y
 						//		<< "), Remaining distance: " << it->second.ratPlayerDistance << std::endl;
-
-#ifdef DEBUG_PRINT
-						std::cout << "RatScript_v2_0::CalculateMovement(" << id << ") after moving: ratPlayerDistance: " << it->second.ratPlayerDistance << ", new pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
+						// 
+						//std::cout << "RatScript_v2_0::CalculateMovement(" << id << ") after moving: ratPlayerDistance: " << it->second.ratPlayerDistance << ", new pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
 #endif // DEBUG_PRINT
 
 						return CheckDestinationReached(it->second.minDistanceToTarget, newPosition, it->second.targetPosition);
@@ -730,13 +804,22 @@ namespace PE
 				else
 				{
 #ifdef DEBUG_PRINT
-						std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): dist to target is zero (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n";
-#endif // DEBUG_PRINT
+						//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): dist to target is zero (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n";
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " has no movement or already at destination." << std::endl;
-						RatScript_v2_0::PositionEntity(id, it->second.targetPosition);
+#endif // DEBUG_PRINT
+
+						//RatScript_v2_0::PositionEntity(id, it->second.targetPosition);
 						it->second.ratPlayerDistance = 0.f;
 						return true;
 				}
+		}
+
+
+		bool RatScript_v2_0::CheckDestinationReached(EntityID id)
+		{
+				RatScript_v2_0_Data* data = GETSCRIPTDATA(RatScript_v2_0, id);
+				if (!data) { return false; }
+				return CheckDestinationReached(data->minDistanceToTarget, GetEntityPosition(data->myID), data->targetPosition);
 		}
 
 
@@ -746,10 +829,53 @@ namespace PE
 				bool reached = distanceToTarget <= (minDistanceToTarget * minDistanceToTarget);
 
 #ifdef DEBUG_PRINT
-				std::cout << "RatScript_v2_0::CheckDestinationReached(): distanceToTarget: " << distanceToTarget << ", minDistToTarget: " << (minDistanceToTarget * minDistanceToTarget) << ")\n";
+				//std::cout << "RatScript_v2_0::CheckDestinationReached(): distanceToTarget: " << distanceToTarget << ", minDistToTarget: " << (minDistanceToTarget * minDistanceToTarget) << ")\n";
 #endif // DEBUG_PRINT
 
 				return reached;
+		}
+
+
+		void RatScript_v2_0::DamageRat(EntityID ratId, EntityID damageSourceId, int damage)
+		{
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return; }
+
+				// Check if the rat has hit this entity during this phase
+				if (it->second.hitBy.find(damageSourceId) != it->second.hitBy.end())
+				{
+						// Don't damage the rat twice via the same source
+						return;
+				}
+				it->second.hitBy.emplace(damageSourceId);
+
+				// Subtract the damage from the rat's health
+				it->second.ratHealth -= damage;
+
+				// Check if the rat's health drops below or equals zero
+				if (it->second.ratHealth <= 0)
+				{
+						// Kill the rat
+						KillRat(ratId);
+				}
+				else 
+				{
+						PlayInjuredAudio();
+				}
+		}
+
+
+		void RatScript_v2_0::KillRat(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				// Prevent this function from getting called more than once
+				if (!(it->second.isAlive)) { return; }
+				it->second.isAlive = false;  // Marking the rat as not alive
+
+				ChangeStateToDeath(it->second.myID, 0.f); 
+				// @TODO Check if this should take the current rat animation duration into account?
 		}
 
 
@@ -762,7 +888,6 @@ namespace PE
 
 				m_scriptData[id].p_stateManager = new StateMachine{};
 				ChangeStateToIdle(id);
-				//ChangeStateToMovement(id);
 			}
 		}
 
@@ -775,7 +900,9 @@ namespace PE
 				// Change the state
 				if (it->second.p_stateManager)
 				{
+#ifdef DEBUG_PRINT
 						std::cout << "RatScript_v2_0::ChangeRatState(" << id << ", " << it->second.GetQueuedState()->GetName() << ")\n";
+#endif // DEBUG_PRINT
 						it->second.p_stateManager->ChangeState(it->second.GetQueuedState(), id);
 				}
 
@@ -829,63 +956,42 @@ namespace PE
 			return radiusId;
 		}
 
-		EntityID RatScript_v2_0::CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data)
-		{
-			SerializationManager serializationManager;
-			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius.prefab") };
-			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
-			PositionEntity(radiusId, GetEntityPosition(r_data.myID));
-			PositionEntityRelative(radiusId, vec2{0.f, 0.f});
-
-			 // Add dynamic rigidbody
-			if (!EntityManager::GetInstance().Has<RigidBody>(radiusId))
-			{
-				EntityFactory::GetInstance().Assign(radiusId, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
-			}
-
-			// Configure rigidbody
-			if (EntityManager::GetInstance().Has<RigidBody>(radiusId))
-			{
-				RigidBody& detectionRigidbody{ EntityManager::GetInstance().Get<RigidBody>(radiusId) };
-				detectionRigidbody.SetType(EnumRigidBodyType::DYNAMIC);
-			}
-
-			// Add circle collider
-			if (!EntityManager::GetInstance().Has<Collider>(radiusId))
-			{
-				EntityFactory::GetInstance().Assign(radiusId, { EntityManager::GetInstance().GetComponentID<Collider>() });
-			}
-
-			// Configure collider
-			if (EntityManager::GetInstance().Has<Collider>(radiusId))
-			{
-				Collider& detectionCollider{ EntityManager::GetInstance().Get<Collider>(radiusId) };
-				detectionCollider.colliderVariant = CircleCollider();
-				detectionCollider.isTrigger = true;
-				detectionCollider.collisionLayerIndex = detectionColliderLayer; // @TODO To configure the collision matrix of the game scene
-
-				CircleCollider& circleCollider{ std::get<CircleCollider>(detectionCollider.colliderVariant) };
-				circleCollider.scaleOffset = r_data.attackRadius;
-			}
-
-			return radiusId;
-		}
-
 
 		void RatScript_v2_0::CreateRatPathTelegraph(RatScript_v2_0_Data& r_data)
 		{
 				SerializationManager serializationManager;
 				r_data.pivotEntityID = EntityFactory::GetInstance().CreateEntity<Transform>();
 				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.pivotEntityID);
-				EntityManager::GetInstance().Get<Transform>(r_data.pivotEntityID).relPosition = vec2{ 0.f, 0.f };
+				PositionEntityRelative(r_data.pivotEntityID, vec2{ 0.f, 0.f });
 
 				vec2 ratScale{ GetEntityScale(r_data.myID) };
 				r_data.telegraphArrowEntityID = serializationManager.LoadFromFile("PawPrints.prefab");
 				ToggleEntity(r_data.telegraphArrowEntityID, false); // set to inactive, it will only show during planning phase
 				ScaleEntity(r_data.telegraphArrowEntityID, ratScale.x * 0.5f, ratScale.y * 0.5f);
 				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent
-				EntityManager::GetInstance().Get<Transform>(r_data.telegraphArrowEntityID).relPosition.Zero();	  // zero out the position (attach calculates to stay in the same position in the world)
-				EntityManager::GetInstance().Get<Transform>(r_data.telegraphArrowEntityID).relPosition.x = ratScale.x * 0.7f;
+				
+				PositionEntityRelative(r_data.telegraphArrowEntityID, vec2{ ratScale.x * 0.7f, 0.f });
+		}
+
+
+		void RatScript_v2_0::InstantiateRatAttack(RatScript_v2_0_Data& r_data)
+		{
+				switch (r_data.ratType) 
+				{
+				case EnumRatType::SNIPER:
+				{
+						r_data.p_attackData = new SniperRatAttack_v2_0{ r_data.myID };
+						break;
+				}
+				default:
+				{
+						r_data.p_attackData = new GutterRatAttack_v2_0{ r_data.myID };
+						break;
+				}
+				}
+
+				// Create the objects needed for the attack
+				r_data.p_attackData->CreateAttackObjects();
 		}
 
 } // End of namespace PE

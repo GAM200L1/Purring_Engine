@@ -67,15 +67,17 @@ namespace PE
         *************************************************************************************/
         virtual void StateExit(EntityID id) override;
 
-        /*!***********************************************************************************
-            \brief Handles the event when a rat successfully hits a cat during an attack.
-
-            \param[in,out] r_TE - Event data for the collision.
-        *************************************************************************************/
-        void RatHitCat(const Event<CollisionEvents>& r_TE);
-
 
         // --- COLLISION DETECTION --- // 
+
+        /*!***********************************************************************************
+         \brief Called when a collision enter or stay event has occurred. If an event has
+          occurred between this script's rat's collider and a cat, the parent rat
+          is notified.
+
+         \param[in] r_event - Event data.
+        *************************************************************************************/
+        void OnCollisionEnter(const Event<CollisionEvents>& r_event);
 
         /*!***********************************************************************************
          \brief Called when a trigger enter or stay event has occured. If an event has
@@ -100,7 +102,7 @@ namespace PE
 
             \return A string view representing the name of the state.
         *************************************************************************************/
-        virtual std::string_view GetName() { return "Attack_v2_0"; }
+        virtual std::string_view GetName() { return "RatAttack_v2_0"; }
 
     private:
         GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
@@ -110,11 +112,10 @@ namespace PE
         float m_delay{};
         float m_attackDuration{};
 
-        bool attackFeedbackOnce{};
-        bool telegraphEnabled{ false };
+        bool m_attackFeedbackOnce{};
 
         // Event listener IDs 
-        int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+        int m_collisionEventListener{}, m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 
         // ----- PRIVATE METHODS ----- //
     private:
