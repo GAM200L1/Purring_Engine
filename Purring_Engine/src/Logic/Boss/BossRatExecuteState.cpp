@@ -66,7 +66,7 @@ namespace PE
 				
 				Transform catTransform = EntityManager::GetInstance().Get<Transform>(CatID);
 				float DistanceFromPuddle = EntityManager::GetInstance().Get<Transform>(id).position.Distance(catTransform.position);
-				if (DistanceFromPuddle + catTransform.width/2 + 5 < EntityManager::GetInstance().Get<Transform>(id).width/2 - 5)
+				if (DistanceFromPuddle < EntityManager::GetInstance().Get<Transform>(id).width/2)
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
 				}
