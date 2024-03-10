@@ -12,7 +12,7 @@
                                 "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                 "../Assets/Animation/AnimationGutterRat_Walk.anim"
                             ],
-                            "CurrentAnimationID": ""
+                            "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
                         },
                         "Collider": {
                             "collisionLayerIndex": 1,
@@ -34,13 +34,13 @@
                         "EntityDescriptor": {
                             "InteractionLayer": 1,
                             "Layer": 1,
-                            "Old ID": 18446744073709551615,
+                            "Old ID": 1,
                             "Prefab Type": "GutterRat",
                             "children": [],
                             "isActive": true,
                             "name": "GutterRat",
                             "parent": null,
-                            "sceneID": 18446744073709551615
+                            "sceneID": 1
                         },
                         "Renderer": {
                             "Color": {
@@ -49,7 +49,7 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                            "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,
