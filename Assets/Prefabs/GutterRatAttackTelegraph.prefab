@@ -5,7 +5,7 @@
                 "Entity": {
                     "components": {
                         "Collider": {
-                            "collisionLayerIndex": 0,
+                            "collisionLayerIndex": 3,
                             "data": {
                                 "center": {
                                     "x": -86.9000015258789,
@@ -22,7 +22,7 @@
                             "type": "CircleCollider"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 0,
+                            "InteractionLayer": 3,
                             "Layer": 0,
                             "Old ID": 1,
                             "Prefab Type": "GutterRatAttackTelegraph",
