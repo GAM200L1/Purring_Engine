@@ -145,6 +145,10 @@ namespace PE
 
 	void RatReturn_v2_0::CheckIfShouldChangeStates()
 	{
+			// Clear dead cats from the collision sets
+			RatScript_v2_0::ClearDeadCats(p_data->catsInDetectionRadius);
+			RatScript_v2_0::ClearDeadCats(p_data->catsExitedDetectionRadius);
+
 			// ----- Picking where to move
 			// Check if there are any cats in the detection range
 			if (!(p_data->catsInDetectionRadius.empty()))
