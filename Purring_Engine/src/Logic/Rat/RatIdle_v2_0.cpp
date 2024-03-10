@@ -67,10 +67,8 @@ namespace PE
             p_data->finishedExecution = true; // This rat doesn't do anything
         }
 
-        if (EntityManager::GetInstance().Has<AnimationComponent>(id))
-        {
-            EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);           // Reset Rat animaition to first frame.
-        }
+        // Play animation
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
 
         //// Position the ratTelegraph entity where the said rat is.
         //RatScript_v2_0::PositionEntity(p_data->ratTelegraphID, EntityManager::GetInstance().Get<PE::Transform>(id).position);

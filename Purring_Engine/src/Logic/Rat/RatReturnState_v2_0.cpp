@@ -16,14 +16,14 @@
 #include "prpch.h"
 #include "RatReturnState_v2_0.h"
 
-//#define DEBUG_PRINT
+#define DEBUG_PRINT
 
 namespace PE
 {
 	void RatReturn_v2_0::StateEnter(EntityID id)
 	{
 #ifdef DEBUG_PRINT
-		std::cout << "RatReturn_v2_0::StateEnter()\n";
+		std::cout << "RatReturn_v2_0::StateEnter(" << id << ")\n";
 #endif // DEBUG_PRINT 
 		p_data = GETSCRIPTDATA(RatScript_v2_0, id);
 		gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
@@ -53,7 +53,11 @@ namespace PE
 					// Disable telegraphs when the execution phase starts
 					if (StateJustChanged())
 					{
+							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 							DisableTelegraphs();
+
+							// Play animation
+							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::WALK);
 					}
 
 					// Move the rat back towards its original position
@@ -74,6 +78,9 @@ namespace PE
 							{
 									m_planningRunOnce = true;
 									p_data->finishedExecution = false;
+
+									// Play idle animation
+									GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
 
 									// Check if any of the conditions to change states has been met
 									if (!(p_data->hasRatStateChanged))
@@ -175,6 +182,9 @@ namespace PE
 			}
 			else
 			{
+#ifdef DEBUG_PRINT
+					std::cout << "RatReturn_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): don't change states\n";
+#endif // DEBUG_PRINT
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 			}
 	}
