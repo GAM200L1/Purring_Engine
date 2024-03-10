@@ -65,10 +65,23 @@ namespace PE
 					continue;
 				
 				Transform catTransform = EntityManager::GetInstance().Get<Transform>(CatID);
+				vec2 difference = catTransform.position - EntityManager::GetInstance().Get<Transform>(id).position;
 				float DistanceFromPuddle = EntityManager::GetInstance().Get<Transform>(id).position.Distance(catTransform.position);
-				if (DistanceFromPuddle < EntityManager::GetInstance().Get<Transform>(id).width/2)
+				//check distance based on the vec2 differences
+				if (difference.y >= 0)
 				{
-					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+					if (DistanceFromPuddle  < EntityManager::GetInstance().Get<Transform>(id).width / 2)
+					{
+						GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+					}
+				}
+				//x is negative y positive
+				else if (difference.y <= 0)
+				{
+					if (DistanceFromPuddle + catTransform.width / 2 < EntityManager::GetInstance().Get<Transform>(id).width / 2)
+					{
+						GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+					}
 				}
 			}
 		}
