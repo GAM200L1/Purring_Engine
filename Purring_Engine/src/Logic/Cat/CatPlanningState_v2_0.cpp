@@ -102,7 +102,7 @@ namespace PE
 
 	void Cat_v2_0PLAN::StateExit(EntityID id)
 	{
-		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) { return; } // if cat is following cat in the chain )
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
 
 		p_catMovement->Exit(id);
 		p_catAttack->Exit(id);

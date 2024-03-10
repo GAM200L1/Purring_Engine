@@ -168,8 +168,6 @@ namespace PE
 		// check that state manager is still working
 		if (!m_scriptData[id].p_stateManager)
 		{
-			//m_scriptData[id].catID = id;
-
 			MakeStateManager(id);
 		}
 
@@ -343,8 +341,12 @@ namespace PE
 		auto ChangeToAttack = 
 		[&](EntityID animateID)
 		{
-			// change to attack execute state
-			m_scriptData[animateID].p_stateManager->ChangeState(new AttackEXECUTE{}, animateID);
+			// if cat is following cat or cage cat in the chain
+			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)))
+			{
+				// change to attack execute state if it is a cat that can attack
+				m_scriptData[animateID].p_stateManager->ChangeState(new AttackEXECUTE{}, animateID);
+			}
 
 			// reset and play attack animation
 			m_scriptData[animateID].p_catAnimation->SetCurrentFrameIndex(0);
