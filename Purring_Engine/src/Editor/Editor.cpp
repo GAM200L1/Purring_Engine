@@ -2382,7 +2382,7 @@ namespace PE {
 
 								if (ImGui::Button("Play"))
 								{
-									audioComponent.PlayAudioSound();
+									audioComponent.PlayAudioSound(AudioComponent::AudioType::SFX);
 								}
 
 								ImGui::SameLine();
