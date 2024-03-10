@@ -68,7 +68,7 @@ namespace PE
 			p_data-> currentAttackSet = rand() % 3;
 		}
 
-		switch (p_script->BossRatAttackSets[p_data->currentAttackSet][p_data->currentAttackInSet])
+		switch (p_script->bossRatAttackSets[p_data->currentAttackSet][p_data->currentAttackInSet])
 		{
 		case BossRatAttacks::BASH:
 			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindClosestCat());
