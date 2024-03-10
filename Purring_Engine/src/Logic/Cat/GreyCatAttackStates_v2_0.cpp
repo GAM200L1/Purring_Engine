@@ -380,6 +380,7 @@ namespace PE
 				else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
 					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					return true;
 				}
 			}
 			else if (id2 == p_attackData->projectileID)
@@ -397,6 +398,7 @@ namespace PE
 				else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
 					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					return true;
 				}
 			}
 		}
