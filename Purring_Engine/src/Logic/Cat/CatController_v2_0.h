@@ -20,11 +20,7 @@
 namespace PE
 {
 
-	struct CatController_v2_0Data
-	{
-		// vector of pairs <catID, catType>
-		//EntityID mainCatID{ 0 };
-	};
+	struct CatController_v2_0Data{};
 
 	class CatController_v2_0 : public Script
 	{
@@ -38,6 +34,9 @@ namespace PE
 		// ----- Public Functions ----- //
 
 		// ----- Constructor ----- //
+		/*!***********************************************************************************
+		 \brief					Constructor for CatController_v2_0
+		*************************************************************************************/
 		virtual ~CatController_v2_0();
 
 		/*!***********************************************************************************
@@ -123,20 +122,34 @@ namespace PE
 		}
 
 		/*!***********************************************************************************
-		 \brief Checks if cat is caged. Throws if not a cat
+		 \brief Checks if cat is caged.
 
 		 \param[in] id - catID to check
 		 \param[out] bool - true if cat is caged, false if not
 		*************************************************************************************/
 		inline bool IsCatCaged(EntityID id)
 		{
-			if (IsCat(id))
-				return (GETSCRIPTDATA(CatScript_v2_0, id))->isCaged;
-			else
-				return false;
+			return (GETSCRIPTDATA(CatScript_v2_0, id))->isCaged;
 		}
 
+		/*!***********************************************************************************
+		 \brief Checks if cat is a cat following the main cat
+
+		 \param[in] id - catID to check
+		 \param[out] bool - true if cat is following, false if not
+		*************************************************************************************/
 		bool IsFollowCat(EntityID catID);
+
+		/*!***********************************************************************************
+		 \brief Checks if entity is a cat and not caged
+
+		 \param[in] id - catID to check
+		 \param[out] bool - true if entity is a cat and is not caged
+		*************************************************************************************/
+		inline bool IsCatAndNotCaged(EntityID catID)
+		{
+			return (IsCat(catID) && !IsCatCaged(catID));
+		}
 		
 		// getters
 		/*!***********************************************************************************
@@ -181,6 +194,11 @@ namespace PE
 		*************************************************************************************/
 		std::vector<EnumCatType> GetDeployableCats(EntityID id) { return m_deployableCats; }
 
+		/*!**********************************************************************************
+		 \brief Gets the main cat ID
+
+		 \param[out] EntityID - m_mainCatID
+		*************************************************************************************/
 		EntityID GetMainCatID() { return m_mainCatID; }
 
 		/*!***********************************************************************************

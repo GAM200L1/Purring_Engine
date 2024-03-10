@@ -101,10 +101,21 @@ namespace PE
 		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime);
 
+		/*!***********************************************************************************
+		\brief					Does nothing
+		*************************************************************************************/
 		virtual void Destroy(EntityID id){}
 
+		/*!***********************************************************************************
+		\brief					Adds needed components to object with this script
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void OnAttach(EntityID id);
 		
+		/*!***********************************************************************************
+		\brief					Removes this object from scriptData
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void OnDetach(EntityID id);
 
 
@@ -124,6 +135,9 @@ namespace PE
 		*************************************************************************************/
 		std::map<EntityID, CatScript_v2_0Data>& GetScriptData() { return m_scriptData; }
 
+		/*!***********************************************************************************
+		 \brief Returns the container of script data.
+		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 		
 	private:
@@ -213,14 +227,5 @@ namespace PE
 		 \param[in] id - EntityID of the cat undergoing the execution state.
 		*************************************************************************************/
 		inline void ChangeToPlanningState(EntityID id);
-
-		///*!***********************************************************************************
-		// \brief Identifies if the cat state passed in matches the game state passed in.
-
-		// \param[in] catStateName - Name of the cat's state.
-		// \param[in] gameState - Name of the game state to compare with the cat's state.
-		//*************************************************************************************/
-		//static bool DoesGameStateMatchCatState(std::string const& catStateName, GameStates_v2_0 gameState);
-
 	};
 }
