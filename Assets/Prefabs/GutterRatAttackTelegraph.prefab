@@ -4,16 +4,33 @@
             {
                 "Entity": {
                     "components": {
+                        "Collider": {
+                            "collisionLayerIndex": 3,
+                            "data": {
+                                "center": {
+                                    "x": -86.9000015258789,
+                                    "y": -158.40000915527344
+                                },
+                                "positionOffset": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "radius": 75.0,
+                                "scaleOffset": 1.5
+                            },
+                            "isTrigger": true,
+                            "type": "CircleCollider"
+                        },
                         "EntityDescriptor": {
-                            "InteractionLayer": 0,
+                            "InteractionLayer": 3,
                             "Layer": 0,
                             "Old ID": 1,
-                            "Prefab Type": "RatBossBashAttackTelegraph",
+                            "Prefab Type": "GutterRatAttackTelegraph",
                             "children": [],
                             "isActive": true,
-                            "name": "RatBossBashAttackTelegraph",
+                            "name": "GutterRatAttackTelegraph",
                             "parent": null,
-                            "sceneID": 1
+                            "sceneID": 2
                         },
                         "Renderer": {
                             "Color": {
@@ -22,26 +39,26 @@
                                 "g": 0.3333333432674408,
                                 "r": 0.8156862854957581
                             },
-                            "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Bash_512px.png"
+                            "TextureKey": "../Assets/Textures/Telegraphs/Telegraph_Attack_512px.png"
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,
                             "mass": 10.0,
-                            "type": 0
+                            "type": 1
                         },
                         "Transform": {
-                            "height": 256.0,
+                            "height": 100.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 74.00018310546875,
-                                "y": 27.99999237060547
+                                "x": -86.9000015258789,
+                                "y": -158.40000915527344
                             },
                             "relativeposition": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "relorientation": 0.0,
-                            "width": 256.0
+                            "width": 100.0
                         }
                     },
                     "name": ""

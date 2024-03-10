@@ -1,32 +1,28 @@
-/*********************************************************************************
-\project  Purring Engine
-\module   CSD2401 - A
-\file     BossRatExecuteState.h
-\date     25 - 02 - 2024
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401/2451-A
+ \file     RatDeathState_v2_0.h
+ \date     06-03-2024
 
-\author   Jarran Tan Yan Zhi
-\par      email : jarranyanzhi.tan@digipen.edu
+ \author               Krystal YAMIN
+ \par      email:      krystal.y@digipen.edu
 
-\brief
-Declaration for Boss Rat Execute State
+ \brief
+	This file contains functions for the rat's death state.
 
-All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserved.
-
-* ************************************************************************************/
-
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #pragma once
-#include "Logic/StateManager.h"
-#include "BossRatScript.h"
-#include <string_view>
-#include "Logic/GameStateController_v2_0.h"
+#include "../StateManager.h"
+#include "RatScript_v2_0.h"
 
 namespace PE
 {
-	class BossRatExecuteState : public State
+	class RatDeathState_v2_0 : public State
 	{
 		// ----- Destructor ----- //
 	public:
-		virtual ~BossRatExecuteState() override { p_data = nullptr; }
+		virtual ~RatDeathState_v2_0() override { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
 	public:
@@ -55,15 +51,11 @@ namespace PE
 
 			\return std::string_view name of state
 		*************************************************************************************/
-		virtual std::string_view GetName() override { return "BossRatExecuteState"; }
+		virtual std::string_view GetName() override { return "RatDeathState_v2_0"; }
+
 	private:
-		/*!***********************************************************************************
-			\brief Check Poison Puddle for damage
-		*************************************************************************************/
-		void PoisonPuddleDamageUpdate();
-	private:
-		BossRatScriptData* p_data; // pointer to script instance data
-		GameStateController_v2_0* p_gsc; // pointer to game state controller
-		BossRatScript* p_script;
+		RatScript_v2_0_Data *p_data; // pointer to script instance data
+		GameStateController_v2_0* p_gameStateController; // pointer to script instance data
+		float m_animDurationLeft{}; // Duration of the death animation left before the rat should be deactivated
 	};
 } // End of namespace PE

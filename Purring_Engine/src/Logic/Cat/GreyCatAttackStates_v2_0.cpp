@@ -290,7 +290,7 @@ namespace PE
 				SerializationManager m_serializationManager;
 				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX.prefab");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				EntityManager::GetInstance().RemoveEntity(sound);
 
 					int randomInteger = std::rand() % 3 + 1;
@@ -309,7 +309,7 @@ namespace PE
 					}
 
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				EntityManager::GetInstance().RemoveEntity(sound);
 
 			}

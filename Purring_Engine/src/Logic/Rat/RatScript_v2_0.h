@@ -14,6 +14,8 @@
 
 *************************************************************************************/
 #pragma once
+#include "RatScript_v2_0_Data.h"
+
 #include "../LogicSystem.h"
 #include "../Script.h"
 #include "../StateManager.h"
@@ -24,141 +26,7 @@
 #include "../GameStateController_v2_0.h"
 
 namespace PE
-{
-	enum class EnumRatType : char
-	{
-		GUTTER_V1,
-		GUTTER,
-		BRAWLER,
-		SNIPER,
-		HERALD
-	};
-
-	enum class EnumRatAnimations : char
-	{
-		IDLE,
-		WALK,
-		ATTACK,
-		HURT,
-		DEATH
-	};
-
-	struct RatScript_v2_0_Data
-	{
-		~RatScript_v2_0_Data()
-		{
-			delete p_queuedState;
-			delete p_stateManager;
-		}
-
-		// reference entities
-		EntityID myID{ 0 };								// id of the rat with this data
-		EntityID ratTelegraphID{ 0 };			// id of an additional invisible object with transform for rotating the arrow telegraph
-		EnumRatType ratType{ EnumRatType::GUTTER };
-		StateMachine* p_stateManager;
-
-		// animation
-		AnimationComponent* p_ratAnimationComponent = nullptr;
-		std::map<std::string, std::string> animationStates; // animation states of the rat <state name, file name>
-		
-		// rat stats
-		int ratHealth{ 3 };								// health of the rat, needs manual setting
-		int ratMaxHealth{ 3 };						// maximum health of the rat
-
-		// Movement Variables
-		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
-		vec2 targetPosition{ 0.f, 0.f };				// stores the target position the rat is supposed to move towards
-
-		// Attack entities and variables
-		EntityID pivotEntityID{ 0 };					// id of parent obj to rotate to adjust the orientation of the telegraphs
-		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
-		EntityID attackTelegraphEntityID{ 0 };			// id of cross attack telegraph
-		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
-		EntityID redTelegraphEntityID{ 0 };				// id of red detection telegraph
-
-		int collisionDamage{ 1 };						// damage when touching the rat needs manual setting
-		int attackDamage{ 1 };							// damage when properly attacked by the rat needs manual setting
-
-		float attackDelay{ 0.f };						// delay before attacking cat, needs manual setting
-		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack
-		bool hitCat{ false };							// a check for whether the rat has hit the player once in the entire execution sequence
-
-		// Rat Idle
-		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
-
-		bool isAlive{ true }; // True if the rat is alive and should be updated
-
-		bool shouldChangeState{};  // Flags that the state should change when [timeBeforeChangingState] is zero
-		bool delaySet{ false }; // Whether the state change has been flagged
-		float timeBeforeChangingState{ 0.f }; // Delay before state should change
-		bool finishedExecution{ true }; // Keeps track of whether the execution phase has been completed
-		bool hasRatStateChanged{ false }; // True if the rat state changed in the last frame, false otherwise
-
-		// Detection and movement
-		EntityID detectionRadiusId{};
-		float detectionRadius{ 200.f };
-		std::set<EntityID> catsInDetectionRadius;
-		std::set<EntityID> catsExitedDetectionRadius;
-		EntityID targetedCat{}; // Cat to move towards in the hunting phase
-		
-		EntityID attackRadiusId{};
-		float attackRadius{101.f};
-		std::set<EntityID> attackRangeInDetectionRadius;
-		std::set<EntityID> attackRangeExitedDetectionRadius;
-
-		float movementSpeed{ 200.f };
-		float maxMovementRange{ 100.f }; // Total distance that the rat will move in one execution phase
-		float minDistanceToTarget{ 1.f }; // Amount that the rat can be offset from their target before being considered "close enough"
-
-		// Hunting and returning
-		int maxHuntTurns{ 2 }; // Number of turn the rat will hunt before returning to their original position
-		vec2 originalPosition{ 0.f, 0.f }; // Position to return to
-		
-		// Attack 
-		int skillDamage{};
-		int skillArea{}; // probably dependent on the attack and cannot be stored as a flat var
-
-		// Patrol Points
-		std::vector<vec2> patrolPoints;
-		int patrolIndex{ 0 };							// Index of the current patrol point the rat is moving towards
-		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
-
-
-		bool animationStart{ false };
-
-	private:
-		State* p_queuedState{ nullptr }; // State to load
-
-	public:
-
-		/*!***********************************************************************************
-		\brief Setter for the pointer to the state the rat should be set to. 
-						Deletes any states currently being pointed to.
-
-		\param p_newState - Pointer to the state the rat should be set to.
-		\param bypassDeletion - Set to true to not delete the existing data being pointed at,
-								false to delete any data being pointed at if setting a new state.
-		*************************************************************************************/
-		void SetQueuedState(State* p_newState, bool bypassDeletion)
-		{
-			if (!bypassDeletion && p_queuedState)
-			{
-				delete p_queuedState;
-			}
-
-			p_queuedState = p_newState;
-		}
-
-		/*!***********************************************************************************
-		 \brief Getter for the pointer to the state the rat should be set to.
-		*************************************************************************************/
-		State* GetQueuedState()
-		{
-			return p_queuedState;
-		}
-
-	};
-	
+{	
 	class RatScript_v2_0 : public Script
 	{
 
@@ -314,7 +182,6 @@ namespace PE
 
 
 		// ----- Rat stuff ----- //
-		void RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE);
 
 		/*!***********************************************************************************
 		 \brief Deals damage to the cat that the attack collider collided with.
@@ -366,7 +233,19 @@ namespace PE
 		*************************************************************************************/
 		void EnableTelegraphs(EntityID id, vec2 const& r_targetPosition);
 
+		/*!***********************************************************************************
+		 \brief Disables the movement telegraphs.
+
+		 \param[in] id - EntityID of the rat.
+		*************************************************************************************/
 		void DisableTelegraphs(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Disables all entities spawned by the rat.
+
+		 \param[in] id - EntityID of the rat.
+		*************************************************************************************/
+		void DisableAllSpawnedEntities(EntityID id);
 
 
 		// --- RAT STATE CHANGE DETECTION --- // 
@@ -444,16 +323,26 @@ namespace PE
 		*************************************************************************************/
 		void ChangeStateToAttack(EntityID const id, float const stateChangeDelay = 0.f);
 
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed to the death state 
+						after the delay passed in.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void ChangeStateToDeath(EntityID const id, float const stateChangeDelay = 0.f);
+
 
 		// --- COLLISION DETECTION --- // 
 
 		/*!***********************************************************************************
-		 \brief Returns true if the entity passed in is a cat, false otherwise.
+		 \brief Returns true if the entity passed in is a cat that isn't caged, false otherwise.
 
 		 \param[in] id - EntityID of the entity to check.
 		 \return bool - Returns true if the entity passed in is a cat, false otherwise.
 		*************************************************************************************/
-		static bool GetIsCat(EntityID const id);
+		static bool GetIsNonCagedCat(EntityID const id);
 
 		/*!***********************************************************************************
 		 \brief Clears the containers used to store the cats being collided with.
@@ -461,6 +350,13 @@ namespace PE
 		 \param[in] id - EntityID of the rat whose detection radius was entered.
 		*************************************************************************************/
 		void ClearCollisionContainers(EntityID const id);
+
+		/*!***********************************************************************************
+				\brief Clears dead cats from the set passed in.
+
+				\param[in,out] catSet - Container of cats to clear dead cats from.
+		*************************************************************************************/
+		static void ClearDeadCats(std::set<EntityID>& catSet);
 
 		/*!***********************************************************************************
 		 \brief Called when a cat is within the rat's detection radius.
@@ -478,6 +374,45 @@ namespace PE
 		*************************************************************************************/
 		void CatExited(EntityID const id, EntityID const catID);
 
+		/*!***********************************************************************************
+		\brief Checks if the collision event involved the rat's detection radius and a cat,
+				calls the CatEntered() function if true.
+
+		\param[in] ratId - EntityID of the rat to check the detection radius of.
+		\param entity1 - One of the entities involved in the trigger event.
+		\param entity2 - One of the entities involved in the trigger event.
+
+		\return Returns true if the collision involved the rat's detection radius and a cat,
+				false otherwise.
+		*************************************************************************************/
+		bool CheckDetectionTriggerEntered(EntityID const ratId, EntityID const entity1, EntityID const entity2);
+
+		/*!***********************************************************************************
+		\brief Checks if the collision event involved the rat's detection radius and a cat,
+				calls the CatExited() function if true.
+
+		\param[in] ratId - EntityID of the rat to check the detection radius of.
+		\param entity1 - One of the entities involved in the trigger event.
+		\param entity2 - One of the entities involved in the trigger event.
+
+		\return Returns true if the collision involved the rat's detection radius and a cat,
+				false otherwise.
+		*************************************************************************************/
+		bool CheckDetectionTriggerExited(EntityID const ratId, EntityID const entity1, EntityID const entity2);
+
+		/*!***********************************************************************************
+		\brief Checks if the collision event involves the rat's collider and a cat,
+				calls DealDamageToCat() function if true.
+
+		\param[in] ratId - EntityID of the rat to check the detection radius of.
+		\param entity1 - One of the entities involved in the collision event.
+		\param entity2 - One of the entities involved in the collision event.
+
+		\return Returns true if the collision involves the rat's collider and a cat,
+				false otherwise.
+		*************************************************************************************/
+		bool CheckRatTouchingCat(EntityID const ratId, EntityID const entity1, EntityID const entity2);
+
 
 		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
 
@@ -493,8 +428,9 @@ namespace PE
 		 \param[in] capMaximum - Set to true to shift the target position within the range
 					of the rat's maximum range per turn, false to allow the rat to exceed their
 					max range.
+		 \return Returns true if the target position is far enough away from the rat, false otherwise.
 		*************************************************************************************/
-		void SetTarget(EntityID id, EntityID targetId, bool const capMaximum);
+		bool SetTarget(EntityID id, EntityID targetId, bool const capMaximum);
 
 		/*!***********************************************************************************
 		 \brief Sets the position that the rat should move towards when CalculateMovement 
@@ -505,17 +441,31 @@ namespace PE
 		 \param[in] capMaximum - Set to true to shift the target position within the range 
 					of the rat's maximum range per turn, false to allow the rat to exceed their 
 					max range.
+		 \return Returns true if the target position is far enough away from the rat, false otherwise.
 		*************************************************************************************/
-		void SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum);
+		bool SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum);
 
 		// Returns true if the target has been reached, false otherwise
 		bool CalculateMovement(EntityID id, float deltaTime);
+		static bool CheckDestinationReached(EntityID id);
 		static bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
-		
-		void CatEnteredAttackRadius(EntityID const id, EntityID const catID);
-		void CatExitedAttackRadius(EntityID const id, EntityID const catID);
 
+		/*!***********************************************************************************
+		 \brief Reduces the health of the rat and plays the SFX. If the rat has run out of 
+						health, the rat is killed using the KillRat function.
 
+		 \param[in] ratId - EntityID of the rat.
+		 \param[in] damageSourceId - EntityID of the entity that damaged the rat.
+		 \param[in] damage - Amount to reduce the rat's health by.
+		*************************************************************************************/
+		void DamageRat(EntityID ratId, EntityID damageSourceId, int damage);
+
+		/*!***********************************************************************************
+		 \brief Kills the rat, setting it to its death state and playing the death SFX + anim.
+
+		 \param[in] id - EntityID of the rat.
+		*************************************************************************************/
+		void KillRat(EntityID id);
 
 		// ----- Private Members ----- //
 	private:
@@ -553,10 +503,28 @@ namespace PE
 
 		// --- OBJECT CREATION --- //
 
+		/*!***********************************************************************************
+		 \brief Load the detection radius collider prefab and return its EntityID.
+
+		 \param[in] r_data - Reference to this rat's data.
+
+		 \return EntityID - ID of created entity.
+		*************************************************************************************/
 		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
 
-		EntityID CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data);
+		/*!***********************************************************************************
+		 \brief Load the movement telegraph prefab and store it in the rat data.
 
+		 \param[in, out] r_data - Reference to this rat's data.
+		*************************************************************************************/
 		void CreateRatPathTelegraph(RatScript_v2_0_Data& r_data);
+
+		/*!***********************************************************************************
+		 \brief Create an instance of the appropriate attack object for the rat according 
+					to its type and store it in the rat data.
+
+		 \param[in, out] r_data - Reference to this rat's data. 
+		*************************************************************************************/
+		void InstantiateRatAttack(RatScript_v2_0_Data& r_data);
 	}; // end of class 
 }

@@ -48,12 +48,20 @@ namespace PE
         void Update(float deltaTime);
 
         /*!***********************************************************************************
-         \brief Plays an audio prefab with the option to loop it.
+         \brief Plays BGM prefab with the option to loop it.
 
          \param[in] prefabPath - The path to the audio prefab.
          \param[in] loop       - Whether the audio should loop.
         *************************************************************************************/
-        void PlayAudioPrefab(const std::string& prefabPath, bool loop);
+        void PlayBGM(const std::string& prefabPath, bool loop);
+
+        /*!***********************************************************************************
+         \brief Plays SFX prefab with the option to loop it.
+
+         \param[in] prefabPath - The path to the audio prefab.
+         \param[in] loop       - Whether the audio should loop.
+        *************************************************************************************/
+        void PlaySFX(const std::string& prefabPath, bool loop);
 
         /*!***********************************************************************************
          \brief Pauses the currently playing background music.

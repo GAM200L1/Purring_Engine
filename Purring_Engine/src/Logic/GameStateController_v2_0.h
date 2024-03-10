@@ -43,12 +43,15 @@ namespace PE
 		EntityID TurnCounterCanvas;
 
 		EntityID Journal;
+		EntityID RatKingJournal;
 		EntityID JournalButton;
 
 		EntityID PhaseBanner;
 
 		EntityID CatPortrait,RatPortrait;
 		EntityID Portrait;
+
+		EntityID RatKingPortrait;
 
 		EntityID Background;
 		EntityID TransitionPanel;
@@ -458,6 +461,7 @@ namespace PE
 		//portrait
 		bool m_isPotraitShowing{};
 		bool m_isRat{};
+		bool m_bossRatSelected{};
 		EntityID m_lastSelectedEntity{};
 		std::string nextPortraitTexture{};
 

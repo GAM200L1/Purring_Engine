@@ -31,6 +31,12 @@ namespace PE
     class AudioComponent
     {
     public:
+        enum class AudioType
+        {
+            BGM,
+            SFX
+        };
+
         /*!***********************************************************************************
         \brief     Constructor for the AudioComponent class.
         *************************************************************************************/
@@ -52,7 +58,7 @@ namespace PE
         \brief     Plays an audio sound associated with the given identifier.
         \param     r_id The identifier of the audio sound.
         *************************************************************************************/
-        void PlayAudioSound();
+        void PlayAudioSound(AudioType type);
 
         /*!***********************************************************************************
         \brief     Checks if the audio sound with the specified identifier is currently playing.
@@ -150,5 +156,6 @@ namespace PE
         std::string m_audioKey;         // The audio file key
         bool m_loop = false;            // Whether the audio should loop or not
         bool m_isPaused = false;        // Whether the audio is paused or not
+        AudioType m_audioType;
     };
 }

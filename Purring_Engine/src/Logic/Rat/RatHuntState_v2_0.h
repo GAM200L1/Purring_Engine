@@ -8,7 +8,7 @@
  \par      email:      krystal.y@digipen.edu
 
  \brief
-	This file contains functions for a temp rat state for testing purposes.
+	This file contains functions for the rat's hunting state.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -80,6 +80,15 @@ namespace PE
 		// --- COLLISION DETECTION --- // 
 
 		/*!***********************************************************************************
+		 \brief Called when a collision enter or stay event has occurred. If an event has
+			occurred between this script's rat's collider and a cat, the parent rat
+			is notified.
+
+		 \param[in] r_event - Event data.
+		*************************************************************************************/
+		void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+
+		/*!***********************************************************************************
 		 \brief Called when a trigger enter or stay event has occured. If an event has
 			occurred between this script's rat's detection collider and a cat, the parent rat
 			is notified.
@@ -108,7 +117,7 @@ namespace PE
 		int huntingTurnsLeft{}; // Number of turns left for the rat to spend hunting
 
 		// Event listener IDs 
-		int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+		int m_collisionEventListener{}, m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 
 		// Waypoints for level 1, starting from the left of the scene
 		std::vector<vec2> waypointsLevel1{

@@ -150,7 +150,7 @@ namespace PE
 					SerializationManager serializationManager;
 					EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Selection SFX.prefab");
 					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 					EntityManager::GetInstance().RemoveEntity(sound);
 
 					// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
@@ -346,7 +346,7 @@ namespace PE
 				SerializationManager serializationManager;
 				EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Attack SFX.prefab");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				EntityManager::GetInstance().RemoveEntity(sound);
 				playShootOnce = true;
 			}

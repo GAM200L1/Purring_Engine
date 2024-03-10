@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4830,7 +4830,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4909,7 +4909,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5000,7 +5000,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5108,7 +5108,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 102,
+                                "FollowObjectID": 71,
                                 "fillColorAlmostEmpty": {
                                     "w": 1.0,
                                     "x": 0.9800000190734863,
@@ -5135,11 +5135,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1051.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1051.9998779296875,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -5176,7 +5176,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1051.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5261,7 +5261,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 103,
+                                "FollowObjectID": 102,
                                 "fillColorAlmostEmpty": {
                                     "w": 1.0,
                                     "x": 0.9800000190734863,
@@ -5288,11 +5288,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1043.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1043.9998779296875,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -5329,7 +5329,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1043.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5364,13 +5364,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1051.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5405,13 +5405,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1043.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5420,198 +5420,6 @@
                         },
                         "relorientation": 0.0,
                         "width": 70.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack.anim",
-                            "../Assets/Animation/AnimationRat_Death.anim",
-                            "../Assets/Animation/AnimationRat_Hurt.anim",
-                            "../Assets/Animation/AnimationRat_Idle.anim",
-                            "../Assets/Animation/AnimationRat_walk.anim"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 32.50027847290039,
-                                "y": 167.00033569335938
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 102,
-                        "Prefab Type": "Rat",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Rat",
-                        "parent": null,
-                        "sceneID": 25
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "RatScript": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationRat_Attack.anim",
-                                    "Death": "../Assets/Animation/AnimationRat_Death.anim",
-                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt.anim",
-                                    "Idle": "../Assets/Animation/AnimationRat_Idle.anim",
-                                    "Walk": "../Assets/Animation/AnimationRat_walk.anim"
-                                },
-                                "attackDamage": 1,
-                                "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
-                                "attackDuration": 0.5,
-                                "collisionDamage": 1,
-                                "detectionRadius": 4.0,
-                                "health": 3,
-                                "mainCatID": 3,
-                                "movementSpeed": 200.0
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 32.50027847290039,
-                            "y": 167.00033569335938
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack.anim",
-                            "../Assets/Animation/AnimationRat_Death.anim",
-                            "../Assets/Animation/AnimationRat_Hurt.anim",
-                            "../Assets/Animation/AnimationRat_Idle.anim",
-                            "../Assets/Animation/AnimationRat_walk.anim"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 427.50042724609375,
-                                "y": -99.50010681152344
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 103,
-                        "Prefab Type": "Rat",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Rat",
-                        "parent": null,
-                        "sceneID": 24
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "RatScript": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationRat_Attack.anim",
-                                    "Death": "../Assets/Animation/AnimationRat_Death.anim",
-                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt.anim",
-                                    "Idle": "../Assets/Animation/AnimationRat_Idle.anim",
-                                    "Walk": "../Assets/Animation/AnimationRat_walk.anim"
-                                },
-                                "attackDamage": 1,
-                                "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
-                                "attackDuration": 0.5,
-                                "collisionDamage": 1,
-                                "detectionRadius": 4.0,
-                                "health": 3,
-                                "mainCatID": 3,
-                                "movementSpeed": 200.0
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 427.50042724609375,
-                            "y": -99.50010681152344
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
                     }
                 },
                 "name": ""
@@ -6073,186 +5881,6 @@
         {
             "Entity": {
                 "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack.anim",
-                            "../Assets/Animation/AnimationRat_Death.anim",
-                            "../Assets/Animation/AnimationRat_Hurt.anim",
-                            "../Assets/Animation/AnimationRat_Idle.anim",
-                            "../Assets/Animation/AnimationRat_walk.anim"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": -122.49960327148438,
-                                "y": -39.500160217285156
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 108,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Rat",
-                        "parent": null,
-                        "sceneID": 26
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "RatScript": {
-                            "data": {
-                                "animationStates": {},
-                                "attackDamage": 1,
-                                "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
-                                "attackDuration": 0.5,
-                                "collisionDamage": 1,
-                                "detectionRadius": 4.0,
-                                "health": 3,
-                                "mainCatID": 3,
-                                "movementSpeed": 200.0
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -122.49960327148438,
-                            "y": -39.500160217285156
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack.anim",
-                            "../Assets/Animation/AnimationRat_Death.anim",
-                            "../Assets/Animation/AnimationRat_Hurt.anim",
-                            "../Assets/Animation/AnimationRat_Idle.anim",
-                            "../Assets/Animation/AnimationRat_walk.anim"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": -219.99961853027344,
-                                "y": -202.00009155273438
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 109,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Rat",
-                        "parent": null,
-                        "sceneID": 27
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "RatScript": {
-                            "data": {
-                                "animationStates": {},
-                                "attackDamage": 1,
-                                "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
-                                "attackDuration": 0.5,
-                                "collisionDamage": 1,
-                                "detectionRadius": 4.0,
-                                "health": 3,
-                                "mainCatID": 3,
-                                "movementSpeed": 200.0
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -219.99961853027344,
-                            "y": -202.00009155273438
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
@@ -6348,11 +5976,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1067.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1067.999755859375,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -6389,7 +6017,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1067.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -6474,7 +6102,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 109,
+                                "FollowObjectID": 103,
                                 "fillColorAlmostEmpty": {
                                     "w": 1.0,
                                     "x": 0.9800000190734863,
@@ -6501,11 +6129,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1063.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1063.9998779296875,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -6542,7 +6170,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1063.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -6577,13 +6205,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1067.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -6618,13 +6246,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1063.9998779296875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -6633,6 +6261,378 @@
                         },
                         "relorientation": 0.0,
                         "width": 70.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                            "../Assets/Animation/AnimationGutterRat_Death.anim",
+                            "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                            "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                            "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "center": {
+                                "x": 500.0000305175781,
+                                "y": -69.99996948242188
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 1,
+                        "Layer": 1,
+                        "Old ID": 1,
+                        "Prefab Type": "GutterRat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GutterRat",
+                        "parent": null,
+                        "sceneID": 71
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationGutterRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                                },
+                                "detectionRadius": 200.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 200.0,
+                                "movementSpeed": 250.0,
+                                "ratMaxHealth": 2,
+                                "ratType": 1
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 500.0000305175781,
+                            "y": -69.99996948242188
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                            "../Assets/Animation/AnimationGutterRat_Death.anim",
+                            "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                            "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                            "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "center": {
+                                "x": 64.00003051757813,
+                                "y": 218.0000457763672
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 1,
+                        "Layer": 1,
+                        "Old ID": 1,
+                        "Prefab Type": "GutterRat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GutterRat",
+                        "parent": null,
+                        "sceneID": 116
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationGutterRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                                },
+                                "detectionRadius": 200.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 200.0,
+                                "movementSpeed": 250.0,
+                                "ratMaxHealth": 2,
+                                "ratType": 1
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 64.00003051757813,
+                            "y": 218.0000457763672
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                            "../Assets/Animation/AnimationGutterRat_Death.anim",
+                            "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                            "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                            "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "center": {
+                                "x": -81.99999237060547,
+                                "y": 28.00004005432129
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 1,
+                        "Layer": 1,
+                        "Old ID": 1,
+                        "Prefab Type": "GutterRat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GutterRat",
+                        "parent": null,
+                        "sceneID": 117
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationGutterRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                                },
+                                "detectionRadius": 200.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 200.0,
+                                "movementSpeed": 250.0,
+                                "ratMaxHealth": 2,
+                                "ratType": 1
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -81.99999237060547,
+                            "y": 28.00004005432129
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                            "../Assets/Animation/AnimationGutterRat_Death.anim",
+                            "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                            "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                            "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "center": {
+                                "x": -224.0,
+                                "y": -189.99998474121094
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 1,
+                        "Layer": 1,
+                        "Old ID": 1,
+                        "Prefab Type": "GutterRat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GutterRat",
+                        "parent": null,
+                        "sceneID": 118
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationGutterRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                                },
+                                "detectionRadius": 200.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 200.0,
+                                "movementSpeed": 250.0,
+                                "ratMaxHealth": 2,
+                                "ratType": 1
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -224.0,
+                            "y": -189.99998474121094
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""
