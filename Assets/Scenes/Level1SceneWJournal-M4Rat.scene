@@ -5197,7 +5197,7 @@
                                 "maxMovementRange": 200.0,
                                 "movementSpeed": 250.0,
                                 "ratMaxHealth": 2,
-                                "ratType": 1
+                                "ratType": 3
                             },
                             "state": 0
                         }

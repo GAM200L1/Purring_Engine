@@ -31,7 +31,7 @@ namespace PE
 		// --- Attack variables
 		EntityID spikeballID{ 0 }; // id of the projectile
 		vec2 shotTargetPosition{}; // Position to aim the bullet at. Set during the movement state.
-		float bulletForce{ 500.f };
+		float bulletForce{ 100.f };
 		float bulletRange{ 3.f };
 
 		

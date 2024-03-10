@@ -30,7 +30,7 @@ namespace PE
 		m_direction = shotTargetPosition - RatScript_v2_0::GetEntityPosition(mainID);
 		m_bulletImpulse = m_direction.GetNormalized() * bulletForce;
 		
-		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(this->mainID));
+		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(mainID) + m_direction.GetNormalized() * RatScript_v2_0::GetEntityScale(mainID).x * 0.5f);
 		EntityManager::GetInstance().Get<RigidBody>(spikeballID).velocity.Zero();
 
 		attackFeedbackOnce = false;
@@ -45,7 +45,9 @@ namespace PE
 			RatScript_v2_0::PlayAttackAudio();
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(mainID, EnumRatAnimations::ATTACK);
 			attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(mainID);
-
+		}
+		else if (attackFeedbackOnce && EntityManager::GetInstance().Get<AnimationComponent>(mainID).GetCurrentFrameIndex() == 3)
+		{
 			// make the rat face the direction it is shooting
 			vec2 newScale{ RatScript_v2_0::GetEntityScale(mainID) };
 			newScale.x = std::abs(newScale.x) * ((m_direction.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
@@ -54,6 +56,7 @@ namespace PE
 			// shoots the projectile
 			RatScript_v2_0::ToggleEntity(spikeballID, true);
 			EntityManager::GetInstance().Get<RigidBody>(spikeballID).ApplyLinearImpulse(m_bulletImpulse);
+			
 		}
 		else if (attackDuration <= 0.f)
 		{
@@ -62,6 +65,7 @@ namespace PE
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(this->mainID, EnumRatAnimations::IDLE);
 			return true;
 		}
+
 		attackDuration -= deltaTime;
 		return false;
 	}
