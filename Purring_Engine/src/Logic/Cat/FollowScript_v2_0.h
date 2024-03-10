@@ -23,25 +23,19 @@
 
 namespace PE
 {
-	constexpr size_t MAXFOLLOWERS = 4;
 	struct FollowScriptData_v2_0 
 	{
-		int Size{ 64 }; // fixed size of each object
-		float Rotation{};
+		// scaling value, multiplied with object scale to decide how far from main cat it should be
+		float distanceScale{ 1.f };
+		// previous position of main cat
 		vec2 prevPosition;
+		// vector of positions to set for each cat
 		std::vector<vec2> nextPosition;
-
-		//look towards movement
-		bool LookTowardsMovement{ false };
 
 		// new followers stack
 		std::vector<EntityID> followers;
-		
 		// saves the follower position for undoing etc.
 		std::vector<vec2> cacheFollowerPosition;
-
-		//sound
-		EntityID SoundID{};
 	};
 
 
@@ -52,6 +46,9 @@ namespace PE
 		
 	public:
 		// ----- Destructor ----- //
+		/*!***********************************************************************************
+		 \brief Destructor for Follow_Script_v2_0
+		*************************************************************************************/
 		virtual ~FollowScript_v2_0();
 
 		/*!***********************************************************************************
@@ -80,9 +77,18 @@ namespace PE
 		virtual void OnDetach(EntityID) override;
 
 	public:
+		/*!***********************************************************************************
+		 \brief Caches the positions of all the follower cats
 
+		 \param[in] id - id of the main cat that can pick up cats
+		*************************************************************************************/
 		void SavePositions(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Sets position of all follower cats to cached positions
+
+		 \param[in] id - id of the main cat that can pick up cats
+		*************************************************************************************/
 		void ResetToSavePositions(EntityID id);
 
 		/*!***********************************************************************************
@@ -114,9 +120,8 @@ namespace PE
 		void CollisionCheck(const Event<CollisionEvents>& r_event);
 		
 	private:
+		// data
 		GameStateController_v2_0* p_gamestateController;
-
-
 
 		// Event keys
 		int m_collisionEventListener{};

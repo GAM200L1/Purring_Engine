@@ -124,7 +124,7 @@ namespace PE
 
 	void BossRatScript::TakeDamage(int damage)
 	{
-		--m_scriptData[currentBoss].currenthealth;
+		m_scriptData[currentBoss].currenthealth -= damage;
 	}
 
 	EntityID BossRatScript::FindFurthestCat()
