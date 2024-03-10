@@ -61,7 +61,9 @@ namespace PE
 			\brief Set the Attack of the boss
 		*************************************************************************************/
 		void DecideAttack();
-
+		/*!***********************************************************************************
+			\brief check for lifetime of poison puddle
+		*************************************************************************************/
 		void PoisonPuddleUpdate();
 	private:
 		BossRatScriptData* p_data; // pointer to script instance data

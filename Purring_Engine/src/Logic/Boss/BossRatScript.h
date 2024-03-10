@@ -83,7 +83,7 @@ namespace PE
 		int currentSlamTurnCounter{};
 		std::map<EntityID,int> poisonPuddles;
 
-		BossRatAttacks BossRatAttackSets[3][3]
+		BossRatAttacks bossRatAttackSets[3][3]
 		{
 			{BossRatAttacks::CHARGE,BossRatAttacks::SLAM,BossRatAttacks::BASH},
 			{BossRatAttacks::BASH,BossRatAttacks::SLAM,BossRatAttacks::CHARGE},
