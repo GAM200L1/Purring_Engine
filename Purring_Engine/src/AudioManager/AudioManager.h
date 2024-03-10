@@ -154,9 +154,9 @@ namespace PE
         // Audio Variables
         FMOD::System* m_system;
 
-        FMOD::ChannelGroup* m_masterGroup; // Master channel group
-        FMOD::ChannelGroup* m_bgmGroup;
-        FMOD::ChannelGroup* m_sfxGroup;
+        FMOD::ChannelGroup* m_masterGroup;  // Master channel group
+        FMOD::ChannelGroup* m_bgmGroup;     // BGM channel group
+        FMOD::ChannelGroup* m_sfxGroup;     // SFX channel group
 
     };
 }
