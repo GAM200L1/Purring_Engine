@@ -97,7 +97,7 @@ namespace PE
 
 		float movementSpeed{ 200.f };
 		float maxMovementRange{ 100.f }; // Total distance that the rat will move in one execution phase
-		float minDistanceToTarget{ 1.f }; // Amount that the rat can be offset from their target before being considered "close enough"
+		float minDistanceToTarget{ 32.f }; // Amount that the rat can be offset from their target before being considered "close enough"
 
 		// Hunting and returning
 		int maxHuntTurns{ 2 }; // Number of turn the rat will hunt before returning to their original position

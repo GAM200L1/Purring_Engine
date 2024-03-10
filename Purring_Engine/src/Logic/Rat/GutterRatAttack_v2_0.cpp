@@ -34,6 +34,7 @@ namespace PE
 
 	bool GutterRatAttack_v2_0::ExecuteAttack(float deltaTime)
 	{
+		RatScript_v2_0::PositionEntity(this->attackTelegraphEntityID, RatScript_v2_0::GetEntityPosition(this->mainID));
 		RatScript_v2_0::ToggleEntity(this->attackTelegraphEntityID, true);
 
 		if (!attackFeedbackOnce)

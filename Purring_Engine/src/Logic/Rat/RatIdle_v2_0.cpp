@@ -31,7 +31,7 @@
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
 
-#define DEBUG_PRINT
+//#define DEBUG_PRINT
 
 namespace PE
 {

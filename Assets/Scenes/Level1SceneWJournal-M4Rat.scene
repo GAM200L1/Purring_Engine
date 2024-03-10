@@ -5099,10 +5099,10 @@
                                     "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                     "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
                                 },
-                                "detectionRadius": 128.0,
+                                "detectionRadius": 200.0,
                                 "maxHuntTurns": 2,
-                                "maxMovementRange": 100.0,
-                                "movementSpeed": 128.0,
+                                "maxMovementRange": 200.0,
+                                "movementSpeed": 250.0,
                                 "ratMaxHealth": 2,
                                 "ratType": 1
                             },
@@ -5192,10 +5192,10 @@
                                     "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                     "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
                                 },
-                                "detectionRadius": 128.0,
+                                "detectionRadius": 200.0,
                                 "maxHuntTurns": 2,
-                                "maxMovementRange": 100.0,
-                                "movementSpeed": 128.0,
+                                "maxMovementRange": 200.0,
+                                "movementSpeed": 250.0,
                                 "ratMaxHealth": 2,
                                 "ratType": 1
                             },

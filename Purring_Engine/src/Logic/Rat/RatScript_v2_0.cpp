@@ -771,11 +771,11 @@ namespace PE
 						RatScript_v2_0::PositionEntity(id, newPosition);
 						it->second.ratPlayerDistance -= amountToMove;
 
+#ifdef DEBUG_PRINT
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
 						//		<< " moved to new position: (" << newPosition.x << ", " << newPosition.y
 						//		<< "), Remaining distance: " << it->second.ratPlayerDistance << std::endl;
-
-#ifdef DEBUG_PRINT
+						// 
 						//std::cout << "RatScript_v2_0::CalculateMovement(" << id << ") after moving: ratPlayerDistance: " << it->second.ratPlayerDistance << ", new pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
 #endif // DEBUG_PRINT
 
@@ -785,9 +785,10 @@ namespace PE
 				{
 #ifdef DEBUG_PRINT
 						//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): dist to target is zero (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n";
-#endif // DEBUG_PRINT
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " has no movement or already at destination." << std::endl;
-						RatScript_v2_0::PositionEntity(id, it->second.targetPosition);
+#endif // DEBUG_PRINT
+
+						//RatScript_v2_0::PositionEntity(id, it->second.targetPosition);
 						it->second.ratPlayerDistance = 0.f;
 						return true;
 				}
