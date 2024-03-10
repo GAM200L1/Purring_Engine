@@ -66,11 +66,11 @@
                                         "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                         "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
                                     },
-                                    "detectionRadius": 200.0,
+                                    "detectionRadius": 128.0,
                                     "maxHuntTurns": 2,
-                                    "maxMovementRange": 100.0,
+                                    "maxMovementRange": 128.0,
                                     "movementSpeed": 200.0,
-                                    "ratMaxHealth": 3,
+                                    "ratMaxHealth": 2,
                                     "ratType": 1
                                 },
                                 "state": 0
