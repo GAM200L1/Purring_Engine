@@ -24,32 +24,79 @@ namespace PE
 {
 	void SniperRatAttack_v2_0::InitAttack()
 	{
-		// @TODO
+		// calculate the impulse of the buller
+		m_direction = shotTargetPosition - RatScript_v2_0::GetEntityPosition(mainID);
+		m_bulletImpulse = m_direction.GetNormalized() * bulletForce;
+		
+		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(this->mainID));
+		EntityManager::GetInstance().Get<RigidBody>(spikeballID).velocity.Zero();
+
+		attackFeedbackOnce = false;
 	}
 
 
 	bool SniperRatAttack_v2_0::ExecuteAttack(float deltaTime)
 	{
-		// @TODO
-		return true;
+		if (!attackFeedbackOnce)
+		{
+			attackFeedbackOnce = true;
+			RatScript_v2_0::PlayAttackAudio();
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(mainID, EnumRatAnimations::ATTACK);
+			attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(mainID);
+
+			// make the rat face the direction it is shooting
+			vec2 newScale{ RatScript_v2_0::GetEntityScale(mainID) };
+			newScale.x = std::abs(newScale.x) * ((m_direction.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
+			RatScript_v2_0::ScaleEntity(mainID, newScale.x, newScale.y);
+
+			// shoots the projectile
+			RatScript_v2_0::ToggleEntity(spikeballID, true);
+			EntityManager::GetInstance().Get<RigidBody>(spikeballID).ApplyLinearImpulse(m_bulletImpulse);
+		}
+		else if (attackDuration <= 0.f)
+		{
+			RatScript_v2_0::ToggleEntity(spikeballID, false);
+			EntityManager::GetInstance().Get<RigidBody>(spikeballID).velocity.Zero();
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(this->mainID, EnumRatAnimations::IDLE);
+			return true;
+		}
+		attackDuration -= deltaTime;
+		return false;
 	}
 
 
 	void SniperRatAttack_v2_0::CreateAttackObjects()
 	{
-		// @TODO
+		spikeballID = SerializationManager{}.LoadFromFile("RatSpikeball.prefab");
+
+		RatScript_v2_0::ToggleEntity(spikeballID, false); // deactivate spikeball
+		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(mainID));
 	}
 
 
 	void SniperRatAttack_v2_0::DisableAttackObjects()
 	{
-		// @TODO
+		RatScript_v2_0::ToggleEntity(spikeballID, false); // deactivate spikeball
 	}
 
 
 	bool SniperRatAttack_v2_0::OnCollisionEnter(EntityID entity1, EntityID entity2)
 	{
-		// @TODO
+		// check if entity1 is rat or rat's attack and entity2 is cat
+		if ((entity1 == this->mainID || entity1 == this->spikeballID) &&
+			RatScript_v2_0::GetIsNonCagedCat(entity2))
+		{
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity2, this->mainID);
+			return true;
+		}
+		// check if entity2 is rat or rat's attack and entity1 is cat
+		else if ((entity2 == this->mainID || entity2 == this->spikeballID) &&
+			RatScript_v2_0::GetIsNonCagedCat(entity1))
+		{
+			// save the id of the cat that has been checked so that it wont be checked again
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity1, this->mainID);
+			return true;
+		}
 		return false;
 	}
 
@@ -57,6 +104,6 @@ namespace PE
 	vec2 SniperRatAttack_v2_0::PickTargetPosition()
 	{
 		// @TODO - Krystal
-		return vec2{};
+		return RatScript_v2_0::GetEntityPosition(mainID);
 	}
 } // end of namespace PE

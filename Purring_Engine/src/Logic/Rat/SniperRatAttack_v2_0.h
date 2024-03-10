@@ -29,7 +29,11 @@ namespace PE
 		float attackDuration{}; // Time in seconds before the attack is considered done
 
 		// --- Attack variables
+		EntityID spikeballID{ 0 }; // id of the projectile
 		vec2 shotTargetPosition{}; // Position to aim the bullet at. Set during the movement state.
+		float bulletForce{ 1000.f };
+		float bulletRange{ 3.f };
+
 		
 		// ----- Constructors ----- //
 
@@ -93,5 +97,9 @@ namespace PE
 		\return vec2 - Target position to move towards during the movement state.
 		*************************************************************************************/
 		virtual vec2 PickTargetPosition() override;
+
+	private:
+		vec2 m_bulletImpulse{};
+		vec2 m_direction{};
 	}; // end of SniperRatAttack_v2_0
 } // end of namespace PE
