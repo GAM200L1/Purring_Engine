@@ -67,6 +67,7 @@ namespace PE
 					{
 					case EnumRatType::GUTTER:
 					case EnumRatType::BRAWLER:
+					case EnumRatType::SNIPER:
 					{
 							// Move back to the original position
 							if (!m_planningRunOnce)
