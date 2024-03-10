@@ -491,6 +491,7 @@ namespace PE
 				{
 				case EnumRatType::GUTTER:
 				case EnumRatType::BRAWLER:
+				case EnumRatType::SNIPER:
 				{
 						idleBehaviour = RatType::IDLE;
 						break;

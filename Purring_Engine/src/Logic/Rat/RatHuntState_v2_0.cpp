@@ -71,6 +71,7 @@ namespace PE
 				{
 				case EnumRatType::GUTTER:
 				case EnumRatType::BRAWLER:
+				case EnumRatType::SNIPER:
 				{
 						// Move towards the target position until we've reached or we've run out of turns
 						if (!(p_data->finishedExecution)) {
@@ -97,6 +98,7 @@ namespace PE
 			{
 			case EnumRatType::GUTTER:
 			case EnumRatType::BRAWLER:
+			case EnumRatType::SNIPER:
 			{
 				// Choose where to move when the planning state has just started
 				if (!m_planningRunOnce)
