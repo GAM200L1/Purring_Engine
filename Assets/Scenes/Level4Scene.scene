@@ -4573,7 +4573,7 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": -409.0,
+                                "x": 473.0000305175781,
                                 "y": 37.0
                             },
                             "positionOffset": {
@@ -4638,7 +4638,7 @@
                         "height": 256.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -417.0,
+                            "x": 465.0000305175781,
                             "y": 27.0
                         },
                         "relativeposition": {
@@ -4850,14 +4850,14 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 593.9999389648438,
-                                "y": 123.0
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 0.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -5513,7 +5513,7 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -300.0001220703125,
+                            "x": 581.9998779296875,
                             "y": 122.49993896484375
                         },
                         "relativeposition": {
