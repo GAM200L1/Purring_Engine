@@ -25,7 +25,6 @@
 #include "Animation.h"
 #include "GameStateManager.h"
 #include "Layers/LayerManager.h"
-#include "PauseManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -35,6 +34,11 @@ extern Logger engine_logger;
 
 namespace PE
 {
+#ifndef GAMERELEASE
+
+#endif // !GAMERELEASE
+
+
 	Animation::Animation() : m_totalSprites{ 6 }, m_frameRate{ 30 }
 	{
 
@@ -62,9 +66,6 @@ namespace PE
 
 	void Animation::UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex)
 	{
-		if (PauseManager::GetInstance().IsPaused())
-			return;
-
 		r_currentFrameTime += deltaTime;
 
 		try
@@ -100,9 +101,6 @@ namespace PE
 
 	void Animation::UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent)
 	{
-		if (PauseManager::GetInstance().IsPaused())
-			return;
-
 		r_animationComponent.m_currentFrameTime += deltaTime;
 
 		try
@@ -111,7 +109,7 @@ namespace PE
 			{
 				if (m_isLooping)
 				{
-					// if last frame, set animation ended to true
+					// if not last frame, set animation ended to true
 					if (r_animationComponent.m_currentFrameIndex < m_animationFrames.size() - 1)
 					{
 						r_animationComponent.SetAnimationEnded(false);
@@ -255,6 +253,11 @@ namespace PE
 	}
 
 	// AnimationComponent
+	std::shared_ptr<Animation> AnimationComponent::GetAnimation() const
+	{
+		return ResourceManager::GetInstance().GetAnimation(m_currentAnimationID);
+	}
+
 	void AnimationComponent::AddAnimationToComponent(std::string animationID)
 	{
 		m_animationsID.insert(animationID);
@@ -270,8 +273,6 @@ namespace PE
 		ResetAnimation();
 
 		m_currentAnimationID = animationIndex;
-
-		m_currentAnimation = ResourceManager::GetInstance().GetAnimation(m_currentAnimationID);
 	}
 
 	unsigned AnimationComponent::GetAnimationTotalFrames()
@@ -452,6 +453,7 @@ namespace PE
 
 		for (const auto& layer : LayerView<AnimationComponent>())
 		{
+			// updates only active entities animation
 			for (EntityID const& id : InternalView(layer))
 			{
 				// update animation and get current frame
@@ -510,8 +512,23 @@ namespace PE
 		// store animations in resource manager instead
 		if (ResourceManager::GetInstance().Animations.find(animationComponent.GetAnimationID()) != ResourceManager::GetInstance().Animations.end())
 		{
-			if(animationComponent.IsPlaying())
-			ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+#ifndef GAMERELEASE
+			// if run time use IsPlaying variable
+			if (Editor::GetInstance().IsRunTime())
+			{
+				if (animationComponent.IsPlaying())
+					ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+			}
+			else // else, in editor use editor play variable
+			{
+				if (animationComponent.isPlayingEditor)
+					ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+			}		
+#else
+			if (animationComponent.IsPlaying())
+				ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+#endif // !GAMERELEASE			
+			
 
 			return ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->GetCurrentAnimationFrame(animationComponent.m_currentFrameIndex);
 		}
@@ -532,7 +549,8 @@ namespace PE
 	{
 		for (const auto& layer : LayerView<AnimationComponent>())
 		{
-			for (EntityID const& id : InternalView(layer))
+			// sets all active and inactive entities to play animation
+			for (EntityID const& id : InternalView(layer, true))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(id).PlayAnimation();
 			}
@@ -543,7 +561,8 @@ namespace PE
 	{
 		for (const auto& layer : LayerView<AnimationComponent>())
 		{
-			for (EntityID const& id : InternalView(layer))
+			// sets all active and inactive entities to pause animation
+			for (EntityID const& id : InternalView(layer, true))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(id).PauseAnimation();
 			}
@@ -554,7 +573,8 @@ namespace PE
 	{
 		for (const auto& layer : LayerView<AnimationComponent>())
 		{
-			for (EntityID const& id : InternalView(layer))
+			// sets all active and inactive entities to stop animation
+			for (EntityID const& id : InternalView(layer, true))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(id).StopAnimation();
 			}
