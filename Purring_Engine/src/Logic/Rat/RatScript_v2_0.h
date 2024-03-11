@@ -354,6 +354,15 @@ namespace PE
 		*************************************************************************************/
 		void ChangeStateToDeath(EntityID const id, float const stateChangeDelay = 0.f);
 
+		/*!***********************************************************************************
+		\brief Returns true if the execution phase should time out.
+
+		\param[in] id - EntityID of the rat.
+
+		\return Returns true if the execution phase should time out, false otherwise.
+		*************************************************************************************/
+		bool GetExecutionPhaseTimeout(EntityID const id);
+
 
 		// --- COLLISION DETECTION --- // 
 
@@ -381,9 +390,9 @@ namespace PE
 		void ClearCollisionContainers(EntityID const id);
 
 		/*!***********************************************************************************
-				\brief Clears dead cats from the set passed in.
+		 \brief Clears dead cats from the set passed in.
 
-				\param[in,out] catSet - Container of cats to clear dead cats from.
+		 \param[in,out] catSet - Container of cats to clear dead cats from.
 		*************************************************************************************/
 		static void ClearDeadCats(std::set<EntityID>& catSet);
 
@@ -468,15 +477,6 @@ namespace PE
 		*************************************************************************************/
 		bool CheckRatStopTouchingWall(EntityID const ratId, EntityID const entity1, EntityID const entity2);
 
-		/*!***********************************************************************************
-		\brief Returns true if the execution phase should time out.
-
-		\param[in] id - EntityID of the rat.
-
-		\return Returns true if the execution phase should time out, false otherwise.
-		*************************************************************************************/
-		bool GetExecutionPhaseTimeout(EntityID const id);
-
 
 		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
 
@@ -524,9 +524,42 @@ namespace PE
 		*************************************************************************************/
 		bool SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum);
 
-		// Returns true if the target has been reached, false otherwise
+		/*!***********************************************************************************
+		 \brief Moves the rat at a speed of [RatScriptData::movementSpeed] in the direction 
+				of [RatScriptData::directionFromRatToPlayerCat]. After moving the rat, if 
+				[RatScriptData::ratPlayerDistance] is within [RatScriptData::minDistanceToTarget]
+				of the target position, the function returns true.
+
+		 \param[in] id - EntityID of the rat.
+		 \param[in] r_targetPosition - position to move towards.
+		 \param[in] capMaximum - Set to true to shift the target position within the range
+					of the rat's maximum range per turn, false to allow the rat to exceed their
+					max range.
+		 \return Returns true if the rat is within [RatScriptData::minDistanceToTarget] 
+				of the target, false otherwise.
+		*************************************************************************************/
 		bool CalculateMovement(EntityID id, float deltaTime);
+
+		/*!***********************************************************************************
+		 \brief Returns true if the rat is within [RatScriptData::minDistanceToTarget]
+				of [RatScriptData::targetPosition], false otherwise.
+
+		 \param[in] id - EntityID of the rat.
+		 \return Returns true if the rat is within within [RatScriptData::minDistanceToTarget]
+				of [RatScriptData::targetPosition], false otherwise.
+		*************************************************************************************/
 		static bool CheckDestinationReached(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Returns true if [newPosition] is within [minDistanceToTarget] of [targetPosition].
+
+		 \param[in] minDistanceToTarget - Maximum distance [newPosition] can be from 
+				[targetPosition] for the function to return true.
+		 \param[in] newPosition - Position to compare with the target position.
+		 \param[in] targetPosition - Position to get [newPosition]'s distance from.
+		 \return Returns true if [newPosition] is within [minDistanceToTarget] of 
+				[targetPosition], false otherwise.
+		*************************************************************************************/
 		static bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
 
 		/*!***********************************************************************************
