@@ -532,46 +532,23 @@ namespace PE
 
 	void CatScript_v2_0::PlayPathPlacementAudio()
 	{
-		// Plays path placing audio
-		SerializationManager m_serializationManager;
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Movement Planning SFX.prefab");
-		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-		EntityManager::GetInstance().RemoveEntity(sound);
+		std::string soundPrefabPath = "AudioObject/Movement Planning SFX.prefab";
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+		// DEBUGHANS @PR-ER
+		//std::cout << "[Debug] Playing path placement audio: " << soundPrefabPath << std::endl;
 	}
 
 	void CatScript_v2_0::PlayFootstepAudio()
 	{
-		int randNum = (std::rand() % 3) + 1;
-		SerializationManager serializationManager;
+		int randNum = (std::rand() % 3) + 1;								//random number 1to3
+		std::string soundPrefabPath = "AudioObject/Cat Movement SFX ";
+		soundPrefabPath += std::to_string(randNum) + ".prefab";
 
-		switch (randNum)
-		{
-		case 1:
-		{
-			EntityID buttonpress = serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 1.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		case 2:
-		{
-			EntityID buttonpress = serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 2.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		case 3:
-		{
-			EntityID buttonpress = serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 3.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		}
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+		// DEBUGHANS @PR-ER
+		//std::cout << "[Debug] Playing footstep audio: " << soundPrefabPath << std::endl;
 	}
 
 	void CatScript_v2_0::PlayCatAttackAudio(EnumCatType catType)
