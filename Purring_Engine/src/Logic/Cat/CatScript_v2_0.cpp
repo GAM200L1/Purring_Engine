@@ -501,44 +501,33 @@ namespace PE
 	// ----- Audio Helper Functions ----- //
 	void CatScript_v2_0::PlayDeathAudio(EnumCatType catType)
 	{
-		SerializationManager serializationManager;
-		EntityID sound{};
+		std::string soundPrefabPath = "AudioObject/";
 
 		switch (catType)
 		{
-		case ORANGECAT:
+		case EnumCatType::MAINCAT:
+			soundPrefabPath += "Cat Meowsalot Death SFX1.prefab"; // Meowsalot has only one death sound
+			break;
+		case EnumCatType::GREYCAT:
 		{
-			// play orange cat death sound
-			break;
+			int randomInteger = std::rand() % 3 + 1; // Randomize between 1 and 3
+			soundPrefabPath += "Cat Grey Death SFX" + std::to_string(randomInteger) + ".prefab";
 		}
-		case GREYCAT:
+		break;
+		case EnumCatType::ORANGECAT:
 		{
-			// play grey cat death sound
-			int randomInteger = std::rand() % 3 + 1;
-
-			switch (randomInteger)
-			{
-			case 1:
-				sound = serializationManager.LoadFromFile("AudioObject/Cat Death SFX1.prefab");
-				break;
-			case 2:
-				sound = serializationManager.LoadFromFile("AudioObject/Cat Death SFX2.prefab");
-				break;
-			case 3:
-				sound = serializationManager.LoadFromFile("AudioObject/Cat Death SFX3.prefab");
-				break;
-			}
-			break;
+			int randomInteger = std::rand() % 3 + 1; // Randomize between 1 and 3
+			soundPrefabPath += "Cat Orange Death SFX" + std::to_string(randomInteger) + ".prefab";
 		}
-		default: 
-			// play main cat death sound
-			sound = serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot.prefab");
-			break;
+		break;
+		default:
+			return;
 		}
 
-		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-		EntityManager::GetInstance().RemoveEntity(sound);
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+		// DEBUGHANS @PR-ER
+		//std::cout << "[Debug] Playing cat death audio: " << soundPrefabPath << std::endl;
 	}
 
 	void CatScript_v2_0::PlayPathPlacementAudio()
@@ -607,7 +596,7 @@ namespace PE
 		}
 		
 		// DEBUGHANS @PR-ER
-		std::cout << "[Debug] Playing cat attack audio: " << soundPrefabPath << std::endl;
+		//std::cout << "[Debug] Playing cat attack audio: " << soundPrefabPath << std::endl;
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
@@ -631,7 +620,7 @@ namespace PE
 		}
 
 		// DEBUGHANS @PR-ER
-		std::cout << "[Debug] Playing cat rescue audio: " << soundPrefabPath << std::endl;
+		//std::cout << "[Debug] Playing cat rescue audio: " << soundPrefabPath << std::endl;
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
