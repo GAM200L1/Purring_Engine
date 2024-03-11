@@ -134,7 +134,7 @@ namespace PE
 		{
 			if (!bgmStarted)
 			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
 				bgmStarted = true;
 			}
 		}
@@ -142,20 +142,20 @@ namespace PE
 		{
 			if (!bgmStarted)
 			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
 				bgmStarted = true;
 			}
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 5.0f);
+			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 2.5f);
 		}
 		else if (m_currentLevel == 2)	// Stage 3
 		{
 			if (!bgmStarted)
 			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 5.0f);
+				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
+				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 2.5f);
 				bgmStarted = true;
 			}
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music3.prefab", true, 5.0f);
+			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music3.prefab", true, 2.5f);
 		}
 
 		ResetPhaseBanner(true);
