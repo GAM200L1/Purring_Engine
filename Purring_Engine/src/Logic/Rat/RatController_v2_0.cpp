@@ -8,17 +8,17 @@
  \par      email:      krystal.y@digipen.edu
 
  \brief
-	This file contains declarations for functions used for rats.
+	This file contains declarations for functions used to manage tje rats in the scene.
 
  All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 
 *************************************************************************************/
 #include "prpch.h"
 #include "RatController_v2_0.h"
-#include "RatScript_v2_0.h"
-//#include "../RatScript.h"
 
 #include "../Logic/LogicSystem.h"
+
+//#define DEBUG_PRINT 
 
 namespace PE
 {
@@ -58,6 +58,7 @@ namespace PE
 
 				RefreshRats(id); // Refresh the cached rats
 
+#ifdef DEBUG_PRINT
 				if (!ratsPrinted)
 				{
 					auto const& myVec{ GetRats(id) };
@@ -67,6 +68,7 @@ namespace PE
 					}
 					ratsPrinted = true;
 				}
+#endif
 		}
 
 
@@ -115,7 +117,7 @@ namespace PE
 					if (ratType == EnumRatType::GUTTER_V1)
 					{				
 						// Check if the rat has hit this cat before
-						if((GETSCRIPTDATA(RatScript, ratID).hitBy) &&
+						if(GETSCRIPTDATA(RatScript, ratID) &&
 						(GETSCRIPTDATA(RatScript, ratID).hitBy)->find(attackId) == (GETSCRIPTDATA(RatScript, ratID).hitBy)->end())
 						{
 							GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(ratID, damage);
@@ -124,17 +126,7 @@ namespace PE
 					}
 					else
 					{
-						//// Subtract the damage from the rat's health
-						//it->second.ratHealth -= damage;
-
-						//// Check if the rat's health drops below or equals zero
-						//if (it->second.ratHealth <= 0)
-						//{
-						//	// Handle the rat's death (e.g., make it inactive, trigger death animation, etc.)
-						//	//std::cout << "Rat ID: " << ratID << " has been defeated." << std::endl;
-						//	ToggleEntity(ratID, false);  // Making the rat entity inactive
-						//	it->second.isAlive = false;  // Marking the rat as not alive
-						//}
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DamageRat(ratID, attackId, damage);
 					} // end of if (ratType == EnumRatType::GUTTER_V1)
 					break; 
 				} // end of if (ratID == cachedRatId)

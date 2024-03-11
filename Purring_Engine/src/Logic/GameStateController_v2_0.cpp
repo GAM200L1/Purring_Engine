@@ -509,7 +509,7 @@ namespace PE
 							m_isRat = true;
 							m_isPotraitShowing = true;
 							//debug
-							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
+							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << "EntityID: "<< RatID << std::endl;
 							//add a switch statement here
 							//need specific texture
 							m_lastSelectedEntity = RatID;
@@ -578,7 +578,7 @@ namespace PE
 						//Get collider of the rat
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(CatID).colliderVariant);
 						//debug
-						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
+						//std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
 						// Check if the rat/cat has been clicked
 						if (PointCollision(col, cursorPosition))
 						{
@@ -590,7 +590,7 @@ namespace PE
 							int randomSelection = std::rand() % 5 + 1;
 
 							//debug
-							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
+							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
 							//add a switch statement here
 							//need specific texture
 							//set cat portrait active
@@ -1313,6 +1313,21 @@ namespace PE
 					//get value from specific rat
 					EntityManager::GetInstance().Get<GUISlider>(id2).m_maxValue = static_cast<float>(Max);
 					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = static_cast<float>(Current);
+				}
+			}
+
+			if (Max == 2 && EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "HealthFrame")
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_HealthBar_TwoSeg_180x46.png"));
+				}
+			}
+			else if (Max == 3 && EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "HealthFrame")
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_EnergyBar_ThreeSeg_180x46.png"));
 				}
 			}
 		}
