@@ -61,6 +61,8 @@ namespace PE
 		{
 			if (p_data->curr_Anim != BossRatAnimationsEnum::CHARGE)
 				p_script->PlayAnimation(BossRatAnimationsEnum::CHARGE);
+
+			p_script->PlayAttackAudio();
 		}
 		if (p_script->currentSlamTurnCounter == 0)
 		{
@@ -173,6 +175,13 @@ namespace PE
 
 			CheckDamage(id);
 			EnableAnimation(id);
+
+			if (!m_playedSlamAudio)
+			{
+				p_script->PlayAttackAudio();
+				p_script->PlaySlamShockWaveAudio();
+				m_playedSlamAudio = true;
+			}
 		}
 	}
 
@@ -329,7 +338,7 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->rightSideSlamAnimation))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive = false;
 
-		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE)
+		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT)
 			p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
 
 		p_data->finishExecution = true;

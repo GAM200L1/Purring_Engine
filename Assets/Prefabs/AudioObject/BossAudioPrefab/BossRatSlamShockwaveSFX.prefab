@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/BossAudio/sfx_RatKingAttack_SlamShockwave.wav",
+            "loop": false
+          },
+          "EntityDescriptor": {
+            "Prefab Type": "RatKing SlamShockwave SFX",
+            "children": [],
+            "isActive": true,
+            "name": "RatKing SlamShockwave SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
+        },
+        "name": ""
+    }
+}

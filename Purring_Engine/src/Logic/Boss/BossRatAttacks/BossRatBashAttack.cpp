@@ -110,6 +110,7 @@ namespace PE
 			tele_r->SetColor(1, 1, 1, 0);
 		}
 		p_script->PlayAnimation(BossRatAnimationsEnum::ATTACK2);
+		p_script->PlayAttackAudio();
 	}
 
 	void BossRatBashAttack::UpdateAttack(EntityID id, float dt)
@@ -139,6 +140,7 @@ namespace PE
 				for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(tid).children)
 				{
 					EntityManager::GetInstance().Get<EntityDescriptor>(ie).isActive = true;
+					p_script->PlayBashSpikeAudio();
 				}
 				m_attackDelay = p_data->attackDelay;
 			}

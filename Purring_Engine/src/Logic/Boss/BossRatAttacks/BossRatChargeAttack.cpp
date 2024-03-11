@@ -73,6 +73,7 @@ namespace PE
 		if (EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetAnimationMaxIndex() && p_data->curr_Anim == BossRatAnimationsEnum::CHARGE)
 		{
 			m_animationPlayed = true;
+			p_script->PlayAttackAudio();
 			p_script->PlayAnimation(BossRatAnimationsEnum::WALKFASTER);
 			m_isCharging = true;
 		}
@@ -99,6 +100,7 @@ namespace PE
 					{
 						Transform* puddleTransform = &EntityManager::GetInstance().Get<Transform>(puddle);
 						puddleTransform->position = BossTransform->position;
+						p_script->PlayPoisonPuddleAudio();
 					}
 					p_script->poisonPuddles.insert(std::pair<EntityID,int>(puddle,3));
 					m_distanceTravelled = 0;

@@ -134,6 +134,6 @@ namespace PE
 		bool m_attackIsLeft{};
 		float m_slamAttackDelay{ .5f };
 		bool m_ratSpawned{ false };
-		bool m_playedSlamAnimation{ false };
+		bool m_playedSlamAudio{ false };
 	};
 }

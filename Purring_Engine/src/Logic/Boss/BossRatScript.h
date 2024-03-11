@@ -209,6 +209,12 @@ namespace PE
 		void PlayHurtAudio();
 
 		void PlayDeathAudio();
+
+		void PlayPoisonPuddleAudio();
+
+		void PlaySlamShockWaveAudio();
+
+		void PlayBashSpikeAudio();
 		// ----- Private Members ----- //
 	private:
 		// --- STATE CHANGE --- //

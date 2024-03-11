@@ -20,6 +20,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "BossRatPlanningState.h"
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Layers/LayerManager.h"
+#include "AudioManager/GlobalMusicManager.h"
+
 namespace PE
 {
 	// ---------- FUNCTION DEFINITIONS ---------- //
@@ -49,16 +51,6 @@ namespace PE
 
 		if (p_gsc->currentState == GameStates_v2_0::WIN || p_gsc->currentState == GameStates_v2_0::LOSE)
 		{
-			if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::DEATH)
-				PlayAnimation(BossRatAnimationsEnum::DEATH);
-
-			//keep in execution phase
-			m_scriptData[id].finishExecution = false;
-
-			if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
-			{
-
-			}
 			return;
 		}		
 		
@@ -71,6 +63,19 @@ namespace PE
 		if (m_scriptData[id].currenthealth <= 0)
 		{
 			//do something, call end cutscene most likely and end bgm here
+			if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::DEATH)
+			{
+				PlayAnimation(BossRatAnimationsEnum::DEATH);
+				PlayDeathAudio();
+			}
+
+			//keep in execution phase
+			m_scriptData[id].finishExecution = false;
+
+			if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
+			{
+				p_gsc->WinGame();
+			}
 		}
 
 		CreateCheckStateManager(id);
@@ -167,6 +172,7 @@ namespace PE
 		m_scriptData[currentBoss].currenthealth -= damage;
 		if(m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::WALKFASTER)
 		PlayAnimation(BossRatAnimationsEnum::HURT);
+		PlayHurtAudio();
 	}
 
 	EntityID BossRatScript::FindFurthestCat()
@@ -313,5 +319,34 @@ namespace PE
 			}
 		
 
+	}
+	void BossRatScript::PlayAttackAudio()
+	{
+		int random = rand() % 5 + 1;
+		std::string attackAudio = "AudioObject/BossAudioPrefab/BossRatAttack" + std::to_string(random) + "SFX.prefab";
+		GlobalMusicManager::GetInstance().PlaySFX(attackAudio, false);
+
+	}
+	void BossRatScript::PlayHurtAudio()
+	{
+		int random = rand() % 8 + 1;
+		std::string hurtAudio = "AudioObject/BossAudioPrefab/BossRatInjured" + std::to_string(random) + "SFX.prefab";
+		GlobalMusicManager::GetInstance().PlaySFX(hurtAudio, false);
+	}
+	void BossRatScript::PlayDeathAudio()
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatDeath1SFX.prefab", false);
+	}
+	void BossRatScript::PlayPoisonPuddleAudio()
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatChargePuddlesSFX.prefab", false);
+	}
+	void BossRatScript::PlaySlamShockWaveAudio()
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatSlamShockwaveSFX.prefab",false);
+	}
+	void BossRatScript::PlayBashSpikeAudio()
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatBashSpikeSFX.prefab", false);
 	}
 } // End of namespace PE

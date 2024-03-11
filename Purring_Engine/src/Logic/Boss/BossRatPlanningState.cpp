@@ -29,7 +29,7 @@ namespace PE
 		p_data = GETSCRIPTDATA(BossRatScript, id);
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
-		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE)
+		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT)
 			p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
 
 		DecideAttack();
