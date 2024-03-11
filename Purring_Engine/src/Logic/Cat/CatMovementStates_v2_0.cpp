@@ -314,7 +314,7 @@ namespace PE
 				PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 
 				// DEBUGHANS @PR-ER
-				std::cout << "[DEBUG] Path collision w/ obstacle. Playing sound: " << soundPrefabPath << std::endl;
+				//std::cout << "[DEBUG] Path collision w/ obstacle. Playing sound: " << soundPrefabPath << std::endl;
 			}
 		}
 	}
