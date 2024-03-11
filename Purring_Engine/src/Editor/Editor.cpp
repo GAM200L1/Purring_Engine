@@ -4820,7 +4820,8 @@ namespace PE {
 					}
 
 					ImGui::Dummy(ImVec2(0, 5));
-					ImGui::SeparatorText("Sprite Sheet");
+					ImGui::SeparatorText("Animation");
+					ImGui::Columns(2, "PlaybackColumns", true);
 
 					// if there's animation to preview
 					if (currentAnimation)
@@ -4904,27 +4905,6 @@ namespace PE {
 							currentAnimation->SetSpriteSheetKey(filepaths[textureIndex].string());
 					}
 
-					// deprecated
-					//// Load texture through file explorer
-					//if (ImGui::Button("Load Spritesheet"))
-					//{
-					//	std::string filePath = serializationManager.OpenFileExplorerRequestPath();
-
-					//	// Check if filePath is not empty
-					//	if (!filePath.empty())
-					//	{
-					//		std::replace(filePath.begin(), filePath.end(), '\\', '/');
-					//		filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".png";
-
-					//		ResourceManager::GetInstance().LoadTextureFromFile(filePath, filePath);
-					//	}
-					//	else
-					//	{
-					//		std::cerr << "No file path was selected for loading." << std::endl;
-					//	}
-					//}
-
-
 					if (ImGui::Button("Play"))
 					{
 						playAnimation = true;
@@ -4937,7 +4917,6 @@ namespace PE {
 					}
 
 					// slider
-					ImGui::SameLine();
 					int frame{ static_cast<int>(previewCurrentFrameIndex) };
 					ImGui::SetNextItemWidth(300);
 
@@ -4970,6 +4949,94 @@ namespace PE {
 						frameRate = currentAnimation->GetFrameRate();
 						isLooping = currentAnimation->IsLooping();
 					}
+
+					ImGui::NextColumn();
+
+					if (currentAnimation)
+					{
+						// show script functions for current selected object
+						if (EntityManager::GetInstance().Has<ScriptComponent>(m_currentSelectedObject))
+						{
+							// setting animations
+							std::map<const char*, std::vector<const char*>> scriptAndFunctionNames;
+							std::vector<const char*> scriptFunctionNames;
+
+							// get all the script keys for the entity
+							for (auto& [scriptName, state] : EntityManager::GetInstance().Get<ScriptComponent>(m_currentSelectedObject).m_scriptKeys)
+							{
+								// get all the animation functions from the scripts
+								for (auto& [functionName, function] : LogicSystem::m_scriptContainer[scriptName]->animationFunctions)
+								{
+									scriptFunctionNames.push_back(functionName.c_str());
+								}
+
+								scriptAndFunctionNames[scriptName.c_str()] = scriptFunctionNames;
+							}
+
+							// Begin Script Functions Menu
+							if (ImGui::BeginMenu("Script Functions"))
+							{
+								for (auto& [scriptName, functionNames] : scriptAndFunctionNames)
+								{
+									// Show functions for script
+									if (ImGui::BeginMenu(scriptName))
+									{
+										for (auto& functionName : functionNames)
+										{
+											if (ImGui::MenuItem(functionName))
+											{
+												currentAnimation->AddCurrentAnimationFrameAction(previewCurrentFrameIndex, AnimationAction{ scriptName, functionName });
+											}
+										}
+										ImGui::EndMenu();
+									}
+								}
+								// End Script Functions Menu
+								ImGui::EndMenu();
+							}
+
+							ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+							static int actionIndex{ -1 };
+							static AnimationAction selectedAction{};
+							ImGui::Text("Actions List");
+							//loop to show all the items ins the vector
+							if (ImGui::BeginChild("Actions", ImVec2(-1, 200), true, ImGuiWindowFlags_NoResize))
+							{
+								int index = 0;
+								for (auto& action : currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).actions)
+								{
+									const bool is_selected = (actionIndex == index);
+
+									std::string scriptAndFunctionName{ action.scriptName + " :: " + action.scriptFunction };
+
+									if (ImGui::Selectable(scriptAndFunctionName.c_str(), is_selected))
+									{
+										actionIndex = index; //seteting current index to check for selection
+										selectedAction = action;
+									}//imgui selectable is the function to make the clickable bar of text
+
+									// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+									if (is_selected) // to show the highlight if selected
+										ImGui::SetItemDefaultFocus();
+
+									++index;
+								}
+							}
+							ImGui::EndChild();
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
+							if (ImGui::Button("Remove Action"))
+							{
+								if (actionIndex >= 0)
+								{
+									currentAnimation->RemoveCurrentAnimationFrameAction(previewCurrentFrameIndex, selectedAction);
+									actionIndex = -1;
+								}
+							}
+							ImGui::PopStyleColor(1);
+						}
+					}
+					ImGui::EndColumns();
 
 					ImGui::Dummy(ImVec2(0, 5));
 					ImGui::SeparatorText("Animation Properties");
@@ -5036,10 +5103,7 @@ namespace PE {
 					if (currentAnimation)
 					{
 						currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, static_cast<unsigned>(framesHeld));
-					}
-
-					// save animation here
-
+					}	
 				}
 				else
 				{
