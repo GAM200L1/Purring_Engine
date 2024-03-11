@@ -358,6 +358,14 @@ namespace PE
 		// --- COLLISION DETECTION --- // 
 
 		/*!***********************************************************************************
+		 \brief Returns true if the entity passed in is an obstacle.
+
+		 \param[in] id - EntityID of the entity to check.
+		 \return bool - Returns true if the entity passed in is a obstacle, false otherwise.
+		*************************************************************************************/
+		static bool GetIsObstacle(EntityID const id);
+
+		/*!***********************************************************************************
 		 \brief Returns true if the entity passed in is a cat that isn't caged, false otherwise.
 
 		 \param[in] id - EntityID of the entity to check.
@@ -434,10 +442,60 @@ namespace PE
 		*************************************************************************************/
 		bool CheckRatTouchingCat(EntityID const ratId, EntityID const entity1, EntityID const entity2);
 
+		/*!***********************************************************************************
+		\brief Checks if the collision event involves the rat's collider and a wall,
+				times the execution phase out if true. Call during on collision enter events.
+
+		\param[in] ratId - EntityID of the rat to check the detection radius of.
+		\param entity1 - One of the entities involved in the collision event.
+		\param entity2 - One of the entities involved in the collision event.
+
+		\return Returns true if the collision involves the rat's collider and a cat,
+				false otherwise.
+		*************************************************************************************/
+		bool CheckRatTouchingWall(EntityID const ratId, EntityID const entity1, EntityID const entity2);
+
+		/*!***********************************************************************************
+		\brief Checks if the collision event involves the rat's collider and a wall. 
+				Call during on collision exit events.
+
+		\param[in] ratId - EntityID of the rat to check the detection radius of.
+		\param entity1 - One of the entities involved in the collision event.
+		\param entity2 - One of the entities involved in the collision event.
+
+		\return Returns true if the collision involves the rat's collider and a cat,
+				false otherwise.
+		*************************************************************************************/
+		bool CheckRatStopTouchingWall(EntityID const ratId, EntityID const entity1, EntityID const entity2);
+
+		/*!***********************************************************************************
+		\brief Returns true if the execution phase should time out.
+
+		\param[in] id - EntityID of the rat.
+
+		\return Returns true if the execution phase should time out, false otherwise.
+		*************************************************************************************/
+		bool GetExecutionPhaseTimeout(EntityID const id);
+
 
 		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
 
+		/*!***********************************************************************************
+		 \brief Returns the ID of the entity from the container closest to the position passed in.
+
+		 \param[in] position - Position to compare the entities against.
+		 \param[in] potentialTargets - Container of the entities to compare distances to.
+		 \return EntityID - Returns the ID of the entity closest to the position passed in.
+		*************************************************************************************/
 		static EntityID GetCloserTarget(vec2 position, std::set<EntityID> const& potentialTargets);
+
+		/*!***********************************************************************************
+		 \brief Returns the position from the container closest to the position passed in.
+
+		 \param[in] position - Position to compare the entities against.
+		 \param[in] potentialTargets - Container of the positions to compare distances to.
+		 \return EntityID - Returns the position closest to the position passed in.
+		*************************************************************************************/
 		static vec2 GetCloserTarget(vec2 position, std::vector<vec2> const& potentialTargets);
 
 		/*!***********************************************************************************
