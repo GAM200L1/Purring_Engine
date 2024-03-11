@@ -288,7 +288,7 @@ namespace PE
 			// DEBUGHANS @PR-ER
 			//std::cout << "[Debug] Playing attack audio: " << soundPrefab << std::endl;
 
-			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
+			PlayAudio(soundPrefab);
 		}
 
 		void RatScript_v2_0::PlayDeathAudio(EntityID id)
@@ -322,7 +322,7 @@ namespace PE
 			// DEBUGHANS @PR-ER
 			//std::cout << "[Debug] Playing death audio: " << soundPrefab << std::endl;
 
-			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
+			PlayAudio(soundPrefab);
 		}
 
 
@@ -357,7 +357,7 @@ namespace PE
 			// DEBUGHANS @PR-ER
 			//std::cout << "[Debug] Playing detection audio: " << soundPrefab << std::endl;
 
-			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
+			PlayAudio(soundPrefab);
 		}
 
 
@@ -392,7 +392,7 @@ namespace PE
 			// DEBUGHANS @PR-ER
 			//std::cout << "[Debug] Playing injured audio: " << soundPrefab << std::endl;
 
-			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
+			PlayAudio(soundPrefab);
 		}
 
 
