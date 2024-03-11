@@ -176,9 +176,6 @@ namespace PE
 		// ID of the main cat
 		EntityID m_mainCatID;
 
-		// animation
-		float m_executionAnimationDuration{};
-
 		// Event Listeners
 		int m_mouseClickEventListener{};
 		int m_mouseReleaseEventListener{};

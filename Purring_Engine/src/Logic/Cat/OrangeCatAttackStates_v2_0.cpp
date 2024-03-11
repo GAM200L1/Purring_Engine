@@ -179,7 +179,6 @@ namespace PE
 
 		// reset animation
 		EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID).SetCurrentFrameIndex(0);
-		m_attackLifetime = ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID).GetAnimationID())->GetAnimationDuration();
 	}
 
 	void OrangeCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -192,9 +191,10 @@ namespace PE
 
 		if (m_seismicSlammed)
 		{	
-			if (m_attackLifetime <= 0.f)
+			if (r_seismicAnimation.HasAnimationEnded())
 			{
 				p_catData->finishedExecution = true;
+				r_seismicAnimation.StopAnimation();
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
 			}
 			else
@@ -205,17 +205,16 @@ namespace PE
 					r_seismicCollider.scaleOffset += 0.25f;
 
 				m_seismicPrevAnimationFrame = r_seismicAnimation.GetCurrentFrameIndex();
-				m_attackLifetime -= deltaTime;
 			}
 		}
 		// if seismic is not yet done, attack is selected, and animation is at the point where seismic would play
-		else if (!p_catData->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->seismicSlamAnimationIndex)
+		else if (!p_catData->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).HasAnimationEnded())
 		{
 			if (m_seismicDelay <= 0.f)
 			{
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, true);
 				m_seismicSlammed = true;
-				r_seismicAnimation.SetCurrentFrameIndex(0);
+				r_seismicAnimation.PlayAnimation();
 				CatScript_v2_0::PlayCatAttackAudio(EnumCatType::ORANGECAT);
 			}
 			else 

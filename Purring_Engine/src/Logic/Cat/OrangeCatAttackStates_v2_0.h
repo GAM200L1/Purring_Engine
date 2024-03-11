@@ -57,7 +57,7 @@ namespace PE
 		/*!***********************************************************************************
 		\brief Destructor for OrangeCatAttakc_v2_0PLAN
 		*************************************************************************************/
-		virtual ~OrangeCatAttack_v2_0PLAN() { p_attackData = nullptr; }
+		virtual ~OrangeCatAttack_v2_0PLAN() { p_gsc = nullptr; p_attackData = nullptr; }
 
 		/*!***********************************************************************************
 		\brief Set up the state and subscribe to the collision events
@@ -191,9 +191,6 @@ namespace PE
 		OrangeCatAttackVariables* p_attackData;
 
 		float m_seismicDelay;
-		float m_seismicLifeTime;
-		float m_attackLifetime;
-		
 		bool m_seismicSlammed{ false };
 		bool m_seismicFinished{ false };
 

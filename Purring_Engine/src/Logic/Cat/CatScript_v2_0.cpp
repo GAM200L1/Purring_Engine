@@ -359,7 +359,6 @@ namespace PE
 			{
 				// if attack has been selected play attack execute animation
 				PlayAnimation(animateID, "Attack");
-				m_executionAnimationDuration = ResourceManager::GetInstance().GetAnimation(m_scriptData[animateID].p_catAnimation->GetAnimationID())->GetAnimationDuration();
 				m_scriptData[animateID].executionAnimationFinished = false;
 				m_scriptData[animateID].finishedExecution = false;
 			}
@@ -372,13 +371,6 @@ namespace PE
 				m_scriptData[animateID].finishedExecution = true;
 				m_scriptData[animateID].executionAnimationFinished = true;
 			}
-		};
-
-		auto HasFinishedAnimation = 
-		[&]()
-		{
-			m_executionAnimationDuration -= deltaTime;
-			return (m_executionAnimationDuration <= 0.f);
 		};
 
 		// when execution phase is activated, sets the state to movement
@@ -429,7 +421,7 @@ namespace PE
 			{
 				PlayAnimation(id, "Idle");
 			}
-			else if (m_scriptData[id].attackSelected && HasFinishedAnimation())
+			else if (m_scriptData[id].attackSelected && m_scriptData[id].p_catAnimation->HasAnimationEnded())
 			{
 				m_scriptData[id].executionAnimationFinished = true; // if attack animation finished set to true
 				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
