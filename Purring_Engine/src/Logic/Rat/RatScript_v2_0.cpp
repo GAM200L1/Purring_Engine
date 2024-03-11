@@ -156,7 +156,6 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
-					delete it->second.p_attackData;
 					m_scriptData.erase(id);
 			}
 		}
@@ -994,12 +993,12 @@ namespace PE
 				{
 				case EnumRatType::SNIPER:
 				{
-						r_data.p_attackData = new SniperRatAttack_v2_0{ r_data.myID };
+						r_data.p_attackData = dynamic_cast<AttackDataBase_v2_0*>(new SniperRatAttack_v2_0{ r_data.myID });
 						break;
 				}
 				default:
 				{
-						r_data.p_attackData = new GutterRatAttack_v2_0{ r_data.myID };
+						r_data.p_attackData = dynamic_cast<AttackDataBase_v2_0*>(new GutterRatAttack_v2_0{ r_data.myID });
 						break;
 				}
 				}

@@ -19,9 +19,10 @@
 
 namespace PE
 {
-	struct SniperRatAttack_v2_0 : AttackDataBase_v2_0
+	class SniperRatAttack_v2_0 : public AttackDataBase_v2_0
 	{
 		// ----- Public variables ----- //
+	public:
 
 		// --- Misc variables
 		// Ensures that the attack feedback only plays once. Set to true once it has been played.
@@ -42,7 +43,7 @@ namespace PE
 
 		
 		// ----- Constructors ----- //
-
+	public:
 		/*!***********************************************************************************
 		\brief Constructs the base attack object.
 					
@@ -55,8 +56,9 @@ namespace PE
 		*************************************************************************************/
 		~SniperRatAttack_v2_0() override { /* Empty by design */ }
 
-		// ----- Public methods ----- //
 
+		// ----- Public methods ----- //
+	public:
 		/*!***********************************************************************************
 		\brief Initializes the attack (e.g. position objects at the start position etc.).
 				Does nothing by default.
@@ -104,6 +106,7 @@ namespace PE
 		*************************************************************************************/
 		virtual vec2 PickTargetPosition() override;
 
+		// ----- Private variables ----- //
 	private:
 		vec2 m_bulletImpulse{};
 		vec2 m_direction{};
