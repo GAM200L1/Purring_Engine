@@ -45,8 +45,8 @@ namespace PE
 		*************************************************************************************/
 		virtual ~Cat_v2_0PLAN() 
 		{
-			p_catMovement = nullptr;
-			p_catAttack = nullptr;
+			delete p_catMovement;
+			delete p_catAttack;
 			p_data = nullptr;
 		}
 
