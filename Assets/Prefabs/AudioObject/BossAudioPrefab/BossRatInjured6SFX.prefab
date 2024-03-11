@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/BossAudio/vo_Rat_RatKing_Injured6.wav",
+            "loop": false
+          },
+          "EntityDescriptor": {
+            "Prefab Type": "RatKing Injured6 SFX",
+            "children": [],
+            "isActive": true,
+            "name": "RatKing Injured6 SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
+        },
+        "name": ""
+    }
+}

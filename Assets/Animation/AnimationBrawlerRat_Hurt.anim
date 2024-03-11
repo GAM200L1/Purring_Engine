@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationBrawlerRat_Hurt.anim",
     "frameRate": 30,
+    "isLooping": false,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Brawler_Hurt.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Rat_Brawler_Hurt.png",
     "totalSprites": 6
 }

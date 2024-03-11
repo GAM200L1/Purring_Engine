@@ -77,6 +77,6 @@
     "frameRate": 30,
     "isLooping": false,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Rat_Gutter_Death.png",
     "totalSprites": 6
 }

@@ -103,12 +103,10 @@ namespace PE
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
-			if (GameStateJustChanged() && previousGameState != GameStates_v2_0::PAUSE && gameStateController->currentState == GameStates_v2_0::EXECUTE)
+			if (GetIsPlayingHurtAnim(id) && GetHasAnimEnded(id))
 			{
-					// Clear cat collision containers
-					//ClearCollisionContainers(id);
-					// NOTE: I'm still not too sure about whether it's a good idea to clear this here. 
-					// I'm making the assumption that all decisions the rat makes occurs during the planning pgase 
+					PlayAnimation(id, it->second.cachedRatAnimation);
+					it->second.cachedRatAnimation = EnumRatAnimations::RAT_ANIM_COUNT;
 			}
 
 			if (CheckShouldStateChange(id, deltaTime))
@@ -217,9 +215,34 @@ namespace PE
 			}
 		}
 
-
-		void RatScript_v2_0::PlayAnimation(EntityID const id, EnumRatAnimations const animationState)
+		bool RatScript_v2_0::GetIsPlayingHurtAnim(EntityID const id)
 		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return false; }
+				return (it->second.p_ratAnimationComponent->GetAnimationID() == it->second.animationStates.at("Hurt"));
+		}
+
+		bool RatScript_v2_0::GetHasAnimEnded(EntityID const id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return false; }
+				return (it->second.p_ratAnimationComponent && it->second.p_ratAnimationComponent->HasAnimationEnded());
+		}
+
+		void RatScript_v2_0::PlayAnimation(EntityID const id, EnumRatAnimations const animationState, bool const forceRestart)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				// If the rat hasn't died, check if we are trying to play the hurt animation
+				if (EnumRatAnimations::DEATH != animationState && EnumRatAnimations::HURT != animationState &&
+						GetIsPlayingHurtAnim(id) && !GetHasAnimEnded(id))
+				{
+						// Don't let the new animation interrupt the hurt animation
+						it->second.cachedRatAnimation = animationState;
+						return;
+				}
+
 				// Get the name of the animation state
 				std::string animationStateString{};
 				switch (animationState) {
@@ -235,14 +258,16 @@ namespace PE
 #endif // DEBUG_PRINT
 
 				// Play the animation state
-				if (m_scriptData[id].p_ratAnimationComponent && m_scriptData[id].animationStates.size())
+				if (it->second.p_ratAnimationComponent && it->second.animationStates.size())
 				{
 						try
 						{
-								if (m_scriptData[id].p_ratAnimationComponent->GetAnimationID() != m_scriptData[id].animationStates.at(animationStateString))
+								if (forceRestart || // bypass the check that the animation being requested is already playing
+										it->second.p_ratAnimationComponent->GetAnimationID() != it->second.animationStates.at(animationStateString))
 								{
-										m_scriptData[id].p_ratAnimationComponent->SetCurrentAnimationID(m_scriptData[id].animationStates.at(animationStateString));
-										m_scriptData[id].p_ratAnimationComponent->PlayAnimation();
+										it->second.p_ratAnimationComponent->SetCurrentAnimationID(it->second.animationStates.at(animationStateString));
+										it->second.p_ratAnimationComponent->ResetAnimation();
+										it->second.p_ratAnimationComponent->PlayAnimation();
 								}
 						}
 						catch (...) { /* error */ }
@@ -914,16 +939,17 @@ namespace PE
 			// Subtract the damage from the rat's health
 			it->second.ratHealth -= damage;
 
-			// Check if the rat's health drops below or equals zero
-			if (it->second.ratHealth <= 0)
-			{
-				// Kill the rat
-				KillRat(ratId);
-			}
-			else 
-			{
-				PlayInjuredAudio(ratId);
-			}
+				// Check if the rat's health drops below or equals zero
+				if (it->second.ratHealth <= 0)
+				{
+						// Kill the rat
+						KillRat(ratId);
+				}
+				else 
+				{
+						PlayAnimation(ratId, EnumRatAnimations::HURT);
+						PlayInjuredAudio();
+				}
 		}
 
 

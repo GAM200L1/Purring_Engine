@@ -20,6 +20,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "BossRatPlanningState.h"
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Layers/LayerManager.h"
+#include "AudioManager/GlobalMusicManager.h"
+
 namespace PE
 {
 	// ---------- FUNCTION DEFINITIONS ---------- //
@@ -49,6 +51,11 @@ namespace PE
 
 		if (p_gsc->currentState == GameStates_v2_0::WIN || p_gsc->currentState == GameStates_v2_0::LOSE)
 		{
+			return;
+		}		
+		
+		if (p_gsc->currentState == GameStates_v2_0::WIN || p_gsc->currentState == GameStates_v2_0::LOSE)
+		{
 			//might want to do something else from pause
 			return;
 		}
@@ -56,12 +63,47 @@ namespace PE
 		if (m_scriptData[id].currenthealth <= 0)
 		{
 			//do something, call end cutscene most likely and end bgm here
+			if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::DEATH)
+			{
+				PlayAnimation(BossRatAnimationsEnum::DEATH);
+				std::cout << "playaud" << std::endl;
+				PlayDeathAudio();
+			}
+
+			//keep in execution phase
+			m_scriptData[id].finishExecution = false;
+			if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
+			{
+				p_gsc->WinGame();
+			}
 		}
 
 		CreateCheckStateManager(id);
 
 		if(p_gsc->currentState == GameStates_v2_0::PLANNING || p_gsc->currentState == GameStates_v2_0::EXECUTE)
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
+
+		if (EntityManager::GetInstance().Has<AnimationComponent>(currentBoss))
+		{
+			if(EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
+			{
+				if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::IDLE && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::CHARGE && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::WALKFASTER && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::DEATH)
+					PlayAnimation(BossRatAnimationsEnum::IDLE);
+			}
+		}
+
+
+
+		//to ensure execution ends
+		if(executionTimeOutTimer > 0 && p_gsc->currentState == GameStates_v2_0::EXECUTE)
+		{
+			executionTimeOutTimer -= deltaTime;
+			if (executionTimeOutTimer <= 0)
+			{
+				m_scriptData[id].finishExecution = true;
+				executionTimeOutTimer = executionTimeOutTime;
+			}
+		 }
 	}
 
 
@@ -128,6 +170,9 @@ namespace PE
 	void BossRatScript::TakeDamage(int damage)
 	{
 		m_scriptData[currentBoss].currenthealth -= damage;
+		if(m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::WALKFASTER)
+		PlayAnimation(BossRatAnimationsEnum::HURT);
+		PlayHurtAudio();
 	}
 
 	EntityID BossRatScript::FindFurthestCat()
@@ -226,5 +271,82 @@ namespace PE
 	bool BossRatScript::IsObstacle(EntityID id)
 	{
 	 return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);;
+	}
+
+	void BossRatScript::PlayAnimation(BossRatAnimationsEnum AnimationState)
+	{
+		m_scriptData[currentBoss].curr_Anim = AnimationState;
+		std::string animationState;
+		
+		switch (AnimationState)
+		{
+			case BossRatAnimationsEnum::WALK:
+				animationState = "Walk";
+				break;
+			case BossRatAnimationsEnum::WALKFASTER:
+				animationState = "WalkFaster";
+				break;
+			case BossRatAnimationsEnum::ATTACK1:
+				animationState = "Attack1";
+				break;
+			case BossRatAnimationsEnum::ATTACK2:
+				animationState = "Attack2";
+				break;
+			case BossRatAnimationsEnum::HURT:
+				animationState = "Hurt";
+				break;
+			case BossRatAnimationsEnum::DEATH:
+				animationState = "Death";
+				break;
+			case BossRatAnimationsEnum::CHARGE:
+				animationState = "Charge";
+				break;
+			default: animationState = "Idle";
+		}
+
+
+			if (EntityManager::GetInstance().Has<AnimationComponent>(currentBoss) && m_scriptData[currentBoss].animationStates.size())
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationID() != m_scriptData[currentBoss].animationStates.at(animationState))
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).SetCurrentAnimationID(m_scriptData[currentBoss].animationStates[animationState]);
+						EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).PlayAnimation();
+					}
+				}
+				catch (...) { /* error */ }
+			}
+		
+
+	}
+	void BossRatScript::PlayAttackAudio()
+	{
+		int random = rand() % 5 + 1;
+		std::string attackAudio = "AudioObject/BossAudioPrefab/BossRatAttack" + std::to_string(random) + "SFX.prefab";
+		GlobalMusicManager::GetInstance().PlaySFX(attackAudio, false);
+
+	}
+	void BossRatScript::PlayHurtAudio()
+	{
+		int random = rand() % 8 + 1;
+		std::string hurtAudio = "AudioObject/BossAudioPrefab/BossRatInjured" + std::to_string(random) + "SFX.prefab";
+		GlobalMusicManager::GetInstance().PlaySFX(hurtAudio, false);
+	}
+	void BossRatScript::PlayDeathAudio()
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatDeath1SFX.prefab", false);
+	}
+	void BossRatScript::PlayPoisonPuddleAudio()
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatChargePuddlesSFX.prefab", false);
+	}
+	void BossRatScript::PlaySlamShockWaveAudio()
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatSlamShockwaveSFX.prefab",false);
+	}
+	void BossRatScript::PlayBashSpikeAudio()
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatBashSpikeSFX.prefab", false);
 	}
 } // End of namespace PE

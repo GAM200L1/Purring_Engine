@@ -432,6 +432,14 @@ namespace PE
 			NextStage(3);
 		}
 
+		if (KTE.keycode == GLFW_KEY_F8)
+		{
+			if (m_currentLevel == 3)
+			{
+				*GETSCRIPTDATA(BossRatScript,GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss).currenthealth = 2;
+			}
+		}
+
 		if (KTE.keycode == GLFW_KEY_F9)
 		{
 			NextState();
