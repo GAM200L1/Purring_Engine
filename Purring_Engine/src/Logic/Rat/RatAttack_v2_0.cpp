@@ -34,6 +34,10 @@ namespace PE
 {
     void RatAttack_v2_0::StateEnter(EntityID id)
     {
+#ifdef DEBUG_PRINT
+        std::cout << "RatAttack_v2_0::StateEnter(" << id << ")" << std::endl;
+#endif // DEBUG_PRINT
+
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                                                   // Get GSM instance
 
@@ -91,6 +95,8 @@ namespace PE
     {
         p_data = nullptr;
         gameStateController = nullptr;
+
+        // Unsubscribe from collision events
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
@@ -178,7 +184,12 @@ namespace PE
         {
             OnCollisionEnterEvent OCEE = dynamic_cast<OnCollisionEnterEvent const&>(r_event);
             // check if rat and cat have collided
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingCat(p_data->myID, OCEE.Entity1, OCEE.Entity2);
+            bool touchingCat{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingCat(p_data->myID, OCEE.Entity1, OCEE.Entity2) };
+
+            if (!touchingCat && p_data->attacking && p_data->p_attackData) // Currently attacking 
+            {
+                p_data->p_attackData->OnCollisionEnter(OCEE.Entity1, OCEE.Entity2);
+            } // end of if (p_data->attacking)
         }
     }
 
@@ -190,13 +201,10 @@ namespace PE
         {
             OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
             // check if a cat has entered the rat's detection collider
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTEE.Entity1, OTEE.Entity2);
+            bool inDetectionRadius{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTEE.Entity1, OTEE.Entity2) };
             
-            if (p_data->attacking && p_data->p_attackData) // Currently attacking 
+            if (!inDetectionRadius && p_data->attacking && p_data->p_attackData) // Currently attacking 
             {
-#ifdef DEBUG_PRINT
-                std::cout << "GutterRatAttack_v2_0::OnCollisionEnter(" << p_data->myID << "): between ent " << EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name << " and " << EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name << std::endl;
-#endif // DEBUG_PRINT
                 p_data->p_attackData->OnCollisionEnter(OTEE.Entity1, OTEE.Entity2);
             } // end of if (p_data->attacking)
         }
@@ -204,10 +212,9 @@ namespace PE
         {
             OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
             // check if a cat has entered the rat's detection collider
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTSE.Entity1, OTSE.Entity2);
-            
-            // Check if the 
-            if (p_data->attacking && p_data->p_attackData) // Currently attacking 
+            bool inDetectionRadius{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTSE.Entity1, OTSE.Entity2) };
+
+            if (!inDetectionRadius && p_data->attacking && p_data->p_attackData) // Currently attacking 
             {
                 p_data->p_attackData->OnCollisionEnter(OTSE.Entity1, OTSE.Entity2);
             } // end of if (p_data->attacking)

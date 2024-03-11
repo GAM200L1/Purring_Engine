@@ -54,7 +54,7 @@
                             "Prefab Type": "",
                             "children": [],
                             "isActive": true,
-                            "name": "AAAAAAAAAAA",
+                            "name": "WorldHealthBarFrame",
                             "parent": 1,
                             "sceneID": 2
                         },

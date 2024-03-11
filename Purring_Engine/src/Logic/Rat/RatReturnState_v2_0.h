@@ -79,18 +79,6 @@ namespace PE
 		}
 
 		/*!***********************************************************************************
-		 \brief Displays and updates the rotation of the rat telegraphs.
-
-		 \param targetPosition - Position that is being targeted
-		*************************************************************************************/
-		void EnableTelegraphs(vec2 const& targetPosition);
-
-		/*!***********************************************************************************
-		 \brief Disables the rat telegraphs.
-		*************************************************************************************/
-		void DisableTelegraphs();
-
-		/*!***********************************************************************************
 		 \brief Checks if any cats entered or executed the rat's detection radius during
 						the last execution phase and decides whether to swap to the attacking or
 						hunting states respectively.

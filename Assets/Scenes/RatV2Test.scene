@@ -795,6 +795,8 @@
                                 "PauseMenuCanvas": 3,
                                 "PhaseBanner": 17,
                                 "Portrait": 47,
+                                "RatKingJournal": 0,
+                                "RatKingPortrait": 0,
                                 "RatPortrait": 53,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
@@ -3318,7 +3320,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 91
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3386,11 +3388,11 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 950.5000610351563,
+                                "x": 933.5,
                                 "y": 148.9998016357422
                             },
                             "min": {
-                                "x": 714.5000610351563,
+                                "x": 697.5,
                                 "y": 35.99980163574219
                             },
                             "positionOffset": {
@@ -3420,7 +3422,7 @@
                         "height": 113.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 832.5000610351563,
+                            "x": 815.5,
                             "y": 92.49980163574219
                         },
                         "relativeposition": {
@@ -3469,7 +3471,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 28
+                        "sceneID": 27
                     },
                     "Renderer": {
                         "Color": {
@@ -3883,7 +3885,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 27
+                        "sceneID": 30
                     },
                     "Renderer": {
                         "Color": {
@@ -3952,7 +3954,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 30
+                        "sceneID": 29
                     },
                     "Renderer": {
                         "Color": {
@@ -4021,7 +4023,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 29
+                        "sceneID": 28
                     },
                     "Renderer": {
                         "Color": {
@@ -4152,7 +4154,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 18
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4295,8 +4297,8 @@
                                         "attacKDirection": 0,
                                         "bulletDelay": 0.0,
                                         "bulletFireAnimationIndex": 3,
-                                        "bulletForce": 1000.0,
-                                        "bulletLifeTime": 1.0,
+                                        "bulletForce": 750.0,
+                                        "bulletLifeTime": 0.5,
                                         "bulletRange": 3.0,
                                         "damage": 1,
                                         "projectileID": 0,
@@ -4415,7 +4417,7 @@
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 18
+                        "sceneID": 20
                     },
                     "Renderer": {
                         "Color": {
@@ -4445,8 +4447,8 @@
                                         "attacKDirection": 0,
                                         "bulletDelay": 0.0,
                                         "bulletFireAnimationIndex": 3,
-                                        "bulletForce": 500.0,
-                                        "bulletLifeTime": 1.0,
+                                        "bulletForce": 750.0,
+                                        "bulletLifeTime": 0.5,
                                         "bulletRange": 3.0,
                                         "damage": 2,
                                         "projectileID": 0,
@@ -4503,7 +4505,8 @@
                         "Prefab Type": "Canvas Object",
                         "children": [
                             85,
-                            87
+                            87,
+                            92
                         ],
                         "isActive": true,
                         "name": "HealthBarCanvas",
@@ -4626,11 +4629,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1330.0,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1330.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -4667,7 +4670,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1330.0,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -4779,11 +4782,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1329.9996337890625,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1329.9996337890625,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -4820,7 +4823,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1329.9996337890625,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -4855,13 +4858,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1330.0,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -4896,13 +4899,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1329.9996337890625,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5045,14 +5048,14 @@
                             "../Assets/Animation/AnimationGutterRat_Idle.anim",
                             "../Assets/Animation/AnimationGutterRat_Walk.anim"
                         ],
-                        "CurrentAnimationID": ""
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 144.99899291992188,
-                                "y": -72.0
+                                "x": 247.0,
+                                "y": -105.99995422363281
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5073,7 +5076,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 34
+                        "sceneID": 31
                     },
                     "Renderer": {
                         "Color": {
@@ -5082,7 +5085,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5113,8 +5116,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 144.99899291992188,
-                            "y": -72.0
+                            "x": 247.0,
+                            "y": -105.99995422363281
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5138,14 +5141,14 @@
                             "../Assets/Animation/AnimationGutterRat_Idle.anim",
                             "../Assets/Animation/AnimationGutterRat_Walk.anim"
                         ],
-                        "CurrentAnimationID": ""
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 64.0,
-                                "y": 168.0
+                                "x": 43.00004577636719,
+                                "y": 160.0000762939453
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5175,7 +5178,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5206,8 +5209,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 64.0,
-                            "y": 168.0
+                            "x": 43.00004577636719,
+                            "y": 160.0000762939453
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5215,6 +5218,293 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationSniperRat_Attack.anim",
+                            "../Assets/Animation/AnimationSniperRat_Death.anim",
+                            "../Assets/Animation/AnimationSniperRat_Hurt.anim",
+                            "../Assets/Animation/AnimationSniperRat_Idle.anim",
+                            "../Assets/Animation/AnimationSniperRat_Walk.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationSniperRat_Idle.anim"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "center": {
+                                "x": -97.49999237060547,
+                                "y": -116.49991607666016
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 1,
+                        "Layer": 1,
+                        "Old ID": 91,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SniperRat",
+                        "parent": null,
+                        "sceneID": 61
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Sniper_Idle.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationSniperRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationSniperRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationSniperRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationSniperRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationSniperRat_Walk.anim"
+                                },
+                                "detectionRadius": 320.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 128.0,
+                                "movementSpeed": 400.0,
+                                "ratMaxHealth": 3,
+                                "ratType": 3
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -97.49999237060547,
+                            "y": -116.49991607666016
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 85,
+                        "Prefab Type": "WorldHealthBar",
+                        "children": [
+                            95,
+                            96
+                        ],
+                        "isActive": true,
+                        "name": "WorldHealthBar",
+                        "parent": 83,
+                        "sceneID": 92
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 1.0,
+                        "m_currentWidth": 16.0,
+                        "m_currentXpos": 32.0,
+                        "m_defaultColor": [
+                            0.3607843220233917,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.9882352948188782,
+                            0.23137255012989044,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 32.0,
+                        "m_hoveredColor": [
+                            0.9254902005195618,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": true,
+                        "m_knobID": 95,
+                        "m_maxValue": 1.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -32.0
+                    },
+                    "ScriptComponent": {
+                        "HealthBarScript_v2_0": {
+                            "data": {
+                                "FollowObjectID": 91,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 16.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 1330.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 1330.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 86,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SliderKnob",
+                        "parent": 92,
+                        "sceneID": 95
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 16.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 1330.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 89,
+                        "Prefab Type": "WorldHealthBarFrame",
+                        "children": [],
+                        "isActive": true,
+                        "name": "WorldHealthBarFrame",
+                        "parent": 92,
+                        "sceneID": 96
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 1330.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 70.0
                     }
                 },
                 "name": ""
