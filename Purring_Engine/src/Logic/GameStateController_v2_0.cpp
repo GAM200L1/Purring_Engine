@@ -520,21 +520,27 @@ namespace PE
 							//RatScript_v2_0* RatScript = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0);
 							//RatScript* _RatScript = GETSCRIPTINSTANCEPOINTER(RatScript);
 
+							std::string soundPath;
+							int randomSoundIndex = std::rand() % 5 + 1;	// Random selection from 1 to 5
+
 							switch (RatType)
 							{
 							case EnumRatType::GUTTER_V1: //GUTTER V1 (M3)
 							case EnumRatType::GUTTER: //GUTTER
+								soundPath = "AudioObject/Rat Gutter Selection SFX" + std::to_string(randomSoundIndex) + ".prefab";
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_GutterRat_753x402.png"));
 								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 								break;
 							case EnumRatType::BRAWLER: //BRAWLER
+								soundPath = "AudioObject/Rat Brawler Selection SFX" + std::to_string(randomSoundIndex) + ".prefab";
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Brawler_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_BrawlerRat_753x402.png"));
 								
 								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 								break;
 							case EnumRatType::SNIPER: //SNIPER
+								soundPath = "AudioObject/Rat Sniper Selection SFX" + std::to_string(randomSoundIndex) + ".prefab";
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Sniper_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_SniperRat_753x402.png"));
 								SetPortraitInformation("UnitPortrait_RatNameFrame_SniperRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
@@ -543,6 +549,11 @@ namespace PE
 								//case 3: //HERALD
 									//break;
 							}
+
+							// DEBUGHANS @PR-ER
+							//std::cout << "[Debug] Playing selection audio: " << soundPath << std::endl;
+							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
+
 							return;
 						}
 						else
@@ -599,21 +610,21 @@ namespace PE
 							switch (CatType)
 							{
 							case EnumCatType::MAINCAT: //
-								soundPath = "AudioObject/Meowsalot Selection SFX" + std::to_string(randomSelection) + ".prefab";
+								soundPath = "AudioObject/Cat Meowsalot Selection SFX" + std::to_string(randomSelection) + ".prefab";
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_Meowsalot_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_Meowsalot_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_Meowsalot_753x402.png"));
 								break;
 							case EnumCatType::GREYCAT: //
-								soundPath = "AudioObject/GreyCat Selection SFX" + std::to_string(randomSelection) + ".prefab";
+								soundPath = "AudioObject/Cat Grey Selection SFX" + std::to_string(randomSelection) + ".prefab";
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_GreyCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_GreyCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Grey_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_GreyCat_753x402.png"));
 								break;
 							case EnumCatType::ORANGECAT: //
-								soundPath = "AudioObject/OrangeCat Selection SFX" + std::to_string(randomSelection) + ".prefab";
+								soundPath = "AudioObject/Cat Orange Selection SFX" + std::to_string(randomSelection) + ".prefab";
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_OrangeCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
@@ -621,6 +632,8 @@ namespace PE
 								break;
 							}
 
+							// DEBUGHANS @PR-ER
+							//std::cout << "[Debug] Playing selection audio: " << soundPath << std::endl;
 							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
 
 							return;

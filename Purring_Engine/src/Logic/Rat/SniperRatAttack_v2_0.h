@@ -19,20 +19,31 @@
 
 namespace PE
 {
-	struct SniperRatAttack_v2_0 : AttackDataBase_v2_0
+	class SniperRatAttack_v2_0 : public AttackDataBase_v2_0
 	{
 		// ----- Public variables ----- //
+	public:
 
 		// --- Misc variables
 		// Ensures that the attack feedback only plays once. Set to true once it has been played.
 		bool attackFeedbackOnce{ false }; 
-		float attackDuration{}; // Time in seconds before the attack is considered done
+		float projectileStartTime{ 0.16f }; // Time in seconds since the anim starts playing that the projectile should get launched
+		float attackDuration{ 0.f }; // Time in seconds before the attack is considered done
+		float timePassed{ 0.f };		// Time in seconds since the attack first started
+
+		// --- Movement variables
+		float movementAngularOffset{ 1.309f }; // Angle in degrees from the direction of the cat from the rat to angle the movement direction of the rat
+		// 1.309f rad = ~75 deg
 
 		// --- Attack variables
+		EntityID spikeballID{ 0 }; // id of the projectile
 		vec2 shotTargetPosition{}; // Position to aim the bullet at. Set during the movement state.
+		float bulletForce{ 100.f };
+		float bulletRange{ 3.f };
+
 		
 		// ----- Constructors ----- //
-
+	public:
 		/*!***********************************************************************************
 		\brief Constructs the base attack object.
 					
@@ -45,8 +56,9 @@ namespace PE
 		*************************************************************************************/
 		~SniperRatAttack_v2_0() override { /* Empty by design */ }
 
-		// ----- Public methods ----- //
 
+		// ----- Public methods ----- //
+	public:
 		/*!***********************************************************************************
 		\brief Initializes the attack (e.g. position objects at the start position etc.).
 				Does nothing by default.
@@ -93,5 +105,10 @@ namespace PE
 		\return vec2 - Target position to move towards during the movement state.
 		*************************************************************************************/
 		virtual vec2 PickTargetPosition() override;
+
+		// ----- Private variables ----- //
+	private:
+		vec2 m_bulletImpulse{};
+		vec2 m_direction{};
 	}; // end of SniperRatAttack_v2_0
 } // end of namespace PE

@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/vo_Rat_Sniper_Detection2.wav",
+            "loop": false
+          },
+          "EntityDescriptor": {
+            "Prefab Type": "Rat Sniper Detection SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Rat Sniper Detection SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
+        },
+        "name": ""
+    }
+}
