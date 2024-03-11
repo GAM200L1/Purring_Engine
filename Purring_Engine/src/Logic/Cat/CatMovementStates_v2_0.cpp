@@ -130,6 +130,8 @@ namespace PE
 		EndPathDrawing(id);
 		// set follow cats to their previous positions
 		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+
+		p_data = nullptr;
 	}
 
 
@@ -423,6 +425,8 @@ namespace PE
 	{
 		StopMoving(id);
 		p_data->pathPositions.clear();
+
+		p_data = nullptr;
 	}
 
 	void CatMovement_v2_0EXECUTE::StopMoving(EntityID id)
