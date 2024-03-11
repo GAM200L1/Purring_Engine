@@ -165,7 +165,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Play one of a few random detection SFX.
 		*************************************************************************************/
-		static void PlayDetectionAudio();
+		void PlayDetectionAudio(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Play one of a few random injury SFX.
