@@ -343,8 +343,7 @@ namespace PE
 
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Death SFX" + std::to_string(randSound) + ".prefab";
 
-			// DEBUGHANS @PR-ER
-			//std::cout << "[Debug] Playing death audio: " << soundPrefab << std::endl;
+			
 
 			PlayAudio(soundPrefab);
 		}
@@ -378,8 +377,7 @@ namespace PE
 
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Detection SFX" + std::to_string(randSound) + ".prefab";
 
-			// DEBUGHANS @PR-ER
-			//std::cout << "[Debug] Playing detection audio: " << soundPrefab << std::endl;
+			
 
 			PlayAudio(soundPrefab);
 		}
@@ -413,8 +411,7 @@ namespace PE
 
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Injured SFX" + std::to_string(randSound) + ".prefab";
 
-			// DEBUGHANS @PR-ER
-			//std::cout << "[Debug] Playing injured audio: " << soundPrefab << std::endl;
+			
 
 			PlayAudio(soundPrefab);
 		}

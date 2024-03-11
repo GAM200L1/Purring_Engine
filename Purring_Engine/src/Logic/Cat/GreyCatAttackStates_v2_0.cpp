@@ -417,8 +417,7 @@ namespace PE
 			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 		}
 
-		// DEBUGHANS @PR-ER
-		//std::cout << "[Debug] Playing projectile hit audio: " << soundPrefabPath << std::endl;
+		
 
 	}
 }

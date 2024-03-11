@@ -302,7 +302,6 @@ namespace PE
 		std::string soundPrefabPath = "AudioObject/Cat Shockwave SFX1.prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 
-		// DEBUGHANS @PR-ER
-		//std::cout << "[Debug] Playing seismic shockwave audio: " << soundPrefabPath << std::endl;
+	
 	}
 }

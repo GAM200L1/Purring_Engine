@@ -526,8 +526,7 @@ namespace PE
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 
-		// DEBUGHANS @PR-ER
-		//std::cout << "[Debug] Playing cat death audio: " << soundPrefabPath << std::endl;
+		
 	}
 
 	void CatScript_v2_0::PlayPathPlacementAudio()
@@ -535,8 +534,7 @@ namespace PE
 		std::string soundPrefabPath = "AudioObject/Movement Planning SFX.prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 
-		// DEBUGHANS @PR-ER
-		//std::cout << "[Debug] Playing path placement audio: " << soundPrefabPath << std::endl;
+		
 	}
 
 	void CatScript_v2_0::PlayFootstepAudio()
@@ -547,8 +545,7 @@ namespace PE
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 
-		// DEBUGHANS @PR-ER
-		//std::cout << "[Debug] Playing footstep audio: " << soundPrefabPath << std::endl;
+		
 	}
 
 	void CatScript_v2_0::PlayCatAttackAudio(EnumCatType catType)
@@ -572,8 +569,7 @@ namespace PE
 			return;
 		}
 		
-		// DEBUGHANS @PR-ER
-		//std::cout << "[Debug] Playing cat attack audio: " << soundPrefabPath << std::endl;
+		
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
@@ -596,8 +592,7 @@ namespace PE
 			return;
 		}
 
-		// DEBUGHANS @PR-ER
-		//std::cout << "[Debug] Playing cat rescue audio: " << soundPrefabPath << std::endl;
+		
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
