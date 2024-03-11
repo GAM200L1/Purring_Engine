@@ -240,7 +240,6 @@ namespace PE
 #ifdef DEBUG_PRINT
         std::cout << "RatIdle_v2_0::StateCleanUp(" << p_data->myID << ") m_collisionEventListener: " << m_collisionEventListener << ", m_collisionExitEventListener: " << m_collisionExitEventListener << std::endl;
 #endif // DEBUG_PRINT
-        RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false);
         p_data = nullptr;
         gameStateController = nullptr;
 

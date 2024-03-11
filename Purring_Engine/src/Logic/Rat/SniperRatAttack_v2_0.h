@@ -26,7 +26,13 @@ namespace PE
 		// --- Misc variables
 		// Ensures that the attack feedback only plays once. Set to true once it has been played.
 		bool attackFeedbackOnce{ false }; 
-		float attackDuration{ 0.5f }; // Time in seconds before the attack is considered done
+		float projectileStartTime{ 0.16f }; // Time in seconds since the anim starts playing that the projectile should get launched
+		float attackDuration{ 0.f }; // Time in seconds before the attack is considered done
+		float timePassed{ 0.f };		// Time in seconds since the attack first started
+
+		// --- Movement variables
+		float movementAngularOffset{ 1.309f }; // Angle in degrees from the direction of the cat from the rat to angle the movement direction of the rat
+		// 1.309f rad = ~75 deg
 
 		// --- Attack variables
 		EntityID spikeballID{ 0 }; // id of the projectile

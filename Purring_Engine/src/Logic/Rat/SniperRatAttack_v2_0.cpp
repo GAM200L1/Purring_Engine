@@ -18,7 +18,7 @@
 #include "RatScript_v2_0.h"
 #include "SniperRatAttack_v2_0.h"
 
-#define DEBUG_PRINT
+//#define DEBUG_PRINT
 
 namespace PE
 {
@@ -26,11 +26,11 @@ namespace PE
 	{
 		m_bulletImpulse = vec2{ 0.f, 0.f };
 
-		// calculate the impulse of the buller
+		// calculate the impulse of the bullet
 		m_direction = shotTargetPosition - RatScript_v2_0::GetEntityPosition(mainID);
 		m_bulletImpulse = m_direction.GetNormalized() * bulletForce;
 		
-		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(mainID) + m_direction.GetNormalized() * RatScript_v2_0::GetEntityScale(mainID).x * 0.5f);
+		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(mainID)/* + m_direction.GetNormalized() * RatScript_v2_0::GetEntityScale(mainID).x * 0.5f*/);
 		EntityManager::GetInstance().Get<RigidBody>(spikeballID).velocity.Zero();
 
 		attackFeedbackOnce = false;
@@ -41,13 +41,20 @@ namespace PE
 	{
 		if (!attackFeedbackOnce)
 		{
+#ifdef DEBUG_PRINT
+				std::cout << "SniperRatAttack_v2_0::ExecuteAttack(" << mainID << ") attack feedback once" << std::endl;
+#endif // DEBUG_PRINT
 			attackFeedbackOnce = true;
 			RatScript_v2_0::PlayAttackAudio();
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(mainID, EnumRatAnimations::ATTACK);
 			attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(mainID);
+			timePassed = 0.f;
 		}
-		else if (attackFeedbackOnce && EntityManager::GetInstance().Get<AnimationComponent>(mainID).GetCurrentFrameIndex() == 3)
+		else if (attackFeedbackOnce && (timePassed >= projectileStartTime) && (timePassed < (projectileStartTime + 0.1f)))
 		{
+#ifdef DEBUG_PRINT
+				std::cout << "SniperRatAttack_v2_0::ExecuteAttack(" << mainID << ") correct frame of anim" << std::endl;
+#endif // DEBUG_PRINT
 			// make the rat face the direction it is shooting
 			vec2 newScale{ RatScript_v2_0::GetEntityScale(mainID) };
 			newScale.x = std::abs(newScale.x) * ((m_direction.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
@@ -55,18 +62,20 @@ namespace PE
 
 			// shoots the projectile
 			RatScript_v2_0::ToggleEntity(spikeballID, true);
-			EntityManager::GetInstance().Get<RigidBody>(spikeballID).ApplyLinearImpulse(m_bulletImpulse);
-			
+			EntityManager::GetInstance().Get<RigidBody>(spikeballID).ApplyLinearImpulse(m_bulletImpulse);			
 		}
-		else if (attackDuration <= 0.f)
+		else if (timePassed >= attackDuration)
 		{
+#ifdef DEBUG_PRINT
+				std::cout << "SniperRatAttack_v2_0::ExecuteAttack(" << mainID << ") attack duration is less than zero" << std::endl;
+#endif // DEBUG_PRINT
 			RatScript_v2_0::ToggleEntity(spikeballID, false);
 			EntityManager::GetInstance().Get<RigidBody>(spikeballID).velocity.Zero();
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(this->mainID, EnumRatAnimations::IDLE);
 			return true;
 		}
 
-		attackDuration -= deltaTime;
+		timePassed += deltaTime;
 		return false;
 	}
 
@@ -111,7 +120,33 @@ namespace PE
 
 	vec2 SniperRatAttack_v2_0::PickTargetPosition()
 	{
-		// @TODO - Krystal
-		return RatScript_v2_0::GetEntityPosition(mainID);
+		// Retrieve the rat data
+		RatScript_v2_0_Data* p_data{ GETSCRIPTDATA(RatScript_v2_0, mainID) };				
+		
+		// Pick the closest cat to move 
+		// ASSUMPTION: container of cats in detection radius has at least 1 element. 
+		vec2 ratPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
+		EntityID closestCat{ RatScript_v2_0::GetCloserTarget(ratPosition, p_data->catsInDetectionRadius) };
+
+
+		// Set the shot target position
+		shotTargetPosition = RatScript_v2_0::GetEntityPosition(closestCat);
+
+
+		// Set the movement target position
+		// Get the direction 75 deg from the direction that the 
+		float anticlockwiseMultiplier{ ((std::rand() % 2) > 0) ? 1.f : -1.f};
+		vec2 movementDirection{ shotTargetPosition - ratPosition };
+		movementDirection = Rotate(movementDirection, anticlockwiseMultiplier * movementAngularOffset);
+		movementDirection = movementDirection.GetNormalized();
+		//vec2 movementDirection{ Rotate(shotTargetPosition - ratPosition, anticlockwiseMultiplier * 75.f).GetNormalized() };
+		vec2 movementTarget{ movementDirection * p_data->maxMovementRange + ratPosition };
+
+		// Set the position for the rat to move to
+		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, movementTarget, false);
+		p_data->targetedCat = closestCat;
+
+
+		return p_data->targetPosition;
 	}
 } // end of namespace PE

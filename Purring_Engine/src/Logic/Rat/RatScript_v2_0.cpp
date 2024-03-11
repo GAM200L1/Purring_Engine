@@ -229,7 +229,11 @@ namespace PE
 				case EnumRatAnimations::DEATH:	animationStateString = "Death";  break;
 				default: animationStateString = "Idle";  break;
 				}
-				
+
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::PlayAnimation(" << id << ") anim state: " << animationStateString << std::endl;
+#endif // DEBUG_PRINT
+
 				// Play the animation state
 				if (m_scriptData[id].p_ratAnimationComponent && m_scriptData[id].animationStates.size())
 				{
@@ -238,6 +242,7 @@ namespace PE
 								if (m_scriptData[id].p_ratAnimationComponent->GetAnimationID() != m_scriptData[id].animationStates.at(animationStateString))
 								{
 										m_scriptData[id].p_ratAnimationComponent->SetCurrentAnimationID(m_scriptData[id].animationStates.at(animationStateString));
+										m_scriptData[id].p_ratAnimationComponent->PlayAnimation();
 								}
 						}
 						catch (...) { /* error */ }
@@ -402,6 +407,9 @@ namespace PE
 				if (it == m_scriptData.end()) { return; }
 
 				ToggleEntity(it->second.telegraphArrowEntityID, false); // disable the telegraph
+
+				// Disable attack objects
+				if (it->second.p_attackData) { it->second.p_attackData->DisableAttackObjects(); }
 		}
 		
 
@@ -727,8 +735,9 @@ namespace PE
 				std::cout << "RatScript_v2_0::SetTarget(" << id << "): target id: " << targetId << ", ";
 #endif // DEBUG_PRINT
 
+				bool targetSet{ SetTarget(id, RatScript_v2_0::GetEntityPosition(targetId), capMaximum) };
 				it->second.targetedCat = targetId;
-				return SetTarget(id, RatScript_v2_0::GetEntityPosition(targetId), capMaximum);
+				return targetSet;
 		}
 
 
@@ -782,6 +791,7 @@ namespace PE
 				if (it == m_scriptData.end()) { return false; }
 #ifdef DEBUG_PRINT
 				//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): ratPlayerDistance: " << it->second.ratPlayerDistance << ", curr pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
+				static bool printOnce{false};
 #endif // DEBUG_PRINT
 				if (it->second.ratPlayerDistance > 0.f)
 				{
@@ -791,6 +801,7 @@ namespace PE
 						it->second.ratPlayerDistance -= amountToMove;
 
 #ifdef DEBUG_PRINT
+						printOnce = false;
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
 						//		<< " moved to new position: (" << newPosition.x << ", " << newPosition.y
 						//		<< "), Remaining distance: " << it->second.ratPlayerDistance << std::endl;
@@ -803,8 +814,11 @@ namespace PE
 				else
 				{
 #ifdef DEBUG_PRINT
-						//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): dist to target is zero (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n";
-						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " has no movement or already at destination." << std::endl;
+						if (!printOnce) 
+						{
+								printOnce = true;
+								std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): dist to target is zero (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n";
+						}
 #endif // DEBUG_PRINT
 
 						//RatScript_v2_0::PositionEntity(id, it->second.targetPosition);
@@ -911,6 +925,7 @@ namespace PE
 				it->second.delaySet = false;
 				it->second.SetQueuedState(nullptr, true);
 				it->second.hasRatStateChanged = true;
+				DisableTelegraphs(it->second.myID);
 		}
 
 		EntityID RatScript_v2_0::CreateDetectionRadius(RatScript_v2_0_Data const& r_data)
