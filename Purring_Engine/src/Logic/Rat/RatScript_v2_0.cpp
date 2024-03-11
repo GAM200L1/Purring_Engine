@@ -398,13 +398,7 @@ namespace PE
 
 		void RatScript_v2_0::PlayAudio(std::string const& r_soundPrefab)
 		{
-				SerializationManager serializationManager;
-				EntityID sound = serializationManager.LoadFromFile(r_soundPrefab);
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-				{
-						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				}
-				EntityManager::GetInstance().RemoveEntity(sound);
+			PE::GlobalMusicManager::GetInstance().PlaySFX(r_soundPrefab, false);
 		}
 
 
