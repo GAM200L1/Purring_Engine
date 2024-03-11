@@ -346,16 +346,24 @@ namespace PE
 				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 				{
 					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (p_catController->IsCatAndNotCaged(id2) && !p_catController->IsFollowCat(id2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
 					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					PlayProjectileHitAudio(false);
+					return true;
+				}
+				else if (CatHelperFunctions::IsObstacle(id2))
+				{
+					PlayProjectileHitAudio(true);
 					return true;
 				}
 			}
@@ -364,20 +372,42 @@ namespace PE
 				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 				{
 					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (p_catController->IsCatAndNotCaged(id1) && !p_catController->IsFollowCat(id1))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
 					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					PlayProjectileHitAudio(false);
+					return true;
+				}
+				else if (CatHelperFunctions::IsObstacle(id1))
+				{
+					PlayProjectileHitAudio(true);
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+
+	void GreyCatAttack_v2_0EXECUTE::PlayProjectileHitAudio(bool isTerrain)
+	{
+		if (isTerrain)
+		{
+			// @TODOHANS
+			// add projectile hit terrain audio here
+		}
+		else
+		{
+			// @TODOHANS
+			// add projectile hit entity audio here? (sorry idk what the paper and organic ones mean)
+		}
 	}
 }
