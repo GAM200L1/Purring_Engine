@@ -3306,7 +3306,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4899,7 +4899,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4978,7 +4978,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5014,7 +5014,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5105,7 +5105,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5779,18 +5779,18 @@
                         "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
                     },
                     "Transform": {
-                        "height": 150.0,
+                        "height": 100.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 234.00050354003906,
                             "y": -9.000188827514648
                         },
                         "relativeposition": {
-                            "x": 2.0,
-                            "y": -9.000053405761719
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 150.0
+                        "width": 100.0
                     }
                 },
                 "name": ""
@@ -5977,115 +5977,6 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationOrange_Attack.anim",
-                            "../Assets/Animation/AnimationOrange_Death.anim",
-                            "../Assets/Animation/AnimationOrange_Idle.anim",
-                            "../Assets/Animation/AnimationOrange_walk.anim"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Attack.anim"
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 5,
-                        "data": {
-                            "center": {
-                                "x": 348.0005798339844,
-                                "y": 44.99999237060547
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 48.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": true,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 2,
-                        "Old ID": 1,
-                        "Prefab Type": "OrangeCat",
-                        "children": [
-                            105
-                        ],
-                        "isActive": true,
-                        "name": "OrangeCat",
-                        "parent": null,
-                        "sceneID": 104
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Animations/Cat_Citrus_Attack.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "CatScript_v2_0": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationOrange_Attack.anim",
-                                    "Death": "../Assets/Animation/AnimationOrange_Death.anim",
-                                    "Idle": "../Assets/Animation/AnimationOrange_Idle.anim",
-                                    "Walk": "../Assets/Animation/AnimationOrange_walk.anim"
-                                },
-                                "attackVariants": {
-                                    "OrangeCatAttackVariables": {
-                                        "damage": 2,
-                                        "seismicDelay": 0.0,
-                                        "seismicForce": 500.0,
-                                        "seismicID": 0,
-                                        "seismicRadius": 3.0,
-                                        "seismicSlamAnimationIndex": 4,
-                                        "telegraphID": 0
-                                    }
-                                },
-                                "catID": 0,
-                                "catMaxMovementEnergy": 6,
-                                "catType": 2,
-                                "finishedExecution": false,
-                                "forgivenessOffset": 1.0,
-                                "isCaged": true,
-                                "maxDistance": 50.0,
-                                "minDistance": 10.0,
-                                "movementSpeed": 300.0,
-                                "nodeSize": 10.0,
-                                "toggleDeathAnimation": false
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 96.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 348.0005798339844,
-                            "y": 44.99999237060547
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 96.0
                     }
                 },
                 "name": ""

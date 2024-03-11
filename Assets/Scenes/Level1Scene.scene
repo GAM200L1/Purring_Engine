@@ -3306,7 +3306,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4140,7 +4140,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4276,7 +4276,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Cat_Smokey_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4306,7 +4306,7 @@
                                     }
                                 },
                                 "catID": 0,
-                                "catMaxMovementEnergy": 7,
+                                "catMaxMovementEnergy": 21,
                                 "catType": 1,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
@@ -4389,7 +4389,7 @@
                             "../Assets/Animation/AnimationMeowsalot_Idle.anim",
                             "../Assets/Animation/AnimationMeowsalot_walk.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Attack.anim"
+                        "CurrentAnimationID": ""
                     },
                     "Collider": {
                         "collisionLayerIndex": 0,
@@ -4426,7 +4426,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Cat_Meowsalot_Attack.png"
+                        "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4495,7 +4495,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
