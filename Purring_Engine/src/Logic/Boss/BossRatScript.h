@@ -98,7 +98,8 @@ namespace PE
 		EntityID currentBoss{};
 		int currentSlamTurnCounter{};
 		std::map<EntityID,int> poisonPuddles;
-
+		float executionTimeOutTime{ 30 };
+		float executionTimeOutTimer{ executionTimeOutTime };
 		BossRatAttacks bossRatAttackSets[3][3]
 		{
 			{BossRatAttacks::CHARGE,BossRatAttacks::SLAM,BossRatAttacks::BASH},
@@ -196,7 +197,18 @@ namespace PE
 		*************************************************************************************/
 		std::vector<EntityID> GetAllObstacles();
 
+		/*!***********************************************************************************
+		 \brief Play Animation on the Rat King
+		 \param[in] BossRatAnimationsEnum AnimationState animation to play
+		 \return void
+		*************************************************************************************/
 		void PlayAnimation(BossRatAnimationsEnum AnimationState);
+
+		void PlayAttackAudio();
+
+		void PlayHurtAudio();
+
+		void PlayDeathAudio();
 		// ----- Private Members ----- //
 	private:
 		// --- STATE CHANGE --- //

@@ -49,6 +49,21 @@ namespace PE
 
 		if (p_gsc->currentState == GameStates_v2_0::WIN || p_gsc->currentState == GameStates_v2_0::LOSE)
 		{
+			if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::DEATH)
+				PlayAnimation(BossRatAnimationsEnum::DEATH);
+
+			//keep in execution phase
+			m_scriptData[id].finishExecution = false;
+
+			if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
+			{
+
+			}
+			return;
+		}		
+		
+		if (p_gsc->currentState == GameStates_v2_0::WIN || p_gsc->currentState == GameStates_v2_0::LOSE)
+		{
 			//might want to do something else from pause
 			return;
 		}
@@ -63,14 +78,27 @@ namespace PE
 		if(p_gsc->currentState == GameStates_v2_0::PLANNING || p_gsc->currentState == GameStates_v2_0::EXECUTE)
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
 
-		if (EntityManager::GetInstance().Has<AnimationComponent>(currentBoss) && m_scriptData[currentBoss].animationStates.size())
+		if (EntityManager::GetInstance().Has<AnimationComponent>(currentBoss))
 		{
 			if(EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
 			{
-				if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::IDLE && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::CHARGE && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::WALKFASTER)
+				if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::IDLE && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::CHARGE && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::WALKFASTER && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::DEATH)
 					PlayAnimation(BossRatAnimationsEnum::IDLE);
 			}
 		}
+
+
+
+		//to ensure execution ends
+		if(executionTimeOutTimer > 0 && p_gsc->currentState == GameStates_v2_0::EXECUTE)
+		{
+			executionTimeOutTimer -= deltaTime;
+			if (executionTimeOutTimer <= 0)
+			{
+				m_scriptData[id].finishExecution = true;
+				executionTimeOutTimer = executionTimeOutTime;
+			}
+		 }
 	}
 
 
