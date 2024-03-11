@@ -143,10 +143,11 @@ namespace PE
 		{
 			OnTriggerEnterEvent OTEE = static_cast<const OnTriggerEnterEvent&>(r_event);
 
-			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 			CatScript_v2_0Data* p_catData{ nullptr };
 
-			if (OTEE.Entity1 == p_catController->GetMainCatID() && p_catController->IsCat(OTEE.Entity2) && p_catController->IsCatCaged(OTEE.Entity2))
+			if (OTEE.Entity1 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && 
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(OTEE.Entity2) && 
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(OTEE.Entity2))
 			{
 				// add to followers list
 				scriptData[OTEE.Entity1].followers.emplace_back(OTEE.Entity2);
@@ -155,7 +156,9 @@ namespace PE
 				// set cat position to the end of the chain
 				CatHelperFunctions::PositionEntity(OTEE.Entity2, scriptData[OTEE.Entity1].nextPosition.back());
 			}
-			else if (OTEE.Entity2 == p_catController->GetMainCatID() && p_catController->IsCat(OTEE.Entity1) && p_catController->IsCatCaged(OTEE.Entity1))
+			else if (OTEE.Entity2 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && 
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(OTEE.Entity1) && 
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(OTEE.Entity1))
 			{
 				// add to followers list
 				scriptData[OTEE.Entity2].followers.emplace_back(OTEE.Entity1);
@@ -178,6 +181,7 @@ namespace PE
 				}
 				// play adopt audio
 				CatScript_v2_0::PlayRescueCatAudio(p_catData->catType);
+				p_catData = nullptr;
 			}
 		}
 	}
