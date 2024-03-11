@@ -57,14 +57,24 @@ namespace PE
 	{
 		HideTelegraph(p_script->currentBoss);
 
+		if (p_script->currentSlamTurnCounter == 2)
+		{
+			if (p_data->curr_Anim != BossRatAnimationsEnum::CHARGE)
+				p_script->PlayAnimation(BossRatAnimationsEnum::CHARGE);
+
+			p_script->PlayAttackAudio();
+		}
 		if (p_script->currentSlamTurnCounter == 0)
+		{
 			HideDamageTelegraph(p_script->currentBoss);
+		}
 	}
 
 	void BossRatSlamAttack::UpdateAttack(EntityID id, float dt)
 	{	
 		if (p_script->currentSlamTurnCounter == 2)
 		{
+			if (EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetAnimationMaxIndex())
 			JumpUp(p_script->currentBoss,dt);
 			if(m_ratSpawned)
 			p_data->finishExecution = true;
@@ -165,6 +175,13 @@ namespace PE
 
 			CheckDamage(id);
 			EnableAnimation(id);
+
+			if (!m_playedSlamAudio)
+			{
+				p_script->PlayAttackAudio();
+				p_script->PlaySlamShockWaveAudio();
+				m_playedSlamAudio = true;
+			}
 		}
 	}
 
@@ -320,6 +337,9 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->leftSideSlamAnimation).isActive = false;
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->rightSideSlamAnimation))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive = false;
+
+		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT)
+			p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
 
 		p_data->finishExecution = true;
 	}

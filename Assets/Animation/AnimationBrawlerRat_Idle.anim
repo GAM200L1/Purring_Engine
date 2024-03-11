@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationBrawlerRat_Idle.anim",
     "frameRate": 30,
+    "isLooping": true,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Brawler_Idle.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Rat_Brawler_Idle.png",
     "totalSprites": 6
 }

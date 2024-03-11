@@ -795,6 +795,8 @@
                                 "PauseMenuCanvas": 3,
                                 "PhaseBanner": 17,
                                 "Portrait": 47,
+                                "RatKingJournal": 0,
+                                "RatKingPortrait": 0,
                                 "RatPortrait": 53,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
@@ -1707,7 +1709,7 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 64.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -1965,7 +1967,7 @@
                         "isActive": false,
                         "name": "LoseRestartButton",
                         "parent": 37,
-                        "sceneID": 13
+                        "sceneID": 40
                     },
                     "GUI": {
                         "disabled": false,
@@ -2042,7 +2044,7 @@
                         "isActive": false,
                         "name": "LoseRetryButton",
                         "parent": 37,
-                        "sceneID": 40
+                        "sceneID": 41
                     },
                     "GUI": {
                         "disabled": false,
@@ -2119,7 +2121,7 @@
                         "isActive": false,
                         "name": "youlosetextobj",
                         "parent": 37,
-                        "sceneID": 41
+                        "sceneID": 13
                     },
                     "GUIRenderer": {
                         "Color": {
