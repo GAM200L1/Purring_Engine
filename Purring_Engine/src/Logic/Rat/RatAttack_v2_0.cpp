@@ -43,9 +43,9 @@ namespace PE
 
         // Subscribe to events
         m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatAttack_v2_0::OnCollisionEnter, this);
-        m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnterAndStay, this);
-        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerEnterAndStay, this);
-        m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
+        m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnterAndStay, this);
+        m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerEnterAndStay, this);
+        m_triggerExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
 
         // Reset variables
         m_delay = 0.1f;
@@ -97,10 +97,10 @@ namespace PE
         gameStateController = nullptr;
 
         // Unsubscribe from collision events
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_triggerExitEventListener);
     }
 
     void RatAttack_v2_0::StateExit(EntityID id)

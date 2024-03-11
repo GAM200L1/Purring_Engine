@@ -117,7 +117,8 @@ namespace PE
 		int huntingTurnsLeft{}; // Number of turns left for the rat to spend hunting
 
 		// Event listener IDs 
-		int m_collisionEventListener{}, m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+		int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+		int m_triggerEnterEventListener{},  m_triggerStayEventListener{}, m_triggerExitEventListener{};
 
 		// Waypoints for level 1, starting from the left of the scene
 		std::vector<vec2> waypointsLevel1{

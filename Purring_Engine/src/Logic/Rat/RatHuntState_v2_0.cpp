@@ -36,9 +36,9 @@ namespace PE
 
 		// Subscribe to events
 		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatHunt_v2_0::OnCollisionEnter, this);
-		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatHunt_v2_0::OnTriggerEnterAndStay, this);
-		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatHunt_v2_0::OnTriggerEnterAndStay, this);
-		m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatHunt_v2_0::OnTriggerExit, this);
+		m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatHunt_v2_0::OnTriggerEnterAndStay, this);
+		m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatHunt_v2_0::OnTriggerEnterAndStay, this);
+		m_triggerExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatHunt_v2_0::OnTriggerExit, this);
 
 		// Store the ID of the cat being targeted and reset the hunting state
 		SetHuntTarget(targetId);
@@ -154,10 +154,10 @@ namespace PE
 			gameStateController = nullptr;
 
 			// Unsubscribe from events
-			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+			REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
-			REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
-			REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+			REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
+			REMOVE_KEY_COLLISION_LISTENER(m_triggerExitEventListener);
 	}
 
 
