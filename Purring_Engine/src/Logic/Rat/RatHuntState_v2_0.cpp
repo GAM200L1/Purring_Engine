@@ -21,12 +21,14 @@
 #include "Layers/LayerManager.h"
 
 //#define DEBUG_PRINT
-# define M_PI           3.14159265358979323846 
 
 namespace PE
 {
 	void RatHunt_v2_0::StateEnter(EntityID id)
 	{
+#ifdef DEBUG_PRINT
+			//std::cout << "RatHunt_v2_0::StateEnter(" << id << ")" << std::endl;
+#endif // DEBUG_PRINT
 		p_data = GETSCRIPTDATA(RatScript_v2_0, id);
 		gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		m_previousGameState = gameStateController->currentState;
@@ -148,7 +150,6 @@ namespace PE
 
 	void RatHunt_v2_0::StateCleanUp()
 	{
-			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(p_data->myID);
 			p_data = nullptr;
 			gameStateController = nullptr;
 
@@ -236,14 +237,12 @@ namespace PE
 		return finalTarget;
 	}
 
-	vec2 RatHunt_v2_0::RotatePoint( vec2 center,  vec2 point, float m)
+	vec2 RatHunt_v2_0::RotatePoint(vec2 center, vec2 point, float m)
 	{
-		float angle = m * (static_cast<float>(M_PI) / 180.0f);
+		float angleInRadians = ConvertDegToRad(m);
+		vec2 centerToPoint{point - center};
 
-		float newX = center.x + (point.x - center.x) * std::cos(angle) - (point.y - center.y) * std::sin(angle);
-		float newY = center.y + (point.x - center.x) * std::sin(angle) + (point.y - center.y) * std::cos(angle);
-
-		return vec2(newX, newY);
+		return Rotate(centerToPoint, angleInRadians) + center;
 	}
 
 	void RatHunt_v2_0::CheckIfShouldChangeStates()

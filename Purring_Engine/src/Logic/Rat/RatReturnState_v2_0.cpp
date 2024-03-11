@@ -54,7 +54,7 @@ namespace PE
 					if (StateJustChanged())
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
-							DisableTelegraphs();
+							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(p_data->myID);
 
 							// Play animation
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::WALK);
@@ -92,7 +92,7 @@ namespace PE
 
 									// ---- Update telegraph
 									// Rotate the telegraph to face the target
-									EnableTelegraphs(targetPosition);
+									GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableTelegraphs(p_data->myID, targetPosition);
 							}
 							break;
 					}
@@ -107,7 +107,6 @@ namespace PE
 
 	void RatReturn_v2_0::StateCleanUp()
 	{
-			DisableTelegraphs();
 			p_data = nullptr;
 			gameStateController = nullptr;
 
@@ -122,24 +121,6 @@ namespace PE
 	void RatReturn_v2_0::StateExit(EntityID)
 	{
 			// empty
-	}
-
-
-	void RatReturn_v2_0::EnableTelegraphs(vec2 const& targetPosition)
-	{
-			vec2 directionOfTarget{ targetPosition - RatScript_v2_0::GetEntityPosition(p_data->myID) };
-			float orientation = atan2(directionOfTarget.y, directionOfTarget.x);
-
-			// Rotate the telegraph
-			RatScript_v2_0::RotateEntityRelative(p_data->pivotEntityID, orientation);
-			RatScript_v2_0::ToggleEntity(p_data->pivotEntityID, true); // enable the telegraph parent
-			RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, true); // enable the telegraph
-	}
-
-
-	void RatReturn_v2_0::DisableTelegraphs()
-	{
-			RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false); // disable the telegraph
 	}
 
 

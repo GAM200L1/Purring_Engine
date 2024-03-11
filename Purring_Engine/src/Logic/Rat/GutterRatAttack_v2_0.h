@@ -19,10 +19,10 @@
 
 namespace PE
 {
-	struct GutterRatAttack_v2_0 : AttackDataBase_v2_0
+	class GutterRatAttack_v2_0 : public AttackDataBase_v2_0
 	{
 		// ----- Public variables ----- //
-
+	public:
 		// --- Misc variables
 		// Ensures that the attack feedback only plays once. Set to true once it has been played.
 		bool attackFeedbackOnce{ false }; 
@@ -32,8 +32,9 @@ namespace PE
 		float attackRadius{101.f};			 // Radius of attack collider
 		EntityID attackTelegraphEntityID{0}; // id of cross attack telegraph
 
-		// ----- Constructors ----- //
 
+		// ----- Constructors ----- //
+	public:
 		/*!***********************************************************************************
 		\brief Constructs the base attack object.
 					
@@ -46,8 +47,9 @@ namespace PE
 		*************************************************************************************/
 		~GutterRatAttack_v2_0() override { /* Empty by design */ }
 
-		// ----- Public methods ----- //
 
+		// ----- Public methods ----- //
+	public:
 		/*!***********************************************************************************
 		\brief Initializes the attack (e.g. position objects at the start position etc.).
 				Does nothing by default.

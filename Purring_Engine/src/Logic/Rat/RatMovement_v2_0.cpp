@@ -39,6 +39,10 @@ namespace PE
 
     void RatMovement_v2_0::StateEnter(EntityID id)
     {
+#ifdef DEBUG_PRINT
+        std::cout << "RatMovement_v2_0::StateEnter(" << id << ")" << std::endl;
+#endif // DEBUG_PRINT
+
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
         m_planningRunOnce = false;
@@ -87,6 +91,7 @@ namespace PE
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
 
                     // Switch to the attack state since we're close enough to the targets
+                    p_data->ratPlayerDistance = 0.f;
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(id);
                 }
                 break;
@@ -135,7 +140,6 @@ namespace PE
 
     void RatMovement_v2_0::StateCleanUp()
     {
-        p_data->ratPlayerDistance = 0.f;
         p_data = nullptr;
         gameStateController = nullptr;
 
