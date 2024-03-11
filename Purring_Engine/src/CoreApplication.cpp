@@ -94,7 +94,6 @@
 #include "Logic/RatScript.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/UI/HealthBarScript_v2_0.h"
-#include "Logic/Rat/RatDetectionScript_v2_0.h"
 #include "Logic/Rat/RatScript_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"

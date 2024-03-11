@@ -15,7 +15,6 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "RatScript_v2_0.h"
-#include "RatTempSTATE_v2_0.h"
 
 #include "../Physics/RigidBody.h"
 #include "../Physics/Colliders.h"
