@@ -38,6 +38,8 @@ namespace PE
 		m_scriptData[id].collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 
 		m_scriptData[id].currentAttackInSet = 3;
+
+		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(3);
 	}
 
 
