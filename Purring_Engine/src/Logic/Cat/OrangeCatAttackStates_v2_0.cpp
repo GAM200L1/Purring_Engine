@@ -129,6 +129,9 @@ namespace PE
 	void OrangeCatAttack_v2_0PLAN::Exit(EntityID id)
 	{
 		ToggleTelegraphs(false, false);
+
+		p_gsc = nullptr;
+		p_attackData = nullptr;
 	}
 
 	void OrangeCatAttack_v2_0PLAN::ResetSelection(EntityID id)
@@ -237,6 +240,8 @@ namespace PE
 		CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
 		// @TODO remove this temp solution
 		EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
+
+		p_attackData = nullptr;
 	}
 
 	void OrangeCatAttack_v2_0EXECUTE::SeismicCollided(const Event<CollisionEvents>& r_CE)

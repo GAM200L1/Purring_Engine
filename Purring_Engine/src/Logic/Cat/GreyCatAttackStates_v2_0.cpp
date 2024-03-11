@@ -170,6 +170,9 @@ namespace PE
 	{
 		// toggles all telegraphs except the selected one to false
 		ToggleTelegraphs(false, false);
+
+		p_gsc = nullptr;
+		p_attackData = nullptr;
 	}
 
 	void GreyCatAttack_v2_0PLAN::ResetSelection(EntityID id)
@@ -308,6 +311,8 @@ namespace PE
 		CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
 		m_projectileFired = false;
 		(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = false;
+
+		p_attackData = nullptr;
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::ProjectileCollided(const Event<CollisionEvents>& r_CE)

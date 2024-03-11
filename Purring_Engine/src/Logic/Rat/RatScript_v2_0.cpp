@@ -948,7 +948,7 @@ namespace PE
 				else 
 				{
 						PlayAnimation(ratId, EnumRatAnimations::HURT);
-						PlayInjuredAudio();
+						PlayInjuredAudio(ratId);
 				}
 		}
 
