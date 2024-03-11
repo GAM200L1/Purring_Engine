@@ -66,12 +66,12 @@ namespace PE
 			if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::DEATH)
 			{
 				PlayAnimation(BossRatAnimationsEnum::DEATH);
+				std::cout << "playaud" << std::endl;
 				PlayDeathAudio();
 			}
 
 			//keep in execution phase
 			m_scriptData[id].finishExecution = false;
-
 			if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
 			{
 				p_gsc->WinGame();

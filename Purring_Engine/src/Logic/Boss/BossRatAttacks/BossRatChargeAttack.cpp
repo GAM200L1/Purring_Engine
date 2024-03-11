@@ -128,9 +128,10 @@ namespace PE
 	{
 		if (m_travelTime < 0)
 		{
-			m_isCharging = false;
-			if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE)
+			if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && m_isCharging && p_data->curr_Anim != BossRatAnimationsEnum::DEATH)
 				p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
+			m_isCharging = false;
+
 		}
 	}
 
