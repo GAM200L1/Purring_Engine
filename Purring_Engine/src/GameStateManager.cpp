@@ -46,7 +46,7 @@ namespace PE
 
 			MenuTransitionSound();
 
-			EntityID bgm = serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+			EntityID bgm = serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -116,7 +116,7 @@ namespace PE
 			case GameStates::ATTACK:
 			case GameStates::EXECUTE:
 
-				bgm = serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+				bgm = serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 				if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 				EntityManager::GetInstance().RemoveEntity(bgm);
@@ -172,7 +172,7 @@ namespace PE
 		case GameStates::ATTACK:
 		case GameStates::EXECUTE:
 
-			bgm = serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+			bgm = serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -228,7 +228,7 @@ namespace PE
 	void GameStateManager::ResetDefaultState()
 	{
 			SetTurnNumber(0);
-			EntityID bgm = serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+			EntityID bgm = serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -310,7 +310,7 @@ namespace PE
 			
 			ButtonPressSound();
 
-			EntityID bgm = serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+			EntityID bgm = serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);

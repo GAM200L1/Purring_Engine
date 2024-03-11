@@ -229,5 +229,12 @@ namespace PE
 		 \param[in] id2 - ID of the second entity to check
 		*************************************************************************************/
 		bool CollideCatOrRat(EntityID id1, EntityID id2);
+
+		/*!***********************************************************************************
+		 \brief Plays projectile collided with another entity audio
+
+		 \param[in] isTerrain - if the projectile hit a terrain
+		*************************************************************************************/
+		void PlayProjectileHitAudio(bool isTerrain);
 	};
 }

@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/vo_Rat_Gutter_Detection3.wav",
+            "loop": false
+          },
+          "EntityDescriptor": {
+            "Prefab Type": "Rat Gutter Detection SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Rat Gutter Detection SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
+        },
+        "name": ""
+    }
+}

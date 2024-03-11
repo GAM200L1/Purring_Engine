@@ -62,7 +62,7 @@ namespace PE
 
 		// Play BGM
 		SerializationManager serializationManager;
-		bgm = serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+		bgm = serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm)) 
 		{
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
