@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationBrawlerRat_Attack.anim",
     "frameRate": 30,
+    "isLooping": false,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Brawler_Attack.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Rat_Brawler_Attack.png",
     "totalSprites": 6
 }
