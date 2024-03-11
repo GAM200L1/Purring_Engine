@@ -260,7 +260,6 @@ namespace PE
 
 	void OrangeCatAttack_v2_0EXECUTE::SeismicHitCatOrRat(EntityID id1, EntityID id2)
 	{
-		CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 		// kill cat if it is not following and not in cage and projectile hits catif (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 		if (id1 == p_attackData->seismicID)
 		{
@@ -269,7 +268,7 @@ namespace PE
 				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
 				return;
 			}
-			else if (p_catController->IsCatAndNotCaged(id2) && !p_catController->IsFollowCat(id2))
+			else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id2) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id2))
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
 				return;
@@ -286,7 +285,7 @@ namespace PE
 				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
 				return;
 			}
-			else if (p_catController->IsCatAndNotCaged(id1) && !p_catController->IsFollowCat(id1))
+			else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id1) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id1))
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
 				return;
