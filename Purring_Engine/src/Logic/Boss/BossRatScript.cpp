@@ -65,9 +65,10 @@ namespace PE
 
 		if (EntityManager::GetInstance().Has<AnimationComponent>(currentBoss) && m_scriptData[currentBoss].animationStates.size())
 		{
-			if(EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).HasAnimationEnded())
+			if(EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
 			{
-				EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).SetCurrentAnimationID(m_scriptData[currentBoss].animationStates["Idle"]);
+				if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::IDLE && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::CHARGE && m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::WALKFASTER)
+					PlayAnimation(BossRatAnimationsEnum::IDLE);
 			}
 		}
 	}
@@ -136,6 +137,7 @@ namespace PE
 	void BossRatScript::TakeDamage(int damage)
 	{
 		m_scriptData[currentBoss].currenthealth -= damage;
+		if(m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::WALKFASTER)
 		PlayAnimation(BossRatAnimationsEnum::HURT);
 	}
 
@@ -239,6 +241,7 @@ namespace PE
 
 	void BossRatScript::PlayAnimation(BossRatAnimationsEnum AnimationState)
 	{
+		m_scriptData[currentBoss].curr_Anim = AnimationState;
 		std::string animationState;
 		
 		switch (AnimationState)
@@ -272,8 +275,11 @@ namespace PE
 			{
 				try
 				{
-					if(EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationID() != m_scriptData[currentBoss].animationStates.at(animationState))
-					EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).SetCurrentAnimationID(m_scriptData[currentBoss].animationStates[animationState]);
+					if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationID() != m_scriptData[currentBoss].animationStates.at(animationState))
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).SetCurrentAnimationID(m_scriptData[currentBoss].animationStates[animationState]);
+						EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).PlayAnimation();
+					}
 				}
 				catch (...) { /* error */ }
 			}

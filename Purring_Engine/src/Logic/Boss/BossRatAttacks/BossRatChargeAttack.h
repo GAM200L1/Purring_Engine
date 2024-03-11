@@ -88,5 +88,7 @@ namespace PE
 		float m_activationTime{};
 		float m_chargeEndDelay{1.f};
 		float m_distanceTravelled{};
+
+		bool m_animationPlayed{ false };
 	};
 }

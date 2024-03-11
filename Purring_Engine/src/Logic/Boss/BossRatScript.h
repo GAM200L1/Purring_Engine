@@ -79,7 +79,10 @@ namespace PE
 		bool isCharging{ false };
 		float distanceBetweenPools{ 180 };
 
+		//animation variables
+		BossRatAnimationsEnum curr_Anim{ BossRatAnimationsEnum::IDLE };
 		std::map<std::string, std::string> animationStates;
+		
 		int collisionEnterEventKey,collisionStayEventKey;
 
 		int currentAttackSet{ 1 };
@@ -193,6 +196,7 @@ namespace PE
 		*************************************************************************************/
 		std::vector<EntityID> GetAllObstacles();
 
+		void PlayAnimation(BossRatAnimationsEnum AnimationState);
 		// ----- Private Members ----- //
 	private:
 		// --- STATE CHANGE --- //
@@ -221,7 +225,7 @@ namespace PE
 		*************************************************************************************/
 		bool IsObstacle(EntityID);
 
-		void PlayAnimation(BossRatAnimationsEnum AnimationState);
+
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;

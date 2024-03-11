@@ -109,7 +109,9 @@ namespace PE
 			Graphics::Renderer* tele_r = &EntityManager::GetInstance().Get<Graphics::Renderer>(id);
 			tele_r->SetColor(1, 1, 1, 0);
 		}
+		p_script->PlayAnimation(BossRatAnimationsEnum::ATTACK2);
 	}
+
 	void BossRatBashAttack::UpdateAttack(EntityID id, float dt)
 	{	
 		if (m_attackActivationTime > 0)
