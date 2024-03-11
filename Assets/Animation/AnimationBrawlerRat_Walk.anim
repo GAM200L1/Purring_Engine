@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationBrawlerRat_Walk.anim",
     "frameRate": 30,
+    "isLooping": true,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Brawler_Walk.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Rat_Brawler_Walk.png",
     "totalSprites": 6
 }

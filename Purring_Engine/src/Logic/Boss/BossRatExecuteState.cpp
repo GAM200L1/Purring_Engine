@@ -73,6 +73,13 @@ namespace PE
 					if (DistanceFromPuddle  < EntityManager::GetInstance().Get<Transform>(id).width / 2)
 					{
 						GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+
+						if (EntityManager::GetInstance().Has<AnimationComponent>(CatID))
+						{
+							if(EntityManager::GetInstance().Get<AnimationComponent>(CatID).GetAnimationID() != *(GETSCRIPTDATA(CatScript_v2_0,CatID).animationStates.at("Death")))
+							p_script->PlayPoisonPuddleAudio();
+						}
+
 					}
 				}
 				//x is negative y positive
@@ -81,6 +88,12 @@ namespace PE
 					if (DistanceFromPuddle + catTransform.width / 2 < EntityManager::GetInstance().Get<Transform>(id).width / 2)
 					{
 						GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+
+						if (EntityManager::GetInstance().Has<AnimationComponent>(CatID))
+						{
+							if (EntityManager::GetInstance().Get<AnimationComponent>(CatID).GetAnimationID() != *(GETSCRIPTDATA(CatScript_v2_0, CatID).animationStates.at("Death")))
+								p_script->PlayPoisonPuddleAudio();
+						}
 					}
 				}
 			}

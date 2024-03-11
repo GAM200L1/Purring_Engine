@@ -49,12 +49,12 @@ namespace PE
 
         // Subscribe to collision events
         m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatIdle_v2_0::OnCollisionEnter, this);
-        m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatIdle_v2_0::OnTriggerEnterAndStay, this);
-        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatIdle_v2_0::OnTriggerEnterAndStay, this);
-        m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatIdle_v2_0::OnTriggerExit, this);
+        m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatIdle_v2_0::OnTriggerEnterAndStay, this);
+        m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatIdle_v2_0::OnTriggerEnterAndStay, this);
+        m_triggerExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatIdle_v2_0::OnTriggerExit, this);
 
 #ifdef DEBUG_PRINT
-        std::cout << "RatIdle_v2_0::StateEnter(" << p_data->myID << ") m_collisionEventListener: " << m_collisionEventListener << ", m_collisionExitEventListener: " << m_collisionExitEventListener << std::endl;
+        std::cout << "RatIdle_v2_0::StateEnter(" << p_data->myID << ") m_collisionEventListener: " << m_triggerEnterEventListener << ", m_collisionExitEventListener: " << m_triggerExitEventListener << std::endl;
 #endif // DEBUG_PRINT
 
         // ----- Reset -----
@@ -147,7 +147,7 @@ namespace PE
             {
 #ifdef DEBUG_PRINT
                 std::cout << "RatIdle_v2_0::StateUpdate(" << id << "): GameStates_v2_0::EXECUTE, idle behaviour " << (int)m_type << std::endl;
-                std::cout << "RatIdle_v2_0::StateUpdate(" << p_data->myID << ") m_collisionEventListener: " << m_collisionEventListener << ", m_collisionExitEventListener: " << m_collisionExitEventListener << std::endl;
+                std::cout << "RatIdle_v2_0::StateUpdate(" << p_data->myID << ") m_collisionEventListener: " << m_triggerEnterEventListener << ", m_collisionExitEventListener: " << m_triggerExitEventListener << std::endl;
 #endif // DEBUG_PRINT
             }
 
@@ -238,16 +238,16 @@ namespace PE
     void RatIdle_v2_0::StateCleanUp()
     {
 #ifdef DEBUG_PRINT
-        std::cout << "RatIdle_v2_0::StateCleanUp(" << p_data->myID << ") m_collisionEventListener: " << m_collisionEventListener << ", m_collisionExitEventListener: " << m_collisionExitEventListener << std::endl;
+        std::cout << "RatIdle_v2_0::StateCleanUp(" << p_data->myID << ") m_collisionEventListener: " << m_triggerEnterEventListener << ", m_collisionExitEventListener: " << m_triggerExitEventListener << std::endl;
 #endif // DEBUG_PRINT
         p_data = nullptr;
         gameStateController = nullptr;
 
         // Unsubscribe from events
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_triggerExitEventListener);
     }
 
     void RatIdle_v2_0::StateExit(EntityID id)

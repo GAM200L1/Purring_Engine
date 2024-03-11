@@ -29,6 +29,19 @@ namespace PE
 		CHARGE
 	};
 
+	enum class BossRatAnimationsEnum
+	{
+		IDLE,
+		WALK,
+		WALKFASTER,
+		ATTACK1,
+		ATTACK2,
+		CHARGE,//channeling animation
+		HURT,
+		DEATH
+	};
+
+
 	struct BossRatScriptData
 	{
 		~BossRatScriptData()
@@ -66,7 +79,10 @@ namespace PE
 		bool isCharging{ false };
 		float distanceBetweenPools{ 180 };
 
+		//animation variables
+		BossRatAnimationsEnum curr_Anim{ BossRatAnimationsEnum::IDLE };
 		std::map<std::string, std::string> animationStates;
+		
 		int collisionEnterEventKey,collisionStayEventKey;
 
 		int currentAttackSet{ 1 };
@@ -82,7 +98,8 @@ namespace PE
 		EntityID currentBoss{};
 		int currentSlamTurnCounter{};
 		std::map<EntityID,int> poisonPuddles;
-
+		float executionTimeOutTime{ 30 };
+		float executionTimeOutTimer{ executionTimeOutTime };
 		BossRatAttacks bossRatAttackSets[3][3]
 		{
 			{BossRatAttacks::CHARGE,BossRatAttacks::SLAM,BossRatAttacks::BASH},
@@ -180,6 +197,42 @@ namespace PE
 		*************************************************************************************/
 		std::vector<EntityID> GetAllObstacles();
 
+		/*!***********************************************************************************
+		 \brief Play Animation on the Rat King
+		 \param[in] BossRatAnimationsEnum AnimationState animation to play
+		 \return void
+		*************************************************************************************/
+		void PlayAnimation(BossRatAnimationsEnum AnimationState);
+
+		/*!***********************************************************************************
+		 \brief Play Attack Audio
+		*************************************************************************************/
+		void PlayAttackAudio();
+
+		/*!***********************************************************************************
+		 \brief Play Hurt Audio
+		*************************************************************************************/
+		void PlayHurtAudio();
+
+		/*!***********************************************************************************
+		 \brief Play Death Audio
+		*************************************************************************************/
+		void PlayDeathAudio();
+
+		/*!***********************************************************************************
+		 \brief Play Poison Puddle Audio
+		*************************************************************************************/
+		void PlayPoisonPuddleAudio();
+
+		/*!***********************************************************************************
+		 \brief Play Slam Audio
+		*************************************************************************************/
+		void PlaySlamShockWaveAudio();
+
+		/*!***********************************************************************************
+		 \brief Play Bash Spike Audio
+		*************************************************************************************/
+		void PlayBashSpikeAudio();
 		// ----- Private Members ----- //
 	private:
 		// --- STATE CHANGE --- //
@@ -207,6 +260,8 @@ namespace PE
 		 \return bool whether an object is an obstacle
 		*************************************************************************************/
 		bool IsObstacle(EntityID);
+
+
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
