@@ -44,7 +44,7 @@ namespace PE
 		// Subscribe to events
 		m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, CatMovement_v2_0PLAN::OnMouseClick, this);
 		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
-		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovement_v2_0PLAN::OnPathCollision, this);
+		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
 
 		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
 
@@ -93,7 +93,7 @@ namespace PE
 		// If the mouse is being pressed
 		if (m_mouseClick && m_pathBeingDrawn)
 		{
-			if (p_data->catCurrentEnergy && !m_invalidPath) // Check if the player has sufficient energy
+			if (p_data->catCurrentEnergy) // Check if the player has sufficient energy
 			{
 				// Get the mouse position
 				vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
@@ -297,22 +297,16 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 	{
-		if (r_CE.GetType() == CollisionEvents::OnTriggerStay)
+		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
-			OnTriggerStayEvent OCEE = dynamic_cast<const OnTriggerStayEvent&>(r_CE);
+			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
 			// Check if the cat is colliding with an obstacle
-			if ((OCEE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OCEE.Entity2))
-				|| (OCEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OCEE.Entity1)))
+			if ((OTEE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity2))
+				|| (OTEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity1)))
 			{
 				// The entity is colliding with is an obstacle
 				SetPathColor(m_invalidPathColor); // Set the color of the path nodes to red
 				m_invalidPath = true;
-
-				SerializationManager m_serializationManager;
-				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Path Denial SFX1.prefab");
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				EntityManager::GetInstance().RemoveEntity(sound);
 			}
 		}
 	}

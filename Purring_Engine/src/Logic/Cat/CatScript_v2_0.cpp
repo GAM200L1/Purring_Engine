@@ -339,17 +339,6 @@ namespace PE
 		}
 		
 		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
-		
-		if (id == m_mainCatID)
-		{
-			for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
-			{
-				if (r_stateName == "MovementEXECUTE")
-					PlayAnimation(follower, "Walk");
-				else if (r_stateName == "AttackEXECUTE" || r_stateName == "PLANNING")
-					PlayAnimation(follower, "Idle");
-			}
-		}
 
 		auto ChangeToAttack = 
 		[&](EntityID animateID)
@@ -358,12 +347,12 @@ namespace PE
 			m_scriptData[animateID].p_stateManager->ChangeState(new AttackEXECUTE{}, animateID);
 
 			// reset and play attack animation
-			m_scriptData[animateID].p_catAnimation->SetCurrentFrameIndex(0);
+			m_scriptData[animateID].p_catAnimation->StopAnimation();
 			if (animateID == m_mainCatID)
 			{
 				for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
 				{
-					m_scriptData[follower].p_catAnimation->SetCurrentFrameIndex(0);
+					m_scriptData[follower].p_catAnimation->StopAnimation();
 				}
 			}
 			if (m_scriptData[animateID].attackSelected)
@@ -410,9 +399,10 @@ namespace PE
 					{
 						for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
 						{
-							m_scriptData[follower].p_catAnimation->SetCurrentFrameIndex(0);
+							m_scriptData[follower].p_catAnimation->StopAnimation();
 						}
 					}
+					m_scriptData[id].p_catAnimation->StopAnimation();
 					PlayAnimation(id, "Walk");
 				}
 				else // if not moving, immediately set to attack state
@@ -452,6 +442,17 @@ namespace PE
 				}
 			}
 		}
+
+		if (id == m_mainCatID)
+		{
+			for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
+			{
+				if (r_stateName == "MovementEXECUTE")
+					PlayAnimation(follower, "Walk");
+				else if (r_stateName == "AttackEXECUTE" || r_stateName == "PLANNING")
+					PlayAnimation(follower, "Idle");
+			}
+		}
 	}
 
 	void CatScript_v2_0::PlayAnimation(EntityID id, std::string const& r_animationState)
@@ -464,6 +465,7 @@ namespace PE
 				{
 					m_scriptData[id].p_catAnimation->SetCurrentAnimationID(m_scriptData[id].animationStates.at(r_animationState));
 				}
+				m_scriptData[id].p_catAnimation->PlayAnimation();
 			}
 			catch (...)
 			{
