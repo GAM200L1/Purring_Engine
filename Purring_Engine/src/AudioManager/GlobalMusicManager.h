@@ -127,6 +127,8 @@ namespace PE
         *************************************************************************************/
         const AudioState& GetCurrentState() const;
 
+        void StopAllAudio();
+
     private:
         std::map<std::string, std::shared_ptr<AudioComponent>> m_audioComponents;  // Map store audio components
         std::map<std::string, float> m_originalVolumes;  // Map to store original volumes of audio components

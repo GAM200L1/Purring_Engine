@@ -40,6 +40,7 @@
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif
+
 namespace PE
 {
 
@@ -129,9 +130,24 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
-		// Play audio BGM and BGM Ambience via GlobalMusicManager
-		GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music.prefab", true, 5.0f);
-		GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Ambience.prefab", true, 5.0f);
+		if (!bgmStarted)
+		{
+			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+			bgmStarted = true;
+		}
+
+		if (m_currentLevel == 1)
+		{
+			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 5.0f);
+		}
+
+		if (m_currentLevel == 2)
+		{
+			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 5.0f);
+			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music3.prefab", true, 5.0f);
+		}
 
 		ResetPhaseBanner(true);
 		m_nextTurnOnce = false;
@@ -308,7 +324,11 @@ namespace PE
 		PauseManager::GetInstance().SetPaused(false);
 
 		//pause the background music so it does not double play on next scene
-		PauseBGM();
+		//PauseBGM();
+		GlobalMusicManager::GetInstance().StopAllAudio();
+
+		// reset bgm flag
+		bgmStarted = false;
 	}
 
 	void GameStateController_v2_0::OnAttach(EntityID id)
@@ -1131,6 +1151,8 @@ namespace PE
 		PlayClickAudio();
 		PlaySceneTransition();
 
+		bgmStarted = false;
+
 		m_leveltoLoad = SceneManager::GetInstance().GetActiveScene();
 	}
 
@@ -1142,7 +1164,7 @@ namespace PE
 
 		switch (nextStage)
 		{
-		case 0: // 2nd level
+		case 0: // 1st level
 		{
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
@@ -1372,10 +1394,20 @@ namespace PE
 
 	void GameStateController_v2_0::PauseBGM()
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		EntityID bgm2 = m_serializationManager.LoadFromFile("AudioObject/Background Music2.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm2))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm2).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bgm2);
+
+		EntityID bgm3 = m_serializationManager.LoadFromFile("AudioObject/Background Music3.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm3))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm3).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bgm3);
 
 		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
@@ -1385,10 +1417,20 @@ namespace PE
 
 	void GameStateController_v2_0::ResumeBGM()
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		EntityID bgm2 = m_serializationManager.LoadFromFile("AudioObject/Background Music2.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm2))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm2).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bgm2);
+
+		EntityID bgm3 = m_serializationManager.LoadFromFile("AudioObject/Background Music3.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm3))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm3).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bgm3);
 
 		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))

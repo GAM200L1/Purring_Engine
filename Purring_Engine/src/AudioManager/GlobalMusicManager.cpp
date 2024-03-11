@@ -173,4 +173,18 @@ namespace PE
         m_fadeDuration = duration;
     }
 
+    void GlobalMusicManager::StopAllAudio()
+    {
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            if (audioComponent)
+            {
+                audioComponent->StopSound();
+            }
+        }
+
+        // Clear the map after stopping all sounds
+        m_audioComponents.clear();
+    }
+
 }
