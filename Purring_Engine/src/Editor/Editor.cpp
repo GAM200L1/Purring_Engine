@@ -5026,7 +5026,7 @@ namespace PE {
 							}
 							ImGui::EndChild();
 							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
-							if (ImGui::Button("Remove Script"))
+							if (ImGui::Button("Remove Action"))
 							{
 								if (actionIndex >= 0)
 								{
