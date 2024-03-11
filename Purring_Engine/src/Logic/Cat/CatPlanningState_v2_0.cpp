@@ -69,7 +69,6 @@ namespace PE
 				p_data->planningAttack = true;
 				m_doubleClick = 0;
 				p_catAttack->ForceZeroMouse();
-				// @TODO: Add open attack sound here
 			}
 			
 			if (PointCollision(r_catCollider, r_cursorPosition))

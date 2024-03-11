@@ -588,7 +588,7 @@ namespace PE
 
 							std::string soundPath;
 							int randomSelection = std::rand() % 5 + 1;
-
+							
 							//debug
 							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
 							//add a switch statement here

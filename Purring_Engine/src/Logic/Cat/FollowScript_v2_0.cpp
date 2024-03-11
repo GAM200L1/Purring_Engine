@@ -134,27 +134,6 @@ namespace PE
 		scriptData[id].prevPosition = CatHelperFunctions::GetEntityPosition(id);
 	}
 
-	void FollowScript_v2_0::PlayAdoptCatAudio()
-	{
-		int randomInteger = std::rand() % 2 + 1;
-		SerializationManager m_serializationManager;
-		EntityID sound{};
-
-		switch (randomInteger)
-		{
-		case 1:
-			sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX.prefab");
-			break;
-		case 2:
-			sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX2.prefab");
-			break;
-		}
-
-		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-		EntityManager::GetInstance().RemoveEntity(sound);
-	}
-
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)
 	{
 		// if not in execute state dont allow pick up
@@ -199,7 +178,7 @@ namespace PE
 					}
 				}
 				// play adopt audio
-				PlayAdoptCatAudio();
+				CatScript_v2_0::PlayRescueCatAudio(p_catData->catType);
 			}
 		}
 	}
