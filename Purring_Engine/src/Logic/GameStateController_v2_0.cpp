@@ -559,27 +559,28 @@ namespace PE
 							m_lastSelectedEntity = CatID;
 
 							EntityID sound{};
-								int randomInteger = std::rand() % 4 + 1;
+							int randomInteger = std::rand() % 4 + 1;
 
-								switch (randomInteger)
-								{
-								case 1:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX1.prefab");
-									break;
-								case 2:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX2.prefab");
-									break;
-								case 3:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX3.prefab");
-									break;							
-								case 4:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX4.prefab");
-									break;
-								}
+							switch (randomInteger)
+							{
+							case 1:
+								sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX1.prefab");
+								break;
+							case 2:
+								sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX2.prefab");
+								break;
+							case 3:
+								sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX3.prefab");
+								break;
+							case 4:
+								sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX4.prefab");
+								break;
+							}
 
 							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 							EntityManager::GetInstance().RemoveEntity(sound);
+
 
 							//debug
 							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;

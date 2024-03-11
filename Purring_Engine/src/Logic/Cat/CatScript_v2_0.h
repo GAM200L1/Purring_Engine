@@ -139,7 +139,33 @@ namespace PE
 		 \brief Returns the container of script data.
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
+
+		// ----- Audio Helper Functions ----- //
+		/*!***********************************************************************************
+		 \brief Plays the death audio depending on the cat type
+		*************************************************************************************/
+		static void PlayDeathAudio(EnumCatType catType);
+
+		/*!***********************************************************************************
+		 \brief Plays the path placement audio during movement planning
+		*************************************************************************************/
+		static void PlayPathPlacementAudio();
 		
+		/*!***********************************************************************************
+		 \brief Plays the footstep audio
+		*************************************************************************************/
+		static void PlayFootstepAudio();
+
+		/*!***********************************************************************************
+		 \brief Plays the attack audio depending on the cat type
+		*************************************************************************************/
+		static void PlayCatAttackAudio(EnumCatType catType);
+
+		/*!***********************************************************************************
+		 \brief Plays the rescure audio depending on the cat type
+		*************************************************************************************/
+		static void PlayRescueCatAudio(EnumCatType catType);
+
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;

@@ -216,7 +216,7 @@ namespace PE
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, true);
 				m_seismicSlammed = true;
 				r_seismicAnimation.SetCurrentFrameIndex(0);
-				// @TODO add sound
+				CatScript_v2_0::PlayCatAttackAudio(EnumCatType::ORANGECAT);
 			}
 			else 
 			{

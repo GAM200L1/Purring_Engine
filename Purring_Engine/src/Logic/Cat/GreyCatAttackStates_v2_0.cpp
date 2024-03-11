@@ -286,34 +286,10 @@ namespace PE
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ApplyLinearImpulse(m_bulletImpulse);
 				m_projectileFired = true;
 				
-				// ----- Attacking Audio ----- //
-				SerializationManager m_serializationManager;
-				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX.prefab");
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				EntityManager::GetInstance().RemoveEntity(sound);
-
-					int randomInteger = std::rand() % 3 + 1;
-
-					switch (randomInteger)
-					{
-					case 1:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX1.prefab");
-						break;
-					case 2:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX2.prefab");
-						break;
-					case 3:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX3.prefab");
-						break;
-					}
-
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				EntityManager::GetInstance().RemoveEntity(sound);
-
+				CatScript_v2_0::PlayCatAttackAudio(p_catData->catType);
 			}
-			else {
+			else 
+			{
 				m_bulletDelay -= deltaTime;
 			}
 		}
