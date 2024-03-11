@@ -315,8 +315,7 @@ namespace PE
 				std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
 				PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 
-				// DEBUGHANS @PR-ER
-				//std::cout << "[DEBUG] Path collision w/ obstacle. Playing sound: " << soundPrefabPath << std::endl;
+				
 			}
 		}
 	}

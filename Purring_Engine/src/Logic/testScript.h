@@ -88,6 +88,12 @@ namespace PE
 		 \return void
 		*************************************************************************************/
 		~testScript();
+
+		testScript();
+
+		void TestFunction(EntityID);
+		void TestFunction2(EntityID);
+		void TestFunction3(EntityID);
 	private:
 		std::map<EntityID, TestScriptData> m_ScriptData;
 	};

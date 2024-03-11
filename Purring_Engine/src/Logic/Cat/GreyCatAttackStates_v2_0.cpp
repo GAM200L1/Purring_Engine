@@ -26,6 +26,7 @@
 
 #include "Hierarchy/HierarchyManager.h"
 #include "Physics/CollisionManager.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 namespace PE
 {
@@ -340,16 +341,24 @@ namespace PE
 				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 				{
 					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id2) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
 					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					PlayProjectileHitAudio(false);
+					return true;
+				}
+				else if (CatHelperFunctions::IsObstacle(id2))
+				{
+					PlayProjectileHitAudio(true);
 					return true;
 				}
 			}
@@ -358,20 +367,51 @@ namespace PE
 				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 				{
 					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id1) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id1))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
 					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					PlayProjectileHitAudio(false);
+					return true;
+				}
+				else if (CatHelperFunctions::IsObstacle(id1))
+				{
+					PlayProjectileHitAudio(true);
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+
+	void GreyCatAttack_v2_0EXECUTE::PlayProjectileHitAudio(bool isTerrain)
+	{
+		std::string soundPrefabPath = "AudioObject/Projectile Hit Sound SFX";
+
+		if (isTerrain)
+		{
+			// @TODOHANS
+			// add projectile hit terrain audio here
+
+			// KL say no terrain sound yet.
+		}
+		else
+		{
+			int randomSoundIndex = std::rand() % 3 + 1;  // random number between 1 and 3
+			soundPrefabPath += std::to_string(randomSoundIndex) + ".prefab";
+
+			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+		}
+
+		
+
 	}
 }

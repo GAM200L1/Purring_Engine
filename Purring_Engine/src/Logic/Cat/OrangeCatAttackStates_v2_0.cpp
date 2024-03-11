@@ -27,6 +27,7 @@
 #include "CatScript_v2_0.h"
 #include "CatHelperFunctions.h"
 #include "Logic/Boss/BossRatScript.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 namespace PE
 {
@@ -213,6 +214,7 @@ namespace PE
 				m_seismicSlammed = true;
 				r_seismicAnimation.PlayAnimation();
 				CatScript_v2_0::PlayCatAttackAudio(EnumCatType::ORANGECAT);
+				PlaySeismicAudio();
 			}
 			else 
 			{
@@ -289,5 +291,14 @@ namespace PE
 				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
 			}
 		}
+	}
+
+	void OrangeCatAttack_v2_0EXECUTE::PlaySeismicAudio()
+	{
+		// Path to the seismic shockwave audio prefab
+		std::string soundPrefabPath = "AudioObject/Cat Shockwave SFX1.prefab";
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+	
 	}
 }

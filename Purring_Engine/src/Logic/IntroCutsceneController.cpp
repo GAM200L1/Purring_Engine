@@ -54,7 +54,7 @@ namespace PE
 				EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PauseSound();
 			EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 
-			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music1.prefab");
+			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -71,7 +71,7 @@ namespace PE
 					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PlayAudioSound(AudioComponent::AudioType::BGM);
 				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 
-				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music1.prefab");
+				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
 				EntityManager::GetInstance().RemoveEntity(bgm);
@@ -85,7 +85,7 @@ namespace PE
 					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).StopSound();
 				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 
-				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music1.prefab");
+				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 				EntityManager::GetInstance().RemoveEntity(bgm);

@@ -48,9 +48,9 @@ namespace PE
 
     }
 
-    void GlobalMusicManager::PlayBGM(const std::string& prefabPath, bool loop, float fadeInDuration)
+    void GlobalMusicManager::PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration)
     {
-        EntityID audioEntity = m_serializationManager.LoadFromFile(prefabPath);
+        EntityID audioEntity = m_serializationManager.LoadFromFile(r_prefabPath);
         if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
         {
             auto& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
@@ -66,20 +66,20 @@ namespace PE
             }
 
             audioComponent.PlayAudioSound(AudioComponent::AudioType::BGM);
-            m_audioComponents[prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+            m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
 
-    void GlobalMusicManager::PlaySFX(const std::string& prefabPath, bool loop)
+    void GlobalMusicManager::PlaySFX(const std::string& r_prefabPath, bool loop)
     {
-        EntityID audioEntity = m_serializationManager.LoadFromFile(prefabPath);
+        EntityID audioEntity = m_serializationManager.LoadFromFile(r_prefabPath);
         if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
         {
             auto audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
             audioComponent.SetLoop(loop);
             audioComponent.PlayAudioSound(AudioComponent::AudioType::SFX);
-            m_audioComponents[prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+            m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
@@ -123,14 +123,14 @@ namespace PE
         }
     }
 
-    std::shared_ptr<AudioComponent> GlobalMusicManager::GetOrCreateAudioComponent(const std::string& trackKey)
+    std::shared_ptr<AudioComponent> GlobalMusicManager::GetOrCreateAudioComponent(const std::string& r_trackKey)
     {
-        auto it = m_audioComponents.find(trackKey);
+        auto it = m_audioComponents.find(r_trackKey);
         if (it == m_audioComponents.end())
         {
             auto audioComponent = std::make_shared<AudioComponent>();
-            audioComponent->SetAudioKey(trackKey);
-            it = m_audioComponents.emplace(trackKey, audioComponent).first;
+            audioComponent->SetAudioKey(r_trackKey);
+            it = m_audioComponents.emplace(r_trackKey, audioComponent).first;
         }
         return it->second;
     }

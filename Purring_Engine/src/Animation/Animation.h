@@ -28,6 +28,29 @@ namespace PE
 	// forward declare animation class
 	class Animation;
 
+	struct AnimationAction
+	{
+		std::string scriptName;
+		std::string scriptFunction;
+
+		/*!***********************************************************************************
+		\brief Overloaded operator for comparing two AnimationAction objects.
+
+		\return bool value if the two AnimationAction objects are equal.
+		*************************************************************************************/
+		bool operator==(AnimationAction const& rhs)
+		{
+			return scriptName == rhs.scriptName && scriptFunction == rhs.scriptFunction;
+		}
+
+		/*!***********************************************************************************
+		\brief Serializes the data attached to this action.
+
+		\return A JSON object with the data of this action.
+		*************************************************************************************/
+		nlohmann::json ToJson() const;
+	};
+
 	class AnimationComponent
 	{
 		// ----- Public functions ----- //
@@ -183,6 +206,13 @@ namespace PE
 		inline bool IsPlaying() const { return m_isPlaying; }
 
 		/*!***********************************************************************************
+		 \brief Check if animation just entered a new frame.
+
+		 \return bool value of the animation on frame enter.
+		*************************************************************************************/
+		inline bool OnFrameEnter() const { return m_onFrameEnter; }
+
+		/*!***********************************************************************************
 		 \brief Serializes the data attached to this component.
 
 		 \param[in] id The id of the entity that owns this component.
@@ -211,12 +241,13 @@ namespace PE
 
 		// new stuff to serialize
 
-
 		// do not need to serialize
 		float m_currentFrameTime{}; // current frame time of the animation
 		unsigned m_currentFrameIndex{}; // current frame index of the animation
 		bool m_isPlaying{ true }; // is the animation playing, true by default
 		bool m_animationEnded{ false }; // has the animation ended, false by default
+		bool m_onFrameEnter{ true }; // true when the animation enters a new frame
+		bool m_frameChanged{ true }; // true when the frame has changed
 
 		// add later
 		//std::map<std::string, std::shared_ptr<Animation>> m_animationsMap; // Stores all animations for the component - need this for states? not sure if just key is enough
@@ -236,6 +267,9 @@ namespace PE
 
 		// un-comment if not using spritesheet
 		std::string m_textureKey;
+
+		// Need to serialize
+		std::vector<AnimationAction> actions;
 
 		/*!***********************************************************************************
 		 \brief Serializes the data attached to this frame.
@@ -303,7 +337,7 @@ namespace PE
 		 \param[in] deltaTime Time since last update.
 		 \param[in] r_animationComponent
 		*************************************************************************************/
-		void UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent);
+		void UpdateAnimationFrame(float deltaTime, EntityID id);
 
 		/*!***********************************************************************************
 			\brief Get the current frame of the animation.
@@ -352,6 +386,22 @@ namespace PE
 		 \param[in] textureKey Identifier for the texture to display in this frame.
 		*************************************************************************************/
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, std::string textureKey);
+
+		/*!***********************************************************************************
+		 \brief Add animation action to the current frame.
+
+		 \param[in] currentFrameIndex Index of the current frame.
+		 \param[in] action Name of script function to add.
+		*************************************************************************************/
+		void AddCurrentAnimationFrameAction(unsigned currentFrameIndex, AnimationAction action);
+
+		/*!***********************************************************************************
+		 \brief Remove animation action to the current frame.
+
+		 \param[in] currentFrameIndex Index of the current frame.
+		 \param[in] action Name of script function to remove.
+		*************************************************************************************/
+		void RemoveCurrentAnimationFrameAction(unsigned currentFrameIndex, AnimationAction action);
 
 		/*!***********************************************************************************
 		 \brief Set the frame rate of the animation
@@ -453,7 +503,6 @@ namespace PE
 		 \return The animation with the loaded values;
 		*************************************************************************************/
 		Animation& Deserialize(const nlohmann::json& r_j);
-
 
 		// ----- Private Variables ----- //
 	private:

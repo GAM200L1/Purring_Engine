@@ -310,8 +310,7 @@ namespace PE
 
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Attack SFX" + std::to_string(randSound) + ".prefab";
 
-			// DEBUGHANS @PR-ER
-			//std::cout << "[Debug] Playing attack audio: " << soundPrefab << std::endl;
+		
 
 			PlayAudio(soundPrefab);
 		}
@@ -344,8 +343,7 @@ namespace PE
 
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Death SFX" + std::to_string(randSound) + ".prefab";
 
-			// DEBUGHANS @PR-ER
-			//std::cout << "[Debug] Playing death audio: " << soundPrefab << std::endl;
+			
 
 			PlayAudio(soundPrefab);
 		}
@@ -379,8 +377,7 @@ namespace PE
 
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Detection SFX" + std::to_string(randSound) + ".prefab";
 
-			// DEBUGHANS @PR-ER
-			//std::cout << "[Debug] Playing detection audio: " << soundPrefab << std::endl;
+			
 
 			PlayAudio(soundPrefab);
 		}
@@ -414,8 +411,7 @@ namespace PE
 
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Injured SFX" + std::to_string(randSound) + ".prefab";
 
-			// DEBUGHANS @PR-ER
-			//std::cout << "[Debug] Playing injured audio: " << soundPrefab << std::endl;
+			
 
 			PlayAudio(soundPrefab);
 		}
@@ -939,17 +935,17 @@ namespace PE
 			// Subtract the damage from the rat's health
 			it->second.ratHealth -= damage;
 
-				// Check if the rat's health drops below or equals zero
-				if (it->second.ratHealth <= 0)
-				{
-						// Kill the rat
-						KillRat(ratId);
-				}
-				else 
-				{
-						PlayAnimation(ratId, EnumRatAnimations::HURT);
-						PlayInjuredAudio(ratId);
-				}
+			// Check if the rat's health drops below or equals zero
+			if (it->second.ratHealth <= 0)
+			{
+				// Kill the rat
+				KillRat(ratId);
+			}
+			else 
+			{
+				PlayAnimation(ratId, EnumRatAnimations::HURT);
+				PlayInjuredAudio(ratId);
+			}
 		}
 
 

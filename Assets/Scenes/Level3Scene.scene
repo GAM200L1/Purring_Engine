@@ -446,7 +446,7 @@
                         "isActive": false,
                         "name": "areyousure",
                         "parent": 8,
-                        "sceneID": 9
+                        "sceneID": 5
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -487,7 +487,7 @@
                         "isActive": false,
                         "name": "yesbutton",
                         "parent": 8,
-                        "sceneID": 5
+                        "sceneID": 11
                     },
                     "GUI": {
                         "disabled": false,
@@ -564,7 +564,7 @@
                         "isActive": false,
                         "name": "LeaveSadCat",
                         "parent": 8,
-                        "sceneID": 11
+                        "sceneID": 9
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -583,7 +583,7 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 47.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -3078,7 +3078,7 @@
                         "isActive": false,
                         "name": "RestartYes",
                         "parent": 64,
-                        "sceneID": 65
+                        "sceneID": 67
                     },
                     "GUI": {
                         "disabled": false,
@@ -3155,7 +3155,7 @@
                         "isActive": false,
                         "name": "AreYouSure",
                         "parent": 64,
-                        "sceneID": 66
+                        "sceneID": 65
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3196,7 +3196,7 @@
                         "isActive": false,
                         "name": "RestartSadCat",
                         "parent": 64,
-                        "sceneID": 67
+                        "sceneID": 66
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3215,7 +3215,7 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 47.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -3393,7 +3393,7 @@
                         "isActive": true,
                         "name": "DeploymentArea",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 19
                     },
                     "Renderer": {
                         "Color": {
@@ -3461,7 +3461,7 @@
                         "isActive": true,
                         "name": "DeployTexture",
                         "parent": null,
-                        "sceneID": 21
+                        "sceneID": 20
                     },
                     "Renderer": {
                         "Color": {
@@ -3508,7 +3508,7 @@
                         "isActive": true,
                         "name": "NoGoAreas",
                         "parent": null,
-                        "sceneID": 22
+                        "sceneID": 21
                     },
                     "Renderer": {
                         "Color": {
@@ -3764,7 +3764,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 39
+                        "sceneID": 34
                     },
                     "Renderer": {
                         "Color": {
@@ -3833,7 +3833,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 41
+                        "sceneID": 35
                     },
                     "Renderer": {
                         "Color": {
@@ -3902,7 +3902,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 42
+                        "sceneID": 36
                     },
                     "Renderer": {
                         "Color": {
@@ -3971,7 +3971,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 108
+                        "sceneID": 41
                     },
                     "Renderer": {
                         "Color": {
@@ -4040,7 +4040,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 109
+                        "sceneID": 42
                     },
                     "Renderer": {
                         "Color": {
@@ -4109,7 +4109,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 28
+                        "sceneID": 23
                     },
                     "Renderer": {
                         "Color": {
@@ -4178,7 +4178,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 29
+                        "sceneID": 24
                     },
                     "Renderer": {
                         "Color": {
@@ -4247,7 +4247,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 30
+                        "sceneID": 25
                     },
                     "Renderer": {
                         "Color": {
@@ -4316,7 +4316,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 31
+                        "sceneID": 26
                     },
                     "Renderer": {
                         "Color": {
@@ -4385,7 +4385,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 32
+                        "sceneID": 27
                     },
                     "Renderer": {
                         "Color": {
@@ -4454,7 +4454,7 @@
                         "isActive": true,
                         "name": "Exit Point",
                         "parent": null,
-                        "sceneID": 33
+                        "sceneID": 28
                     },
                     "Renderer": {
                         "Color": {
@@ -4518,7 +4518,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 34
+                        "sceneID": 29
                     },
                     "Renderer": {
                         "Color": {
@@ -4587,7 +4587,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 35
+                        "sceneID": 30
                     },
                     "Renderer": {
                         "Color": {
@@ -4656,7 +4656,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 36
+                        "sceneID": 31
                     },
                     "Renderer": {
                         "Color": {
@@ -4725,7 +4725,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 37
+                        "sceneID": 32
                     },
                     "Renderer": {
                         "Color": {
@@ -4794,7 +4794,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 38
+                        "sceneID": 33
                     },
                     "Renderer": {
                         "Color": {
@@ -4925,7 +4925,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 23
+                        "sceneID": 22
                     },
                     "Transform": {
                         "height": 100.0,
@@ -5014,7 +5014,8 @@
                             61,
                             98,
                             110,
-                            112
+                            112,
+                            116
                         ],
                         "isActive": true,
                         "name": "Canvas Object",
@@ -5708,7 +5709,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 95
+                        "sceneID": 38
                     },
                     "Renderer": {
                         "Color": {
@@ -5777,7 +5778,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 106
+                        "sceneID": 39
                     },
                     "Renderer": {
                         "Color": {
@@ -5846,7 +5847,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 107
+                        "sceneID": 40
                     },
                     "Renderer": {
                         "Color": {
@@ -6285,8 +6286,8 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 500.0000305175781,
-                                "y": -69.99996948242188
+                                "x": 249.5,
+                                "y": 41.000030517578125
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -6307,7 +6308,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 71
+                        "sceneID": 37
                     },
                     "Renderer": {
                         "Color": {
@@ -6316,7 +6317,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -6347,8 +6348,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 500.0000305175781,
-                            "y": -69.99996948242188
+                            "x": 249.5,
+                            "y": 41.000030517578125
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -6400,7 +6401,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 116
+                        "sceneID": 43
                     },
                     "Renderer": {
                         "Color": {
@@ -6409,7 +6410,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -6493,7 +6494,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 117
+                        "sceneID": 44
                     },
                     "Renderer": {
                         "Color": {
@@ -6502,7 +6503,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -6586,7 +6587,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 118
+                        "sceneID": 45
                     },
                     "Renderer": {
                         "Color": {
@@ -6595,7 +6596,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -6635,6 +6636,362 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationSniperRat_Attack.anim",
+                            "../Assets/Animation/AnimationSniperRat_Death.anim",
+                            "../Assets/Animation/AnimationSniperRat_Hurt.anim",
+                            "../Assets/Animation/AnimationSniperRat_Idle.anim",
+                            "../Assets/Animation/AnimationSniperRat_Walk.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationSniperRat_Idle.anim"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "center": {
+                                "x": 406.4998474121094,
+                                "y": -140.99996948242188
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 1,
+                        "Layer": 1,
+                        "Old ID": 109,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SniperRat",
+                        "parent": null,
+                        "sceneID": 119
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Sniper_Idle.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationSniperRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationSniperRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationSniperRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationSniperRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationSniperRat_Walk.anim"
+                                },
+                                "detectionRadius": 320.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 128.0,
+                                "movementSpeed": 400.0,
+                                "ratMaxHealth": 3,
+                                "ratType": 3
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 406.4998474121094,
+                            "y": -140.99996948242188
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 85,
+                        "Prefab Type": "WorldHealthBar",
+                        "children": [
+                            117,
+                            118
+                        ],
+                        "isActive": true,
+                        "name": "WorldHealthBar",
+                        "parent": 60,
+                        "sceneID": 116
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 1.0,
+                        "m_currentWidth": 16.0,
+                        "m_currentXpos": 32.0,
+                        "m_defaultColor": [
+                            0.3607843220233917,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.9882352948188782,
+                            0.23137255012989044,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 32.0,
+                        "m_hoveredColor": [
+                            0.9254902005195618,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": true,
+                        "m_knobID": 117,
+                        "m_maxValue": 1.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -32.0
+                    },
+                    "ScriptComponent": {
+                        "HealthBarScript_v2_0": {
+                            "data": {
+                                "FollowObjectID": 109,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 16.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 1355.0001220703125,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 1355.0001220703125,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 86,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SliderKnob",
+                        "parent": 116,
+                        "sceneID": 117
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 16.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 1355.0001220703125,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 89,
+                        "Prefab Type": "WorldHealthBarFrame",
+                        "children": [],
+                        "isActive": true,
+                        "name": "WorldHealthBarFrame",
+                        "parent": 116,
+                        "sceneID": 118
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 1355.0001220703125,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 70.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 4,
+                        "data": {
+                            "max": {
+                                "x": 119.80006408691406,
+                                "y": 22.87696075439453
+                            },
+                            "min": {
+                                "x": 9.80002212524414,
+                                "y": -103.27689361572266
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 120,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Obstacle",
+                        "parent": null,
+                        "sceneID": 120
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
+                    "Transform": {
+                        "height": 126.15385437011719,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 64.80004119873047,
+                            "y": -40.19996643066406
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 110.00003814697266
                     }
                 },
                 "name": ""
