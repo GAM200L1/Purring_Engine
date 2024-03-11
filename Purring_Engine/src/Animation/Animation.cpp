@@ -35,8 +35,6 @@ extern Logger engine_logger;
 
 namespace PE
 {
-	std::map<std::string_view, std::function<void()>> AnimationManager::m_animationFunctions;
-
 	Animation::Animation() : m_totalSprites{ 6 }, m_frameRate{ 30 }
 	{
 
@@ -662,10 +660,5 @@ namespace PE
 				EntityManager::GetInstance().Get<AnimationComponent>(id).StopAnimation();
 			}
 		}
-	}
-
-	void AnimationManager::AddFunction(std::string_view str, const std::function<void()>& func)
-	{
-		m_animationFunctions[str] = func;
 	}
 }

@@ -23,16 +23,8 @@
 #include "Math/MathCustom.h"
 #include "ECS/Entity.h"
 
-#define	REGISTER_ANIMATION_FUNCTION(func,namespace) AnimationManager::AddFunction(#func, [this]() { this->##func(); })
-
-
 namespace PE
 {
-	//template<typename T>
-	//class AnimationEvent
-	//{
-	//	T operator()
-	//};
 	// forward declare animation class
 	class Animation;
 
@@ -615,15 +607,10 @@ namespace PE
 		*************************************************************************************/
 		void StopAllAnimations() const;
 
-		// documentation
-		static void AddFunction(std::string_view str, const std::function<void()>& func);
-
 		// ----- Private Variables ----- //
 	private:
 		//std::map<std::string, Animation> m_animations;
         std::string m_systemName{ "Animation" };
-
-		static std::map<std::string_view, std::function<void()>> m_animationFunctions;
 	};
 
 }
