@@ -504,8 +504,13 @@ void PE::CoreApplication::Run()
     EntityID id = serializationManager.LoadFromFile("EmptyObject.prefab");
     EntityManager::GetInstance().Assign<ParticleEmitter>(id);
     auto& pe = EntityManager::GetInstance().Get<ParticleEmitter>(id);
-    pe.startColor = vec4(1.f,1.f,1.f,1.f);
-    pe.startScale = vec2(1.f, 1.f);
+    pe.maxParticles = 5;
+    pe.startColor = vec4(1.f,0.f,0.f,0.5f);
+    pe.startScale = vec2(10.f, 10.f);
+    pe.scaleChangeSpeed = vec2(-20.f, -20.f);
+    pe.endScale = vec2(0.f, 0.f);
+    pe.startLifetime = 10;
+    pe.minMaxSpeed = vec2{ 1.f, 100.f };
     pe.isActive = true;
     pe.isLooping = true;
     pe.SetParent(id);

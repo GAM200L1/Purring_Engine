@@ -27,13 +27,13 @@ namespace PE
 		emissionRate{ 1 }, emissionDuration{ 5.f }, startLifetime{ 1.f }, startSpeed{ 1.f },
 		startDelay{ 0.f }, startRotation{ 0.f }, startScale{ 1.f, 1.f }, startColor{ 1.f,1.f,1.f,1.f },
 		endDelay{ 0.f }, endRotation{ 0.f }, endScale{ 1.f, 1.f }, endColor{ 1.f,1.f,1.f,1.f },
-		emissionDirection{ 1.f }, emissionVector{ sinf(emissionDirection), cosf(emissionDirection) },
-		emissionArc{ M_PI * 2 }, startEmissionRadius{ 1.f }, emissionElapsed{ emissionDuration },
+		emissionDirection{ 0.f }, emissionVector{ sinf(emissionDirection), cosf(emissionDirection) },
+		emissionArc{ M_PI * 0.5f }, startEmissionRadius{ 1.f }, emissionElapsed{ emissionDuration },
 		randomnessFactor{ 0.f }
 	{
 		emissionVector.Normalize();
 		orientationChangeSpeed = (endRotation - startRotation) / emissionDuration;
-		scaleChangeSpeed = (endScale - startScale) / emissionDuration;
+		//scaleChangeSpeed = (endScale - startScale) / emissionDuration;
 		colorChangeSpeed = (endColor - startColor) / emissionDuration;
 	}
 
@@ -78,21 +78,21 @@ namespace PE
 		particlesResetted = false;
 
 		// if emission duration finished
-		if (emissionElapsed <= 0.f)
-		{
-			if (!isLooping)
-				return;
-			else // if looping
-				emissionElapsed = emissionDuration;
-		}
-		emissionElapsed -= deltaTime;
+		//if (emissionElapsed <= 0.f)
+		//{
+		//	if (!isLooping)
+		//		return;
+		//	else // if looping
+		//		emissionElapsed = emissionDuration;
+		//}
+		//emissionElapsed -= deltaTime;
 		
 		for (Particle& r_particle : particles)
 		{
 			if (r_particle.lifetime <= 0.f) {
 
 				// when lifetime of individual particle is depleted reset lifetime
-				vec2 const& r_particleStartPosition{ GeneratePosition(startEmissionRadius) };
+				//vec2 const& r_particleStartPosition{ GeneratePosition(startEmissionRadius) };
 				//r_particle.Reset(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
 			}
 			else
@@ -103,10 +103,21 @@ namespace PE
 				}
 				if (!r_particle.Update(deltaTime))
 				{
-					// reset the particle
-					auto pos = GeneratePosition(startEmissionRadius);
-					r_particle.Reset(particleType, pos, startScale, GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, startLifetime);
+					if (isLooping)
+					{
+						// reset the particle
+						auto pos = GeneratePosition(startEmissionRadius);
+						std::mt19937 generator(seed());
+						std::uniform_real_distribution<float> distributor(minMaxSpeed.x, minMaxSpeed.y);
+						std::uniform_real_distribution<float> distributorScale(endScale.Length(), startScale.Length());
+						r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime);
+					}
+					else
+					{
+						r_particle.enabled = false;
+					}
 				}
+				
 				//r_particle.UpdatePosition(startSpeed * deltaTime);
 				//r_particle.UpdateRotation(orientationChangeSpeed * deltaTime);
 				//r_particle.UpdateScale(scaleChangeSpeed.x * deltaTime, scaleChangeSpeed.y * deltaTime);
@@ -123,7 +134,10 @@ namespace PE
 		for (unsigned i = 0; i < maxParticles; i++)
 		{
 			auto pos = GeneratePosition(startEmissionRadius);
-			particles.emplace_back(Particle(particleType, pos, startScale, GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, startLifetime));
+			std::mt19937 generator(seed());
+			std::uniform_real_distribution<float> distributor(minMaxSpeed.x, minMaxSpeed.y);
+			std::uniform_real_distribution<float> distributorScale(endScale.Length(), startScale.Length());
+			particles.emplace_back(Particle(particleType, pos, vec2(1.f,1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime));
 		}
 	}
 
@@ -135,7 +149,10 @@ namespace PE
 			//r_particle.Reset(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
 			//r_particle.enabled = true;
 			auto pos = GeneratePosition(startEmissionRadius);
-			r_particle.Reset(particleType, pos, startScale, GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, startLifetime);
+			std::mt19937 generator(seed());
+			std::uniform_real_distribution<float> distributor(minMaxSpeed.x, minMaxSpeed.y);
+			std::uniform_real_distribution<float> distributorScale(endScale.Length(), startScale.Length());
+			r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime);
 		}
 	}
 

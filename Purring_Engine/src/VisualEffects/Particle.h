@@ -41,8 +41,9 @@ namespace PE
 				 const vec2& r_dir, 
 				 const vec2& r_dScl, 
 				 const float& r_dr, 
+			     const float& r_spd,
 				 const float& r_lifetime)
-			: type(r_tp), directionVector(r_dir), deltaScale(r_dScl), deltaOrientation(r_dr), lifetime(r_lifetime)
+			: type(r_tp), directionVector(r_dir), deltaScale(r_dScl), deltaOrientation(r_dr),speed(r_spd), lifetime(r_lifetime)
 		{
 			transform.position = r_p;
 			transform.height = r_scl.y;
@@ -56,6 +57,7 @@ namespace PE
 				   const vec2& r_dir,
 				   const vec2& r_dScl,
 				   const float& r_dr,
+				   const float& r_spd,
 				   const float& r_lifetime)
 		{
 			type = r_tp;
@@ -69,7 +71,7 @@ namespace PE
 			deltaScale = r_dScl;
 			// chane in orientation
 			deltaOrientation = r_dr;
-
+			speed = r_spd;
 			lifetime = r_lifetime;
 			enabled = true;
 		}
@@ -78,7 +80,7 @@ namespace PE
 		{
 			if (!enabled)
 				return false;
-			transform.position += directionVector * 10.f * dt;
+			transform.position += directionVector * speed * dt;
 			transform.orientation += deltaOrientation * dt;
 			transform.width += deltaScale.x * dt;
 			transform.height += deltaScale.y * dt;
@@ -90,7 +92,7 @@ namespace PE
 					spriteID = 0;
 			}
 
-			if (!transform.width || !transform.height)
+			if (transform.width <= 0.f || transform.height <= 0.f)
 				lifetime = 0.f;
 			lifetime -= dt;
 			// future, update sprite id?				
@@ -108,6 +110,7 @@ namespace PE
 		vec2 deltaScale{ 0.f, 0.f };
 		float deltaOrientation{ 0.f };
 		float lifetime = 0.f;
+		float speed = 100.f;
 
 		int maxSpriteID{ 0 };
 

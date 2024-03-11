@@ -75,7 +75,8 @@ namespace PE
 		float endRotation;
 		vec2 endScale; // width and height
 		vec4 endColor;
-	
+		vec2 minMaxSpeed;
+		vec2 scaleChangeSpeed{ -10.f, -10.f };
 	private:
 		// Random value generators
 		vec2 GeneratePosition(float radius);
@@ -86,7 +87,7 @@ namespace PE
 		std::vector<Particle> particles;
 
 		float orientationChangeSpeed;
-		vec2 scaleChangeSpeed;
+		
 		vec4 colorChangeSpeed;
 		vec2 emissionVector;
 
