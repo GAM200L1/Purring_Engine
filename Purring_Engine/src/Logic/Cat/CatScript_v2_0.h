@@ -59,8 +59,11 @@ namespace PE
 		float forgivenessOffset{ 1.f }; // Amount that the cat can be offset from the path node before attempting to move to the next one
 		unsigned currentPositionIndex{}; // Index of the position in the pathPositions container that the cat should move towards
 		
+		// planning variables
+		
+
+		// movement variables
 		std::vector<vec2> pathPositions{}; // Positions of the nodes of the player drawn path
-		std::vector<vec2> followCatPositions{}; // positions for the follower cats in the cat chain to use
 		std::vector<EntityID> pathQuads{}; // IDs of entities to visualise the path nodes
 		vec2 resetPosition{ 0.f,0.f };
 
