@@ -133,13 +133,34 @@ namespace PE
 		*************************************************************************************/
 		static void RotateEntityRelative(EntityID const transformId, float const orientation);
 
+
+		// ----- Animation Helper Functions ----- //
+
+		/*!***********************************************************************************
+		 \brief Returns true if the current animation being played is the hurt animation, 
+				false otherwise.
+
+		 \return Returns true if the current animation being played is the hurt animation, 
+				false otherwise.
+		*************************************************************************************/
+		bool GetIsPlayingHurtAnim(EntityID const id);
+
+		/*!***********************************************************************************
+		 \brief Returns true if the current animation is done playing, false otherwise.
+
+		 \return Returns true if the current animation is done playing, false otherwise.
+		*************************************************************************************/
+		bool GetHasAnimEnded(EntityID const id);
+
 		/*!***********************************************************************************
 		 \brief Helper function for playing rat animation.
 
 		 \param[in] id - EntityID of the rat which the animation should be playing on.
 		 \param[in] animationState - Animation state that should be played.
+		 \param[in] forceRestart - Set to true if the current animation should be restarted 
+										if the animation state passed in matches the current state.
 		*************************************************************************************/
-		void PlayAnimation(EntityID const id, EnumRatAnimations const animationState);
+		void PlayAnimation(EntityID const id, EnumRatAnimations const animationState, bool const forceRestart = false);
 
 		/*!***********************************************************************************
 		 \brief Helper function for checking if the rat's animation is done.

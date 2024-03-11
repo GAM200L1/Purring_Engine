@@ -36,7 +36,8 @@ namespace PE
 		WALK,
 		ATTACK,
 		HURT,
-		DEATH
+		DEATH,
+		RAT_ANIM_COUNT // Use this to get the number of rat animation states
 	};
 
 
@@ -142,6 +143,7 @@ namespace PE
 		// animation
 		AnimationComponent* p_ratAnimationComponent = nullptr;
 		std::map<std::string, std::string> animationStates; // animation states of the rat <state name, file name>
+		EnumRatAnimations cachedRatAnimation{ EnumRatAnimations::RAT_ANIM_COUNT }; // The animation state to play when the rat is done with its hurt animation
 		
 		// rat stats
 		int ratHealth{ 0 };								// health of the rat, needs manual setting
