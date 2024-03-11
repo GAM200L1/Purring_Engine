@@ -53,7 +53,7 @@ namespace PE
          \param[in] prefabPath - The path to the audio prefab.
          \param[in] loop       - Whether the audio should loop.
         *************************************************************************************/
-        void PlayBGM(const std::string& prefabPath, bool loop, float fadeInDuration = 0.0f);
+        void PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration = 0.0f);
 
         /*!***********************************************************************************
          \brief Plays SFX prefab with the option to loop it.
@@ -61,7 +61,7 @@ namespace PE
          \param[in] prefabPath - The path to the audio prefab.
          \param[in] loop       - Whether the audio should loop.
         *************************************************************************************/
-        void PlaySFX(const std::string& prefabPath, bool loop);
+        void PlaySFX(const std::string& r_prefabPath, bool loop);
 
         /*!***********************************************************************************
          \brief Pauses the currently playing background music.
@@ -118,7 +118,7 @@ namespace PE
 
          \param[in] state - The audio state to resume from.
         *************************************************************************************/
-        void ResumeFromState(const AudioState& state);
+        void ResumeFromState(const AudioState& r_state);
 
         /*!***********************************************************************************
          \brief Returns the current audio state, including track key and position.
@@ -153,6 +153,6 @@ namespace PE
          \param[in] trackKey - The key identifying the track.
          \return A shared pointer to the requested audio component.
         *************************************************************************************/
-        std::shared_ptr<AudioComponent> GetOrCreateAudioComponent(const std::string& trackKey);
+        std::shared_ptr<AudioComponent> GetOrCreateAudioComponent(const std::string& r_trackKey);
     };
 }

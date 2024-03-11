@@ -558,8 +558,7 @@ namespace PE
 									//break;
 							}
 
-							// DEBUGHANS @PR-ER
-							//std::cout << "[Debug] Playing selection audio: " << soundPath << std::endl;
+							
 							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
 
 							return;
@@ -640,8 +639,7 @@ namespace PE
 								break;
 							}
 
-							// DEBUGHANS @PR-ER
-							//std::cout << "[Debug] Playing selection audio: " << soundPath << std::endl;
+							
 							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
 
 							return;
