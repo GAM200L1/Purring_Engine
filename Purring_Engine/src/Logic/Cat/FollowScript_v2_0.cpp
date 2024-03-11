@@ -40,13 +40,12 @@ namespace PE
 
 	void FollowScript_v2_0::Init(EntityID)
 	{
-		p_gamestateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);		
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, FollowScript_v2_0::CollisionCheck, this);
 	}
 
 	void FollowScript_v2_0::Update(EntityID id, float deltaTime)
 	{
-		if (p_gamestateController->currentState == GameStates_v2_0::DEPLOYMENT) 
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::DEPLOYMENT)
 		{ 
 			scriptData[id].prevPosition = CatHelperFunctions::GetEntityPosition(id);
 			return;
@@ -79,7 +78,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Transform>(follower).position = scriptData[id].nextPosition[index - 1] + 
 					vec2{ xScale * cosf(newRotation - static_cast<float>(M_PI)), xScale * sinf(newRotation - static_cast<float>(M_PI)) };
 
-				if (p_gamestateController->currentState == GameStates_v2_0::EXECUTE)
+				if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::EXECUTE)
 				{
 					// Ensure the cat is facing the direction of their movement
 					vec2 newScale{ CatHelperFunctions::GetEntityScale(follower) };
@@ -137,7 +136,7 @@ namespace PE
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)
 	{
 		// if not in execute state dont allow pick up
-		if (p_gamestateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState != GameStates_v2_0::EXECUTE) { return; }
 		
 		// pick up cats
 		if (r_event.GetType() == CollisionEvents::OnTriggerEnter)

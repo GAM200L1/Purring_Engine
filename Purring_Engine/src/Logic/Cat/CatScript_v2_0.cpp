@@ -506,14 +506,14 @@ namespace PE
 		{
 			int randomInteger = std::rand() % 3 + 1; // Randomize between 1 and 3
 			soundPrefabPath += "Cat Grey Death SFX" + std::to_string(randomInteger) + ".prefab";
+			break;
 		}
-		break;
 		case EnumCatType::ORANGECAT:
 		{
 			int randomInteger = std::rand() % 3 + 1; // Randomize between 1 and 3
 			soundPrefabPath += "Cat Orange Death SFX" + std::to_string(randomInteger) + ".prefab";
+			break;
 		}
-		break;
 		default:
 			return;
 		}
