@@ -29,6 +29,9 @@ namespace PE
 		p_data = GETSCRIPTDATA(BossRatScript, id);
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
+		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT)
+			p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
+
 		DecideAttack();
 		p_script->FindAllObstacles();
 		if(p_data->p_currentAttack)
@@ -42,6 +45,7 @@ namespace PE
 		// Can conduct state checks and call for state changes here
 		if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
 		{
+			p_script->executionTimeOutTimer = p_script->executionTimeOutTime;
 			p_data->finishExecution = false;
 			p_data->p_stateManager->ChangeState(new BossRatExecuteState(),id);
 		}
