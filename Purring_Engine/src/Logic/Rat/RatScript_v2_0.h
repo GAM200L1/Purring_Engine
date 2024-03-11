@@ -155,7 +155,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Play one of a few random attack SFX.
 		*************************************************************************************/
-		static void PlayAttackAudio();
+		void PlayAttackAudio(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Play one of a few random death SFX.

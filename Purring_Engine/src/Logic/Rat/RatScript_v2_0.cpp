@@ -34,6 +34,7 @@
 #include "SniperRatAttack_v2_0.h"
 
 #include "../Cat/CatController_v2_0.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 //#define DEBUG_PRINT
 
@@ -253,26 +254,39 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::PlayAttackAudio()
+		void RatScript_v2_0::PlayAttackAudio(EntityID id)
 		{
-				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-				int randSound = std::rand() % 2 + 1;
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			int randSound = std::rand() % 5 + 1;						// Randomise between 1 and 5
 
-				std::string soundPrefab;
-				if (randSound == 1)
-				{
-						soundPrefab = "AudioObject/Rat Attack SFX1.prefab";
-				}
-				else
-				{
-						soundPrefab = "AudioObject/Rat Attack SFX2.prefab";
-				}
+			std::string soundPrefabBasePath = "AudioObject/Rat ";
+			std::string ratTypeString;
+			switch (it->second.ratType)
+			{
+			case EnumRatType::GUTTER:
+			case EnumRatType::GUTTER_V1:
+				ratTypeString = "Gutter ";
+				break;
+			case EnumRatType::BRAWLER:
+				ratTypeString = "Brawler ";
+				break;
+			case EnumRatType::SNIPER:
+				ratTypeString = "Sniper ";
+				break;
+			default:
+				return;
+			}
 
-				// Play the selected sound
-				PlayAudio(soundPrefab);
+			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Attack SFX" + std::to_string(randSound) + ".prefab";
+
+			// DEBUGHANS @PR-ER
+			std::cout << "[Debug] Playing attack audio: " << soundPrefab << std::endl;
+
+			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
 		}
-
 
 		void RatScript_v2_0::PlayDeathAudio()
 		{
