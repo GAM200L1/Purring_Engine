@@ -70,7 +70,7 @@
                                     "maxHuntTurns": 2,
                                     "maxMovementRange": 128.0,
                                     "movementSpeed": 400.0,
-                                    "ratMaxHealth": 2,
+                                    "ratMaxHealth": 3,
                                     "ratType": 3
                                 },
                                 "state": 0
