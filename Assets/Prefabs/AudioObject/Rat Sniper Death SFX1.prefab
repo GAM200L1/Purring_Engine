@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Rat_Sniper_Death1.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Rat Sniper Death SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Rat Sniper Death SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

@@ -291,24 +291,38 @@ namespace PE
 			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
 		}
 
-		void RatScript_v2_0::PlayDeathAudio()
+		void RatScript_v2_0::PlayDeathAudio(EntityID id)
 		{
-				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-				int randSound = std::rand() % 2 + 1;
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			int randSound = std::rand() % 4 + 1;						// Randomize between 1 and 4
 
-				std::string soundPrefab;
-				if (randSound == 1)
-				{
-						soundPrefab = "AudioObject/Rat Death SFX1.prefab";
-				}
-				else
-				{
-						soundPrefab = "AudioObject/Rat Death SFX2.prefab";
-				}
+			std::string soundPrefabBasePath = "AudioObject/Rat ";
+			std::string ratTypeString;
+			switch (it->second.ratType)
+			{
+			case EnumRatType::GUTTER:
+			case EnumRatType::GUTTER_V1:
+				ratTypeString = "Gutter ";
+				break;
+			case EnumRatType::BRAWLER:
+				ratTypeString = "Brawler ";
+				break;
+			case EnumRatType::SNIPER:
+				ratTypeString = "Sniper ";
+				break;
+			default:
+				return;
+			}
 
-				// Play the selected sound
-				PlayAudio(soundPrefab);
+			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Death SFX" + std::to_string(randSound) + ".prefab";
+
+			// DEBUGHANS @PR-ER
+			//std::cout << "[Debug] Playing death audio: " << soundPrefab << std::endl;
+
+			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
 		}
 
 

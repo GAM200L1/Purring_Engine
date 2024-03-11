@@ -160,7 +160,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Play one of a few random death SFX.
 		*************************************************************************************/
-		static void PlayDeathAudio();
+		void PlayDeathAudio(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Play one of a few random detection SFX.

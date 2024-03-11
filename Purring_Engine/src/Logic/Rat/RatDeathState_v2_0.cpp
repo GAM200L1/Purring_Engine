@@ -28,7 +28,7 @@ namespace PE
 		m_animDurationLeft = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(p_data->myID);
 
 		// Play the death audio
-		RatScript_v2_0::PlayDeathAudio();
+		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayDeathAudio(p_data->myID);
 	}
 
 
