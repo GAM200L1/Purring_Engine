@@ -18,6 +18,9 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "BossRatExecuteState.h"
 #include "Logic/LogicSystem.h"
 #include "Logic/Boss/BossRatAttacks/BossRatBashAttack.h"
+#include "Logic/Boss/BossRatAttacks/BossRatSlamAttack.h"
+#include "Logic/Boss/BossRatAttacks/BossRatChargeAttack.h"
+
 namespace PE
 {
 	void BossRatPlanningState::StateEnter(EntityID id)
@@ -28,7 +31,9 @@ namespace PE
 
 		DecideAttack();
 		p_script->FindAllObstacles();
+		if(p_data->p_currentAttack)
 		p_data->p_currentAttack->DrawTelegraphs(id);
+		PoisonPuddleUpdate();
 	}
 
 
@@ -45,16 +50,62 @@ namespace PE
 
 	void BossRatPlanningState::StateExit(EntityID)
 	{
-
+		if (p_script->currentSlamTurnCounter > 0)
+		--p_script->currentSlamTurnCounter;
 	}
 
 	void BossRatPlanningState::DecideAttack()
 	{
-		// Decides which attack to use
-		//will add the other attacks later, fixed on bash for now
+		if (p_script->currentSlamTurnCounter > 0 && p_data->p_currentAttack)
+			return;
+
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
-		p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
+
+		if (p_data->currentAttackInSet == 3)
+		{
+			p_data->currentAttackInSet = 0;
+			p_data-> currentAttackSet = rand() % 3;
+		}
+
+		switch (p_script->bossRatAttackSets[p_data->currentAttackSet][p_data->currentAttackInSet])
+		{
+		case BossRatAttacks::BASH:
+			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindClosestCat());
+			p_script->currentSlamTurnCounter = 0;
+			break;
+		case BossRatAttacks::SLAM:
+			p_data->p_currentAttack = new BossRatSlamAttack();
+			p_script->currentSlamTurnCounter = 3;
+			break;
+		case BossRatAttacks::CHARGE:
+			p_data->p_currentAttack = new BossRatChargeAttack(p_script->FindFurthestCat());
+			p_script->currentSlamTurnCounter = 0;
+			break;
+		}
+
+		p_data->currentAttackInSet++;
+	}
+
+	void BossRatPlanningState::PoisonPuddleUpdate()
+	{
+		for (auto& [id, timer] : p_script->poisonPuddles)
+		{
+			--timer;
+		}
+
+		for (auto it = p_script->poisonPuddles.cbegin(); it != p_script->poisonPuddles.cend() /* not hoisted */; /* no increment */)
+		{
+			if (it->second <= 0)
+			{
+				EntityManager::GetInstance().RemoveEntity(it->first);
+				p_script->poisonPuddles.erase(it++);    // or "it = m.erase(it)" since C++11
+			}
+			else
+			{
+				++it;
+			}
+		}
 	}
 
 } // End of namespace PE

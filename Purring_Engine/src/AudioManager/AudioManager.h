@@ -43,11 +43,11 @@ namespace PE
         public:
             /*!***********************************************************************************
              \brief     Load a sound from a file path.
-             \param     path Path to the audio file.
-             \param     system FMOD::System pointer for audio system management.
+             \param     r_path      - Path to the audio file.
+             \param     p_system    - FMOD::System pointer for audio system management.
              \return    bool True if the sound is successfully loaded.
             *************************************************************************************/
-            bool LoadSound(const std::string& path, FMOD::System* system);
+            bool LoadSound(const std::string& r_path, FMOD::System* p_system);
 
             /*!***********************************************************************************
              \brief     Getter for FMOD::Sound* object.
@@ -84,6 +84,46 @@ namespace PE
         void Update();
 
         /*!***********************************************************************************
+         \brief     Set master volume level.
+        *************************************************************************************/
+        void SetMasterVolume(float volume);
+
+        /*!***********************************************************************************
+         \brief     Set background music volume level.
+        *************************************************************************************/
+        void SetBGMVolume(float volume);
+
+        /*!***********************************************************************************
+         \brief     Set sound effects volume level.
+        *************************************************************************************/
+        void SetSFXVolume(float volume);
+
+        /*!***********************************************************************************
+         \brief     Set sound effects volume level.
+        *************************************************************************************/
+        void MuteMaster(bool mute);
+
+        /*!***********************************************************************************
+         \brief     Set sound effects volume level.
+        *************************************************************************************/
+        void MuteBGM(bool mute);
+
+        /*!***********************************************************************************
+         \brief     Set sound effects volume level.
+        *************************************************************************************/
+        void MuteSFX(bool mute);
+
+        /*!***********************************************************************************
+         \brief     Getter for BGM channel group.
+        *************************************************************************************/
+        FMOD::ChannelGroup* GetBGMGroup() const;
+
+        /*!***********************************************************************************
+         \brief     // Getter for SFX channel group.
+        *************************************************************************************/
+        FMOD::ChannelGroup* GetSFXGroup() const;
+
+        /*!***********************************************************************************
          \brief     Set the global volume for all sounds.
          \param     volume The new global volume level (0.0 to 1.0).
         *************************************************************************************/
@@ -113,5 +153,10 @@ namespace PE
 
         // Audio Variables
         FMOD::System* m_system;
+
+        FMOD::ChannelGroup* m_masterGroup;  // Master channel group
+        FMOD::ChannelGroup* m_bgmGroup;     // BGM channel group
+        FMOD::ChannelGroup* m_sfxGroup;     // SFX channel group
+
     };
 }

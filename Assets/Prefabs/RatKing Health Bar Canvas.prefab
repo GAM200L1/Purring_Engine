@@ -1,0 +1,298 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "Canvas": {
+                            "Height": 1080.0,
+                            "Width": 1920.0
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 1,
+                            "Prefab Type": "Canvas Object",
+                            "children": [
+                                2,
+                                5,
+                                6,
+                                7
+                            ],
+                            "isActive": true,
+                            "name": "RatKing Health Bar Canvas",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "Transform": {
+                            "height": 100.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            [
+                {
+                    "Entity": {
+                        "components": {
+                            "EntityDescriptor": {
+                                "InteractionLayer": 0,
+                                "Layer": 0,
+                                "Old ID": 2,
+                                "Prefab Type": "SliderBody",
+                                "children": [
+                                    3
+                                ],
+                                "isActive": true,
+                                "name": "Ratking Healthbar",
+                                "parent": 1,
+                                "sceneID": 5
+                            },
+                            "GUIRenderer": {
+                                "Color": {
+                                    "a": 1.0,
+                                    "b": 1.0,
+                                    "g": 1.0,
+                                    "r": 1.0
+                                },
+                                "TextureKey": ""
+                            },
+                            "GUISlider": {
+                                "m_Hovered": false,
+                                "m_clicked": false,
+                                "m_currentValue": 86.0,
+                                "m_currentWidth": 75.0,
+                                "m_currentXpos": 270.0,
+                                "m_defaultColor": [
+                                    0.3921568691730499,
+                                    0.3921568691730499,
+                                    0.3921568691730499,
+                                    0.3921568691730499
+                                ],
+                                "m_defaultTexture": "",
+                                "m_disabled": false,
+                                "m_disabledColor": [
+                                    0.0784313753247261,
+                                    0.0784313753247261,
+                                    0.0784313753247261,
+                                    1.0
+                                ],
+                                "m_disabledTexture": "",
+                                "m_endPoint": 375.0,
+                                "m_hoveredColor": [
+                                    0.3529411852359772,
+                                    0.3529411852359772,
+                                    0.3529411852359772,
+                                    1.0
+                                ],
+                                "m_hoveredTexture": "",
+                                "m_isHealthBar": true,
+                                "m_knobID": 3,
+                                "m_maxValue": 100.0,
+                                "m_minValue": 0.0,
+                                "m_pressedColor": [
+                                    0.23529411852359772,
+                                    0.23529411852359772,
+                                    0.23529411852359772,
+                                    1.0
+                                ],
+                                "m_pressedTexture": "",
+                                "m_startPoint": -375.0
+                            },
+                            "Transform": {
+                                "height": 65.0,
+                                "orientation": 0.0,
+                                "position": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "relativeposition": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "relorientation": 0.0,
+                                "width": 750.0
+                            }
+                        },
+                        "name": ""
+                    }
+                },
+                {
+                    "Entity": {
+                        "components": {
+                            "EntityDescriptor": {
+                                "InteractionLayer": 0,
+                                "Layer": 0,
+                                "Old ID": 3,
+                                "Prefab Type": "SliderKnob",
+                                "children": [],
+                                "isActive": true,
+                                "name": "SliderKnob",
+                                "parent": 2,
+                                "sceneID": 3
+                            },
+                            "GUIRenderer": {
+                                "Color": {
+                                    "a": 1.0,
+                                    "b": 0.5735294222831726,
+                                    "g": 0.5735294222831726,
+                                    "r": 0.5735294222831726
+                                },
+                                "TextureKey": ""
+                            },
+                            "Transform": {
+                                "height": 65.0,
+                                "orientation": 0.0,
+                                "position": {
+                                    "x": -52.5,
+                                    "y": 0.0
+                                },
+                                "relativeposition": {
+                                    "x": -52.5,
+                                    "y": 0.0
+                                },
+                                "relorientation": 0.0,
+                                "width": 645.0
+                            }
+                        },
+                        "name": ""
+                    }
+                }
+            ],
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 5,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "RatKing Healthbar Backing",
+                            "parent": 1,
+                            "sceneID": 2
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/RatKing_Healthbar_Backing_760x71.png"
+                        },
+                        "Transform": {
+                            "height": 71.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 760.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 6,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "RatKing Healthbar Frame",
+                            "parent": 1,
+                            "sceneID": 6
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/RatKing_Healthbar_Frame_754x67.png"
+                        },
+                        "Transform": {
+                            "height": 71.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 760.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 7,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "RatKing Healthbar Overlay",
+                            "parent": 1,
+                            "sceneID": 7
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/RatKing_Healthbar_Overlay_818x146.png"
+                        },
+                        "Transform": {
+                            "height": 146.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 818.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

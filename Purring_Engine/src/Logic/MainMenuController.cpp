@@ -22,6 +22,7 @@
 #include "SceneManager/SceneManager.h"
 #include "Graphics/Text.h"
 #include "PauseManager.h"
+#include "GameStateController_v2_0.h"
 namespace PE
 {
 	MainMenuController::MainMenuController()
@@ -29,6 +30,10 @@ namespace PE
 		REGISTER_UI_FUNCTION(PlayGameMM, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(QuitGameMM, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(ReturnFromMMAYS, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMCloseHTP, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMOpenHTP, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMHTPPage1, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMHTPPage2, PE::MainMenuController);
 	}
 
 	void MainMenuController::Init(EntityID id)
@@ -234,7 +239,7 @@ namespace PE
 
 				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
 				EntityManager::GetInstance().RemoveEntity(bgm);
 
 				ActiveObject(m_scriptData[id].MainMenuCanvas);
@@ -268,6 +273,7 @@ namespace PE
 
 	void MainMenuController::PlayGameMM(EntityID)
 	{
+		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 		SceneManager::GetInstance().LoadScene("IntroCutsceneScene.scene");
 		PlayPositiveFeedback();
 	}
@@ -286,25 +292,86 @@ namespace PE
 		PlayClickAudio();
 	}
 
+	void MainMenuController::MMCloseHTP(EntityID)
+	{
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas);
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMOpenHTP(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageTwo);
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+		}
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMHTPPage2(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageTwo);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageOne);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+			}
+			else if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg2")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+		}
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMHTPPage1(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageOne);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayPageTwo);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+			else if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg2")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+			}
+		}
+		PlayClickAudio();
+	}
+
+
 	void MainMenuController::PlayClickAudio()
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 	void MainMenuController::PlayPositiveFeedback()
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Positive Feedback.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 	void MainMenuController::PlayNegativeFeedback()
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 }

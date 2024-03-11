@@ -78,6 +78,8 @@
 #include "Logic/Rat/RatIdle_v2_0.h"
 #include "Layers/LayerManager.h"
 #include "Logic/IntroCutsceneController.h"
+#include "Logic/Boss/BossRatScript.h"
+#include "Logic/ObjectAttachScript.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -2380,7 +2382,7 @@ namespace PE {
 
 								if (ImGui::Button("Play"))
 								{
-									audioComponent.PlayAudioSound();
+									audioComponent.PlayAudioSound(AudioComponent::AudioType::SFX);
 								}
 
 								ImGui::SameLine();
@@ -2764,6 +2766,21 @@ namespace PE {
 									}
 							}
 
+							if (key == "ObjectAttachScript")
+							{
+								ObjectAttachScript* p_Script = dynamic_cast<ObjectAttachScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int ObjectToAttachToID = static_cast<int> (it->second.ObjectToAttachTo);
+
+										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##OTATID", &ObjectToAttachToID);
+										if (ObjectToAttachToID != m_currentSelectedObject) { it->second.ObjectToAttachTo = ObjectToAttachToID; }
+
+									}
+							}
+
 							if (key == "PlayerControllerScript")
 							{
 								PlayerControllerScript* p_Script = dynamic_cast<PlayerControllerScript*>(val);
@@ -3131,9 +3148,11 @@ namespace PE {
 										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
 										int CatPortID = static_cast<int> (it->second.CatPortrait);
 										int RatPortID = static_cast<int> (it->second.RatPortrait);
+										int RatKingPortraitID = static_cast<int> (it->second.RatKingPortrait);
 										int PortID = static_cast<int> (it->second.Portrait);
 										int BackgroundID = static_cast<int> (it->second.Background);
 										int JournalID = static_cast<int> (it->second.Journal);
+										int RatKingJournalID = static_cast<int> (it->second.RatKingJournal);
 										int JournalButtonID = static_cast<int> (it->second.JournalButton);
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
@@ -3197,6 +3216,12 @@ namespace PE {
 
 										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
 										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }
+
+										ImGui::Text("Rat King Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rkpid", &RatKingPortraitID);
+										if (RatKingPortraitID != m_currentSelectedObject) { it->second.RatKingPortrait = RatKingPortraitID; }
+
+										ImGui::Text("Rat King Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rkjid", &RatKingJournalID);
+										if (RatKingJournalID != m_currentSelectedObject) { it->second.RatKingJournal = RatKingJournalID; }
 
 										for (int i = 0; i < 5; i++)
 										{
@@ -3343,6 +3368,9 @@ namespace PE {
 										int AreYouSureID = static_cast<int> (it->second.AreYouSureCanvas);
 										int MainMenuCanvasID = static_cast<int> (it->second.MainMenuCanvas);
 										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
+										int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
+										int HowToPlayPageOneID = static_cast<int> (it->second.HowToPlayPageOne);
+										int HowToPlayPageTwoID = static_cast<int> (it->second.HowToPlayPageTwo);
 
 										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCID", &MainMenuCanvasID);
 										if (MainMenuCanvasID != m_currentSelectedObject) { it->second.MainMenuCanvas = MainMenuCanvasID; }
@@ -3352,6 +3380,159 @@ namespace PE {
 
 										ImGui::Text("Are You Sure Canvas Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##AYSMMID", &AreYouSureID);
 										if (AreYouSureID != m_currentSelectedObject) it->second.AreYouSureCanvas = AreYouSureID;
+
+										ImGui::Text("How To Place Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTPCID", &HowToPlayCanvasID);
+										if (HowToPlayCanvasID != m_currentSelectedObject) { it->second.HowToPlayCanvas = HowToPlayCanvasID; }
+
+										ImGui::Text("HowToPlayPageOne ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTP1ID", &HowToPlayPageOneID);
+										if (HowToPlayPageOneID != m_currentSelectedObject) { it->second.HowToPlayPageOne = HowToPlayPageOneID; }
+
+										ImGui::Text("HowToPlayPageTwo ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTP2ID", &HowToPlayPageTwoID);
+										if (HowToPlayPageTwoID != m_currentSelectedObject) it->second.HowToPlayPageTwo = HowToPlayPageTwoID;
+									}
+								}
+							}
+
+							if (key == "BossRatScript")
+							{
+								BossRatScript* p_script = dynamic_cast<BossRatScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("BossRatScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int healthID = static_cast<int> (it->second.maxHealth);
+										float telegraphRadiusID = it->second.telegraphRadius;
+										float activationTimeID = (it->second.activationTime);
+										float attackDelayID = (it->second.attackDelay);
+										float jumpSpeedID =  (it->second.jumpSpeed);
+										float slamSpeedID =  (it->second.slamSpeed);
+										int leftSideSlamID = static_cast<int> (it->second.leftSideSlam);
+										int rightSideSlamID = static_cast<int> (it->second.rightSideSlam);
+										int rightSideSlamAnimationID = static_cast<int> (it->second.rightSideSlamAnimation);
+										int leftSideSlamAnimationID = static_cast<int> (it->second.leftSideSlamAnimation);
+										int slamTelegraphID = static_cast<int> (it->second.slamTelegraph);
+										int slamAreaTelegraphID = static_cast<int> (it->second.slamAreaTelegraph);
+										float distanceBetweenPoolsID = it->second.distanceBetweenPools;
+
+										ImGui::SeparatorText("Boss Rat Stats");
+										ImGui::Text("Boss Max Health: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bhid", &healthID);
+										if (healthID != m_currentSelectedObject) { it->second.maxHealth = static_cast<float>(healthID); }
+
+
+										ImGui::SeparatorText("Bash Attack Stats");
+										ImGui::Text("Telegraph Radius: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##btrid", &telegraphRadiusID);
+										if (telegraphRadiusID != m_currentSelectedObject) { it->second.telegraphRadius = telegraphRadiusID; }	
+										
+										ImGui::Text("Activation Time: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##batid", &activationTimeID);
+										if (activationTimeID != m_currentSelectedObject) { it->second.activationTime = activationTimeID; }
+										
+										ImGui::Text("Attack Delay: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##badid", &attackDelayID);
+										if (attackDelayID != m_currentSelectedObject) { it->second.attackDelay = attackDelayID; }
+
+										ImGui::SeparatorText("Slam Attack Stats");
+										ImGui::Text("Jump Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjsid", &jumpSpeedID);
+										if (jumpSpeedID != m_currentSelectedObject) it->second.jumpSpeed = jumpSpeedID;										
+										ImGui::Text("Slam Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjssid", &slamSpeedID);
+										if (slamSpeedID != m_currentSelectedObject) it->second.slamSpeed = slamSpeedID;
+
+										ImGui::SeparatorText("Dash Attack Stats");
+										ImGui::Text("Distance Between Each Poison: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjdbpid", &distanceBetweenPoolsID);
+										if (distanceBetweenPoolsID != m_currentSelectedObject) it->second.distanceBetweenPools = distanceBetweenPoolsID;
+
+										ImGui::SeparatorText("Entities");
+										ImGui::Text("Left Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssid", &leftSideSlamID);
+										if (leftSideSlamID != m_currentSelectedObject) it->second.leftSideSlam = leftSideSlamID;
+
+										ImGui::Text("Right Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brssid", &rightSideSlamID);
+										if (rightSideSlamID != m_currentSelectedObject) it->second.rightSideSlam = rightSideSlamID;
+
+										ImGui::Text("Left Side Slam Animation ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssaid", &leftSideSlamAnimationID);
+										if (leftSideSlamAnimationID != m_currentSelectedObject) it->second.leftSideSlamAnimation = leftSideSlamAnimationID;
+
+										ImGui::Text("Right Side Slam Animation ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brssaid", &rightSideSlamAnimationID);
+										if (rightSideSlamAnimationID != m_currentSelectedObject) it->second.rightSideSlamAnimation = rightSideSlamAnimationID;
+
+										ImGui::Text("Slam Telegraph ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brstid", &slamTelegraphID);
+										if (slamTelegraphID != m_currentSelectedObject) it->second.slamTelegraph = slamTelegraphID;
+
+										ImGui::Text("Slam Area Telegraph ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brsatid", &slamAreaTelegraphID);
+										if (slamAreaTelegraphID != m_currentSelectedObject) it->second.slamAreaTelegraph = slamAreaTelegraphID;
+
+
+										ImGui::SeparatorText("Animations");
+										int num{};
+										ImGui::Text("Add Animation state"); ImGui::SameLine();
+										bool worked{ false };
+										if (ImGui::Button("+"))
+										{
+											std::string str = "NewState";
+											while (!worked)
+											{
+												if (it->second.animationStates.count(str))
+												{
+													str += 1;
+												}
+												else
+												{
+													it->second.animationStates.emplace(str, "");
+													worked = true;
+												}
+											}
+										}
+										static std::pair<std::string, std::string> whoToRemove;
+										static bool rmFlag{ false };
+										for (auto& [k, v] : it->second.animationStates)
+										{
+											ImGui::Text("State: "); ImGui::SameLine();
+											std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
+											bool changed = ImGui::InputText(std::string("##" + k + std::to_string(++num)).c_str(), &curr);
+											if (!changed)
+											{
+												if (whoToRemove.first == k)
+												{
+													if (!ImGui::IsItemActivated())
+													{
+														rmFlag = true;
+													}
+												}
+											}
+											else
+											{
+												if (k != curr)
+												{
+													whoToRemove.first = k;
+													whoToRemove.second = curr;
+													rmFlag = false;
+												}
+
+											}
+
+
+											ImGui::Text("Animation: "); ImGui::SameLine();
+											bool bl = ImGui::BeginCombo(std::string("##Animation" + k + std::to_string(num)).c_str(), v.c_str());
+											if (bl)
+											{
+												if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+												{
+													for (const auto& name : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+													{
+														if (ImGui::Selectable(name.c_str()))
+															v = name;
+													}
+												}
+												ImGui::EndCombo();
+											}
+											ImGui::Separator();
+										}
+										if (rmFlag)
+										{
+											it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
+											it->second.animationStates.erase(whoToRemove.first);
+											whoToRemove.first = "";
+											whoToRemove.second = "";
+											rmFlag = false;
+										}
 									}
 								}
 							}
@@ -3363,53 +3544,46 @@ namespace PE {
 
 								if (it != p_Script->GetScriptData().end())
 								{
-									if (ImGui::CollapsingHeader("Rat Settings", ImGuiTreeNodeFlags_DefaultOpen))
+									if (ImGui::CollapsingHeader("RatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
-									}
-
-									if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-									{
-										if (it->second.patrolPoints.empty())
+										// --- Set the rat type
+										ImGui::Text("Rat Type"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f);
+										if (ImGui::BeginCombo("##ratType", RatScript_v2_0_Data::GetRatName(it->second.ratType).c_str())) // The second param is the value previewed before the user clicks on it
 										{
-											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
-											it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
+											char maxValue{ static_cast<char>(EnumRatType::RAT_TYPE_COUNT) };
+											bool selected{ false };
+											for (char i{ 1 }; i < maxValue; ++i)
+											{
+												if (ImGui::Selectable(RatScript_v2_0_Data::GetRatName(i).c_str(), &selected))
+												{
+													it->second.ratType = static_cast<EnumRatType>(i);
+												}
+											}
+											ImGui::EndCombo();
 										}
+										ImGui::Separator();
 
-										for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
-										{
-											ImGui::PushID(static_cast<int>(i)); // Use i as the ID
-											ImGui::Text("Point %zu:", i + 1); // Display point number
-											ImGui::SameLine();
-											float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
-											ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
-											it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
-											ImGui::PopID();
-										}
 
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+										// --- Start of rat variables
+										ImGui::Text("Movement speed:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratSpeed", &(it->second.movementSpeed));
+										ImGui::Text("Movement range:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratRange", &(it->second.maxMovementRange));
+										ImGui::Text("Maximum health:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputInt("##ratHealth", &(it->second.ratMaxHealth));
+										ImGui::Text("Detection radius:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratDetect", &(it->second.detectionRadius));
+										ImGui::Text("Max hunting turns:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputInt("##ratHunt", &(it->second.maxHuntTurns));
+										// --- End of rat variables
 
-										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
-										if (ImGui::Button("Add Patrol Point"))
-										{
-											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
-										}
-										ImGui::PopStyleColor(1); // Pop button color style
 
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+										// --- Rat animation states
 
-										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
-										if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
-										{
-											it->second.patrolPoints.pop_back();
-										}
-										ImGui::PopStyleColor(1); // Pop button color style
-									}
-									ImGui::Separator();
-									int num{};
-									ImGui::Text("Add Animation state"); ImGui::SameLine();
-									bool worked{ false };
-									if (ImGui::Button("+"))
+										int num{};
+										ImGui::Text("Add Animation state"); ImGui::SameLine();
+										bool worked{ false };
+										if (ImGui::Button("+"))
 									{
 										std::string str = "NewState";
 										while (!worked)
@@ -3425,9 +3599,9 @@ namespace PE {
 											}
 										}
 									}
-									static std::pair<std::string, std::string> whoToRemove;
-									static bool rmFlag{ false };
-									for (auto& [k, v] : it->second.animationStates)
+										static std::pair<std::string, std::string> whoToRemove;
+										static bool rmFlag{ false };
+										for (auto& [k, v] : it->second.animationStates)
 									{
 										ImGui::Text("State: "); ImGui::SameLine();
 										std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
@@ -3470,17 +3644,69 @@ namespace PE {
 										}
 										ImGui::Separator();
 									}
-									if (rmFlag)
+										if (rmFlag)
 									{
 										it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
 										it->second.animationStates.erase(whoToRemove.first);
 										whoToRemove.first = "";
 										whoToRemove.second = "";
 										rmFlag = false;
+									}								
+
+										// --- End of rat animation states
+
+
+										// --- Rat Patrolling Settings
+										//ImGui::Text("Rat Patrolling Settings");
+										//ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
+										//ImGui::Separator();
+
+										// Dynamic list for adding patrol point positions
+										//if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+										//{
+										//	if (it->second.patrolPoints.empty())
+										//	{
+										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
+										//		it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
+										//	}
+
+										//	for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
+										//	{
+										//		ImGui::PushID(static_cast<int>(i)); // Use i as the ID
+										//		ImGui::Text("Point %zu:", i + 1); // Display point number
+										//		ImGui::SameLine();
+										//		float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
+										//		ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
+										//		it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
+										//		ImGui::PopID();
+										//	}
+
+										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
+										//	if (ImGui::Button("Add Patrol Point"))
+										//	{
+										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
+										//	}
+										//	ImGui::PopStyleColor(1); // Pop button color style
+
+										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
+										//	if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
+										//	{
+										//		it->second.patrolPoints.pop_back();
+										//	}
+										//	ImGui::PopStyleColor(1); // Pop button color style
+										//}
+										//ImGui::Separator();
+
 									}
-								
-								}
-							}
+
+								} // end of if (ImGui::CollapsingHeader("RatScript_v2_0...
+
+							} // end of if(key == "RatScript_v2_0")
+
 							if (key == "CatScript_v2_0")
 							{
 								CatScript_v2_0* p_script = dynamic_cast<CatScript_v2_0*>(val);

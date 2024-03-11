@@ -22,6 +22,7 @@
 #include "CatController_v2_0.h"
 #include "Logic/Rat/RatController_v2_0.h"
 #include "CatPlanningState_v2_0.h"
+#include "Logic/Boss/BossRatScript.h"
 
 #include "Hierarchy/HierarchyManager.h"
 #include "Physics/CollisionManager.h"
@@ -35,6 +36,8 @@ namespace PE
 		SerializationManager serializationManager;
 		projectileID = serializationManager.LoadFromFile("Projectile.prefab");
 		CatHelperFunctions::ToggleEntity(projectileID, false);
+		/*EntityManager::GetInstance().Get<EntityDescriptor>(projectileID).layer = 0;
+		EntityManager::GetInstance().Get<Collider>(projectileID).collisionLayerIndex = 0;*/
 
 		if (isMainCat)
 			EntityManager::GetInstance().Get<Collider>(projectileID).isTrigger = true;
@@ -182,7 +185,7 @@ namespace PE
 	void GreyCatAttack_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		if (MBPE.button != 1)
+		if (MBPE.button == 0)
 			m_mouseClick = true;
 	}
 
@@ -287,7 +290,7 @@ namespace PE
 				SerializationManager m_serializationManager;
 				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX.prefab");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				EntityManager::GetInstance().RemoveEntity(sound);
 
 					int randomInteger = std::rand() % 3 + 1;
@@ -306,7 +309,7 @@ namespace PE
 					}
 
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				EntityManager::GetInstance().RemoveEntity(sound);
 
 			}
@@ -361,26 +364,40 @@ namespace PE
 		if (id1 != m_catID && id2 != m_catID)
 		{
 			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			// kill cat if it is not following and not in cage and projectile hits cat
-			if (id1 == p_attackData->projectileID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+			// kill cat if it is not following and not in cage and projectile hits catif (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+			if (id1 == p_attackData->projectileID)
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
-				return true;
+				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+				{
+					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
+					return true;
+				}
+				else if (p_catController->IsCatAndNotCaged(id2) && !p_catController->IsFollowCat(id2))
+				{
+					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
+					return true;
+				}
+				else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
+				{
+					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+				}
 			}
-			else if (id2 == p_attackData->projectileID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+			else if (id2 == p_attackData->projectileID)
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
-				return true;
-			}
-			else if (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
-			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
-				return true;
-			}
-			else if (id2 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
-			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
-				return true;
+				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
+				{
+					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+					return true;
+				}
+				else if (p_catController->IsCatAndNotCaged(id1) && !p_catController->IsFollowCat(id1))
+				{
+					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
+					return true;
+				}
+				else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
+				{
+					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+				}
 			}
 		}
 		return false;

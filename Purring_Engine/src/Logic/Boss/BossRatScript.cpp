@@ -30,15 +30,19 @@ namespace PE
 
 	void BossRatScript::Init(EntityID id)
 	{
-		CreateCheckStateManager(id);
 		FindAllObstacles();
+
+		m_scriptData[id].collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+		m_scriptData[id].collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
+
+		m_scriptData[id].currentAttackInSet = 3;
 	}
 
 
 	void BossRatScript::Update(EntityID id, float deltaTime)
 	{
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE) 
+		if (p_gsc->currentState == GameStates_v2_0::PAUSE || p_gsc->currentState == GameStates_v2_0::DEPLOYMENT) 
 		{
 			return;
 		}
@@ -49,9 +53,9 @@ namespace PE
 			return;
 		}
 
-		if (m_scriptData[id].health <= 0)
+		if (m_scriptData[id].currenthealth <= 0)
 		{
-			//do something
+			//do something, call end cutscene most likely and end bgm here
 		}
 
 		CreateCheckStateManager(id);
@@ -65,6 +69,7 @@ namespace PE
 	{
 		m_scriptData[id] = BossRatScriptData();
 		currentBoss = id;
+		currentSlamTurnCounter = 0;
 	}
 
 
@@ -75,7 +80,11 @@ namespace PE
 		if (it != m_scriptData.end())
 		{
 			m_scriptData.erase(id);
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionEnterEventKey)
+			REMOVE_KEY_COLLISION_LISTENER(m_scriptData[id].collisionStayEventKey)
 		}
+
+		poisonPuddles.clear();
 	}
 
 
@@ -104,21 +113,21 @@ namespace PE
 
 	void BossRatScript::FindAllObstacles()
 	{
-		m_Obstacles.clear();
+		m_obstacles.clear();
 		for (const auto& layer : LayerView<EntityDescriptor, Collider>(true))
 		{
 			for (const EntityID& id : InternalView(layer))
 			{
 				std::string nameTest = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
 				if(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos)
-				m_Obstacles.push_back(id);
+				m_obstacles.push_back(id);
 			}
 		}
 	}
 
 	void BossRatScript::TakeDamage(int damage)
 	{
-		--m_scriptData[currentBoss].health;
+		m_scriptData[currentBoss].currenthealth -= damage;
 	}
 
 	EntityID BossRatScript::FindFurthestCat()
@@ -139,12 +148,83 @@ namespace PE
 
 		}
 
-		//std::cout << "Furthest Cat: " << EntityManager::GetInstance().Get<EntityDescriptor>(FurthestCat).name << "\n";
-
 		return FurthestCat;
+	}
+
+	EntityID BossRatScript::FindClosestCat()
+	{
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+		EntityID ClosestCat{};
+		float ClosestDistance{1000000000};
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			Transform cattransform = EntityManager::GetInstance().Get<Transform>(CatID);
+
+			if (cattransform.position.Distance(EntityManager::GetInstance().Get<Transform>(currentBoss).position) < ClosestDistance)
+			{
+				ClosestDistance = cattransform.position.Distance(EntityManager::GetInstance().Get<Transform>(currentBoss).position);
+				ClosestCat = CatID;
+			}
+
+		}
+		return ClosestCat;
 	}
 	std::vector<EntityID> BossRatScript::GetAllObstacles()
 	{
-		return m_Obstacles;
+		return m_obstacles;
+	}
+
+	void BossRatScript::OnCollisionStay(const Event<CollisionEvents>& r_collisionStay)
+	{
+		OnCollisionStayEvent OCEE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionStay) };
+
+		if (IsObstacle(OCEE.Entity1))
+		{
+			if (OCEE.Entity2 == currentBoss)
+			{
+				if (m_scriptData[currentBoss].p_currentAttack)
+					m_scriptData[currentBoss].p_currentAttack->StopAttack();
+			}
+		}
+		else if (IsObstacle(OCEE.Entity2))
+		{
+			if (OCEE.Entity1 == currentBoss)
+			{
+				if (m_scriptData[currentBoss].p_currentAttack)
+					m_scriptData[currentBoss].p_currentAttack->StopAttack();
+			}
+		}
+
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			if (OCEE.Entity1 == currentBoss  && OCEE.Entity2 == CatID
+				|| OCEE.Entity2 == currentBoss && OCEE.Entity1 == CatID)
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+			}
+		}
+	}
+
+	void BossRatScript::OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter)
+	{
+		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEnter) };
+
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			if (OCEE.Entity1 == currentBoss && OCEE.Entity2 == CatID
+				|| OCEE.Entity2 == currentBoss && OCEE.Entity1 == CatID)
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+			}
+		}
+	}
+	bool BossRatScript::IsObstacle(EntityID id)
+	{
+	 return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);;
 	}
 } // End of namespace PE

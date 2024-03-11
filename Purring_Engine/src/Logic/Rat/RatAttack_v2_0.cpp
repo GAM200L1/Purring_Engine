@@ -28,140 +28,123 @@
 #include "Logic/FollowScript.h"
 #include "../Cat/CatController_v2_0.h"
 
+//#define DEBUG_PRINT
+
 namespace PE
 {
     void RatAttack_v2_0::StateEnter(EntityID id)
     {
+#ifdef DEBUG_PRINT
+        std::cout << "RatAttack_v2_0::StateEnter(" << id << ")" << std::endl;
+#endif // DEBUG_PRINT
+
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                                                   // Get GSM instance
 
+        // Subscribe to events
+        m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatAttack_v2_0::OnCollisionEnter, this);
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnterAndStay, this);
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
 
-        m_delay = p_data->attackDelay;
-        m_attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(p_data->myID);
+        // Reset variables
+        m_delay = 0.1f;
         p_data->attacking = true;  // Set the attacking flag to true
-        attackFeedbackOnce = false;
-        //std::cout << "[DEBUG] RatAttack_v2_0::StateEnter - Rat ID: " << id << " transitioning to Attack state." << std::endl;
+        m_attackFeedbackOnce = false;
+        m_attackDuration = 0; // will be set later when the attack animation plays
+        p_data->attackedCats.clear();
+
+        if (p_data->p_attackData) { p_data->p_attackData->InitAttack(); }
     }
 
     void RatAttack_v2_0::StateUpdate(EntityID id, float deltaTime)
     {
-        //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Rat ID: " << id << " is updating with attacking status: " << p_data->attacking << std::endl;
-
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
         {
-            //std::cout << "[DEBUG] RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
             return;
         }
 
-        if (m_delay > 0.f && p_data->attacking)
-        {
-            m_delay -= deltaTime;
-            std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate(" << id << ") - Delay countdown: " << m_delay << std::endl;
-        }
-        else if (p_data->attacking)
-        {
-            std::cout << "RatAttack_v2_0::StateUpdate(" << id << "): p_data->attacking true" << std::endl;
-
-            //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack initiated, enabling telegraph." << std::endl;
-            RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, true);
-            m_attackDuration -= deltaTime;
-
-            if (!attackFeedbackOnce)
+        if (gameStateController->currentState == GameStates_v2_0::EXECUTE) 
+        { 
+            if (m_delay > 0.f && p_data->attacking)
             {
-                attackFeedbackOnce = true;
-                RatScript_v2_0::PlayAttackAudio();
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(p_data->myID, EnumRatAnimations::ATTACK);
+                m_delay -= deltaTime;
+#ifdef DEBUG_PRINT
+                //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate(" << id << ") - Delay countdown: " << m_delay << std::endl;
+#endif // DEBUG_PRINT
             }
-            else if (m_attackDuration <= 0.f)
+            else if (p_data->attacking)
             {
-                std::cout << "RatAttack_v2_0::StateUpdate(" << id << "): animation is done" << std::endl;
-
-                RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
-                p_data->attacking = false;
-                p_data->finishedExecution = true;
-
-                ChangeStates();
-            }
-        }
+                if (p_data->p_attackData && p_data->p_attackData->ExecuteAttack(deltaTime))
+                {
+                    p_data->p_attackData->DisableAttackObjects();
+                    p_data->attacking = false;
+                    p_data->finishedExecution = true;
+                }
+            } // end of if (p_data->attacking)
+        } // end of if (gameStateController->currentState == GameStates_v2_0::EXECUTE) 
+        else if (gameStateController->currentState == GameStates_v2_0::PLANNING)
+        {
+            // Change states during the next planning phase
+            ChangeStates();
+        } // end of if (gameStateController->currentState == GameStates_v2_0::PLANNING) 
+        
     }
 
     void RatAttack_v2_0::StateCleanUp()
     {
+        p_data = nullptr;
+        gameStateController = nullptr;
+
+        // Unsubscribe from collision events
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
     void RatAttack_v2_0::StateExit(EntityID id)
     {
-        // Cleanup attack-specific data here
-        gameStateController = nullptr;
+        // empty
+#ifdef DEBUG_PRINT
         //std::cout << "[DEBUG] RatAttack_v2_0::StateExit - Rat ID: " << id << " exiting Attack state." << std::endl;
-        p_data->hitCat = false;
+#endif // DEBUG_PRINT
     }
 
-    void RatAttack_v2_0::RatHitCat(const Event<CollisionEvents>& r_TE)
-    {
-        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->RatHitCat(p_data->myID, r_TE);
-    }
-
-    void RatScript_v2_0::RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE)
-    {
-        // if cat has been checked before check the next event
-        if (m_scriptData[id].hitCat) { return; }
-        if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
-        {
-            OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
-            // check if entity1 is rat or rat's attack and entity2 is cat
-            if ((OTEE.Entity1 == m_scriptData[id].myID || OTEE.Entity1 == m_scriptData[id].attackTelegraphEntityID) &&
-                RatScript_v2_0::GetIsCat(OTEE.Entity2))
-            {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTEE.Entity2, id);
-            }
-            // check if entity2 is rat or rat's attack and entity1 is cat
-            else if ((OTEE.Entity2 == m_scriptData[id].myID || OTEE.Entity2 == m_scriptData[id].attackTelegraphEntityID) &&
-                RatScript_v2_0::GetIsCat(OTEE.Entity1))
-            {
-                // save the id of the cat that has been checked so that it wont be checked again
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTEE.Entity1, id);
-            }
-        }
-        else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
-        {
-            OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
-            // check if entity1 is rat or rat's attack and entity2 is cat
-            if ((OTSE.Entity1 == m_scriptData[id].myID || OTSE.Entity1 == m_scriptData[id].attackTelegraphEntityID) &&
-                RatScript_v2_0::GetIsCat(OTSE.Entity2))
-            {
-                // save the id of the cat that has been checked so that it wont be checked again
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTSE.Entity2, id);
-            }
-            // check if entity2 is rat or rat's attack and entity1 is cat
-            else if ((OTSE.Entity2 == m_scriptData[id].myID || OTSE.Entity2 == m_scriptData[id].attackTelegraphEntityID) &&
-                RatScript_v2_0::GetIsCat(OTSE.Entity1))
-            {
-                // save the id of the cat that has been checked so that it wont be checked again
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTSE.Entity1, id);
-            }
-        }
-    }
 
     void RatScript_v2_0::DealDamageToCat(EntityID collidedCat, EntityID rat)
     {
+        // Ensure that we do not attack the same cat twice in the same frame
+        auto ratIt = m_scriptData.find(rat);
+        if (ratIt != m_scriptData.end())
+        {
+            auto catIt{ ratIt->second.attackedCats.find(collidedCat) };
+            if (catIt != ratIt->second.attackedCats.end()) {
+                // cat has already been damaged
+                return;
+            }
+
+            // Add the cat to the map
+            ratIt->second.attackedCats.emplace(collidedCat);
+            ratIt->second.hitCat = true;
+        }
+
         GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(collidedCat);
-        m_scriptData.at(rat).hitCat = true;
     }
 
 
     void RatAttack_v2_0::ChangeStates()
     {
+        // Clear dead cats from the collision sets
+        RatScript_v2_0::ClearDeadCats(p_data->catsInDetectionRadius);
+        RatScript_v2_0::ClearDeadCats(p_data->catsExitedDetectionRadius);
+
         // Check if there are any cats in the detection range
         if (!(p_data->catsInDetectionRadius.empty()))
         {
+#ifdef DEBUG_PRINT
             std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): cats in detection radius\n";
+#endif // DEBUG_PRINT
 
             // there's a cat in the detection range, move to attack it again
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
@@ -169,7 +152,10 @@ namespace PE
         // Check if any cats exited the detection range
         else if (!(p_data->catsExitedDetectionRadius.empty()))
         {
+#ifdef DEBUG_PRINT
             std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): cats exited radius\n";
+#endif // DEBUG_PRINT
+
             // Check for the closest cat
             EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) };
 
@@ -179,7 +165,9 @@ namespace PE
         // No cats in detection range
         else
         {
+#ifdef DEBUG_PRINT
             std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): no cats in detection radius\n";
+#endif // DEBUG_PRINT
 
             // the cat we're chasing is dead, return to the original position
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
@@ -187,124 +175,60 @@ namespace PE
     }
 
 
+    void RatAttack_v2_0::OnCollisionEnter(const Event<CollisionEvents>& r_event)
+    {
+        if (!p_data) { return; }
+        else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+
+        if (r_event.GetType() == CollisionEvents::OnCollisionEnter)
+        {
+            OnCollisionEnterEvent OCEE = dynamic_cast<OnCollisionEnterEvent const&>(r_event);
+            // check if rat and cat have collided
+            bool touchingCat{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingCat(p_data->myID, OCEE.Entity1, OCEE.Entity2) };
+
+            if (!touchingCat && p_data->attacking && p_data->p_attackData) // Currently attacking 
+            {
+                p_data->p_attackData->OnCollisionEnter(OCEE.Entity1, OCEE.Entity2);
+            } // end of if (p_data->attacking)
+        }
+    }
+
     void RatAttack_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
     {
         if (!p_data) { return; }
-        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
-
-        if (p_data->attacking) // Currently attacking 
+        else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+        if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
         {
-            if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
+            OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
+            // check if a cat has entered the rat's detection collider
+            bool inDetectionRadius{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTEE.Entity1, OTEE.Entity2) };
+            
+            if (!inDetectionRadius && p_data->attacking && p_data->p_attackData) // Currently attacking 
             {
-                OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
-                //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Collision detected. Entity1: " << OTEE.Entity1 << ", Entity2: " << OTEE.Entity2 << std::endl;
-
-                // Directly check if one of the entities is the Cat
-                if (RatScript_v2_0::GetIsCat(OTEE.Entity2) || RatScript_v2_0::GetIsCat(OTEE.Entity1))
-                {
-                    EntityID catID = (RatScript_v2_0::GetIsCat(OTEE.Entity2) ? OTEE.Entity2 : OTEE.Entity1);
-                    //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Rat attack collides with Cat ID: " << catID << ", applying damage." << std::endl;
-                    catID;
-                    // Trigger the attack logic directly without checking attackRadiusId
-                    //GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(catID, p_data->attackDamage);
-
-                    // Optionally set a flag to prevent multiple attacks if necessary
-                    p_data->attacking = false; // This prevents continuous attack, reset this flag when conditions are met for another attack
-                }
-                else
-                {
-                    //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - No collision with Cat detected." << std::endl;
-                }
-            }
+                p_data->p_attackData->OnCollisionEnter(OTEE.Entity1, OTEE.Entity2);
+            } // end of if (p_data->attacking)
         }
-        else // Currently not attacking
+        else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
         {
-            if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
-            {
-                OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
-                // check if entity1 is the rat's detection collider and entity2 is cat
-                if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity2))
-                {
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity2);
+            OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
+            // check if a cat has entered the rat's detection collider
+            bool inDetectionRadius{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerEntered(p_data->myID, OTSE.Entity1, OTSE.Entity2) };
 
-                    std::cout << "RatAttack_v2_0::OnTriggerEnter() catsInDetectionRadius: ";
-                    for (auto const& catId : p_data->catsInDetectionRadius)
-                    {
-                        std::cout << catId << ' ';
-                    }
-                    std::cout << std::endl;
-                }
-                // check if entity2 is the rat's detection collider and entity1 is cat
-                else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity1))
-                {
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
-
-                    std::cout << "RatAttack_v2_0::OnTriggerEnter() catsInDetectionRadius: ";
-                    for (auto const& catId : p_data->catsInDetectionRadius)
-                    {
-                        std::cout << catId << ' ';
-                    }
-                    std::cout << std::endl;
-                }
-            }
-            else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
+            if (!inDetectionRadius && p_data->attacking && p_data->p_attackData) // Currently attacking 
             {
-                OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
-                // check if entity1 is the rat's detection collider and entity2 is cat
-                if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTSE.Entity2))
-                {
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
-                    std::cout << "RatAttack_v2_0::OnTriggerStay() catsInDetectionRadius: ";
-                    for (auto const& catId : p_data->catsInDetectionRadius)
-                    {
-                        std::cout << catId << ' ';
-                    }
-                    std::cout << std::endl;
-                }
-                // check if entity2 is the rat's detection collider and entity1 is cat
-                else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTSE.Entity1))
-                {
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
-                    std::cout << "RatAttack_v2_0::OnTriggerStay() catsInDetectionRadius: ";
-                    for (auto const& catId : p_data->catsInDetectionRadius)
-                    {
-                        std::cout << catId << ' ';
-                    }
-                    std::cout << std::endl;
-                }
-            }
-        }
-        
+                p_data->p_attackData->OnCollisionEnter(OTSE.Entity1, OTSE.Entity2);
+            } // end of if (p_data->attacking)
+        } // end of if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
     }
 
 
     void RatAttack_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
     {
         if (!p_data) { return; }
-        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+        else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
         OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
-        // check if entity1 is the rat's detection collider and entity2 is cat
-        if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity2))
-        {
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
-            std::cout << "RatAttack_v2_0::OnTriggerExit() catsExitedDetectionRadius: ";
-            for (auto const& catId : p_data->catsExitedDetectionRadius)
-            {
-                std::cout << catId << ' ';
-            }
-            std::cout << std::endl;
-        }
-        // check if entity2 is the rat's detection collider and entity1 is cat
-        else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity1))
-        {
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
-            std::cout << "RatAttack_v2_0::OnTriggerExit() catsExitedDetectionRadius: ";
-            for (auto const& catId : p_data->catsExitedDetectionRadius)
-            {
-                std::cout << catId << ' ';
-            }
-            std::cout << std::endl;
-        }
+        // check if a cat has exited the rat's detection collider
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckDetectionTriggerExited(p_data->myID, OTEE.Entity1, OTEE.Entity2);
     }
 } // namespace PE

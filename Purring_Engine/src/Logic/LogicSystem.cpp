@@ -44,7 +44,6 @@
 
 #include "Rat/RatScript_v2_0.h"
 #include "Rat/RatController_v2_0.h"
-#include "Rat/RatDetectionScript_v2_0.h"
 #include "UI/HealthBarScript_v2_0.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
 
@@ -59,6 +58,8 @@
 #include "Cat/FollowScript_v2_0.h"
 
 #include "Boss/BossRatScript.h"
+#include "Boss/BossRatHealthBarScript.h"
+#include "ObjectAttachScript.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -90,7 +91,6 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(DeploymentScript);
 	REGISTER_SCRIPT(MainMenuController);
 
-	REGISTER_SCRIPT(RatDetectionScript_v2_0);
 	REGISTER_SCRIPT(RatScript_v2_0);
 	REGISTER_SCRIPT(RatController_v2_0);
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
@@ -103,6 +103,8 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(FollowScript_v2_0);
 
 	REGISTER_SCRIPT(BossRatScript);
+	REGISTER_SCRIPT(ObjectAttachScript);
+	REGISTER_SCRIPT(BossRatHealthBarScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
@@ -284,6 +286,11 @@ nlohmann::json PE::ScriptComponent::ToJson(EntityID id) const
 			{
 				unsigned val = var.get_value<unsigned>();
 				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else if (var.get_type().get_name() == "enumPE::EnumRatType")
+			{
+					PE::EnumRatType val = var.get_value<EnumRatType>();
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
 			}
 			else
 			{

@@ -48,6 +48,7 @@
 
 // scripts
 #include "Logic/Cat/CatScript_v2_0.h"
+#include "Logic/Rat/RatScript_v2_0.h"
 
 const std::wstring wjsonExt = L".json";
 const std::wstring wAnimExt = L".anim";
@@ -550,7 +551,7 @@ nlohmann::json SerializationManager::LoadMetaDataFromFile(const std::filesystem:
     return loadedData;
 }
 
-
+#pragma warning (disable : 4702)
 size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
 {
     if (r_json.contains("Prefab")) // following multi prefab method
@@ -596,7 +597,7 @@ size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
     }
     return MAXSIZE_T;
 }
-
+#pragma warning (default : 4702)
 void SerializationManager::LoadLoaders()
 {
     m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
@@ -964,6 +965,14 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                             if (data.contains(prop.get_name().to_string().c_str()))
                             {
                                 unsigned val = data[prop.get_name().to_string().c_str()].get<unsigned>();
+                                prop.set_value(inst, val);
+                            }
+                        }
+                        else if (prop.get_type().get_name() == "enumPE::EnumRatType")
+                        {
+                            if (data.contains(prop.get_name().to_string().c_str()))
+                            {
+                                PE::EnumRatType val = data[prop.get_name().to_string().c_str()].get<PE::EnumRatType>();
                                 prop.set_value(inst, val);
                             }
                         }

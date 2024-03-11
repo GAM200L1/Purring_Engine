@@ -45,10 +45,10 @@ namespace PE
 		m_mouseClicked = false;
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, PlayerControllerScript::OnMouseClick, this)
 
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
-		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
-		EntityManager::GetInstance().RemoveEntity(buttonpress);
+		//EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+		//if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+		//	EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		//EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 	void PlayerControllerScript::Update(EntityID id, float deltaTime)
 	{
@@ -73,10 +73,10 @@ namespace PE
 	{
 		id;
 
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
-		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).StopSound();
-		EntityManager::GetInstance().RemoveEntity(buttonpress);
+		//EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+		//if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+		//	EntityManager::GetInstance().Get<AudioComponent>(buttonpress).StopSound();
+		//EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
 	void PlayerControllerScript::OnAttach(EntityID id)
@@ -237,36 +237,36 @@ namespace PE
 	}
 	void PlayerControllerScript::PlayFootstepAudio()
 	{
-		int randNum = (std::rand() % 3) + 1;
+		//int randNum = (std::rand() % 3) + 1;
 
-		switch (randNum)
-		{
-		case 1:
-		{
-			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 1.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		case 2:
-		{
-			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 2.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		case 3:
-		{
-			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 3.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		}
+		//switch (randNum)
+		//{
+		//case 1:
+		//{
+		//	EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 1.prefab");
+		//	if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+		//		EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		//	EntityManager::GetInstance().RemoveEntity(buttonpress);
+		//	break;
+		//}
+		//case 2:
+		//{
+		//	EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 2.prefab");
+		//	if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+		//		EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		//	EntityManager::GetInstance().RemoveEntity(buttonpress);
+		//	break;
+		//}
+		//case 3:
+		//{
+		//	EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 3.prefab");
+		//	if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+		//		EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		//	EntityManager::GetInstance().RemoveEntity(buttonpress);
+		//	break;
+		//}
+		//}
 
-		footstepTimer = footstepDelay;
+		//footstepTimer = footstepDelay;
 	}
 }
