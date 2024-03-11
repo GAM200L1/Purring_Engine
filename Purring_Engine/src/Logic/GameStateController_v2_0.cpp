@@ -130,22 +130,31 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
-		if (!bgmStarted)
+		if (m_currentLevel == 0)		// Stage 1
 		{
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
-			bgmStarted = true;
+			if (!bgmStarted)
+			{
+				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+				bgmStarted = true;
+			}
 		}
-
-		if (m_currentLevel == 1)
+		else if (m_currentLevel == 1)	// Stage 2
 		{
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+			if (!bgmStarted)
+			{
+				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+				bgmStarted = true;
+			}
 			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 5.0f);
 		}
-
-		if (m_currentLevel == 2)
+		else if (m_currentLevel == 2)	// Stage 3
 		{
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 5.0f);
+			if (!bgmStarted)
+			{
+				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 5.0f);
+				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 5.0f);
+				bgmStarted = true;
+			}
 			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music3.prefab", true, 5.0f);
 		}
 
