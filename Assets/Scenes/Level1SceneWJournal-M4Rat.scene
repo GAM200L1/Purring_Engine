@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4138,7 +4138,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4445,8 +4445,8 @@
                                         "attacKDirection": 0,
                                         "bulletDelay": 0.0,
                                         "bulletFireAnimationIndex": 3,
-                                        "bulletForce": 750.0,
-                                        "bulletLifeTime": 0.5,
+                                        "bulletForce": 500.0,
+                                        "bulletLifeTime": 1.0,
                                         "bulletRange": 3.0,
                                         "damage": 2,
                                         "projectileID": 0,
@@ -4493,7 +4493,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5197,7 +5197,7 @@
                                 "maxMovementRange": 200.0,
                                 "movementSpeed": 250.0,
                                 "ratMaxHealth": 2,
-                                "ratType": 3
+                                "ratType": 1
                             },
                             "state": 0
                         }
