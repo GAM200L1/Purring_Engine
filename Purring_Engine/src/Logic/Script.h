@@ -25,6 +25,8 @@
 #include <rttr/registration.h>
 typedef unsigned long long EntityID;
 
+#define	REGISTERANIMATIONFUNCTION(func, namespace) Script::AddFunction(#func, [this](EntityID x) { this->##func(x); });
+
 namespace PE 
 {
 enum class ScriptState {INIT, UPDATE, EXIT, DEAD};
@@ -70,6 +72,14 @@ public:
 	 \brief					Destructor for Scripts
 	*************************************************************************************/
 	virtual ~Script() {}
+
+	// documentation
+	void AddFunction(std::string str, const std::function<void(EntityID)> function)
+	{
+		animationFunctions[str] = function;
+	}
+
+	std::map<std::string, std::function<void(EntityID)>> animationFunctions;
 };
 
 }
