@@ -355,32 +355,46 @@ namespace PE
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Detection SFX" + std::to_string(randSound) + ".prefab";
 
 			// DEBUGHANS @PR-ER
-			std::cout << "[Debug] Playing death audio: " << soundPrefab << std::endl;
+			//std::cout << "[Debug] Playing detection audio: " << soundPrefab << std::endl;
 
 			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
 		}
 
 
-		void RatScript_v2_0::PlayInjuredAudio()
+		void RatScript_v2_0::PlayInjuredAudio(EntityID id)
 		{
-				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-				int randSound = std::rand() % 3 + 1;
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			int randSound = std::rand() % 5 + 1; // Randomize between 1 and 5 for the new audio files
 
-				std::string soundPrefab;
-				switch (randSound)
-				{
-				case 1:
-						soundPrefab = "AudioObject/Rat Injured SFX1.prefab"; break;
-				case 2:
-						soundPrefab = "AudioObject/Rat Injured SFX2.prefab"; break;
-				case 3:
-						soundPrefab = "AudioObject/Rat Injured SFX3.prefab"; break;
-				}
+			std::string soundPrefabBasePath = "AudioObject/Rat ";
+			std::string ratTypeString;
+			switch (it->second.ratType)
+			{
+			case EnumRatType::GUTTER:
+			case EnumRatType::GUTTER_V1:
+				ratTypeString = "Gutter ";
+				break;
+			case EnumRatType::BRAWLER:
+				ratTypeString = "Brawler ";
+				break;
+			case EnumRatType::SNIPER:
+				ratTypeString = "Sniper ";
+				break;
+			default:
+				return;
+			}
 
-				// Play the selected sound
-				PlayAudio(soundPrefab);
+			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Injured SFX" + std::to_string(randSound) + ".prefab";
+
+			// DEBUGHANS @PR-ER
+			//std::cout << "[Debug] Playing injured audio: " << soundPrefab << std::endl;
+
+			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
 		}
+
 
 		void RatScript_v2_0::PlayAudio(std::string const& r_soundPrefab)
 		{
@@ -892,30 +906,30 @@ namespace PE
 
 		void RatScript_v2_0::DamageRat(EntityID ratId, EntityID damageSourceId, int damage)
 		{
-				auto it = m_scriptData.find(ratId);
-				if (it == m_scriptData.end()) { return; }
+			auto it = m_scriptData.find(ratId);
+			if (it == m_scriptData.end()) { return; }
 
-				// Check if the rat has hit this entity during this phase
-				if (it->second.hitBy.find(damageSourceId) != it->second.hitBy.end())
-				{
-						// Don't damage the rat twice via the same source
-						return;
-				}
-				it->second.hitBy.emplace(damageSourceId);
+			// Check if the rat has hit this entity during this phase
+			if (it->second.hitBy.find(damageSourceId) != it->second.hitBy.end())
+			{
+				// Don't damage the rat twice via the same source
+				return;
+			}
+			it->second.hitBy.emplace(damageSourceId);
 
-				// Subtract the damage from the rat's health
-				it->second.ratHealth -= damage;
+			// Subtract the damage from the rat's health
+			it->second.ratHealth -= damage;
 
-				// Check if the rat's health drops below or equals zero
-				if (it->second.ratHealth <= 0)
-				{
-						// Kill the rat
-						KillRat(ratId);
-				}
-				else 
-				{
-						PlayInjuredAudio();
-				}
+			// Check if the rat's health drops below or equals zero
+			if (it->second.ratHealth <= 0)
+			{
+				// Kill the rat
+				KillRat(ratId);
+			}
+			else 
+			{
+				PlayInjuredAudio(ratId);
+			}
 		}
 
 

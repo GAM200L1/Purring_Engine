@@ -170,7 +170,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Play one of a few random injury SFX.
 		*************************************************************************************/
-		static void PlayInjuredAudio();
+		void PlayInjuredAudio(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Spawn an audio object using the audio object at the filepath passed in and
