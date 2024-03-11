@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationGrey_Walk.anim",
     "frameRate": 30,
+    "isLooping": true,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Cat_Smokey_Walk.png",
     "totalSprites": 6
 }

@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationGrey_Death.anim",
     "frameRate": 30,
+    "isLooping": false,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Death.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Cat_Smokey_Death.png",
     "totalSprites": 6
 }

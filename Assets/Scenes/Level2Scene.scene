@@ -795,6 +795,8 @@
                                 "PauseMenuCanvas": 3,
                                 "PhaseBanner": 17,
                                 "Portrait": 47,
+                                "RatKingJournal": 0,
+                                "RatKingPortrait": 0,
                                 "RatPortrait": 53,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
@@ -3304,7 +3306,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4897,7 +4899,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4976,7 +4978,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5012,7 +5014,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5103,7 +5105,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5654,7 +5656,7 @@
                             "../Assets/Animation/AnimationOrange_Idle.anim",
                             "../Assets/Animation/AnimationOrange_walk.anim"
                         ],
-                        "CurrentAnimationID": ""
+                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Attack.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 5,
@@ -5667,7 +5669,7 @@
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 48.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": true,
@@ -5693,7 +5695,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Citrus_Attack.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5736,7 +5738,7 @@
                         }
                     },
                     "Transform": {
-                        "height": 64.0,
+                        "height": 96.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 350.0005798339844,
@@ -5747,7 +5749,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 64.0
+                        "width": 96.0
                     }
                 },
                 "name": ""
@@ -5777,7 +5779,7 @@
                         "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 150.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 350.0005798339844,
@@ -5788,7 +5790,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 150.0
                     }
                 },
                 "name": ""

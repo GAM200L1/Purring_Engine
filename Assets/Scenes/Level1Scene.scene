@@ -795,6 +795,8 @@
                                 "PauseMenuCanvas": 3,
                                 "PhaseBanner": 17,
                                 "Portrait": 47,
+                                "RatKingJournal": 0,
+                                "RatKingPortrait": 0,
                                 "RatPortrait": 53,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
@@ -3304,7 +3306,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4138,7 +4140,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4274,7 +4276,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Smokey_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4304,7 +4306,7 @@
                                     }
                                 },
                                 "catID": 0,
-                                "catMaxMovementEnergy": 21,
+                                "catMaxMovementEnergy": 7,
                                 "catType": 1,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
@@ -4387,7 +4389,7 @@
                             "../Assets/Animation/AnimationMeowsalot_Idle.anim",
                             "../Assets/Animation/AnimationMeowsalot_walk.anim"
                         ],
-                        "CurrentAnimationID": ""
+                        "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Attack.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 0,
@@ -4424,7 +4426,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Meowsalot_Attack.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4493,7 +4495,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
