@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Rat_Sniper_Selected1.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Rat Sniper Selection SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Rat Sniper Selection SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

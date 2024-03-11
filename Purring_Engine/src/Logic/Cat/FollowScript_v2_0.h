@@ -108,11 +108,6 @@ namespace PE
 
 	private:
 		/*!***********************************************************************************
-		\brief Plays audio for when a cat is picked up by main cat
-		*************************************************************************************/
-		void PlayAdoptCatAudio();
-
-		/*!***********************************************************************************
 		 \brief Called when a collision event has occured. 
 
 		 \param[in,out] r_event - Collision event data.

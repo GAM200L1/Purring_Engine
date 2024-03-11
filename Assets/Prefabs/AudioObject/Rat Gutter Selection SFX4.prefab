@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Rat_Gutter_Selected4.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Rat Gutter Selection SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Rat Gutter Selection SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

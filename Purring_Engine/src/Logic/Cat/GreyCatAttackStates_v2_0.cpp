@@ -26,6 +26,7 @@
 
 #include "Hierarchy/HierarchyManager.h"
 #include "Physics/CollisionManager.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 namespace PE
 {
@@ -286,34 +287,10 @@ namespace PE
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ApplyLinearImpulse(m_bulletImpulse);
 				m_projectileFired = true;
 				
-				// ----- Attacking Audio ----- //
-				SerializationManager m_serializationManager;
-				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX.prefab");
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				EntityManager::GetInstance().RemoveEntity(sound);
-
-					int randomInteger = std::rand() % 3 + 1;
-
-					switch (randomInteger)
-					{
-					case 1:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX1.prefab");
-						break;
-					case 2:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX2.prefab");
-						break;
-					case 3:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX3.prefab");
-						break;
-					}
-
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				EntityManager::GetInstance().RemoveEntity(sound);
-
+				CatScript_v2_0::PlayCatAttackAudio(p_catData->catType);
 			}
-			else {
+			else 
+			{
 				m_bulletDelay -= deltaTime;
 			}
 		}
@@ -370,16 +347,25 @@ namespace PE
 				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 				{
 					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (p_catController->IsCatAndNotCaged(id2) && !p_catController->IsFollowCat(id2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
 					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					PlayProjectileHitAudio(false);
+					return true;
+				}
+				else if (CatHelperFunctions::IsObstacle(id2))
+				{
+					PlayProjectileHitAudio(true);
+					return true;
 				}
 			}
 			else if (id2 == p_attackData->projectileID)
@@ -387,19 +373,51 @@ namespace PE
 				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 				{
 					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (p_catController->IsCatAndNotCaged(id1) && !p_catController->IsFollowCat(id1))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
+					PlayProjectileHitAudio(false);
 					return true;
 				}
 				else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
 					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					PlayProjectileHitAudio(false);
+					return true;
+				}
+				else if (CatHelperFunctions::IsObstacle(id1))
+				{
+					PlayProjectileHitAudio(true);
+					return true;
 				}
 			}
 		}
 		return false;
+	}
+
+	void GreyCatAttack_v2_0EXECUTE::PlayProjectileHitAudio(bool isTerrain)
+	{
+		std::string soundPrefabPath = "AudioObject/Projectile Hit Sound SFX";
+
+		if (isTerrain)
+		{
+			// @TODOHANS
+			// add projectile hit terrain audio here
+
+			// KL say no terrain sound yet.
+		}
+		else
+		{
+			int randomSoundIndex = std::rand() % 3 + 1;  // random number between 1 and 3
+			soundPrefabPath += std::to_string(randomSoundIndex) + ".prefab";
+
+			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+		}
+
+		
+
 	}
 }

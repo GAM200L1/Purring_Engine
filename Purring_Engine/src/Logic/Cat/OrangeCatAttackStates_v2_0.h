@@ -217,5 +217,10 @@ namespace PE
 			   [in] id2 - second entity in collision event
 		*************************************************************************************/
 		void SeismicHitCatOrRat(EntityID id1, EntityID id2);
+
+		/*!***********************************************************************************
+		 \brief Plays audio when seismic ruptures
+		*************************************************************************************/
+		void PlaySeismicAudio();
 	};
 }

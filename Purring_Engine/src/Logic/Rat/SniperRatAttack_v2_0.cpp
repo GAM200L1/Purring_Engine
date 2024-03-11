@@ -45,7 +45,7 @@ namespace PE
 				std::cout << "SniperRatAttack_v2_0::ExecuteAttack(" << mainID << ") attack feedback once" << std::endl;
 #endif // DEBUG_PRINT
 			attackFeedbackOnce = true;
-			RatScript_v2_0::PlayAttackAudio();
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAttackAudio(this->mainID);
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(mainID, EnumRatAnimations::ATTACK);
 			attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(mainID);
 			timePassed = 0.f;

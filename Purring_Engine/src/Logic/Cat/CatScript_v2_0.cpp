@@ -35,6 +35,7 @@
 
 #include "ECS/EntityFactory.h"
 #include "ResourceManager/ResourceManager.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 namespace PE
 {
@@ -124,39 +125,34 @@ namespace PE
 				{
 					CatHelperFunctions::ToggleEntity(nodeId, false);
 				}
-				SerializationManager m_serializationManager;
-				EntityID sound{};
-
-				if ((GETSCRIPTDATA(CatScript_v2_0, id))->catType == EnumCatType::MAINCAT)
-				{
-					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot.prefab");
-				}
-				else
-				{
-					int randomInteger = std::rand() % 3 + 1;
-
-					switch (randomInteger)
-					{
-					case 1:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX1.prefab");
-						break;
-					case 2:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX2.prefab");
-						break;
-					case 3:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX3.prefab");
-						break;
-					}
-				}
-
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				EntityManager::GetInstance().RemoveEntity(sound);
+				
+				PlayDeathAudio(m_scriptData[id].catType);
 			}
-
 
 			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
+				switch (m_scriptData[id].catType)
+				{
+					case EnumCatType::ORANGECAT:
+					{
+						OrangeCatAttackVariables const& vars = std::get<OrangeCatAttackVariables>(m_scriptData[id].attackVariables);
+						// clears entities
+						CatHelperFunctions::ToggleEntity(vars.seismicID, false);
+						CatHelperFunctions::ToggleEntity(vars.telegraphID, false);
+						break;
+					}
+					default: // main cat or grey cat
+					{
+						GreyCatAttackVariables const& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
+						// clears entities
+						for (auto const& [direction, telegraphID] : vars.telegraphIDs)
+						{
+							CatHelperFunctions::ToggleEntity(telegraphID, false);
+						}
+						CatHelperFunctions::ToggleEntity(vars.projectileID, false);
+						break;
+					}
+				}
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->RemoveCatFromCurrent(id);
 				m_scriptData[id].toggleDeathAnimation = false;
 				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
@@ -500,5 +496,104 @@ namespace PE
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		m_mouseClickPrevious = m_mouseClick;
 		m_mouseClick = true;
+	}
+	
+	// ----- Audio Helper Functions ----- //
+	void CatScript_v2_0::PlayDeathAudio(EnumCatType catType)
+	{
+		std::string soundPrefabPath = "AudioObject/";
+
+		switch (catType)
+		{
+		case EnumCatType::MAINCAT:
+			soundPrefabPath += "Cat Meowsalot Death SFX1.prefab"; // Meowsalot has only one death sound
+			break;
+		case EnumCatType::GREYCAT:
+		{
+			int randomInteger = std::rand() % 3 + 1; // Randomize between 1 and 3
+			soundPrefabPath += "Cat Grey Death SFX" + std::to_string(randomInteger) + ".prefab";
+		}
+		break;
+		case EnumCatType::ORANGECAT:
+		{
+			int randomInteger = std::rand() % 3 + 1; // Randomize between 1 and 3
+			soundPrefabPath += "Cat Orange Death SFX" + std::to_string(randomInteger) + ".prefab";
+		}
+		break;
+		default:
+			return;
+		}
+
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+		
+	}
+
+	void CatScript_v2_0::PlayPathPlacementAudio()
+	{
+		std::string soundPrefabPath = "AudioObject/Movement Planning SFX.prefab";
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+		
+	}
+
+	void CatScript_v2_0::PlayFootstepAudio()
+	{
+		int randNum = (std::rand() % 3) + 1;								//random number 1to3
+		std::string soundPrefabPath = "AudioObject/Cat Movement SFX ";
+		soundPrefabPath += std::to_string(randNum) + ".prefab";
+
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+		
+	}
+
+	void CatScript_v2_0::PlayCatAttackAudio(EnumCatType catType)
+	{
+		std::string soundPrefabPath = "AudioObject/Cat ";
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
+		int randSound = std::rand() % 5 + 1; // Random number between 1 and 5
+
+		switch (catType)
+		{
+		case EnumCatType::MAINCAT:
+			soundPrefabPath += "Meowsalot Attack SFX" + std::to_string(randSound) + ".prefab";
+			break;
+		case EnumCatType::GREYCAT:
+			soundPrefabPath += "Grey Attack SFX" + std::to_string(randSound) + ".prefab";
+			break;
+		case EnumCatType::ORANGECAT:
+			soundPrefabPath += "Orange Attack SFX" + std::to_string(randSound) + ".prefab";
+			break;
+		default:
+			return;
+		}
+		
+		
+
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+	}
+
+	void CatScript_v2_0::PlayRescueCatAudio(EnumCatType catType)
+	{
+		std::string soundPrefabPath = "AudioObject/Cat ";
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
+		int randSound = std::rand() % 2 + 1; // Random number between 1 and 2
+
+		switch (catType)
+		{
+		case EnumCatType::GREYCAT:
+			soundPrefabPath += "Grey Rescued SFX" + std::to_string(randSound) + ".prefab";
+			break;
+		case EnumCatType::ORANGECAT:
+			soundPrefabPath += "Orange Rescued SFX" + std::to_string(randSound) + ".prefab";
+			break;
+		default:
+			return;
+		}
+
+		
+
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
 }

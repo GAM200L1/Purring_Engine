@@ -33,6 +33,7 @@
 #include "SniperRatAttack_v2_0.h"
 
 #include "../Cat/CatController_v2_0.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 #include "../Time/TimeManager.h" // GetDeltaTime()
 
@@ -298,100 +299,144 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::PlayAttackAudio()
+		void RatScript_v2_0::PlayAttackAudio(EntityID id)
 		{
-				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-				int randSound = std::rand() % 2 + 1;
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			int randSound = std::rand() % 5 + 1;						// Randomise between 1 and 5
 
-				std::string soundPrefab;
-				if (randSound == 1)
-				{
-						soundPrefab = "AudioObject/Rat Attack SFX1.prefab";
-				}
-				else
-				{
-						soundPrefab = "AudioObject/Rat Attack SFX2.prefab";
-				}
+			std::string soundPrefabBasePath = "AudioObject/Rat ";
+			std::string ratTypeString;
+			switch (it->second.ratType)
+			{
+			case EnumRatType::GUTTER:
+			case EnumRatType::GUTTER_V1:
+				ratTypeString = "Gutter ";
+				break;
+			case EnumRatType::BRAWLER:
+				ratTypeString = "Brawler ";
+				break;
+			case EnumRatType::SNIPER:
+				ratTypeString = "Sniper ";
+				break;
+			default:
+				return;
+			}
 
-				// Play the selected sound
-				PlayAudio(soundPrefab);
+			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Attack SFX" + std::to_string(randSound) + ".prefab";
+
+		
+
+			PlayAudio(soundPrefab);
+		}
+
+		void RatScript_v2_0::PlayDeathAudio(EntityID id)
+		{
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
+
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			int randSound = std::rand() % 4 + 1;						// Randomize between 1 and 4
+
+			std::string soundPrefabBasePath = "AudioObject/Rat ";
+			std::string ratTypeString;
+			switch (it->second.ratType)
+			{
+			case EnumRatType::GUTTER:
+			case EnumRatType::GUTTER_V1:
+				ratTypeString = "Gutter ";
+				break;
+			case EnumRatType::BRAWLER:
+				ratTypeString = "Brawler ";
+				break;
+			case EnumRatType::SNIPER:
+				ratTypeString = "Sniper ";
+				break;
+			default:
+				return;
+			}
+
+			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Death SFX" + std::to_string(randSound) + ".prefab";
+
+			
+
+			PlayAudio(soundPrefab);
 		}
 
 
-		void RatScript_v2_0::PlayDeathAudio()
+		void RatScript_v2_0::PlayDetectionAudio(EntityID id)
 		{
-				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-				int randSound = std::rand() % 2 + 1;
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			int randSound = std::rand() % 5 + 1;					// Randomize between 1 and 5
 
-				std::string soundPrefab;
-				if (randSound == 1)
-				{
-						soundPrefab = "AudioObject/Rat Death SFX1.prefab";
-				}
-				else
-				{
-						soundPrefab = "AudioObject/Rat Death SFX2.prefab";
-				}
+			std::string soundPrefabBasePath = "AudioObject/Rat ";
+			std::string ratTypeString;
+			switch (it->second.ratType)
+			{
+			case EnumRatType::GUTTER:
+			case EnumRatType::GUTTER_V1:
+				ratTypeString = "Gutter ";
+				break;
+			case EnumRatType::BRAWLER:
+				ratTypeString = "Brawler ";
+				break;
+			case EnumRatType::SNIPER:
+				ratTypeString = "Sniper ";
+				break;
+			default:
+				return;
+			}
 
-				// Play the selected sound
-				PlayAudio(soundPrefab);
+			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Detection SFX" + std::to_string(randSound) + ".prefab";
+
+			
+
+			PlayAudio(soundPrefab);
 		}
 
 
-		void RatScript_v2_0::PlayDetectionAudio()
+		void RatScript_v2_0::PlayInjuredAudio(EntityID id)
 		{
-				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-				int randSound = std::rand() % 3 + 1;
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+			int randSound = std::rand() % 5 + 1; // Randomize between 1 and 5 for the new audio files
 
-				std::string soundPrefab;
-				switch (randSound)
-				{
-				case 1:
-						soundPrefab = "AudioObject/Rat Detection SFX1.prefab"; break;
-				case 2:
-						soundPrefab = "AudioObject/Rat Detection SFX2.prefab"; break;
-				case 3:
-						soundPrefab = "AudioObject/Rat Detection SFX3.prefab"; break;
-				}
+			std::string soundPrefabBasePath = "AudioObject/Rat ";
+			std::string ratTypeString;
+			switch (it->second.ratType)
+			{
+			case EnumRatType::GUTTER:
+			case EnumRatType::GUTTER_V1:
+				ratTypeString = "Gutter ";
+				break;
+			case EnumRatType::BRAWLER:
+				ratTypeString = "Brawler ";
+				break;
+			case EnumRatType::SNIPER:
+				ratTypeString = "Sniper ";
+				break;
+			default:
+				return;
+			}
 
-				// Play the selected sound
-				PlayAudio(soundPrefab);
+			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Injured SFX" + std::to_string(randSound) + ".prefab";
+
+			
+
+			PlayAudio(soundPrefab);
 		}
 
-
-		void RatScript_v2_0::PlayInjuredAudio()
-		{
-				std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
-				int randSound = std::rand() % 3 + 1;
-
-				std::string soundPrefab;
-				switch (randSound)
-				{
-				case 1:
-						soundPrefab = "AudioObject/Rat Injured SFX1.prefab"; break;
-				case 2:
-						soundPrefab = "AudioObject/Rat Injured SFX2.prefab"; break;
-				case 3:
-						soundPrefab = "AudioObject/Rat Injured SFX3.prefab"; break;
-				}
-
-				// Play the selected sound
-				PlayAudio(soundPrefab);
-		}
 
 		void RatScript_v2_0::PlayAudio(std::string const& r_soundPrefab)
 		{
-				SerializationManager serializationManager;
-				EntityID sound = serializationManager.LoadFromFile(r_soundPrefab);
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-				{
-						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				}
-				EntityManager::GetInstance().RemoveEntity(sound);
+			PE::GlobalMusicManager::GetInstance().PlaySFX(r_soundPrefab, false);
 		}
 
 
@@ -630,8 +675,9 @@ namespace PE
 			// Check if the cat is alive
 			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
 
-			if (it->second.catsInDetectionRadius.find(catID) == it->second.catsInDetectionRadius.end()) {
-					PlayDetectionAudio();
+			if (it->second.catsInDetectionRadius.find(catID) == it->second.catsInDetectionRadius.end())
+			{
+				PlayDetectionAudio(id);
 			}
 
 			// Store the cat in the container
@@ -957,31 +1003,31 @@ namespace PE
 
 		void RatScript_v2_0::DamageRat(EntityID ratId, EntityID damageSourceId, int damage)
 		{
-				auto it = m_scriptData.find(ratId);
-				if (it == m_scriptData.end()) { return; }
+			auto it = m_scriptData.find(ratId);
+			if (it == m_scriptData.end()) { return; }
 
-				// Check if the rat has hit this entity during this phase
-				if (it->second.hitBy.find(damageSourceId) != it->second.hitBy.end())
-				{
-						// Don't damage the rat twice via the same source
-						return;
-				}
-				it->second.hitBy.emplace(damageSourceId);
+			// Check if the rat has hit this entity during this phase
+			if (it->second.hitBy.find(damageSourceId) != it->second.hitBy.end())
+			{
+				// Don't damage the rat twice via the same source
+				return;
+			}
+			it->second.hitBy.emplace(damageSourceId);
 
-				// Subtract the damage from the rat's health
-				it->second.ratHealth -= damage;
+			// Subtract the damage from the rat's health
+			it->second.ratHealth -= damage;
 
-				// Check if the rat's health drops below or equals zero
-				if (it->second.ratHealth <= 0)
-				{
-						// Kill the rat
-						KillRat(ratId);
-				}
-				else 
-				{
-						PlayAnimation(ratId, EnumRatAnimations::HURT);
-						PlayInjuredAudio();
-				}
+			// Check if the rat's health drops below or equals zero
+			if (it->second.ratHealth <= 0)
+			{
+				// Kill the rat
+				KillRat(ratId);
+			}
+			else 
+			{
+				PlayAnimation(ratId, EnumRatAnimations::HURT);
+				PlayInjuredAudio(ratId);
+			}
 		}
 
 
