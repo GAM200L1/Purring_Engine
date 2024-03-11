@@ -34,6 +34,8 @@
 
 #include "../Cat/CatController_v2_0.h"
 
+#include "../Time/TimeManager.h" // GetDeltaTime()
+
 //#define DEBUG_PRINT
 
 namespace PE
@@ -70,6 +72,7 @@ namespace PE
 
 			// Initialize some variables
 			it->second.ratHealth = it->second.ratMaxHealth;
+			it->second.timeBeforeChangingState = 0.f;
 
 			// Clear collision containers
 			ClearCollisionContainers(id);
@@ -106,6 +109,20 @@ namespace PE
 			{
 					PlayAnimation(id, it->second.cachedRatAnimation);
 					it->second.cachedRatAnimation = EnumRatAnimations::RAT_ANIM_COUNT;
+			}
+
+			// If we just changed to the execution state
+			if(GameStateJustChanged() && gameStateController->prevState != GameStates_v2_0::PAUSE 
+				&& gameStateController->currentState == GameStates_v2_0::EXECUTE)
+			{				
+					// Clear cat collision containers
+					//ClearCollisionContainers(id);
+					// NOTE: I'm still not too sure about whether it's a good idea to clear this here. 
+					// I'm making the assumption that all decisions the rat makes occurs during the planning phase
+					// Update: It was not a good idea. Keeping this here for reference
+
+					// Reset timeout
+					it->second.totalTimeCollidingIntoWall = 0.f;
 			}
 
 			if (CheckShouldStateChange(id, deltaTime))
@@ -550,11 +567,26 @@ namespace PE
 			TriggerStateChange(id, new RatDeathState_v2_0, stateChangeDelay);
 		}
 
-		// ------------ CAT DETECTION ------------ // 
+		bool RatScript_v2_0::GetExecutionPhaseTimeout(EntityID const id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return false; }
+				return (it->second.totalTimeCollidingIntoWall >= it->second.maxObstacleCollisionTime);
+		}
 
-		bool RatScript_v2_0::GetIsNonCagedCat(EntityID const id) {
+		// ------------ CAT DETECTION ------------ //
+
+		bool RatScript_v2_0::GetIsObstacle(EntityID const id)
+		{
+				return (EntityManager::GetInstance().Has<EntityDescriptor>(id) && EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
+		}
+
+
+		bool RatScript_v2_0::GetIsNonCagedCat(EntityID const id) 
+		{
 				return (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id));
 		}
+
 
 		void RatScript_v2_0::ClearCollisionContainers(EntityID const id) 
 		{
@@ -686,6 +718,56 @@ namespace PE
 				else if ((entity2 == it->second.myID) && RatScript_v2_0::GetIsNonCagedCat(entity1))
 				{
 						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(entity1, it->second.myID);
+						return true;
+				}
+				return false;
+		}
+
+
+		bool RatScript_v2_0::CheckRatTouchingWall(EntityID const ratId, EntityID const entity1, EntityID const entity2)
+		{
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return false; }
+
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::CheckRatTouchingCat(" << ratId << "): collision between ent " << entity1 << " and " << entity2 << std::endl;
+#endif // DEBUG_PRINT
+
+				// check if entity1 is rat and entity2 is cat
+				if ((entity1 == it->second.myID) && GetIsObstacle(entity2))
+				{
+						it->second.totalTimeCollidingIntoWall += TimeManager::GetInstance().GetDeltaTime();
+						return true;
+				}
+				// check if entity2 is rat and entity1 is cat
+				else if ((entity2 == it->second.myID) && GetIsObstacle(entity1))
+				{
+						it->second.totalTimeCollidingIntoWall += TimeManager::GetInstance().GetDeltaTime();
+						return true;
+				}
+				return false;
+		}
+
+
+		bool RatScript_v2_0::CheckRatStopTouchingWall(EntityID const ratId, EntityID const entity1, EntityID const entity2)
+		{
+				auto it = m_scriptData.find(ratId);
+				if (it == m_scriptData.end()) { return false; }
+
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::CheckRatTouchingCat(" << ratId << "): collision between ent " << entity1 << " and " << entity2 << std::endl;
+#endif // DEBUG_PRINT
+
+				// check if entity1 is rat and entity2 is cat
+				if ((entity1 == it->second.myID) && GetIsObstacle(entity2))
+				{
+						it->second.totalTimeCollidingIntoWall = 0.f;
+						return true;
+				}
+				// check if entity2 is rat and entity1 is cat
+				else if ((entity2 == it->second.myID) && GetIsObstacle(entity1))
+				{
+						it->second.totalTimeCollidingIntoWall = 0.f;
 						return true;
 				}
 				return false;

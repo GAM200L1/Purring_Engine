@@ -3320,7 +3320,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 91
+                        "sceneID": 97
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4395,8 +4395,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -478.00079345703125,
-                                "y": 77.00000762939453
+                                "x": -280.0007629394531,
+                                "y": 106.99996185302734
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4477,8 +4477,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -478.00079345703125,
-                            "y": 77.00000762939453
+                            "x": -280.0007629394531,
+                            "y": 106.99996185302734
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5076,7 +5076,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 31
+                        "sceneID": 61
                     },
                     "Renderer": {
                         "Color": {
@@ -5085,7 +5085,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5178,7 +5178,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5240,7 +5240,7 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": -97.49999237060547,
+                                "x": 26.99993896484375,
                                 "y": -116.49991607666016
                             },
                             "positionOffset": {
@@ -5262,7 +5262,7 @@
                         "isActive": true,
                         "name": "SniperRat",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 91
                     },
                     "Renderer": {
                         "Color": {
@@ -5302,7 +5302,7 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -97.49999237060547,
+                            "x": 26.99993896484375,
                             "y": -116.49991607666016
                         },
                         "relativeposition": {
@@ -5505,6 +5505,75 @@
                         },
                         "relorientation": 0.0,
                         "width": 70.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 4,
+                        "data": {
+                            "max": {
+                                "x": -26.500324249267578,
+                                "y": 490.5
+                            },
+                            "min": {
+                                "x": -56.50032424926758,
+                                "y": -490.5
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 2.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 97,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Obstacle",
+                        "parent": null,
+                        "sceneID": 31
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
+                    "Transform": {
+                        "height": 981.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -41.50032424926758,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 15.0
                     }
                 },
                 "name": ""
