@@ -124,7 +124,7 @@ namespace PE
 	{
 		~RatScript_v2_0_Data()
 		{
-			delete p_attackData;
+			DeleteAttackData();
 			delete p_queuedState;
 			delete p_stateManager;
 		}
@@ -232,6 +232,18 @@ namespace PE
 		State* GetQueuedState()
 		{
 			return p_queuedState;
+		}
+
+		/*!***********************************************************************************
+		 \brief Deletes the attack data object if it hasn't already been deleted.
+		*************************************************************************************/
+		void DeleteAttackData()
+		{
+			if (p_attackData) 
+			{
+				p_attackData = nullptr;
+				delete p_attackData;
+			}
 		}
 
 	}; // end of struct RatScript_v2_0_Data

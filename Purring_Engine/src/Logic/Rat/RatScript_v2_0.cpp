@@ -155,6 +155,7 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
+					it->second.DeleteAttackData();
 					m_scriptData.erase(id);
 			}
 		}
@@ -1061,6 +1062,9 @@ namespace PE
 
 		void RatScript_v2_0::InstantiateRatAttack(RatScript_v2_0_Data& r_data)
 		{
+				// Delete any existing attack data
+				r_data.DeleteAttackData();
+
 				switch (r_data.ratType) 
 				{
 				case EnumRatType::SNIPER:
