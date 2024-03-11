@@ -4640,7 +4640,6 @@ namespace PE {
 			ImVec2 minUV;
 			ImVec2 maxUV;
 			int framesHeld{};
-			AnimationAction action{};
 
 			static bool playAnimation{ false };
 

@@ -607,7 +607,7 @@ namespace PE
 			}		
 #else
 			if (animationComponent.IsPlaying())
-				ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+				ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, id);
 #endif // !GAMERELEASE			
 			
 
