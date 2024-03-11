@@ -1180,7 +1180,7 @@ namespace PE
 
 	void GameStateController_v2_0::NextStage(int nextStage)
 	{
-		GlobalMusicManager::GetInstance().StartFadeOut(1.0f);
+		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
 
 		PlaySceneTransition();
 

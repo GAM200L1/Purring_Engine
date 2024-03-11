@@ -453,7 +453,7 @@ namespace PE
 		const float m_UIFadeTimer{.5f};
 		float m_timeSinceEnteredState{ 1.f };
 		float m_timeSinceExitedState{};
-		const float m_transitionTimer{ .5f };
+		const float m_transitionTimer{ .75f };
 		float m_timeSinceTransitionStarted{};
 		float m_timeSinceTransitionEnded{};
 
