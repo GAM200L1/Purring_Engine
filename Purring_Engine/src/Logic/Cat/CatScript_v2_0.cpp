@@ -35,6 +35,7 @@
 
 #include "ECS/EntityFactory.h"
 #include "ResourceManager/ResourceManager.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 namespace PE
 {
@@ -586,45 +587,29 @@ namespace PE
 
 	void CatScript_v2_0::PlayCatAttackAudio(EnumCatType catType)
 	{
-		SerializationManager serializationManager;
-		EntityID sound{};
+		std::string soundPrefabPath = "AudioObject/Cat ";
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
+		int randSound = std::rand() % 5 + 1; // Random number between 1 and 5
 
 		switch (catType)
 		{
-		case ORANGECAT:
-		{
+		case EnumCatType::MAINCAT:
+			soundPrefabPath += "Meowsalot Attack SFX" + std::to_string(randSound) + ".prefab";
 			break;
-		}
-		case GREYCAT:
-		{
-			sound = serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-				EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-			EntityManager::GetInstance().RemoveEntity(sound);
-
-			int randomInteger = std::rand() % 3 + 1;
-
-			switch (randomInteger)
-			{
-			case 1:
-				sound = serializationManager.LoadFromFile("AudioObject/Cat Attack SFX1.prefab");
-				break;
-			case 2:
-				sound = serializationManager.LoadFromFile("AudioObject/Cat Attack SFX2.prefab");
-				break;
-			case 3:
-				sound = serializationManager.LoadFromFile("AudioObject/Cat Attack SFX3.prefab");
-				break;
-			}
+		case EnumCatType::GREYCAT:
+			soundPrefabPath += "Grey Attack SFX" + std::to_string(randSound) + ".prefab";
 			break;
-		}
-		default: // main cat
+		case EnumCatType::ORANGECAT:
+			soundPrefabPath += "Orange Attack SFX" + std::to_string(randSound) + ".prefab";
 			break;
+		default:
+			return;
 		}
+		
+		// DEBUGHANS @PR-ER
+		std::cout << "[Debug] Playing cat attack audio: " << soundPrefabPath << std::endl;
 
-		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-		EntityManager::GetInstance().RemoveEntity(sound);
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
 
 	void CatScript_v2_0::PlayRescueCatAudio(EnumCatType catType)
