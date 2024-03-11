@@ -446,7 +446,7 @@
                         "isActive": false,
                         "name": "areyousure",
                         "parent": 8,
-                        "sceneID": 9
+                        "sceneID": 5
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -487,7 +487,7 @@
                         "isActive": false,
                         "name": "yesbutton",
                         "parent": 8,
-                        "sceneID": 5
+                        "sceneID": 11
                     },
                     "GUI": {
                         "disabled": false,
@@ -564,7 +564,7 @@
                         "isActive": false,
                         "name": "LeaveSadCat",
                         "parent": 8,
-                        "sceneID": 11
+                        "sceneID": 9
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -583,7 +583,7 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 47.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -1945,8 +1945,8 @@
                             "y": -17.499980926513672
                         },
                         "relativeposition": {
-                            "x": 47.0,
-                            "y": -17.499980926513672
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relorientation": 0.0,
                         "width": 1920.0
@@ -3078,7 +3078,7 @@
                         "isActive": false,
                         "name": "RestartYes",
                         "parent": 64,
-                        "sceneID": 65
+                        "sceneID": 67
                     },
                     "GUI": {
                         "disabled": false,
@@ -3155,7 +3155,7 @@
                         "isActive": false,
                         "name": "AreYouSure",
                         "parent": 64,
-                        "sceneID": 66
+                        "sceneID": 65
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3196,7 +3196,7 @@
                         "isActive": false,
                         "name": "RestartSadCat",
                         "parent": 64,
-                        "sceneID": 67
+                        "sceneID": 66
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3215,7 +3215,7 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 47.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
