@@ -38,6 +38,11 @@ namespace PE
 
 	struct CatScript_v2_0Data
 	{
+		~CatScript_v2_0Data()
+		{
+			delete p_stateManager;
+		}
+
 		// id of cat and its type
 		EntityID catID{ 0 };
 		EnumCatType catType{ EnumCatType::ORANGECAT };
@@ -75,7 +80,6 @@ namespace PE
 		bool planningAttack{ false };
 
 		// animation
-		AnimationComponent* p_catAnimation = nullptr;
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
 		bool executionAnimationFinished{ false };
 		bool playDeathSound{ true };

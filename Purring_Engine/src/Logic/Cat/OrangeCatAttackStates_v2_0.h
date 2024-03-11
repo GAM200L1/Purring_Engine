@@ -57,7 +57,10 @@ namespace PE
 		/*!***********************************************************************************
 		\brief Destructor for OrangeCatAttakc_v2_0PLAN
 		*************************************************************************************/
-		virtual ~OrangeCatAttack_v2_0PLAN() { p_gsc = nullptr; p_attackData = nullptr; }
+		virtual ~OrangeCatAttack_v2_0PLAN() 
+		{ 
+			p_attackData = nullptr;
+		}
 
 		/*!***********************************************************************************
 		\brief Set up the state and subscribe to the collision events
@@ -109,10 +112,8 @@ namespace PE
 
 	private:
 		// ----- Private Variables ----- //
-		// pointer to the game state controller
-		GameStateController_v2_0* p_gsc;
 		// data
-		OrangeCatAttackVariables* p_attackData;
+		OrangeCatAttackVariables* p_attackData = nullptr;
 
 		// Telegraph colors
 		vec4 const m_defaultColor{ 0.545f, 1.f, 0.576f, 1.f };
@@ -148,7 +149,10 @@ namespace PE
 		/*!***********************************************************************************
 		\brief Destructor for OrangeCatAttack_v2_0EXECUTE
 		*************************************************************************************/
-		virtual ~OrangeCatAttack_v2_0EXECUTE() { p_attackData = nullptr; }
+		virtual ~OrangeCatAttack_v2_0EXECUTE() 
+		{ 
+			p_attackData = nullptr;
+		}
 
 		/*!***********************************************************************************
 		\brief Set up the state and subscribe to the collision events
@@ -188,7 +192,7 @@ namespace PE
 		
 		// data
 		EntityID m_catID;
-		OrangeCatAttackVariables* p_attackData;
+		OrangeCatAttackVariables* p_attackData = nullptr;
 
 		float m_seismicDelay;
 		bool m_seismicSlammed{ false };

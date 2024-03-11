@@ -71,9 +71,6 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::Enter(EntityID id)
 	{
-		// retrieve pointer to game controller
-		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 
@@ -84,7 +81,7 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE) { return; }
 
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
@@ -130,7 +127,6 @@ namespace PE
 	{
 		ToggleTelegraphs(false, false);
 
-		p_gsc = nullptr;
 		p_attackData = nullptr;
 	}
 
@@ -186,9 +182,7 @@ namespace PE
 
 	void OrangeCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		CatScript_v2_0Data* p_catData = GETSCRIPTDATA(CatScript_v2_0, id);
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE || !p_catData->attackSelected) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE || !(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected) { return; }
 
 		AnimationComponent& r_seismicAnimation = EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID);
 
@@ -196,7 +190,7 @@ namespace PE
 		{	
 			if (r_seismicAnimation.HasAnimationEnded())
 			{
-				p_catData->finishedExecution = true;
+				(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = true;
 				r_seismicAnimation.StopAnimation();
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
 			}
@@ -211,7 +205,7 @@ namespace PE
 			}
 		}
 		// if seismic is not yet done, attack is selected, and animation is at the point where seismic would play
-		else if (!p_catData->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).HasAnimationEnded())
+		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).HasAnimationEnded())
 		{
 			if (m_seismicDelay <= 0.f)
 			{
