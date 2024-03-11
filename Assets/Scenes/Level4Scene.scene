@@ -1946,8 +1946,8 @@
                             "y": -17.499980926513672
                         },
                         "relativeposition": {
-                            "x": 47.0,
-                            "y": -17.499980926513672
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relorientation": 0.0,
                         "width": 1920.0
@@ -1968,7 +1968,7 @@
                         "isActive": false,
                         "name": "LoseRestartButton",
                         "parent": 37,
-                        "sceneID": 13
+                        "sceneID": 40
                     },
                     "GUI": {
                         "disabled": false,
@@ -2045,7 +2045,7 @@
                         "isActive": false,
                         "name": "LoseRetryButton",
                         "parent": 37,
-                        "sceneID": 40
+                        "sceneID": 41
                     },
                     "GUI": {
                         "disabled": false,
@@ -2122,7 +2122,7 @@
                         "isActive": false,
                         "name": "youlosetextobj",
                         "parent": 37,
-                        "sceneID": 41
+                        "sceneID": 13
                     },
                     "GUIRenderer": {
                         "Color": {
