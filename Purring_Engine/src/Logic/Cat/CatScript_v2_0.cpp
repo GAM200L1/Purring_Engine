@@ -614,37 +614,25 @@ namespace PE
 
 	void CatScript_v2_0::PlayRescueCatAudio(EnumCatType catType)
 	{
-		SerializationManager m_serializationManager;
-		EntityID sound{};
-		
+		std::string soundPrefabPath = "AudioObject/Cat ";
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
+		int randSound = std::rand() % 2 + 1; // Random number between 1 and 2
+
 		switch (catType)
 		{
-		case ORANGECAT:
-		{
-			// play orange cat rescue audio
+		case EnumCatType::GREYCAT:
+			soundPrefabPath += "Grey Rescued SFX" + std::to_string(randSound) + ".prefab";
 			break;
-		}
-		case GREYCAT:
-		{
-			int randomInteger = std::rand() % 2 + 1;
-
-			switch (randomInteger)
-			{
-			case 1:
-				sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX.prefab");
-				break;
-			case 2:
-				sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX2.prefab");
-				break;
-			}
+		case EnumCatType::ORANGECAT:
+			soundPrefabPath += "Orange Rescued SFX" + std::to_string(randSound) + ".prefab";
 			break;
-		}
-		default: // none
-			break;
+		default:
+			return;
 		}
 
-		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-		EntityManager::GetInstance().RemoveEntity(sound);
+		// DEBUGHANS @PR-ER
+		std::cout << "[Debug] Playing cat rescue audio: " << soundPrefabPath << std::endl;
+
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
 }
