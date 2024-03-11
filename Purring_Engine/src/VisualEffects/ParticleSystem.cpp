@@ -22,13 +22,13 @@ extern Logger engine_logger;
 
 namespace PE
 {
-	ParticleSystem::ParticleSystem() :
-		maxParticles{ 100 }, isActive{ false }, isLooping{ false }, particleType{ SQUARE },
+	ParticleEmitter::ParticleEmitter() :
+		maxParticles{ DEFAULT_MAX_PARTICLES }, isActive{ false }, isLooping{ false }, particleType{ SQUARE },
 		emissionRate{ 1 }, emissionDuration{ 5.f }, startLifetime{ 1.f }, startSpeed{ 1.f },
 		startDelay{ 0.f }, startRotation{ 0.f }, startScale{ 1.f, 1.f }, startColor{ 1.f,1.f,1.f,1.f },
 		endDelay{ 0.f }, endRotation{ 0.f }, endScale{ 1.f, 1.f }, endColor{ 1.f,1.f,1.f,1.f },
-		emissionDirection{ 0.f }, emissionVector{ sinf(emissionDirection), cosf(emissionDirection) },
-		emissionArc{ M_PI / 4.f }, startEmissionRadius{ 0.f }, emissionElapsed{ emissionDuration },
+		emissionDirection{ 1.f }, emissionVector{ sinf(emissionDirection), cosf(emissionDirection) },
+		emissionArc{ M_PI * 2 }, startEmissionRadius{ 1.f }, emissionElapsed{ emissionDuration },
 		randomnessFactor{ 0.f }
 	{
 		emissionVector.Normalize();
@@ -37,7 +37,7 @@ namespace PE
 		colorChangeSpeed = (endColor - startColor) / emissionDuration;
 	}
 
-	ParticleSystem::ParticleSystem(ParticleSystem const& r_cpy) :
+	ParticleEmitter::ParticleEmitter(ParticleEmitter const& r_cpy) :
 		maxParticles{ r_cpy.maxParticles }, isActive{ r_cpy.isActive }, isLooping{ r_cpy.isLooping }, particleType{ r_cpy.particleType },
 		emissionRate{ r_cpy.emissionRate }, emissionDuration{ r_cpy.emissionDuration }, startLifetime{ r_cpy.startLifetime }, startSpeed{ r_cpy.startSpeed },
 		startDelay{ r_cpy.startDelay }, startRotation{ r_cpy.startRotation }, startScale{ r_cpy.startScale }, startColor{ r_cpy.startColor },
@@ -52,7 +52,7 @@ namespace PE
 			colorChangeSpeed = (endColor - startColor) / emissionDuration;
 		}
 
-	ParticleSystem& ParticleSystem::operator=(ParticleSystem const& r_cpy)
+	ParticleEmitter& ParticleEmitter::operator=(ParticleEmitter const& r_cpy)
 	{
 		maxParticles = r_cpy.maxParticles , isActive = r_cpy.isActive , isLooping = r_cpy.isLooping , particleType = r_cpy.particleType ,
 		emissionRate = r_cpy.emissionRate , emissionDuration = r_cpy.emissionDuration , startLifetime = r_cpy.startLifetime , startSpeed = r_cpy.startSpeed ,
@@ -64,7 +64,7 @@ namespace PE
 		return *this;
 	}
 
-	void ParticleSystem::Update(float deltaTime)
+	void ParticleEmitter::Update(float deltaTime)
 	{
 		// if at any point particle system becomes inactive, reset the particles
 		static bool particlesResetted{ false };
@@ -101,7 +101,12 @@ namespace PE
 				{
 					//r_particle.UpdateAnimation();
 				}
-				r_particle.Update(deltaTime);
+				if (!r_particle.Update(deltaTime))
+				{
+					// reset the particle
+					auto pos = GeneratePosition(startEmissionRadius);
+					r_particle.Reset(particleType, pos, startScale, GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, startLifetime);
+				}
 				//r_particle.UpdatePosition(startSpeed * deltaTime);
 				//r_particle.UpdateRotation(orientationChangeSpeed * deltaTime);
 				//r_particle.UpdateScale(scaleChangeSpeed.x * deltaTime, scaleChangeSpeed.y * deltaTime);
@@ -110,24 +115,31 @@ namespace PE
 		}
 	}
 
-	void ParticleSystem::CreateAllParticles(EntityID emitterID)
+	void ParticleEmitter::CreateAllParticles()
 	{
+		particles.clear();
+		particles.reserve(maxParticles);
+		const auto& xform = EntityManager::GetInstance().Get<Transform>(m_id);
 		for (unsigned i = 0; i < maxParticles; i++)
 		{
-			particles.emplace_back(Particle{ emitterID, particleType });
+			auto pos = GeneratePosition(startEmissionRadius);
+			particles.emplace_back(Particle(particleType, pos, startScale, GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, startLifetime));
 		}
 	}
 
-	void ParticleSystem::ResetAllParticles()
+	void ParticleEmitter::ResetAllParticles()
 	{
 		for (Particle& r_particle : particles)
 		{
-			vec2 const& r_particleStartPosition{ GeneratePosition(startEmissionRadius) };
-			r_particle.Reset(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
+			//vec2 const& r_particleStartPosition{ GeneratePosition(startEmissionRadius) };
+			//r_particle.Reset(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
+			//r_particle.enabled = true;
+			auto pos = GeneratePosition(startEmissionRadius);
+			r_particle.Reset(particleType, pos, startScale, GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, startLifetime);
 		}
 	}
 
-	vec2 ParticleSystem::GeneratePosition(float radius)
+	vec2 ParticleEmitter::GeneratePosition(float radius)
 	{
 		if (radius == 0.f)
 			return vec2{ 0.f, 0.f };
@@ -150,11 +162,17 @@ namespace PE
 		}
 	}
 
-	vec2 ParticleSystem::GenerateDirectionVector(vec2 const& r_startPosition)
+	vec2 ParticleEmitter::GenerateDirectionVector(vec2 const& r_startPosition)
 	{
 		// internal formula is to get the end of the particle emission's 'radius'
-		vec2 generatedEndPosition = GeneratePosition((startSpeed * emissionDuration) * tanf(emissionArc * 0.5f));
 
-		return generatedEndPosition - r_startPosition;
+		std::mt19937 generator(seed());
+
+		std::uniform_real_distribution<float> distributor(emissionDirection - emissionArc * 0.5f, emissionDirection + emissionArc * 0.5f);
+		float gen = distributor(generator);
+		vec2 dir{ sinf(gen), cosf(gen) };
+		dir.Normalize();
+
+		return dir;
 	}
 }

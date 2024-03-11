@@ -18,19 +18,25 @@
 #include "Math/MathCustom.h"
 #include "Particle.h"
 #include "Singleton.h"
+#include "Layers/LayerManager.h"
+
+constexpr size_t DEFAULT_MAX_PARTICLES = 100;
+
+
 namespace PE
 {
 	// component assigned to an entity to make it spit out particles
-	class ParticleSystem
+	class ParticleEmitter
 	{
 	public:
-		ParticleSystem();
-		ParticleSystem(ParticleSystem const& r_cpy);
-		ParticleSystem& operator=(ParticleSystem const& r_cpy);
+		ParticleEmitter();
+		ParticleEmitter(ParticleEmitter const& r_cpy);
+		ParticleEmitter& operator=(ParticleEmitter const& r_cpy);
 		void Update(float deltaTime);
-		void CreateAllParticles(EntityID emitterID);
+		void CreateAllParticles();
 		void ResetAllParticles(); // resets emission duration, lifetime of each particle and the position of each particle
-		
+		const std::vector<Particle>& GetParticles() const { return particles; }
+		void SetParent(size_t id) { m_id = id; }
 	public:
 		// max number of particles
 		unsigned maxParticles;
@@ -90,7 +96,27 @@ namespace PE
 
 		// random seed
 		std::random_device seed;
+
+		// Owner's ID
+		size_t m_id;
 	};
 
-
+	// not a true system, it is called by the VisualEffectsManager
+	/*class ParticleSubSystem
+	{
+		bool enabled{ true };
+	public:
+		void Update(const float& r_dt)
+		{
+			if (!enabled)
+				return;
+			for (const auto& layer : LayerView<ParticleEmitter>())
+			{
+				for (const auto& id : InternalView(layer))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).Update(r_dt);
+				}
+			}
+		}
+	};*/
 }

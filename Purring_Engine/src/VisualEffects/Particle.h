@@ -32,15 +32,31 @@ namespace PE
 
 	struct Particle
 	{
-		Particle(const EnumParticleType& r_tp, const vec2& r_p, const vec2& r_scl, const vec2& r_dir, const vec2& r_dScl, const float& r_dr, const float& r_lifetime)
+		// prevent default construcion
+		Particle() = delete;
+
+		Particle(const EnumParticleType& r_tp, 
+				 const vec2& r_p, 
+				 const vec2& r_scl, 
+				 const vec2& r_dir, 
+				 const vec2& r_dScl, 
+				 const float& r_dr, 
+				 const float& r_lifetime)
 			: type(r_tp), directionVector(r_dir), deltaScale(r_dScl), deltaOrientation(r_dr), lifetime(r_lifetime)
 		{
 			transform.position = r_p;
 			transform.height = r_scl.y;
 			transform.width = r_scl.x;
+			enabled = true;
 		}
 		
-		void Reset(const EnumParticleType& r_tp, const vec2& r_p, const vec2& r_scl, const vec2& r_dir, const vec2& r_dScl, const float& r_dr, const float& r_lifetime)
+		void Reset(const EnumParticleType& r_tp,
+				   const vec2& r_p,
+				   const vec2& r_scl,
+				   const vec2& r_dir,
+				   const vec2& r_dScl,
+				   const float& r_dr,
+				   const float& r_lifetime)
 		{
 			type = r_tp;
 			transform.position = r_p;
@@ -55,11 +71,14 @@ namespace PE
 			deltaOrientation = r_dr;
 
 			lifetime = r_lifetime;
+			enabled = true;
 		}
 
 		bool Update(const float& dt)
 		{
-			transform.position += directionVector * dt;
+			if (!enabled)
+				return false;
+			transform.position += directionVector * 10.f * dt;
 			transform.orientation += deltaOrientation * dt;
 			transform.width += deltaScale.x * dt;
 			transform.height += deltaScale.y * dt;
@@ -75,19 +94,15 @@ namespace PE
 				lifetime = 0.f;
 			lifetime -= dt;
 			// future, update sprite id?				
-			return (lifetime <= 0.f)? true : false; 
+			return (lifetime <= 0.f)? false : true; 
 		}
 
 		EnumParticleType type;
-
 		Transform transform;
-		
 
 #ifdef ENABLE_PARTICLE_PHYSICS
 		RigidBody rigidbody;
 #endif // ENABLE_PARTICLE_PHYSICS
-
-		
 
 		vec2 directionVector{ 0.f, 1.f };
 		vec2 deltaScale{ 0.f, 0.f };
@@ -97,5 +112,6 @@ namespace PE
 		int maxSpriteID{ 0 };
 
 		int spriteID{ 0 };
+		bool enabled{ false };
 	};
 }

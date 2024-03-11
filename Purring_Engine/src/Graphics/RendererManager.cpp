@@ -65,6 +65,9 @@
 
 #include "Text.h"
 
+// Particle effects
+#include "VisualEffects/ParticleSystem.h"
+
 extern Logger engine_logger;
 
 namespace PE
@@ -578,6 +581,89 @@ namespace PE
                     currentTexture.clear();
                     count = 0;
                     RenderText(id, r_worldToNdc);
+                    // continue from the next one after it
+                    auto ite = ++(std::find(r_rendererIdContainer.begin(), r_rendererIdContainer.end(), id));
+                    std::vector<size_t> cont;
+                    while (ite != r_rendererIdContainer.end())
+                    {
+                        cont.emplace_back(*ite);
+                        ++ite;
+                    }
+                    DrawQuadsInstanced<T>(r_worldToNdc, cont);
+                    return;
+                }
+
+                // handle particle effects
+                if (EntityManager::GetInstance().Has<PE::ParticleEmitter>(id))
+                {
+                    // dump current 
+                    DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                    currentTexture.clear();
+                    count = 0;
+                    // Render particle effects
+                    auto& em = EntityManager::GetInstance().Get<ParticleEmitter>(id);
+                    T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+
+                    switch (em.particleType)
+                    {
+                    case SQUARE:
+                    {
+                        for (auto& p : em.GetParticles())
+                        {
+                            auto& xform = p.transform;
+                            m_isTextured.emplace_back(0.f);
+                            m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(xform.width, // width
+                                xform.height, xform.orientation, // height, orientation
+                                xform.position.x, xform.position.y)); // x, y position
+                            m_colors.emplace_back(glm::vec4(em.startColor.x, em.startColor.y, em.startColor.z, em.startColor.w));
+
+                            // Add the UV coordinate adjustments
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
+                            ++count;
+                        }
+                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                        currentTexture.clear();
+                        count = 0;
+                    }
+                        break;
+                    /*case CIRCLE:
+                    {
+
+                    }
+                        break;*/
+                    case TEXTURED:
+                    {
+                        for (auto& p : em.GetParticles())
+                        {
+                            // change this line + look for texture
+                            //m_isTextured.emplace_back(0.f);
+                            auto& xform = p.transform;
+                            m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(xform.width, // width
+                                xform.height, xform.orientation, // height, orientation
+                                xform.position.x, xform.position.y)); // x, y position
+                            m_colors.emplace_back(glm::vec4(em.startColor.x, em.startColor.y, em.startColor.z, em.startColor.w));
+
+                            // Add the UV coordinate adjustments
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
+                            ++count;
+                        }
+                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                        currentTexture.clear();
+                        count = 0;
+                    }
+                        break;
+                    default:
+                        break;
+                    }
+                     
+                    renderedEntities.emplace_back(id);
+
                     // continue from the next one after it
                     auto ite = ++(std::find(r_rendererIdContainer.begin(), r_rendererIdContainer.end(), id));
                     std::vector<size_t> cont;

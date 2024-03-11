@@ -141,7 +141,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
     REGISTERCOMPONENT(PE::Canvas);
-    REGISTERCOMPONENT(PE::ParticleSystem);
+    REGISTERCOMPONENT(PE::ParticleEmitter);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -501,8 +501,15 @@ void PE::CoreApplication::Run()
 #endif // !GAMERELEASE
 
     // REMOVE LATER - TEST FOR PARTICLE SYSTEM //
-    EntityID id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
-    EntityManager::GetInstance().Assign<ParticleSystem>(id);
+    EntityID id = serializationManager.LoadFromFile("EmptyObject.prefab");
+    EntityManager::GetInstance().Assign<ParticleEmitter>(id);
+    auto& pe = EntityManager::GetInstance().Get<ParticleEmitter>(id);
+    pe.startColor = vec4(1.f,1.f,1.f,1.f);
+    pe.startScale = vec2(1.f, 1.f);
+    pe.isActive = true;
+    pe.isLooping = true;
+    pe.SetParent(id);
+    pe.CreateAllParticles();
     ////////////////////////////////////////////
     
     // Main Application Loop

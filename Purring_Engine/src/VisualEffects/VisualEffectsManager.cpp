@@ -35,19 +35,12 @@ namespace PE
 	
 	void VisualEffectsManager::UpdateSystem(float deltaTime)
 	{
-		// runs particle system
-		for (auto& layer : LayerView<Transform, ParticleSystem>())
+		// runs updates particles
+		for (const auto& layer : LayerView<ParticleEmitter>())
 		{
-			for (EntityID ParticleSystemID : InternalView(layer))
+			for (const auto& id : InternalView(layer))
 			{
-				ParticleSystem& r_particleSystem = EntityManager::GetInstance().Get<ParticleSystem>(ParticleSystemID);
-
-				if (!r_particleSystem.isActive)
-				{
-					// if particle system is not active, do not update it
-					continue;
-				}
-				r_particleSystem.Update(deltaTime);
+				EntityManager::GetInstance().Get<ParticleEmitter>(id).Update(deltaTime);
 			}
 		}
 	}
