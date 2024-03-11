@@ -443,7 +443,6 @@ namespace PE
 		std::string m_defaultPotraitTextureKey;
 		std::string m_deploymentPhaseBanner, m_planningPhaseBanner, m_exexcutePhaseBanner;
 
-
 		//Pause and Win/Lose Variables
 		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
 		bool m_isTransitioning{ false };
@@ -465,7 +464,6 @@ namespace PE
 		EntityID m_lastSelectedEntity{};
 		std::string nextPortraitTexture{};
 
-
 		//journal object testing
 		bool m_journalShowing{};
 
@@ -478,6 +476,9 @@ namespace PE
 		bool m_isPhaseBannerTransition{true};
 
 		float prevVolume;
+
+		// Audio Controls
+		bool bgmStarted = false;
 
 	};
 }

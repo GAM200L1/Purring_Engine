@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/vo_Cat_Orange_Death1.wav",
+            "loop": false
+          },
+            "EntityDescriptor": {
+                "Prefab Type": "Cat Orange Death SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Cat Orange Death SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

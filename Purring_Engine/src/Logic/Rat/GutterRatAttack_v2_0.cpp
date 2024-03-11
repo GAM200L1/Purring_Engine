@@ -40,7 +40,7 @@ namespace PE
 		if (!attackFeedbackOnce)
 		{
 			attackFeedbackOnce = true;
-			RatScript_v2_0::PlayAttackAudio();
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAttackAudio(this->mainID);
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(this->mainID, EnumRatAnimations::ATTACK);
 			attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(this->mainID);
 		}

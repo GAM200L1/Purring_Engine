@@ -1,15 +1,15 @@
 {
     "Entity": {
         "components": {
-          "AudioComponent": {
-            "audioKey": "../Assets/Audio/vo_Cat_DeathWilhelm.wav",
-            "loop": false
-          },
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Cat_Grey_Rescued2.wav",
+                "loop": false
+            },
             "EntityDescriptor": {
-                "Prefab Type": "Audio Object",
+                "Prefab Type": "Cat Grey Rescued SFX",
                 "children": [],
                 "isActive": true,
-                "name": "Audio Object",
+                "name": "Cat Grey Rescued SFX",
                 "parent": null,
                 "sceneID": 18446744073709551615
             }

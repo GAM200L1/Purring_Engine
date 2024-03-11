@@ -24,7 +24,7 @@
 
 namespace PE
 {
-    AudioComponent::AudioComponent()
+    AudioComponent::AudioComponent() : m_originalVolume(1.0f)
     {
 
     }
@@ -161,6 +161,38 @@ namespace PE
             }
         }
         return volume;
+    }
+
+    void AudioComponent::UpdateIndividualFade(float deltaTime)
+    {
+        if (!m_isFadingIndividual) return;
+
+        m_fadeProgressIndividual += deltaTime / m_fadeDurationIndividual;
+        m_fadeProgressIndividual = std::min(m_fadeProgressIndividual, 1.0f);
+
+        float volume = m_isFadingInIndividual
+            ? m_fadeProgressIndividual
+            : (1.0f - m_fadeProgressIndividual);
+
+        SetVolume(volume * m_originalVolume);
+
+        if (m_fadeProgressIndividual >= 1.0f) m_isFadingIndividual = false;
+    }
+
+    void AudioComponent::StartIndividualFadeIn(float duration)
+    {
+        m_isFadingIndividual = true;
+        m_isFadingInIndividual = true;
+        m_fadeDurationIndividual = duration;
+        m_fadeProgressIndividual = 0.0f;
+    }
+
+    void AudioComponent::StartIndividualFadeOut(float duration)
+    {
+        m_isFadingIndividual = true;
+        m_isFadingInIndividual = false;
+        m_fadeDurationIndividual = duration;
+        m_fadeProgressIndividual = 0.0f;
     }
 
     nlohmann::json AudioComponent::ToJson() const
