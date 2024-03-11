@@ -283,7 +283,7 @@ namespace PE
 			std::string soundPrefab = soundPrefabBasePath + ratTypeString + "Attack SFX" + std::to_string(randSound) + ".prefab";
 
 			// DEBUGHANS @PR-ER
-			std::cout << "[Debug] Playing attack audio: " << soundPrefab << std::endl;
+			//std::cout << "[Debug] Playing attack audio: " << soundPrefab << std::endl;
 
 			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefab, false);
 		}
