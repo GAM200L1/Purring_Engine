@@ -4561,7 +4561,14 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationRatKing_Idle.anim"
+                            "../Assets/Animation/AnimationRatKing_Attack1.anim",
+                            "../Assets/Animation/AnimationRatKing_Attack2.anim",
+                            "../Assets/Animation/AnimationRatKing_Charge.anim",
+                            "../Assets/Animation/AnimationRatKing_Death.anim",
+                            "../Assets/Animation/AnimationRatKing_Hurt.anim",
+                            "../Assets/Animation/AnimationRatKing_Idle.anim",
+                            "../Assets/Animation/AnimationRatKing_Walk.anim",
+                            "../Assets/Animation/AnimationRatKing_WalkFaster.anim"
                         ],
                         "CurrentAnimationID": "../Assets/Animation/AnimationRatKing_Idle.anim"
                     },
@@ -4613,7 +4620,16 @@
                         "BossRatScript": {
                             "data": {
                                 "activationTime": 0.5,
-                                "animationStates": {},
+                                "animationStates": {
+                                    "Attack1": "../Assets/Animation/AnimationRatKing_Attack1.anim",
+                                    "Attack2": "../Assets/Animation/AnimationRatKing_Attack2.anim",
+                                    "Charge": "../Assets/Animation/AnimationRatKing_Charge.anim",
+                                    "Death": "../Assets/Animation/AnimationRatKing_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationRatKing_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationRatKing_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationRatKing_Walk.anim",
+                                    "WalkFaster": "../Assets/Animation/AnimationRatKing_WalkFaster.anim"
+                                },
                                 "attackDelay": 0.25,
                                 "distanceBetweenPools": 180.0,
                                 "jumpSpeed": 1500.0,

@@ -29,6 +29,19 @@ namespace PE
 		CHARGE
 	};
 
+	enum class BossRatAnimationsEnum
+	{
+		IDLE,
+		WALK,
+		WALKFASTER,
+		ATTACK1,
+		ATTACK2,
+		CHARGE,//channeling animation
+		HURT,
+		DEATH
+	};
+
+
 	struct BossRatScriptData
 	{
 		~BossRatScriptData()
@@ -207,6 +220,8 @@ namespace PE
 		 \return bool whether an object is an obstacle
 		*************************************************************************************/
 		bool IsObstacle(EntityID);
+
+		void PlayAnimation(BossRatAnimationsEnum AnimationState);
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;

@@ -73,10 +73,10 @@
             "textureKey": ""
         }
     ],
-    "animationID": "../Assets/Animation/AnimationRatKing_Attack1.anim",
+    "animationID": "../Assets/Animation/AnimationRatKing_Death.anim",
     "frameRate": 30,
     "isLooping": false,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Rat_King_AttackA.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Rat_King_Death.png",
     "totalSprites": 6
 }

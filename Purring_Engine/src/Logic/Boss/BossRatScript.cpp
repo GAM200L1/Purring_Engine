@@ -62,6 +62,14 @@ namespace PE
 
 		if(p_gsc->currentState == GameStates_v2_0::PLANNING || p_gsc->currentState == GameStates_v2_0::EXECUTE)
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
+
+		if (EntityManager::GetInstance().Has<AnimationComponent>(currentBoss) && m_scriptData[currentBoss].animationStates.size())
+		{
+			if(EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).HasAnimationEnded())
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).SetCurrentAnimationID(m_scriptData[currentBoss].animationStates["Idle"]);
+			}
+		}
 	}
 
 
@@ -128,6 +136,7 @@ namespace PE
 	void BossRatScript::TakeDamage(int damage)
 	{
 		m_scriptData[currentBoss].currenthealth -= damage;
+		PlayAnimation(BossRatAnimationsEnum::HURT);
 	}
 
 	EntityID BossRatScript::FindFurthestCat()
@@ -226,5 +235,49 @@ namespace PE
 	bool BossRatScript::IsObstacle(EntityID id)
 	{
 	 return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);;
+	}
+
+	void BossRatScript::PlayAnimation(BossRatAnimationsEnum AnimationState)
+	{
+		std::string animationState;
+		
+		switch (AnimationState)
+		{
+			case BossRatAnimationsEnum::WALK:
+				animationState = "Walk";
+				break;
+			case BossRatAnimationsEnum::WALKFASTER:
+				animationState = "WalkFaster";
+				break;
+			case BossRatAnimationsEnum::ATTACK1:
+				animationState = "Attack1";
+				break;
+			case BossRatAnimationsEnum::ATTACK2:
+				animationState = "Attack2";
+				break;
+			case BossRatAnimationsEnum::HURT:
+				animationState = "Hurt";
+				break;
+			case BossRatAnimationsEnum::DEATH:
+				animationState = "Death";
+				break;
+			case BossRatAnimationsEnum::CHARGE:
+				animationState = "Charge";
+				break;
+			default: animationState = "Idle";
+		}
+
+
+			if (EntityManager::GetInstance().Has<AnimationComponent>(currentBoss) && m_scriptData[currentBoss].animationStates.size())
+			{
+				try
+				{
+					if(EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationID() != m_scriptData[currentBoss].animationStates.at(animationState))
+					EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).SetCurrentAnimationID(m_scriptData[currentBoss].animationStates[animationState]);
+				}
+				catch (...) { /* error */ }
+			}
+		
+
 	}
 } // End of namespace PE

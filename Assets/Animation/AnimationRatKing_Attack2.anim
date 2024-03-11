@@ -75,7 +75,7 @@
     ],
     "animationID": "../Assets/Animation/AnimationRatKing_Attack2.anim",
     "frameRate": 30,
-    "isLooping": true,
+    "isLooping": false,
     "isSpriteSheet": true,
     "spriteSheetKey": "../Assets/Textures/Animations/Rat_King_AttackB.png",
     "totalSprites": 6
