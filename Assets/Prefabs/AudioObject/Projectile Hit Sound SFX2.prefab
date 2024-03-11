@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/sfx_ProjectileHit2.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Projectile Hit Sound SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Projectile Hit Sound SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

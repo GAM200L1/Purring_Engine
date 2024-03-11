@@ -27,6 +27,7 @@
 #include "CatScript_v2_0.h"
 #include "CatHelperFunctions.h"
 #include "Logic/Boss/BossRatScript.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 namespace PE
 {
@@ -297,7 +298,11 @@ namespace PE
 
 	void OrangeCatAttack_v2_0EXECUTE::PlaySeismicAudio()
 	{
-		// @TODOHANS
-		// add audio for seismic/shockwave here 
+		// Path to the seismic shockwave audio prefab
+		std::string soundPrefabPath = "AudioObject/Cat Shockwave SFX1.prefab";
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+		// DEBUGHANS @PR-ER
+		//std::cout << "[Debug] Playing seismic shockwave audio: " << soundPrefabPath << std::endl;
 	}
 }
