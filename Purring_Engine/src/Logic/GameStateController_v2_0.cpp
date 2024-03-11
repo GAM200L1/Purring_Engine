@@ -130,9 +130,8 @@ namespace PE
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
 		// Play audio BGM and BGM Ambience via GlobalMusicManager
-		GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music.prefab", true);
-		GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Ambience.prefab", true);
-		GlobalMusicManager::GetInstance().StartFadeIn(5.0f);
+		GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music.prefab", true, 5.0f);
+		GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Ambience.prefab", true, 5.0f);
 
 		ResetPhaseBanner(true);
 		m_nextTurnOnce = false;
@@ -801,7 +800,7 @@ namespace PE
 	void GameStateController_v2_0::WinGame()
 	{
 		//PauseBGM();
-		GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+		GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
 
 		PlayWinAudio();
 		SetGameState(GameStates_v2_0::WIN);
@@ -811,7 +810,7 @@ namespace PE
 	void GameStateController_v2_0::LoseGame()
 	{
 		//PauseBGM();
-		GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+		GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
 
 		PlayLoseAudio();
 		SetGameState(GameStates_v2_0::LOSE);
@@ -1137,7 +1136,7 @@ namespace PE
 
 	void GameStateController_v2_0::NextStage(int nextStage)
 	{
-		GlobalMusicManager::GetInstance().StartFadeOut(0.01f);
+		GlobalMusicManager::GetInstance().StartFadeOut(1.0f);
 
 		PlaySceneTransition();
 

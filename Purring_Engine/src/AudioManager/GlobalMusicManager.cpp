@@ -17,8 +17,7 @@
 
 namespace PE
 {
-    GlobalMusicManager::GlobalMusicManager() : m_isPaused(false) {}
-
+    GlobalMusicManager::GlobalMusicManager() : m_isPaused(false), m_maxVolume(1.0f) {}
     GlobalMusicManager::~GlobalMusicManager()
     {
         StopBackgroundMusic();
@@ -26,30 +25,46 @@ namespace PE
 
     void GlobalMusicManager::Update(float deltaTime)
     {
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            audioComponent->UpdateIndividualFade(deltaTime);
+        }
+
         if (m_isFading)
         {
             m_fadeProgress += deltaTime / m_fadeDuration;
+            m_fadeProgress = std::min(m_fadeProgress, 1.0f); // Ensure progress does not exceed 1
 
+            // Calculate volume based on fade progress and max volume
+            float volume = (m_isFadingIn ? m_fadeProgress : (1.0f - m_fadeProgress)) * m_maxVolume;
+            SetBackgroundMusicVolume(volume);
+
+            // Stop fading if the progress has completed
             if (m_fadeProgress >= 1.0f)
             {
-                m_fadeProgress = 1.0f;
                 m_isFading = false;
             }
-
-            float volume = m_isFadingIn ? m_fadeProgress : (1.0f - m_fadeProgress);
-
-            SetBackgroundMusicVolume(volume);
         }
 
     }
 
-    void GlobalMusicManager::PlayBGM(const std::string& prefabPath, bool loop)
+    void GlobalMusicManager::PlayBGM(const std::string& prefabPath, bool loop, float fadeInDuration)
     {
         EntityID audioEntity = m_serializationManager.LoadFromFile(prefabPath);
         if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
         {
-            auto audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
+            auto& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
             audioComponent.SetLoop(loop);
+
+            if (fadeInDuration > 0.0f)
+            {
+                audioComponent.StartIndividualFadeIn(fadeInDuration);
+            }
+            else
+            {
+                audioComponent.SetVolume(m_maxVolume);  // Set to max volume if no fade-in
+            }
+
             audioComponent.PlayAudioSound(AudioComponent::AudioType::BGM);
             m_audioComponents[prefabPath] = std::make_shared<AudioComponent>(audioComponent);
         }
@@ -69,7 +84,6 @@ namespace PE
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
 
-
     void GlobalMusicManager::PauseBackgroundMusic()
     {
         for (auto& [key, audioComponent] : m_audioComponents)
@@ -86,7 +100,7 @@ namespace PE
         for (auto& [key, audioComponent] : m_audioComponents)
         {
             float originalVolume = m_originalVolumes[key];  // Retrieve the original volume
-            audioComponent->SetVolume(originalVolume);  // Restore the original volume
+            audioComponent->SetVolume(originalVolume);      // Restore the original volume
         }
     }
 
@@ -158,7 +172,5 @@ namespace PE
         m_fadeProgress = 0.0f;
         m_fadeDuration = duration;
     }
-
-
 
 }

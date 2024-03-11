@@ -53,7 +53,7 @@ namespace PE
          \param[in] prefabPath - The path to the audio prefab.
          \param[in] loop       - Whether the audio should loop.
         *************************************************************************************/
-        void PlayBGM(const std::string& prefabPath, bool loop);
+        void PlayBGM(const std::string& prefabPath, bool loop, float fadeInDuration = 0.0f);
 
         /*!***********************************************************************************
          \brief Plays SFX prefab with the option to loop it.
@@ -140,6 +140,7 @@ namespace PE
         float m_fadeProgress;
         bool m_isFading;
         bool m_isFadingIn;
+        float m_maxVolume;
 
         SerializationManager m_serializationManager;
         float m_originalVolume = 1.0f;  // Assuming the full volume is 1.0

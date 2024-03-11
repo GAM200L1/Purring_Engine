@@ -140,6 +140,25 @@ namespace PE
         FMOD::Channel* GetChannel() const;
 
         /*!***********************************************************************************
+        \brief     Updates the fade effect based on elapsed time. Use in a loop for continuous fade effects.
+        \param     deltaTime Time since last update, in seconds.
+        *************************************************************************************/
+        void UpdateIndividualFade(float deltaTime);
+
+        /*!***********************************************************************************
+        \brief     Begins a fade-in effect, smoothly increasing volume to its original level over the specified duration.
+        \param     duration Fade-in time in seconds.
+        *************************************************************************************/
+        void StartIndividualFadeIn(float duration);
+
+        /*!***********************************************************************************
+        \brief     Begins a fade-out effect, smoothly decreasing volume to zero over the specified duration.
+        \param     duration Fade-out time in seconds.
+        *************************************************************************************/
+        void StartIndividualFadeOut(float duration);
+
+
+        /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
         \return    JSON representation of the AudioComponent state.
         *************************************************************************************/
@@ -157,5 +176,11 @@ namespace PE
         bool m_loop = false;            // Whether the audio should loop or not
         bool m_isPaused = false;        // Whether the audio is paused or not
         AudioType m_audioType;
+
+        bool m_isFadingIndividual = false;
+        bool m_isFadingInIndividual = false;
+        float m_fadeDurationIndividual = 0.0f;
+        float m_fadeProgressIndividual = 0.0f;
+        float m_originalVolume;
     };
 }
