@@ -32,6 +32,7 @@
 #include "Graphics/CameraManager.h"
 #include "Animation/Animation.h"
 #include "Logic/Script.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 
 namespace PE
@@ -308,11 +309,12 @@ namespace PE
 				SetPathColor(m_invalidPathColor); // Set the color of the path nodes to red
 				m_invalidPath = true;
 
-				SerializationManager m_serializationManager;
-				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Path Denial SFX1.prefab");
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
-				EntityManager::GetInstance().RemoveEntity(sound);
+				// Play audio
+				std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
+				PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+				// DEBUGHANS @PR-ER
+				std::cout << "[DEBUG] Path collision w/ obstacle. Playing sound: " << soundPrefabPath << std::endl;
 			}
 		}
 	}
