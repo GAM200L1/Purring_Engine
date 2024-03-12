@@ -107,7 +107,7 @@ namespace PE
         \brief     Sets the audio to loop or not.
         \param     loop True if the audio should loop, false otherwise.
         *************************************************************************************/
-        void SetLoop(bool loop) { m_loop = loop; }
+        void SetLoop(bool loop);
 
         /*!***********************************************************************************
         \brief     Gets whether the audio is looping or not.

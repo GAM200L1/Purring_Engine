@@ -57,9 +57,13 @@ namespace PE
                 targetGroup = AudioManager::GetInstance().GetSFXGroup();
             }
 
+            FMOD_MODE mode = FMOD_DEFAULT;
+            mode |= m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF; // Set looping mode based on m_loop variable
+
             FMOD_RESULT result = p_system->playSound(audio->GetSound(), targetGroup, false, &p_channel);
             if (result == FMOD_OK)
             {
+                p_channel->setMode(mode); // Apply looping mode
                 audio->SetChannel(p_channel);
             }
             else
@@ -139,6 +143,11 @@ namespace PE
     void AudioComponent::SetAudioKey(std::string const& r_audioKey)
     {
         m_audioKey = r_audioKey;
+    }
+
+    void AudioComponent::SetLoop(bool loop)
+    {
+        m_loop = loop;
     }
 
     FMOD::Channel* AudioComponent::GetChannel() const
