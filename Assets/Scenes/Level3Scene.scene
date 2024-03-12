@@ -3306,8 +3306,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3545,11 +3545,11 @@
                         "data": {
                             "max": {
                                 "x": -642.1004028320313,
-                                "y": 147.6999053955078
+                                "y": 153.6999969482422
                             },
                             "min": {
                                 "x": -958.1004028320313,
-                                "y": 36.69990539550781
+                                "y": 42.69999694824219
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3588,11 +3588,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -800.1004028320313,
-                            "y": 92.19990539550781
+                            "y": 98.19999694824219
                         },
                         "relativeposition": {
                             "x": -800.1004028320313,
-                            "y": 92.19990539550781
+                            "y": 98.19999694824219
                         },
                         "relorientation": 0.0,
                         "width": 316.0
@@ -3673,11 +3673,11 @@
                         "data": {
                             "max": {
                                 "x": -389.90032958984375,
-                                "y": 16.399967193603516
+                                "y": 20.399999618530273
                             },
                             "min": {
                                 "x": -681.9003295898438,
-                                "y": -35.600032806396484
+                                "y": -31.600000381469727
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3716,11 +3716,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -535.9003295898438,
-                            "y": -9.600032806396484
+                            "y": -5.599999904632568
                         },
                         "relativeposition": {
                             "x": -535.9003295898438,
-                            "y": -9.600032806396484
+                            "y": -5.599999904632568
                         },
                         "relorientation": 0.0,
                         "width": 292.0
@@ -4832,8 +4832,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4911,8 +4911,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5002,8 +5002,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
