@@ -56,7 +56,7 @@ namespace PE
 
 		// movement variables
 		int catMaxMovementEnergy{ 21 };
-		int catCurrentEnergy{ catMaxMovementEnergy };
+		int catCurrentEnergy{ 0 };
 
 		float minDistance{ 10.f }; float maxDistance{ 50.f }; // Min and max distance enforced between each path node
 		float nodeSize{ 10.f }; // Size (in pixels) of each node
