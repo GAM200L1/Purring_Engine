@@ -83,6 +83,7 @@ namespace PE
 
 		auto test = m_catController->GetDeployableCats(m_catController->mainInstance);
 
+		if(test.size() > 0)
 		switch (test[m_catPlaced])
 		{
 		case EnumCatType::MAINCAT:
