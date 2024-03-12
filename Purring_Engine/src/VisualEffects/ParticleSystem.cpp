@@ -28,7 +28,7 @@ namespace PE
 		startDelay{ 0.f }, startRotation{ 0.f }, startScale{ 1.f, 1.f }, startColor{ 1.f,1.f,1.f,1.f },
 		endDelay{ 0.f }, endRotation{ 0.f }, endScale{ 1.f, 1.f }, endColor{ 1.f,1.f,1.f,1.f },
 		emissionDirection{ 0.f }, emissionVector{ sinf(emissionDirection), cosf(emissionDirection) },
-		emissionArc{ M_PI * 0.5f }, startEmissionRadius{ 1.f }, emissionElapsed{ emissionDuration },
+		emissionArc{ M_PI }, startEmissionRadius{ 1.f }, emissionElapsed{ emissionDuration },
 		randomnessFactor{ 0.f }
 	{
 		emissionVector.Normalize();
@@ -162,10 +162,12 @@ namespace PE
 			return vec2{ 0.f, 0.f };
 		
 		// get the direction vector to the left and right of the emission direction
+		const auto& xform = EntityManager::GetInstance().Get<Transform>(m_id);
+		emissionVector = xform.position;
 		vec2 rightVector{ emissionVector.y, -emissionVector.x };
 		vec2 leftVector{ -emissionVector.y, emissionVector.x };
 
-		std::mt19937 generator(seed());
+		/*std::mt19937 generator(seed());
 
 		if (std::rand() % 2)
 		{
@@ -176,7 +178,8 @@ namespace PE
 		{
 			std::uniform_real_distribution<float> distributor(0.f, (leftVector * radius).Length());
 			return leftVector * distributor(generator);
-		}
+		}*/
+		return xform.position;
 	}
 
 	vec2 ParticleEmitter::GenerateDirectionVector(vec2 const& r_startPosition)
@@ -184,8 +187,9 @@ namespace PE
 		// internal formula is to get the end of the particle emission's 'radius'
 
 		std::mt19937 generator(seed());
-
-		std::uniform_real_distribution<float> distributor(emissionDirection - emissionArc * 0.5f, emissionDirection + emissionArc * 0.5f);
+		const auto& xform = EntityManager::GetInstance().Get<Transform>(m_id);
+		float trueDir = emissionDirection - xform.orientation;
+		std::uniform_real_distribution<float> distributor(trueDir - emissionArc * 0.5f, trueDir + emissionArc * 0.5f);
 		float gen = distributor(generator);
 		vec2 dir{ sinf(gen), cosf(gen) };
 		dir.Normalize();

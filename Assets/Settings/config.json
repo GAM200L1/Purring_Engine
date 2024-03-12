@@ -11,7 +11,7 @@
         "showLayerWindow": false,
         "showLogs": true,
         "showObjectList": true,
-        "showPerformanceWindow": false,
+        "showPerformanceWindow": true,
         "showPhysicsWindow": false,
         "showResourceWindow": true,
         "showSceneView": true,

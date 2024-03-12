@@ -4511,6 +4511,9 @@ namespace PE {
 			ImGui::Text("Camera: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA) * 100.f);
 			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA), ImVec2(400.f, 30.0f), NULL);
 
+			ImGui::Text("Visual Effects: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::VISUALEFFECTS) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::VISUALEFFECTS), ImVec2(400.f, 30.0f), NULL);
+
 			ImGui::Text("Graphics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS) * 100.f);
 			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS), ImVec2(400.f, 30.0f), NULL);
 

@@ -502,19 +502,34 @@ void PE::CoreApplication::Run()
 
     // REMOVE LATER - TEST FOR PARTICLE SYSTEM //
     EntityID id = serializationManager.LoadFromFile("EmptyObject.prefab");
-    EntityManager::GetInstance().Assign<ParticleEmitter>(id);
+    EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<ParticleEmitter>() });
     auto& pe = EntityManager::GetInstance().Get<ParticleEmitter>(id);
-    pe.maxParticles = 5;
-    pe.startColor = vec4(1.f,0.f,0.f,0.5f);
+    pe.SetParent(id);
+    pe.maxParticles = 500;
+    pe.startColor = vec4(0.f,1.f,0.f,0.5f);
     pe.startScale = vec2(10.f, 10.f);
     pe.scaleChangeSpeed = vec2(-20.f, -20.f);
     pe.endScale = vec2(0.f, 0.f);
     pe.startLifetime = 10;
-    pe.minMaxSpeed = vec2{ 1.f, 100.f };
+    pe.minMaxSpeed = vec2{ 1.f, 1000.f };
     pe.isActive = true;
     pe.isLooping = true;
-    pe.SetParent(id);
     pe.CreateAllParticles();
+
+    id = serializationManager.LoadFromFile("EmptyObject.prefab");
+    EntityFactory::GetInstance().Assign(id, {EntityManager::GetInstance().GetComponentID<ParticleEmitter>() });
+    auto& pe2 = EntityManager::GetInstance().Get<ParticleEmitter>(id);
+    pe2.SetParent(id);
+    pe2.maxParticles = 500;
+    pe2.startColor = vec4(0.f, 1.f, 0.f, 0.5f);
+    pe2.startScale = vec2(10.f, 10.f);
+    pe2.scaleChangeSpeed = vec2(-20.f, -20.f);
+    pe2.endScale = vec2(0.f, 0.f);
+    pe2.startLifetime = 10;
+    pe2.minMaxSpeed = vec2{ 1.f, 1000.f };
+    pe2.isActive = true;
+    pe2.isLooping = true;
+    pe2.CreateAllParticles();
     ////////////////////////////////////////////
     
     // Main Application Loop
