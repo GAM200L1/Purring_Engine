@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationGrey_Idle.anim",
     "frameRate": 30,
+    "isLooping": true,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Idle.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Cat_Smokey_Idle.png",
     "totalSprites": 6
 }

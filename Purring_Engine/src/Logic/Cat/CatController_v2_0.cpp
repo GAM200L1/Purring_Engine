@@ -146,7 +146,7 @@ namespace PE
 
 	bool CatController_v2_0::IsFollowCat(EntityID catID)
 	{
-		FollowScriptData_v2_0* p_followScript = GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID);
-		return (std::find(p_followScript->followers.begin(), p_followScript->followers.end(), catID) != p_followScript->followers.end());
+		return (std::find((GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.begin(), 
+						  (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end(), catID) != (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end());
 	}
 }
