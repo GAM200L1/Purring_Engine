@@ -137,7 +137,7 @@ namespace PE
 		else
 			return;
 
-		if (CheckArea(m_deploymentZone, m_mousepos, cc.radius))
+		if (CheckArea(m_deploymentZone, m_mousepos, cc.radius + 10))
 		{
 			for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].NoGoArea).children)
 			{
