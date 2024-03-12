@@ -58,7 +58,7 @@ namespace PE
             }
 
             FMOD_MODE mode = FMOD_DEFAULT;
-            mode |= m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF; // Set looping mode based on m_loop variable
+            mode |= m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
 
             FMOD_RESULT result = p_system->playSound(audio->GetSound(), targetGroup, false, &p_channel);
             if (result == FMOD_OK)

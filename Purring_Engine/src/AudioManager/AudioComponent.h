@@ -157,7 +157,6 @@ namespace PE
         *************************************************************************************/
         void StartIndividualFadeOut(float duration);
 
-
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
         \return    JSON representation of the AudioComponent state.
