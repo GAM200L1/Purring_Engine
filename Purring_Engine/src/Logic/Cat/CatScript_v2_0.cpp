@@ -430,6 +430,7 @@ namespace PE
 				if (r_catAnimation.GetAnimationID() != m_scriptData[id].animationStates.at(r_animationState))
 				{
 					r_catAnimation.SetCurrentAnimationID(m_scriptData[id].animationStates.at(r_animationState));
+					r_catAnimation.ResetAnimation();
 				}
 				r_catAnimation.PlayAnimation();
 			}

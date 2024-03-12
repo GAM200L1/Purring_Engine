@@ -3306,7 +3306,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4899,7 +4899,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4978,7 +4978,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5014,7 +5014,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5105,7 +5105,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5656,7 +5656,7 @@
                             "../Assets/Animation/AnimationOrange_Idle.anim",
                             "../Assets/Animation/AnimationOrange_walk.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Attack.anim"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 5,
@@ -5695,7 +5695,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Cat_Citrus_Attack.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Citrus_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
