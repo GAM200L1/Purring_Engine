@@ -1492,11 +1492,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2999999523162842,
+                        "Size": 1.5499999523162842,
                         "Text": "End Planning",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2212,11 +2212,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
-                        "HAlignment": 4,
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.5,
+                        "Size": 1.399999976158142,
                         "Text": "Executing",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2229,8 +2229,8 @@
                             "y": 473.4999084472656
                         },
                         "relativeposition": {
-                            "x": 779.0,
-                            "y": 473.4999084472656
+                            "x": 861.0,
+                            "y": 468.0
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -2260,11 +2260,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
-                        "HAlignment": 4,
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2999999523162842,
+                        "Size": 1.5,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2277,8 +2277,8 @@
                             "y": 473.4997863769531
                         },
                         "relativeposition": {
-                            "x": 534.0,
-                            "y": 473.4997863769531
+                            "x": 639.0,
+                            "y": 470.0
                         },
                         "relorientation": 0.0,
                         "width": 356.0
