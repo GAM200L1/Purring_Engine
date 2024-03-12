@@ -838,6 +838,7 @@ namespace PE
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayWinAudio();
+		PauseBGM();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
 	}
@@ -849,6 +850,7 @@ namespace PE
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayLoseAudio();
+		PauseBGM();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
 	}
