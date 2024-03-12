@@ -103,6 +103,36 @@ namespace PE
         m_sfxGroup->setVolume(volume);
     }
 
+    float AudioManager::GetBGMVolume()
+    {
+        float volume;
+        FMOD_RESULT result = m_bgmGroup->getVolume(&volume);
+        if (result == FMOD_OK)
+        {
+            return volume;
+        }
+        else
+        {
+            // Handle error.
+            return 0.0f; // 0.0 cause safe default.
+        }
+    }
+
+    float AudioManager::GetSFXVolume()
+    {
+        float volume;
+        FMOD_RESULT result = m_sfxGroup->getVolume(&volume);
+        if (result == FMOD_OK)
+        {
+            return volume;
+        }
+        else
+        {
+            // Handle error.
+            return 0.0f; // 0.0 cause safe default.
+        }
+    }
+
     void AudioManager::MuteMaster(bool mute)
     {
         m_masterGroup->setMute(mute);

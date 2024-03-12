@@ -101,6 +101,7 @@
 
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
+#include "Logic/Settings.h"
 
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Logic/Cat/CatScript_v2_0.h"
@@ -275,10 +276,18 @@ RTTR_REGISTRATION
         .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen)
         .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
-        .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo);
+        .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo)
+        .property("SettingsMenu", &PE::MainMenuControllerData::SettingsMenu);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);    
+
+    rttr::registration::class_<PE::SettingsScriptData>("SettingsScript")
+        .property("BGMSlider", &PE::SettingsScriptData::BGMSlider)
+        .property("SFXSlider", &PE::SettingsScriptData::SFXSlider)
+        .property("MasterSlider", &PE::SettingsScriptData::MasterSlider)
+        .property("FullScreenButton", &PE::SettingsScriptData::FullScreenButton)
+        .property("WindowedButton", &PE::SettingsScriptData::WindowedButton);
     
     rttr::registration::class_<PE::IntroCutsceneControllerData>("IntroCutsceneController")
         .property("CutsceneObject", &PE::IntroCutsceneControllerData::CutsceneObject)

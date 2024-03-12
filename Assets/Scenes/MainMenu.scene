@@ -126,7 +126,7 @@
                         "Old ID": 5,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "GameTitle",
                         "parent": 12,
                         "sceneID": 2
@@ -167,7 +167,7 @@
                         "Old ID": 4,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Play Button",
                         "parent": 12,
                         "sceneID": 3
@@ -244,7 +244,7 @@
                         "Old ID": 8,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Play Text",
                         "parent": 12,
                         "sceneID": 4
@@ -292,7 +292,7 @@
                         "Old ID": 9,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Quit Button",
                         "parent": 12,
                         "sceneID": 9
@@ -369,7 +369,7 @@
                         "Old ID": 10,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "QuitText",
                         "parent": 12,
                         "sceneID": 10
@@ -546,8 +546,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -563,7 +563,7 @@
                             27,
                             28
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "MainMenuCanvas",
                         "parent": null,
                         "sceneID": 4
@@ -1359,7 +1359,7 @@
                         "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "HowToPlay Button",
                         "parent": 12,
                         "sceneID": 20
@@ -1436,7 +1436,7 @@
                         "Old ID": 28,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Options Button",
                         "parent": 12,
                         "sceneID": 21

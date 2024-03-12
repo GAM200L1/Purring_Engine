@@ -30,6 +30,8 @@ namespace PE
 		EntityID HowToPlayPageOne;
 		EntityID HowToPlayPageTwo;
 
+		EntityID SettingsMenu;
+
 		int mouseClickEventID;
 		int windowNotFocusEventID;
 		int windowFocusEventID;
@@ -187,6 +189,21 @@ namespace PE
 		 \param[in]		EntityID so that this function can be called by a buttopn
 		*************************************************************************************/
 		void MMHTPPage1(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Open Settings in Main Menu
+
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
+		void MMOpenSettings(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Close Settings in Main Menu
+
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
+		void MMCloseSettings(EntityID);
+
 		/*!***********************************************************************************
 		 \brief			Click Audio Sound
 		*************************************************************************************/
