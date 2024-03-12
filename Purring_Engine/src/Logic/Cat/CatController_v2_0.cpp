@@ -103,6 +103,10 @@ namespace PE
 				}
 			}
 		}
+		std::sort(m_currentCats.begin(), m_currentCats.end(), [](std::pair<EntityID, EnumCatType> const& lhs, std::pair<EntityID, EnumCatType> const& rhs)
+			{
+				return lhs.second < rhs.second;
+			});
 	}
 
 	void CatController_v2_0::KillCat(EntityID id)
