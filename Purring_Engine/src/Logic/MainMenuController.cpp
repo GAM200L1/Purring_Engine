@@ -23,6 +23,7 @@
 #include "Graphics/Text.h"
 #include "PauseManager.h"
 #include "GameStateController_v2_0.h"
+#include "AudioManager/GlobalMusicManager.h"
 namespace PE
 {
 	MainMenuController::MainMenuController()
@@ -36,6 +37,7 @@ namespace PE
 		REGISTER_UI_FUNCTION(MMHTPPage2, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(MMOpenSettings, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(MMCloseSettings, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(PlayButtonHoverAudio, PE::MainMenuController);
 	}
 
 	void MainMenuController::Init(EntityID id)
@@ -396,5 +398,10 @@ namespace PE
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
+	}
+
+	void MainMenuController::PlayButtonHoverAudio(EntityID)
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/UIButtonHoverSFX.prefab",false);
 	}
 }

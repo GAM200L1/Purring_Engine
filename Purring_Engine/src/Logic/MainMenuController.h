@@ -216,6 +216,11 @@ namespace PE
 		 \brief			Click Negative Feedback Sound
 		*************************************************************************************/
 		void PlayNegativeFeedback();
+
+		/*!***********************************************************************************
+		 \brief			Button Hover Audio Sound
+		*************************************************************************************/
+		void PlayButtonHoverAudio(EntityID);
 	private:
 		//Script Variables
 		std::map<EntityID, MainMenuControllerData> m_scriptData; // Data associated with each instance of the script

@@ -253,7 +253,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Play_Highlighted_512x128.png",
                         "m_onClicked": "PlayGameMM",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -371,7 +371,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
                         "m_onClicked": "QuitGameMM",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -448,7 +448,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_HowToPlay_MainMenu_Highlighted_347x128.png",
                         "m_onClicked": "MMOpenHTP",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -525,7 +525,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Options_Highlighted_200x128.png",
                         "m_onClicked": "MMOpenSettings",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -938,7 +938,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
                         "m_onClicked": "MMCloseHTP",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1015,7 +1015,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Next_Highlighted_79x77.png",
                         "m_onClicked": "MMHTPPage2",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1092,7 +1092,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Back_Highlighted_79x77.png",
                         "m_onClicked": "MMHTPPage1",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1251,7 +1251,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
                         "m_onClicked": "ExitGame",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1328,7 +1328,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                         "m_onClicked": "ReturnFromMMAYS",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1750,11 +1750,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -221.99990844726563,
-                            "y": -285.0
+                            "y": -300.0
                         },
                         "relativeposition": {
                             "x": -221.99990844726563,
-                            "y": -285.0
+                            "y": -300.0
                         },
                         "relorientation": 0.0,
                         "width": 439.0
@@ -1798,11 +1798,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -221.99990844726563,
-                            "y": -44.0
+                            "y": -61.50006866455078
                         },
                         "relativeposition": {
                             "x": -221.99990844726563,
-                            "y": -44.0
+                            "y": -61.50006866455078
                         },
                         "relorientation": 0.0,
                         "width": 439.0
@@ -1850,7 +1850,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
                         "m_onClicked": "MMCloseSettings",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
