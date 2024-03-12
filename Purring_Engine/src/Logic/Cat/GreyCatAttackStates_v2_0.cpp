@@ -101,9 +101,6 @@ namespace PE
 
 	void GreyCatAttack_v2_0PLAN::Enter(EntityID id)
 	{
-		// retrieve pointer to the game  controller
-		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<GreyCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 
@@ -114,7 +111,7 @@ namespace PE
 
 	void GreyCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE) { return; }
 
 		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
@@ -257,9 +254,7 @@ namespace PE
 
 	void GreyCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		CatScript_v2_0Data* p_catData = GETSCRIPTDATA(CatScript_v2_0, id);
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE || !p_catData->attackSelected) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE || !(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected) { return; }
 
 		// if projectile has been fired, keep reducing lifetime and disable bullet
 
@@ -267,7 +262,7 @@ namespace PE
 		{
 			if (m_bulletLifetime <= 0.f)
 			{
-				p_catData->finishedExecution = true;
+				(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = true;
 				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
@@ -275,7 +270,7 @@ namespace PE
 			m_bulletLifetime -= deltaTime;
 		}
 		// when the frame is attack frame, shoot the projectile after delay passes											
-		else if (!p_catData->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
+		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
 		{
 			if (m_bulletDelay <= 0.f) // extra delay after the frame in case of slight inaccuracy
 			{
@@ -287,7 +282,7 @@ namespace PE
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ApplyLinearImpulse(m_bulletImpulse);
 				m_projectileFired = true;
 				
-				CatScript_v2_0::PlayCatAttackAudio(p_catData->catType);
+				CatScript_v2_0::PlayCatAttackAudio((GETSCRIPTDATA(CatScript_v2_0, id))->catType);
 			}
 			else 
 			{
@@ -340,7 +335,6 @@ namespace PE
 	{
 		if (id1 != m_catID && id2 != m_catID)
 		{
-			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 			// kill cat if it is not following and not in cage and projectile hits catif (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 			if (id1 == p_attackData->projectileID)
 			{
@@ -350,7 +344,7 @@ namespace PE
 					PlayProjectileHitAudio(false);
 					return true;
 				}
-				else if (p_catController->IsCatAndNotCaged(id2) && !p_catController->IsFollowCat(id2))
+				else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id2) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id2))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
 					PlayProjectileHitAudio(false);
@@ -376,7 +370,7 @@ namespace PE
 					PlayProjectileHitAudio(false);
 					return true;
 				}
-				else if (p_catController->IsCatAndNotCaged(id1) && !p_catController->IsFollowCat(id1))
+				else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id1) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id1))
 				{
 					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
 					PlayProjectileHitAudio(false);

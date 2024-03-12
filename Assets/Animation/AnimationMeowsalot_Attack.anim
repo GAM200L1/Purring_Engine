@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationMeowsalot_Attack.anim",
     "frameRate": 30,
+    "isLooping": false,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Meowsalot_Attack.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Cat_Meowsalot_Attack.png",
     "totalSprites": 6
 }

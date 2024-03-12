@@ -11,7 +11,7 @@
                                 "../Assets/Animation/AnimationMeowsalot_Idle.anim",
                                 "../Assets/Animation/AnimationMeowsalot_walk.anim"
                             ],
-                            "CurrentAnimationID": ""
+                            "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle.anim"
                         },
                         "Collider": {
                             "collisionLayerIndex": 0,
@@ -48,7 +48,7 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
+                            "TextureKey": "../Assets/Textures/Animations/Cat_Meowsalot_Idle.png"
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,

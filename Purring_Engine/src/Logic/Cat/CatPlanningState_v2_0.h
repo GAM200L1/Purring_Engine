@@ -47,6 +47,7 @@ namespace PE
 		{
 			delete p_catMovement;
 			delete p_catAttack;
+			p_data = nullptr;
 		}
 
 		/*!***********************************************************************************

@@ -31,10 +31,10 @@ namespace PE
 		virtual void Enter(EntityID id) = 0;
 
 		/*!***********************************************************************************
-			\brief Checks if its state should change
+		\brief Checks if its state should change
 
-			\param[in,out] id - ID of instance of script
-			\param[in,out] deltaTime - delta time to update the state with
+		\param[in,out] id - ID of instance of script
+		\param[in,out] deltaTime - delta time to update the state with
 		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime) = 0;
 
