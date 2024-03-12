@@ -99,12 +99,12 @@ namespace PE
         void SetSFXVolume(float volume);
 
         /*!***********************************************************************************
-         \brief     Set background music volume level.
+         \brief     Get background music volume level.
         *************************************************************************************/
         float GetBGMVolume() const;
 
         /*!***********************************************************************************
-         \brief     Set sound effects volume level.
+         \brief     Get sound effects volume level.
         *************************************************************************************/
         float GetSFXVolume() const;
 
