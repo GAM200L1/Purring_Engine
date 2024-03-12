@@ -11,7 +11,7 @@
                                 "../Assets/Animation/AnimationOrange_Idle.anim",
                                 "../Assets/Animation/AnimationOrange_walk.anim"
                             ],
-                            "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Attack.anim"
+                            "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle.anim"
                         },
                         "Collider": {
                             "collisionLayerIndex": 0,
