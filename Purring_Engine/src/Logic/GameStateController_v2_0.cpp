@@ -1476,7 +1476,7 @@ namespace PE
 			return;
 		}
 
-		// Define the background music tracks for each level
+		// Defining the audio tracks for each stage
 		std::vector<std::vector<std::string>> stageAudio =
 		{
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab"}, // Stage 1
