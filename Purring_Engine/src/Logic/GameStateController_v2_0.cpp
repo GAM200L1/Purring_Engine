@@ -374,6 +374,7 @@ namespace PE
 	{
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
+			GETANIMATIONMANAGER()->PauseAllAnimations();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
 		}
@@ -692,6 +693,7 @@ namespace PE
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
 
+			
 			GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
 
 			//PauseBGM();
