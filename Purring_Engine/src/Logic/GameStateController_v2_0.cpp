@@ -148,7 +148,7 @@ namespace PE
 			}
 			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 2.5f);
 		}
-		else if (m_currentLevel == 2)	// Stage 3
+		else //if (m_currentLevel == 2)	// Stage 3
 		{
 			if (!bgmStarted)
 			{
@@ -223,7 +223,7 @@ namespace PE
 			FadeAllObject(m_scriptData[id].Journal, 0);
 
 			PhaseBannerTransition(id, deltaTime);
-			UpdateTurnCounter("Deployment");
+			UpdateTurnCounter("Deploying");
 
 			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].HUDCanvas).children)
 			{
