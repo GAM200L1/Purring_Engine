@@ -75,7 +75,7 @@
     ],
     "animationID": "../Assets/Animation/AnimationGutterRat_Attack.anim",
     "frameRate": 30,
-    "isLooping": true,
+    "isLooping": false,
     "isSpriteSheet": true,
     "spriteSheetKey": "../Assets/Textures/Animations/Rat_Gutter_Attack.png",
     "totalSprites": 6
