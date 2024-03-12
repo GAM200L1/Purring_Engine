@@ -349,6 +349,7 @@ namespace PE
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
 			GETANIMATIONMANAGER()->PauseAllAnimations();
+			PauseBGM();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
 		}
@@ -706,6 +707,7 @@ namespace PE
 
 			PauseManager::GetInstance().SetPaused(false);
 
+			ResumeBGM();
 			PlayClickAudio();
 			PlayPageAudio();
 		}
