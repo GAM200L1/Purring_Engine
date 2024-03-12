@@ -114,6 +114,15 @@ namespace PE
 			RatScript_v2_0::ToggleEntity(spikeballID, false);
 			return true;
 		}
+		else if ((entity1 == this->spikeballID) && RatScript_v2_0::GetIsObstacle(entity2))
+		{
+				RatScript_v2_0::ToggleEntity(spikeballID, false);
+		}
+		else if ((entity2 == this->spikeballID) && RatScript_v2_0::GetIsObstacle(entity1))
+		{
+				RatScript_v2_0::ToggleEntity(spikeballID, false);
+		}
+
 		return false;
 	}
 
