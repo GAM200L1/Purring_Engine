@@ -128,6 +128,36 @@ namespace PE
         return m_sfxGroup;
     }
 
+    float AudioManager::GetMasterVolume() const
+    {
+        float volume;
+        FMOD_RESULT result = m_masterGroup->getVolume(&volume);
+        if (result == FMOD_OK)
+        {
+            return volume;
+        }
+        else
+        {
+            // Handle error.
+            return 0.0f; // 0.0 cause safe default.
+        }
+    }
+
+    bool AudioManager::GetMasterMute() const
+    {
+        bool mute;
+        FMOD_RESULT result = m_masterGroup->getMute(&mute);
+        if (result == FMOD_OK)
+        {
+            return mute;
+        }
+        else
+        {
+            // Handle error.
+            return false;
+        }
+    }
+
     void AudioManager::SetGlobalVolume(float volume)
     {
         for (auto& pair : ResourceManager::GetInstance().Sounds)
