@@ -36,6 +36,7 @@
 #include "Cat/FollowScript_v2_0.h"
 #include "AudioManager/GlobalMusicManager.h"
 #include "Boss/BossRatScript.h"
+#include "Animation/Animation.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -859,6 +860,7 @@ namespace PE
 		//PauseBGM();
 		GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
 
+		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayWinAudio();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
@@ -869,6 +871,7 @@ namespace PE
 		//PauseBGM();
 		GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
 
+		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayLoseAudio();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
@@ -1187,6 +1190,7 @@ namespace PE
 		m_timeSinceTransitionEnded = m_transitionTimer;
 		PlayClickAudio();
 		PlaySceneTransition();
+		GETANIMATIONMANAGER()->PlayAllAnimations();
 
 		bgmStarted = false;
 
@@ -1287,6 +1291,7 @@ namespace PE
 		CurrentTurn = 0;
 		m_leveltoLoad = m_level1SceneName;
 
+		GETANIMATIONMANAGER()->PlayAllAnimations();
 		PlayClickAudio();
 		PlaySceneTransition();
 	}
