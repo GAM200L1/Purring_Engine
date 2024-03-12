@@ -26,6 +26,7 @@
 #include "ECS/SceneView.h"
 #include "SceneManager/SceneManager.h"
 #include "PauseManager.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 #include <limits>
 
@@ -43,8 +44,11 @@ namespace PE
 		m_scriptData[id].windowNotFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, IntroCutsceneController::OnWindowOutOfFocus, this)
 		m_scriptData[id].windowFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus, IntroCutsceneController::OnWindowFocus, this)
 	}
+
 	void IntroCutsceneController::Update(EntityID id, float deltaTime)
 	{
+		GlobalMusicManager::GetInstance().Update(deltaTime);
+
 		m_elapsedTime += deltaTime;
 
 		if (PauseManager::GetInstance().IsPaused())
@@ -63,33 +67,23 @@ namespace PE
 		}
 		else
 		{
-
 			if (m_startCutscene)
 			{
-				EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music.prefab");
-				if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
-					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PlayAudioSound(AudioComponent::AudioType::BGM);
-				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
+				PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Intro Cutscene Music.prefab", false, 5.0f);
+				PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Menu Background Music.prefab", false, 5.0f); 
 
-				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
-				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
-				EntityManager::GetInstance().RemoveEntity(bgm);
 				m_startCutscene = false;
+			}
+
+			// Start a fade-out effect 3 seconds before the cutscene ends
+			if (m_elapsedTime >= (m_sceneTimer - 3.0f) && !m_isFadingOut)
+			{
+				PE::GlobalMusicManager::GetInstance().StartFadeOut(3.0f);
+				m_isFadingOut = true;
 			}
 
 			if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 			{
-				EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music.prefab");
-				if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
-					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).StopSound();
-				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
-
-				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
-				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-					EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
-				EntityManager::GetInstance().RemoveEntity(bgm);
-
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].CutsceneObject))
 					EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].CutsceneObject).isActive = false;
 
@@ -134,7 +128,6 @@ namespace PE
 			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].windowNotFocusEventID);
 			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].windowFocusEventID);
 		}
-
 
 	}
 
