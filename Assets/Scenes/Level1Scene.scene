@@ -798,7 +798,7 @@
                                 "RatKingJournal": 0,
                                 "RatKingPortrait": 0,
                                 "RatPortrait": 53,
-                                "TransitionPanel": 70,
+                                "TransitionPanel": 92,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
                                 "clicklisttest": [
@@ -1492,11 +1492,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2999999523162842,
+                        "Size": 1.5499999523162842,
                         "Text": "End Planning",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2100,7 +2100,7 @@
                         },
                         "relativeposition": {
                             "x": -500.0,
-                            "y": -320.0
+                            "y": -310.0
                         },
                         "relorientation": 0.0,
                         "width": 624.0
@@ -2212,11 +2212,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
-                        "HAlignment": 4,
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.5,
+                        "Size": 1.399999976158142,
                         "Text": "Plan Movement",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2229,8 +2229,8 @@
                             "y": 473.4999084472656
                         },
                         "relativeposition": {
-                            "x": 779.0,
-                            "y": 473.4999084472656
+                            "x": 861.0,
+                            "y": 468.0
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -2260,11 +2260,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
-                        "HAlignment": 4,
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2999999523162842,
+                        "Size": 1.5,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2277,8 +2277,8 @@
                             "y": 473.4997863769531
                         },
                         "relativeposition": {
-                            "x": 534.0,
-                            "y": 473.4997863769531
+                            "x": 639.0,
+                            "y": 470.0
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -3306,8 +3306,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3416,7 +3416,7 @@
                         "isActive": true,
                         "name": "Exit Point",
                         "parent": null,
-                        "sceneID": 73
+                        "sceneID": 74
                     },
                     "Transform": {
                         "height": 113.0,
@@ -3540,7 +3540,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 74
+                        "sceneID": 91
                     },
                     "Renderer": {
                         "Color": {
@@ -4140,8 +4140,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4154,7 +4154,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 62
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4267,7 +4267,7 @@
                         "isActive": true,
                         "name": "Grey Cat",
                         "parent": null,
-                        "sceneID": 62
+                        "sceneID": 63
                     },
                     "Renderer": {
                         "Color": {
@@ -4417,7 +4417,7 @@
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 63
+                        "sceneID": 73
                     },
                     "Renderer": {
                         "Color": {
@@ -4495,8 +4495,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5217,6 +5217,85 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 881.0,
+                        "Width": 1604.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 69,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            92
+                        ],
+                        "isActive": true,
+                        "name": "TransitionPanelBackground",
+                        "parent": null,
+                        "sceneID": 61
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 70,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Transition Panel",
+                        "parent": 91,
+                        "sceneID": 92
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 0.9960784316062927,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 1147.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1963.0
                     }
                 },
                 "name": ""
