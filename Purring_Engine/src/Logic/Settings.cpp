@@ -20,7 +20,7 @@
 #include "ECS/Entity.h"
 
 #include "GUISystem.h"
-
+#include "AudioManager/AudioManager.h"
 namespace PE 
 {
 	SettingsScript::SettingsScript()
@@ -30,17 +30,44 @@ namespace PE
 
 	void SettingsScript::Init(EntityID id)
 	{
-		id;
-	}
-	void SettingsScript::Update(EntityID id, float deltaTime)
-	{
-		id;
-		deltaTime;
+
+		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].MasterSlider))
+		{
+			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].MasterSlider).SetSliderValue(AudioManager::GetInstance().GetMasterVolume());
+		}
+
+		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].BGMSlider))
+		{
+			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].BGMSlider).SetSliderValue(AudioManager::GetInstance().GetBGMVolume());
+		}
+
+		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].SFXSlider))
+		{
+			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].SFXSlider).SetSliderValue(AudioManager::GetInstance().GetSFXVolume());
+		}
 
 	}
-	void SettingsScript::Destroy(EntityID id)
+	void SettingsScript::Update(EntityID id, float)
 	{
-		id;
+		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].MasterSlider))
+		{
+			AudioManager::GetInstance().SetMasterVolume(EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].MasterSlider).GetSliderValue());
+		}
+
+		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].BGMSlider))
+		{
+			AudioManager::GetInstance().SetBGMVolume(EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].BGMSlider).GetSliderValue());
+		
+		}
+
+		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].SFXSlider))
+		{
+			AudioManager::GetInstance().SetSFXVolume(EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].SFXSlider).GetSliderValue());
+		
+		}
+	}
+	void SettingsScript::Destroy(EntityID)
+	{
 	}
 
 	SettingsScript::~SettingsScript()

@@ -1433,6 +1433,18 @@
                         "parent": null,
                         "sceneID": 25
                     },
+                    "ScriptComponent": {
+                        "SettingsScript": {
+                            "data": {
+                                "BGMSlider": 30,
+                                "FullScreenButton": 0,
+                                "MasterSlider": 35,
+                                "SFXSlider": 26,
+                                "WindowedButton": 0
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
@@ -1479,7 +1491,7 @@
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
-                        "m_currentValue": 0.0,
+                        "m_currentValue": 0.5309091210365295,
                         "m_currentWidth": 75.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
@@ -1507,7 +1519,7 @@
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
                         "m_knobID": 29,
-                        "m_maxValue": 100.0,
+                        "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
                             0.23529411852359772,
@@ -1563,11 +1575,11 @@
                         "height": 75.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -412.5,
+                            "x": 25.500024795532227,
                             "y": -406.0
                         },
                         "relativeposition": {
-                            "x": -412.5,
+                            "x": 25.500024795532227,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -1605,7 +1617,7 @@
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
-                        "m_currentValue": 0.0,
+                        "m_currentValue": 0.5272725820541382,
                         "m_currentWidth": 75.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
@@ -1633,7 +1645,7 @@
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
                         "m_knobID": 31,
-                        "m_maxValue": 100.0,
+                        "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
                             0.23529411852359772,
@@ -1689,11 +1701,11 @@
                         "height": 75.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -412.5,
+                            "x": 22.49988555908203,
                             "y": -174.0
                         },
                         "relativeposition": {
-                            "x": -412.5,
+                            "x": 22.49988555908203,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -1932,7 +1944,7 @@
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
                         "m_knobID": 37,
-                        "m_maxValue": 100.0,
+                        "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
                             0.23529411852359772,

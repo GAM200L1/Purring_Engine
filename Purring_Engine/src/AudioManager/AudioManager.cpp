@@ -103,7 +103,7 @@ namespace PE
         m_sfxGroup->setVolume(volume);
     }
 
-    float AudioManager::GetBGMVolume()
+    float AudioManager::GetBGMVolume() const
     {
         float volume;
         FMOD_RESULT result = m_bgmGroup->getVolume(&volume);
@@ -118,7 +118,7 @@ namespace PE
         }
     }
 
-    float AudioManager::GetSFXVolume()
+    float AudioManager::GetSFXVolume() const
     {
         float volume;
         FMOD_RESULT result = m_sfxGroup->getVolume(&volume);
