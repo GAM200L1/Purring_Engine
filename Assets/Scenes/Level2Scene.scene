@@ -5656,7 +5656,7 @@
                             "../Assets/Animation/AnimationOrange_Idle.anim",
                             "../Assets/Animation/AnimationOrange_walk.anim"
                         ],
-                        "CurrentAnimationID": ""
+                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 5,
@@ -5669,7 +5669,7 @@
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 48.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": true,
@@ -5695,7 +5695,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Citrus_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5723,7 +5723,7 @@
                                     }
                                 },
                                 "catID": 0,
-                                "catMaxMovementEnergy": 21,
+                                "catMaxMovementEnergy": 6,
                                 "catType": 2,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
@@ -5738,7 +5738,7 @@
                         }
                     },
                     "Transform": {
-                        "height": 64.0,
+                        "height": 96.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 234.00050354003906,
@@ -5749,7 +5749,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 64.0
+                        "width": 96.0
                     }
                 },
                 "name": ""
@@ -5779,7 +5779,7 @@
                         "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 150.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 234.00050354003906,
@@ -5790,7 +5790,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 150.0
                     }
                 },
                 "name": ""

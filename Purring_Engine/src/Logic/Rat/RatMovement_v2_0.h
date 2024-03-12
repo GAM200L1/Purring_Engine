@@ -68,17 +68,28 @@ namespace PE
         *************************************************************************************/
         virtual void StateExit(EntityID id) override;
 
+        
+
 
         // --- COLLISION DETECTION --- // 
 
         /*!***********************************************************************************
-         \brief Called when a collision enter or stay event has occurred. If an event has
-          occurred between this script's rat's collider and a cat, the parent rat
-          is notified.
+         \brief Called when a collision enter event has occurred. If an event has
+          occurred between this script's rat's collider and a cat or an obstacle, 
+          the parent rat is notified.
 
          \param[in] r_event - Event data.
         *************************************************************************************/
         void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+
+        /*!***********************************************************************************
+         \brief Called when a collision exit event has occurred. If an event has
+          occurred between this script's rat's collider and an obstacle, the parent rat
+          is notified.
+
+         \param[in] r_event - Event data.
+        *************************************************************************************/
+        void OnCollisionExit(const Event<CollisionEvents>& r_event);
 
         /*!***********************************************************************************
             \brief Called when a trigger enter or stay event has occurred
@@ -140,5 +151,11 @@ namespace PE
           \return Returns a next viable target for the rat.
         *************************************************************************************/
         vec2 PickTargetPosition();
+        
+
+        /*!***********************************************************************************
+          \brief Stop the movement anim and change to the attack state.
+        *************************************************************************************/        
+        void OnMovementDone();
     };
 }

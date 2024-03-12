@@ -49,6 +49,7 @@ namespace PE
 
         // Subscribe to the collision trigger events
         m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatMovement_v2_0::OnCollisionEnter, this);
+        m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionExit, RatMovement_v2_0::OnCollisionExit, this);
         m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovement_v2_0::OnTriggerEnterAndStay, this);
         m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovement_v2_0::OnTriggerEnterAndStay, this);
         m_triggerExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatMovement_v2_0::OnTriggerExit, this);
@@ -88,11 +89,7 @@ namespace PE
                 // The function returns true if the target has been reached
                 if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime))
                 {
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
-
-                    // Switch to the attack state since we're close enough to the targets
-                    p_data->ratPlayerDistance = 0.f;
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(id);
+                    OnMovementDone();
                 }
                 break;
             }
@@ -143,8 +140,10 @@ namespace PE
         p_data = nullptr;
         gameStateController = nullptr;
 
-        REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
+        // Unsubscribe events
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_triggerExitEventListener);
     }
@@ -166,7 +165,29 @@ namespace PE
         {
             OnCollisionEnterEvent OCEE = dynamic_cast<OnCollisionEnterEvent const&>(r_event);
             // check if rat and cat have collided
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingCat(p_data->myID, OCEE.Entity1, OCEE.Entity2);
+            bool ratCollidedWithCat{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingCat(p_data->myID, OCEE.Entity1, OCEE.Entity2) };
+            
+            // Check if the rat has been colliding with a wall
+            if (!ratCollidedWithCat &&
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingWall(p_data->myID, OCEE.Entity1, OCEE.Entity2) &&
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetExecutionPhaseTimeout(p_data->myID))
+            {
+                // The rat has been touching the wall for too long
+                OnMovementDone();
+            }
+        }
+    }
+
+    void RatMovement_v2_0::OnCollisionExit(const Event<CollisionEvents>& r_event)
+    {
+        if (!p_data) { return; }
+        else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+
+        if (r_event.GetType() == CollisionEvents::OnCollisionExit)
+        {
+            OnCollisionExitEvent OCEE = dynamic_cast<OnCollisionExitEvent const&>(r_event);
+            // check if rat has stopped colliding with wall
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatStopTouchingWall(p_data->myID, OCEE.Entity1, OCEE.Entity2);
         }
     }
 
@@ -220,6 +241,18 @@ namespace PE
             std::cout << "RatMovement_v2_0::PickTargetPosition() couldn't pick a target position\n";
             return vec2{};
         }
+    }
+
+
+    void RatMovement_v2_0::OnMovementDone() 
+    {
+        if (!p_data) { return; }
+
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(p_data->myID, EnumRatAnimations::IDLE);
+
+        // Switch to the attack state since we're close enough to the targets
+        p_data->ratPlayerDistance = 0.f;
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
     }
 
 }

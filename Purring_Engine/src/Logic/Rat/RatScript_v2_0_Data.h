@@ -154,6 +154,8 @@ namespace PE
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
 		vec2 targetPosition{ 0.f, 0.f };				// stores the target position the rat is supposed to move towards
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
+		float maxObstacleCollisionTime{ 1.f };		// Max time in seconds that the rat can stay colliding with an obstacle before it is forced out of the execution phase
+		float totalTimeCollidingIntoWall{ 0.f };	// Time since the rat first started walking into the wall 
 
 		// Attack variables
 		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack

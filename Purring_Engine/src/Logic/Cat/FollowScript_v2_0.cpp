@@ -40,13 +40,12 @@ namespace PE
 
 	void FollowScript_v2_0::Init(EntityID)
 	{
-		p_gamestateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);		
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, FollowScript_v2_0::CollisionCheck, this);
 	}
 
 	void FollowScript_v2_0::Update(EntityID id, float deltaTime)
 	{
-		if (p_gamestateController->currentState == GameStates_v2_0::DEPLOYMENT) 
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::DEPLOYMENT)
 		{ 
 			scriptData[id].prevPosition = CatHelperFunctions::GetEntityPosition(id);
 			return;
@@ -79,7 +78,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Transform>(follower).position = scriptData[id].nextPosition[index - 1] + 
 					vec2{ xScale * cosf(newRotation - static_cast<float>(M_PI)), xScale * sinf(newRotation - static_cast<float>(M_PI)) };
 
-				if (p_gamestateController->currentState == GameStates_v2_0::EXECUTE)
+				if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::EXECUTE)
 				{
 					// Ensure the cat is facing the direction of their movement
 					vec2 newScale{ CatHelperFunctions::GetEntityScale(follower) };
@@ -137,17 +136,18 @@ namespace PE
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)
 	{
 		// if not in execute state dont allow pick up
-		if (p_gamestateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState != GameStates_v2_0::EXECUTE) { return; }
 		
 		// pick up cats
 		if (r_event.GetType() == CollisionEvents::OnTriggerEnter)
 		{
 			OnTriggerEnterEvent OTEE = static_cast<const OnTriggerEnterEvent&>(r_event);
 
-			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 			CatScript_v2_0Data* p_catData{ nullptr };
 
-			if (OTEE.Entity1 == p_catController->GetMainCatID() && p_catController->IsCat(OTEE.Entity2) && p_catController->IsCatCaged(OTEE.Entity2))
+			if (OTEE.Entity1 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && 
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(OTEE.Entity2) && 
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(OTEE.Entity2))
 			{
 				// add to followers list
 				scriptData[OTEE.Entity1].followers.emplace_back(OTEE.Entity2);
@@ -156,7 +156,9 @@ namespace PE
 				// set cat position to the end of the chain
 				CatHelperFunctions::PositionEntity(OTEE.Entity2, scriptData[OTEE.Entity1].nextPosition.back());
 			}
-			else if (OTEE.Entity2 == p_catController->GetMainCatID() && p_catController->IsCat(OTEE.Entity1) && p_catController->IsCatCaged(OTEE.Entity1))
+			else if (OTEE.Entity2 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && 
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(OTEE.Entity1) && 
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(OTEE.Entity1))
 			{
 				// add to followers list
 				scriptData[OTEE.Entity2].followers.emplace_back(OTEE.Entity1);
@@ -179,6 +181,7 @@ namespace PE
 				}
 				// play adopt audio
 				CatScript_v2_0::PlayRescueCatAudio(p_catData->catType);
+				p_catData = nullptr;
 			}
 		}
 	}

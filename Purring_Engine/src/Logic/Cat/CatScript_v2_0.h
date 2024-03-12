@@ -38,6 +38,11 @@ namespace PE
 
 	struct CatScript_v2_0Data
 	{
+		~CatScript_v2_0Data()
+		{
+			delete p_stateManager;
+		}
+
 		// id of cat and its type
 		EntityID catID{ 0 };
 		EnumCatType catType{ EnumCatType::ORANGECAT };
@@ -51,7 +56,7 @@ namespace PE
 
 		// movement variables
 		int catMaxMovementEnergy{ 21 };
-		int catCurrentEnergy{ catMaxMovementEnergy };
+		int catCurrentEnergy{ 0 };
 
 		float minDistance{ 10.f }; float maxDistance{ 50.f }; // Min and max distance enforced between each path node
 		float nodeSize{ 10.f }; // Size (in pixels) of each node
@@ -59,8 +64,11 @@ namespace PE
 		float forgivenessOffset{ 1.f }; // Amount that the cat can be offset from the path node before attempting to move to the next one
 		unsigned currentPositionIndex{}; // Index of the position in the pathPositions container that the cat should move towards
 		
+		// planning variables
+		
+
+		// movement variables
 		std::vector<vec2> pathPositions{}; // Positions of the nodes of the player drawn path
-		std::vector<vec2> followCatPositions{}; // positions for the follower cats in the cat chain to use
 		std::vector<EntityID> pathQuads{}; // IDs of entities to visualise the path nodes
 		vec2 resetPosition{ 0.f,0.f };
 
@@ -72,7 +80,6 @@ namespace PE
 		bool planningAttack{ false };
 
 		// animation
-		AnimationComponent* p_catAnimation = nullptr;
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
 		bool executionAnimationFinished{ false };
 		bool playDeathSound{ true };
@@ -172,9 +179,6 @@ namespace PE
 
 		// ID of the main cat
 		EntityID m_mainCatID;
-
-		// animation
-		float m_executionAnimationDuration{};
 
 		// Event Listeners
 		int m_mouseClickEventListener{};

@@ -75,7 +75,8 @@
     ],
     "animationID": "../Assets/Animation/AnimationMeowsalot_Idle.anim",
     "frameRate": 30,
+    "isLooping": true,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Meowsalot_Idle.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Cat_Meowsalot_Idle.png",
     "totalSprites": 6
 }

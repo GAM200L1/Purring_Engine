@@ -41,10 +41,7 @@ namespace PE
 {
 	CatScript_v2_0::~CatScript_v2_0()
 	{
-		for (auto& [key, value] : m_scriptData)
-		{
-			delete value.p_stateManager;
-		}
+		p_gsc = nullptr;
 	}
 
 	void CatScript_v2_0::Init(EntityID id)
@@ -52,15 +49,6 @@ namespace PE
 		//m_scriptData[id].catID = id;
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		m_scriptData[id].catID = id;
-		
-		try
-		{
-			m_scriptData[id].p_catAnimation = &EntityManager::GetInstance().Get<AnimationComponent>(id);
-		}
-		catch (...)
-		{
-			// error
-		}
 
 		switch (m_scriptData[id].catType)
 		{
@@ -111,7 +99,9 @@ namespace PE
 			}
 			return;
 		}
-
+		
+		AnimationComponent& r_catAnimation = EntityManager::GetInstance().Get<AnimationComponent>(id);
+		
 		// cat dies
 		if (m_scriptData[id].toggleDeathAnimation)
 		{
@@ -129,7 +119,7 @@ namespace PE
 				PlayDeathAudio(m_scriptData[id].catType);
 			}
 
-			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
+			if (r_catAnimation.HasAnimationEnded())
 			{
 				switch (m_scriptData[id].catType)
 				{
@@ -220,29 +210,13 @@ namespace PE
 			EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider(); // cat default colliders is circle
 		}
 
-		if (m_scriptData.find(id) == m_scriptData.end())
-		{
-			m_scriptData[id] = CatScript_v2_0Data{};
-		}
-		else
-		{
-			delete m_scriptData[id].p_stateManager;
-			m_scriptData[id] = CatScript_v2_0Data{};
-		}
-
-		// Reset values
-		m_scriptData[id].shouldChangeState = false;
-		m_scriptData[id].timeBeforeChangingState = 0.f;
-
-		// Set the cat max energy to the value set in the editor
-		//m_catBaseMaxEnergy = m_catMaxEnergy = m_scriptData[id].catMaxEnergy;
+		m_scriptData[id] = CatScript_v2_0Data{};
 	}
 
 	void CatScript_v2_0::OnDetach(EntityID id)
 	{
 		if (m_scriptData.find(id) != m_scriptData.end())
 		{
-			delete m_scriptData[id].p_stateManager;
 			m_scriptData.erase(id);
 		}
 	}
@@ -324,7 +298,7 @@ namespace PE
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				ChangeToPlanningState(id);
-				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0); // resets animation to 0
+				EntityManager::GetInstance().Get<AnimationComponent>(id).StopAnimation(); // resets animation to 0
 			}
 		}
 	}
@@ -339,18 +313,7 @@ namespace PE
 		}
 		
 		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
-		
-		if (id == m_mainCatID)
-		{
-			for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
-			{
-				if (r_stateName == "MovementEXECUTE")
-					PlayAnimation(follower, "Walk");
-				else if (r_stateName == "AttackEXECUTE" || r_stateName == "PLANNING")
-					PlayAnimation(follower, "Idle");
-			}
-		}
-
+		AnimationComponent& r_catAnimation = EntityManager::GetInstance().Get<AnimationComponent>(id);
 		auto ChangeToAttack = 
 		[&](EntityID animateID)
 		{
@@ -358,19 +321,18 @@ namespace PE
 			m_scriptData[animateID].p_stateManager->ChangeState(new AttackEXECUTE{}, animateID);
 
 			// reset and play attack animation
-			m_scriptData[animateID].p_catAnimation->SetCurrentFrameIndex(0);
+			r_catAnimation.StopAnimation();
 			if (animateID == m_mainCatID)
 			{
 				for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
 				{
-					m_scriptData[follower].p_catAnimation->SetCurrentFrameIndex(0);
+					EntityManager::GetInstance().Get<AnimationComponent>(follower).StopAnimation();
 				}
 			}
 			if (m_scriptData[animateID].attackSelected)
 			{
 				// if attack has been selected play attack execute animation
 				PlayAnimation(animateID, "Attack");
-				m_executionAnimationDuration = ResourceManager::GetInstance().GetAnimation(m_scriptData[animateID].p_catAnimation->GetAnimationID())->GetAnimationDuration();
 				m_scriptData[animateID].executionAnimationFinished = false;
 				m_scriptData[animateID].finishedExecution = false;
 			}
@@ -383,13 +345,6 @@ namespace PE
 				m_scriptData[animateID].finishedExecution = true;
 				m_scriptData[animateID].executionAnimationFinished = true;
 			}
-		};
-
-		auto HasFinishedAnimation = 
-		[&]()
-		{
-			m_executionAnimationDuration -= deltaTime;
-			return (m_executionAnimationDuration <= 0.f);
 		};
 
 		// when execution phase is activated, sets the state to movement
@@ -405,14 +360,14 @@ namespace PE
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
 					
 					// reset and play movement animation
-					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
 					if (id == m_mainCatID)
 					{
 						for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
 						{
-							m_scriptData[follower].p_catAnimation->SetCurrentFrameIndex(0);
+							EntityManager::GetInstance().Get<AnimationComponent>(follower).StopAnimation();
 						}
 					}
+					r_catAnimation.StopAnimation();
 					PlayAnimation(id, "Walk");
 				}
 				else // if not moving, immediately set to attack state
@@ -439,31 +394,45 @@ namespace PE
 			{
 				PlayAnimation(id, "Idle");
 			}
-			else if (m_scriptData[id].attackSelected && HasFinishedAnimation())
+			else if (m_scriptData[id].attackSelected && r_catAnimation.HasAnimationEnded())
 			{
 				m_scriptData[id].executionAnimationFinished = true; // if attack animation finished set to true
-				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+				r_catAnimation.StopAnimation();
 				if (id == m_mainCatID)
 				{
 					for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
 					{
-						m_scriptData[follower].p_catAnimation->SetCurrentFrameIndex(0);
+						EntityManager::GetInstance().Get<AnimationComponent>(follower).StopAnimation();
 					}
 				}
+			}
+		}
+
+		if (id == m_mainCatID)
+		{
+			for (EntityID follower : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
+			{
+				if (r_stateName == "MovementEXECUTE")
+					PlayAnimation(follower, "Walk");
+				else if (r_stateName == "AttackEXECUTE" || r_stateName == "PLANNING")
+					PlayAnimation(follower, "Idle");
 			}
 		}
 	}
 
 	void CatScript_v2_0::PlayAnimation(EntityID id, std::string const& r_animationState)
 	{
-		if (m_scriptData[id].p_catAnimation != nullptr && m_scriptData[id].animationStates.size())
+		AnimationComponent& r_catAnimation = EntityManager::GetInstance().Get<AnimationComponent>(id);
+		if (m_scriptData[id].animationStates.size())
 		{
 			try
 			{
-				if (m_scriptData[id].p_catAnimation->GetAnimationID() != m_scriptData[id].animationStates.at(r_animationState))
+				if (r_catAnimation.GetAnimationID() != m_scriptData[id].animationStates.at(r_animationState))
 				{
-					m_scriptData[id].p_catAnimation->SetCurrentAnimationID(m_scriptData[id].animationStates.at(r_animationState));
+					r_catAnimation.SetCurrentAnimationID(m_scriptData[id].animationStates.at(r_animationState));
+					r_catAnimation.ResetAnimation();
 				}
+				r_catAnimation.PlayAnimation();
 			}
 			catch (...)
 			{
@@ -512,14 +481,14 @@ namespace PE
 		{
 			int randomInteger = std::rand() % 3 + 1; // Randomize between 1 and 3
 			soundPrefabPath += "Cat Grey Death SFX" + std::to_string(randomInteger) + ".prefab";
+			break;
 		}
-		break;
 		case EnumCatType::ORANGECAT:
 		{
 			int randomInteger = std::rand() % 3 + 1; // Randomize between 1 and 3
 			soundPrefabPath += "Cat Orange Death SFX" + std::to_string(randomInteger) + ".prefab";
+			break;
 		}
-		break;
 		default:
 			return;
 		}

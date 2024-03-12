@@ -115,9 +115,6 @@ namespace PE
 		void CollisionCheck(const Event<CollisionEvents>& r_event);
 		
 	private:
-		// data
-		GameStateController_v2_0* p_gamestateController;
-
 		// Event keys
 		int m_collisionEventListener{};
 	};
