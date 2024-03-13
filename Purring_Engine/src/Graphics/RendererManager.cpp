@@ -593,7 +593,239 @@ namespace PE
                     return;
                 }
 
-                
+                // handle particle effects
+                if (EntityManager::GetInstance().Has<PE::ParticleEmitter>(id))
+                {
+                    // dump current 
+                    DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                    currentTexture.clear();
+                    count = 0;
+                    // Render particle effects
+                    auto& em = EntityManager::GetInstance().Get<ParticleEmitter>(id);
+                    T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+
+                    switch (em.particleType)
+                    {
+                    case SQUARE:
+                    {
+                        for (auto& p : em.GetParticles())
+                        {
+                            if (!p.enabled)
+                                continue;
+                            auto& xform = p.transform;
+                            m_isTextured.emplace_back(0.f);
+                            m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(xform.width, // width
+                                xform.height, xform.orientation, // height, orientation
+                                xform.position.x, xform.position.y)); // x, y position
+                            m_colors.emplace_back(glm::vec4(em.startColor.x, em.startColor.y, em.startColor.z, em.startColor.w));
+
+                            // Add the UV coordinate adjustments
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
+                            m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
+                            ++count;
+                        }
+                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                        currentTexture.clear();
+                        count = 0;
+                    }
+                    break;
+                    /*case CIRCLE:
+                    {
+
+                    }
+                        break;*/
+                    case TEXTURED:
+                    case ANIMATED:
+                    {
+                        const glm::vec2 &minUV = renderer.GetUVCoordinatesMin();
+                        const glm::vec2 &maxUV = renderer.GetUVCoordinatesMax();
+                        if (EntityManager::GetInstance().Has<AnimationComponent>(id) && EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetFrameCount())
+                        {
+                            std::map<int, std::vector<const PE::Particle*>> particles;
+                            for (auto& p : em.GetParticles())
+                            {
+                                particles[p.spriteID % EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetFrameCount()].emplace_back(&p);
+                            }
+                            for (auto& [k, v] : particles)
+                            {
+                                int frame = (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() + k);
+                                frame %= EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetFrameCount();
+                                glm::vec2 minOffset{ EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_minUV.x, EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_minUV.y };
+                                glm::vec2 maxOffset{ EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_maxUV.x, EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_maxUV.y };
+                                for (auto& p : v)
+                                {
+                                    if (!p->enabled)
+                                        continue;
+                                    // Attempt to retrieve and bind the texture
+                                    if (renderer.GetTextureKey().empty())
+                                    {
+                                        m_isTextured.emplace_back(0.f);
+                                    }
+                                    else if (currentTexture != renderer.GetTextureKey())
+                                    {
+                                        // Check if we were already 
+                                        if (!currentTexture.empty())
+                                        {
+                                            DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                                            currentTexture.clear();
+                                            count = 0;
+                                        }
+
+                                        std::shared_ptr<Texture> texture{ ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
+
+                                        // Check if texture is null
+                                        if (!texture)
+                                        {
+                                            // Remove the texture and set the object to neon pink
+                                            renderer.SetTextureKey("");
+                                            renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+
+                                            m_isTextured.emplace_back(0.f);
+                                        }
+                                        else
+                                        {
+                                            // Unbind the existing texture
+                                            if (p_texture)
+                                            {
+                                                p_texture->Unbind();
+                                            }
+
+                                            // Store the texture key of the current texture
+                                            currentTexture = renderer.GetTextureKey();
+
+                                            // Bind the new texture
+                                            GLint textureUnit{ 0 };
+                                            p_texture = texture;
+                                            p_texture->Bind(textureUnit);
+                                            r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+
+                                            m_isTextured.emplace_back(1.f);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        m_isTextured.emplace_back(1.f);
+                                    }
+                                    // change this line + look for texture
+                                    //m_isTextured.emplace_back(0.f);
+                                    auto& xform = p->transform;
+                                    m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(xform.width, // width
+                                        xform.height, xform.orientation, // height, orientation
+                                        xform.position.x, xform.position.y)); // x, y position
+                                    m_colors.emplace_back(glm::vec4(em.startColor.x, em.startColor.y, em.startColor.z, em.startColor.w));
+
+                                    // Add the UV coordinate adjustments
+                                    m_UV.emplace_back(minOffset); // bottom left
+                                    m_UV.emplace_back(maxOffset.x, minOffset.y); // bottom right
+                                    m_UV.emplace_back(maxOffset); // top right
+                                    m_UV.emplace_back(minOffset.x, maxOffset.y); // top left
+
+                                    ++count;
+                                
+                                }
+                                DrawInstanced(count, meshIndex, GL_TRIANGLES);
+
+                                count = 0;
+                            }
+                        }
+                        else
+                        {
+                            for (auto& p : em.GetParticles())
+                            {
+                                if (!p.enabled)
+                                    continue;
+                                // Attempt to retrieve and bind the texture
+                                if (renderer.GetTextureKey().empty())
+                                {
+                                    m_isTextured.emplace_back(0.f);
+                                }
+                                else if (currentTexture != renderer.GetTextureKey())
+                                {
+                                    // Check if we were already 
+                                    if (!currentTexture.empty())
+                                    {
+                                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                                        currentTexture.clear();
+                                        count = 0;
+                                    }
+
+                                    std::shared_ptr<Texture> texture{ ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
+
+                                    // Check if texture is null
+                                    if (!texture)
+                                    {
+                                        // Remove the texture and set the object to neon pink
+                                        renderer.SetTextureKey("");
+                                        renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+
+                                        m_isTextured.emplace_back(0.f);
+                                    }
+                                    else
+                                    {
+                                        // Unbind the existing texture
+                                        if (p_texture)
+                                        {
+                                            p_texture->Unbind();
+                                        }
+
+                                        // Store the texture key of the current texture
+                                        currentTexture = renderer.GetTextureKey();
+
+                                        // Bind the new texture
+                                        GLint textureUnit{ 0 };
+                                        p_texture = texture;
+                                        p_texture->Bind(textureUnit);
+                                        r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+
+                                        m_isTextured.emplace_back(1.f);
+                                    }
+                                }
+                                else
+                                {
+                                    m_isTextured.emplace_back(1.f);
+                                }
+                                // change this line + look for texture
+                                //m_isTextured.emplace_back(0.f);
+                                auto& xform = p.transform;
+                                m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(xform.width, // width
+                                    xform.height, xform.orientation, // height, orientation
+                                    xform.position.x, xform.position.y)); // x, y position
+                                m_colors.emplace_back(glm::vec4(em.startColor.x, em.startColor.y, em.startColor.z, em.startColor.w));
+
+                                // Add the UV coordinate adjustments
+                                m_UV.emplace_back(minUV); // bottom left
+                                m_UV.emplace_back(maxUV.x, minUV.y); // bottom right
+                                m_UV.emplace_back(maxUV); // top right
+                                m_UV.emplace_back(minUV.x, maxUV.y); // top left
+
+                                ++count;
+                            }
+                        }
+                        
+                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                       
+                        count = 0;
+                    }
+                        break;
+                    default:
+                        break;
+                    }
+
+                    renderedEntities.emplace_back(id);
+
+                    // continue from the next one after it
+                    auto ite = ++(std::find(r_rendererIdContainer.begin(), r_rendererIdContainer.end(), id));
+                    std::vector<size_t> cont;
+                    while (ite != r_rendererIdContainer.end())
+                    {
+                        cont.emplace_back(*ite);
+                        ++ite;
+                    }
+                    DrawQuadsInstanced<T>(r_worldToNdc, cont);
+                    return;
+                }
 
                 // Skip this object if it has no renderer
                 if(!EntityManager::GetInstance().Has<T>(id)) 
@@ -678,93 +910,6 @@ namespace PE
                 m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
 
                 ++count; 
-
-                // handle particle effects
-                if (EntityManager::GetInstance().Has<PE::ParticleEmitter>(id))
-                {
-                    // dump current 
-                    DrawInstanced(count, meshIndex, GL_TRIANGLES);
-                    currentTexture.clear();
-                    count = 0;
-                    // Render particle effects
-                    auto& em = EntityManager::GetInstance().Get<ParticleEmitter>(id);
-                    T& renderer{ EntityManager::GetInstance().Get<T>(id) };
-
-                    switch (em.particleType)
-                    {
-                    case SQUARE:
-                    {
-                        for (auto& p : em.GetParticles())
-                        {
-                            if (!p.enabled)
-                                continue;
-                            auto& xform = p.transform;
-                            m_isTextured.emplace_back(0.f);
-                            m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(xform.width, // width
-                                xform.height, xform.orientation, // height, orientation
-                                xform.position.x, xform.position.y)); // x, y position
-                            m_colors.emplace_back(glm::vec4(em.startColor.x, em.startColor.y, em.startColor.z, em.startColor.w));
-
-                            // Add the UV coordinate adjustments
-                            m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
-                            m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
-                            m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
-                            m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
-                            ++count;
-                        }
-                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
-                        currentTexture.clear();
-                        count = 0;
-                    }
-                    break;
-                    /*case CIRCLE:
-                    {
-
-                    }
-                        break;*/
-                    case TEXTURED:
-                    {
-                        for (auto& p : em.GetParticles())
-                        {
-                            if (!p.enabled)
-                                continue;
-                            // change this line + look for texture
-                            //m_isTextured.emplace_back(0.f);
-                            auto& xform = p.transform;
-                            m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(xform.width, // width
-                                xform.height, xform.orientation, // height, orientation
-                                xform.position.x, xform.position.y)); // x, y position
-                            m_colors.emplace_back(glm::vec4(em.startColor.x, em.startColor.y, em.startColor.z, em.startColor.w));
-
-                            // Add the UV coordinate adjustments
-                            m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
-                            m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
-                            m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
-                            m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
-                            ++count;
-                        }
-                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
-                        currentTexture.clear();
-                        count = 0;
-                    }
-                    break;
-                    default:
-                        break;
-                    }
-
-                    renderedEntities.emplace_back(id);
-
-                    // continue from the next one after it
-                    auto ite = ++(std::find(r_rendererIdContainer.begin(), r_rendererIdContainer.end(), id));
-                    std::vector<size_t> cont;
-                    while (ite != r_rendererIdContainer.end())
-                    {
-                        cont.emplace_back(*ite);
-                        ++ite;
-                    }
-                    DrawQuadsInstanced<T>(r_worldToNdc, cont);
-                    return;
-                }
             }
 
             // Draw the remaining objects

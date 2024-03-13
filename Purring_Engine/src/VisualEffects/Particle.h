@@ -42,12 +42,15 @@ namespace PE
 				 const vec2& r_dScl, 
 				 const float& r_dr, 
 			     const float& r_spd,
-				 const float& r_lifetime)
+				 const float& r_lifetime,
+				 const int	  r_animIdx = 0
+			)
 			: type(r_tp), directionVector(r_dir), deltaScale(r_dScl), deltaOrientation(r_dr),speed(r_spd), lifetime(r_lifetime)
 		{
 			transform.position = r_p;
 			transform.height = r_scl.y;
 			transform.width = r_scl.x;
+			spriteID = r_animIdx;
 			enabled = true;
 		}
 		
@@ -58,7 +61,9 @@ namespace PE
 				   const vec2& r_dScl,
 				   const float& r_dr,
 				   const float& r_spd,
-				   const float& r_lifetime)
+				   const float& r_lifetime,
+				   const int& r_animIdx = 0
+			)
 		{
 			type = r_tp;
 			transform.position = r_p;
@@ -73,6 +78,7 @@ namespace PE
 			deltaOrientation = r_dr;
 			speed = r_spd;
 			lifetime = r_lifetime;
+			spriteID = r_animIdx;
 			enabled = true;
 		}
 

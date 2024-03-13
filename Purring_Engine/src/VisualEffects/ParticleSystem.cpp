@@ -97,10 +97,6 @@ namespace PE
 			}
 			else
 			{
-				if (r_particle.type == ANIMATED)
-				{
-					//r_particle.UpdateAnimation();
-				}
 				if (!r_particle.Update(deltaTime))
 				{
 					if (isLooping)
@@ -110,7 +106,15 @@ namespace PE
 						std::mt19937 generator(seed());
 						std::uniform_real_distribution<float> distributor(minMaxSpeed.x, minMaxSpeed.y);
 						std::uniform_real_distribution<float> distributorScale(endScale.Length(), startScale.Length());
-						r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime);
+						if (EntityManager::GetInstance().Has<AnimationComponent>(m_id))
+						{
+							std::uniform_int_distribution<unsigned> distributorAnim(0U, EntityManager::GetInstance().Get<AnimationComponent>(m_id).GetAnimation()->GetFrameCount());
+							r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime, distributorAnim(generator));
+						}
+						else
+						{
+							r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime);
+						}
 					}
 					else
 					{
@@ -138,6 +142,15 @@ namespace PE
 			std::uniform_real_distribution<float> distributor(minMaxSpeed.x, minMaxSpeed.y);
 			std::uniform_real_distribution<float> distributorScale(endScale.Length(), startScale.Length());
 			particles.emplace_back(Particle(particleType, pos, vec2(1.f,1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime));
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_id))
+			{
+				std::uniform_int_distribution<unsigned> distributorAnim(0U, EntityManager::GetInstance().Get<AnimationComponent>(m_id).GetAnimation()->GetFrameCount());
+				particles.emplace_back(Particle(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime, distributorAnim(generator)));
+			}
+			else
+			{
+				particles.emplace_back(Particle(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime));
+			}
 		}
 	}
 
@@ -152,7 +165,15 @@ namespace PE
 			std::mt19937 generator(seed());
 			std::uniform_real_distribution<float> distributor(minMaxSpeed.x, minMaxSpeed.y);
 			std::uniform_real_distribution<float> distributorScale(endScale.Length(), startScale.Length());
-			r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime);
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_id))
+			{
+				std::uniform_int_distribution<unsigned> distributorAnim(0U, EntityManager::GetInstance().Get<AnimationComponent>(m_id).GetAnimation()->GetFrameCount());
+				r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime, distributorAnim(generator));
+			}
+			else
+			{
+				r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime);
+			}
 		}
 	}
 
