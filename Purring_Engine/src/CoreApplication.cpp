@@ -443,6 +443,23 @@ RTTR_REGISTRATION
         .property("leftSideSlamAnimation", &PE::BossRatScriptData::leftSideSlamAnimation)
         .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
         .property("animationStates", &PE::BossRatScriptData::animationStates);
+
+    rttr::registration::class_<PE::ParticleEmitter>(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string())
+        .property("Is active", &PE::ParticleEmitter::isActive)
+        .property("Type", &PE::ParticleEmitter::particleType)
+        .property("Max particles", &PE::ParticleEmitter::maxParticles)
+        .property("Emission Arc", &PE::ParticleEmitter::emissionArc)
+        //.property("", &PE::ParticleEmitter::emissionDirection)
+        .property("Emission Duration", &PE::ParticleEmitter::emissionDuration)
+        //.property("Emission Rate", &PE::ParticleEmitter::emissionRate)
+        .property("Looping", &PE::ParticleEmitter::isLooping)
+        .property("MinMax Speed", &PE::ParticleEmitter::minMaxSpeed)
+        .property("Starting Scale", &PE::ParticleEmitter::startScale)
+        .property("End Scale", &PE::ParticleEmitter::endScale)
+        .property("Delta Scale", &PE::ParticleEmitter::scaleChangeSpeed)
+        .property("Lifetime", &PE::ParticleEmitter::startLifetime)
+        //.property("", &PE::ParticleEmitter::)
+        ;
 }
 
 PE::CoreApplication::CoreApplication()

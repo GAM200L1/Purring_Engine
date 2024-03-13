@@ -25,9 +25,10 @@ namespace PE
 	enum EnumParticleType
 	{
 		SQUARE,
-		CIRCLE,
+		//CIRCLE,
 		TEXTURED,
-		ANIMATED
+		ANIMATED,
+		NUM_TYPES
 	};
 
 	struct Particle

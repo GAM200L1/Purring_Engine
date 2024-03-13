@@ -650,7 +650,7 @@ namespace PE
                             }
                             for (auto& [k, v] : particles)
                             {
-                                int frame = (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() + k);
+                                int frame = (((em.particleType == ANIMATED)?EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() : 0) + k);
                                 frame %= EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetFrameCount();
                                 glm::vec2 minOffset{ EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_minUV.x, EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_minUV.y };
                                 glm::vec2 maxOffset{ EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_maxUV.x, EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_maxUV.y };

@@ -91,6 +91,8 @@
 // interaction layer manager
 #include "Layers/LayerManager.h"
 
+#include "VisualEffects/ParticleSystem.h"
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -1157,6 +1159,100 @@ namespace PE {
 							}
 						}
 
+						// ---------- Particle ---------- //
+						if (name == EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>())
+						{
+
+
+							//search through each component, create a collapsible header if the component exist
+							rttr::type currType = rttr::type::get_by_name(name.to_string());
+
+							if (ImGui::CollapsingHeader("Particle Emitter", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								for (auto& prop : currType.get_properties())
+								{
+
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+									std::string nm(prop.get_name());
+									nm += ": ";
+									ImGui::Text(nm.c_str());
+
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<PE::ParticleEmitter>(entityID));
+
+									// handle types
+									if (vp.get_type().get_name() == "bool")
+									{
+										bool tmp = vp.get_value<bool>();
+										std::string str = "##" + prop.get_name().to_string();
+										ImGui::SameLine(); ImGui::Checkbox(str.c_str(), &tmp);
+										//prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+										if (prop.get_name().to_string() == "Active" && tmp != vp.get_value<bool>())
+										{
+											(tmp) ? EntityManager::GetInstance().Get<EntityDescriptor>(entityID).EnableEntity() : EntityManager::GetInstance().Get<EntityDescriptor>(entityID).DisableEntity();
+										}
+									}
+									else if (vp.get_type().get_name() == "unsignedint")
+									{
+										int tmp = vp.get_value<int>();
+										std::string str = "##" + prop.get_name().to_string();
+
+										ImGui::SameLine(); ImGui::InputInt(str.c_str(), &tmp, 0, 10);
+
+										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+									}
+									else if (vp.get_type().get_name() == "float")
+									{
+
+									}
+									else if (vp.get_type().get_name() == "structPE::vec2")
+									{
+
+									}
+									else if (vp.get_type().get_name() == "enumPE::EnumParticleType")
+									{
+										int tmp = static_cast<int>(vp.get_value<EnumParticleType>());
+										std::string str = "##" + prop.get_name().to_string();
+
+										ImGui::SameLine(); 
+										const std::array<std::string, EnumParticleType::NUM_TYPES> types{ "Square", "Textured", "Animated" };
+										if (ImGui::BeginCombo("##ParticleType", types[tmp].c_str()))
+										{
+											for (int i{}; i < types.size(); ++i)
+											{
+												bool selected = types[tmp] == types[i];
+												if (ImGui::Selectable(types[i].c_str()))
+												{
+													tmp = i;
+													prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), static_cast<EnumParticleType>(tmp));
+												}
+											}
+											ImGui::EndCombo();
+										}
+										
+
+										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), static_cast<EnumParticleType>(tmp));
+									}
+									else
+									{
+										std::cout << vp.get_type().get_name() << std::endl;
+									}
+								}
+							}
+						}
 
 						// ---------- TRANSFORM ---------- //
 
