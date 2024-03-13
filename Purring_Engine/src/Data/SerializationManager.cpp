@@ -566,6 +566,9 @@ size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
                     parent = DeserializeEntity(entity);
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).children.clear();
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).sceneID = parent;
+
+                    // set the first first frame data of the entity
+                    GETANIMATIONMANAGER()->SetEntityFirstFrame(parent);
                 }
                 else
                 {
@@ -584,6 +587,8 @@ size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).sceneID = id;
                     PE::Hierarchy::GetInstance().AttachChild(parent, id);
                     
+                    // set the first first frame data of the entity
+                    GETANIMATIONMANAGER()->SetEntityFirstFrame(id);
                 }
             }
 
@@ -802,7 +807,11 @@ bool SerializationManager::LoadAnimationComponent(const size_t& r_id, const nloh
         static_cast<void*>(&comp));
 
     // load resource
-    PE::ResourceManager::GetInstance().AddAnimationKeyToLoad(comp.GetAnimationID());
+    for (auto const& key: comp.GetAnimationList())
+    {
+        PE::ResourceManager::GetInstance().AddAnimationKeyToLoad(key);
+    }
+    //PE::ResourceManager::GetInstance().AddAnimationKeyToLoad(comp.GetAnimationID());
    // PE::ResourceManager::GetInstance().AddTextureKeyToLoad(PE::ResourceManager::GetInstance().GetAnimation(comp.GetAnimationID())->GetSpriteSheetKey());
     return true;
 }
