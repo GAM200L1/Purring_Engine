@@ -82,6 +82,9 @@ namespace PE
 			it->second.detectionRadiusId = CreateDetectionRadius(it->second);
 			CreateRatPathTelegraph(it->second);
 
+			// Create the detection telegraph
+			CreateRatDetectionTelegraph(it->second);
+
 			// Create the corresponding attack data object
 			InstantiateRatAttack(it->second);
 
@@ -102,14 +105,23 @@ namespace PE
 					previousGameState = gameStateController->currentState;
 					return;
 			}
-
+			
+			// Update the rat state
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
+			// Change back to the animation that the rat should have after the hurt animation
 			if (GetIsPlayingHurtAnim(id) && GetHasAnimEnded(id))
 			{
 					PlayAnimation(id, it->second.cachedRatAnimation);
 					it->second.cachedRatAnimation = EnumRatAnimations::RAT_ANIM_COUNT;
+			}
+
+			// Disable the detection icon if the animation is done
+			if (EntityManager::GetInstance().Has<AnimationComponent>(it->second.detectionIcon) &&
+				EntityManager::GetInstance().Get<AnimationComponent>(it->second.detectionIcon).HasAnimationEnded())
+			{
+					DisableDetectionTelegraphs(id);
 			}
 
 			// If we just changed to the execution state
@@ -126,6 +138,7 @@ namespace PE
 					it->second.totalTimeCollidingIntoWall = 0.f;
 			}
 
+			// Check if the state should get updated
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 					ChangeRatState(id);
@@ -497,6 +510,32 @@ namespace PE
 				// Disable attack objects
 				if (it->second.p_attackData) { it->second.p_attackData->DisableAttackObjects(); }
 		}
+
+
+		void RatScript_v2_0::EnableDetectionTelegraphs(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				ToggleEntity(it->second.detectionIcon, true); // enable the telegraph
+
+				// Play the detection icon animation
+				if (EntityManager::GetInstance().Has<AnimationComponent>(it->second.detectionIcon))
+				{
+						AnimationComponent& r_animationComponent{ EntityManager::GetInstance().Get<AnimationComponent>(it->second.detectionIcon) };
+						r_animationComponent.ResetAnimation();
+						r_animationComponent.PlayAnimation();
+				}
+		}
+
+
+		void RatScript_v2_0::DisableDetectionTelegraphs(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				ToggleEntity(it->second.detectionIcon, false); // disable the telegraph
+		}
 		
 
 		void RatScript_v2_0::DisableAllSpawnedEntities(EntityID id)
@@ -508,6 +547,7 @@ namespace PE
 				ToggleEntity(it->second.detectionRadiusId, false);
 				ToggleEntity(it->second.pivotEntityID, false);
 				ToggleEntity(it->second.telegraphArrowEntityID, false);
+				ToggleEntity(it->second.detectionIcon, false);
 
 				// Disable attack objects
 				if (it->second.p_attackData) { it->second.p_attackData->DisableAttackObjects(); }
@@ -612,11 +652,22 @@ namespace PE
 			TriggerStateChange(id, new RatDeathState_v2_0, stateChangeDelay);
 		}
 
+
 		bool RatScript_v2_0::GetExecutionPhaseTimeout(EntityID const id)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return false; }
 				return (it->second.totalTimeCollidingIntoWall >= it->second.maxObstacleCollisionTime);
+		}
+
+
+		bool RatScript_v2_0::GetIsAggressive(EntityID const id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return false; }
+				return (it->second.p_stateManager && // Null check
+						(it->second.p_stateManager->GetStateName() == GETSCRIPTNAME(RatMovement_v2_0) ||
+						it->second.p_stateManager->GetStateName() == GETSCRIPTNAME(RatAttack_v2_0)));
 		}
 
 		// ------------ CAT DETECTION ------------ //
@@ -675,9 +726,12 @@ namespace PE
 			// Check if the cat is alive
 			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
 
-			if (it->second.catsInDetectionRadius.find(catID) == it->second.catsInDetectionRadius.end())
+			if (it->second.catsInDetectionRadius.find(catID) == it->second.catsInDetectionRadius.end()
+					&& !GetIsAggressive(id)) // Only play detection FX if the cat is newly discovered
 			{
+				// Play SFX and VFX
 				PlayDetectionAudio(id);
+				EnableDetectionTelegraphs(id);
 			}
 
 			// Store the cat in the container
@@ -1124,12 +1178,28 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::CreateRatPathTelegraph(RatScript_v2_0_Data& r_data)
+		void RatScript_v2_0::CreateRatTelegraphPivot(RatScript_v2_0_Data& r_data)
 		{
+				// Check if the pivot entity alr exists
+				if (r_data.pivotEntityID != 0UL && r_data.pivotEntityID != MAXSIZE_T) { return; }
+
 				SerializationManager serializationManager;
+
 				r_data.pivotEntityID = EntityFactory::GetInstance().CreateEntity<Transform>();
 				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.pivotEntityID);
 				PositionEntityRelative(r_data.pivotEntityID, vec2{ 0.f, 0.f });
+		}
+
+
+		void RatScript_v2_0::CreateRatPathTelegraph(RatScript_v2_0_Data& r_data)
+		{
+				// Check if the path telegraph entity alr exists
+				if (r_data.telegraphArrowEntityID != 0UL && r_data.telegraphArrowEntityID != MAXSIZE_T) { return; }
+
+				SerializationManager serializationManager;
+				
+				// Create telegraph pivot point if it doesn't exist yet
+				CreateRatTelegraphPivot(r_data);
 
 				vec2 ratScale{ GetEntityScale(r_data.myID) };
 				r_data.telegraphArrowEntityID = serializationManager.LoadFromFile("PawPrints.prefab");
@@ -1138,6 +1208,20 @@ namespace PE
 				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent
 				
 				PositionEntityRelative(r_data.telegraphArrowEntityID, vec2{ ratScale.x * 0.7f, 0.f });
+		}
+		
+
+		void RatScript_v2_0::CreateRatDetectionTelegraph(RatScript_v2_0_Data& r_data)
+		{
+				if (r_data.detectionIcon != 0UL && r_data.detectionIcon != MAXSIZE_T) { return; }
+
+				SerializationManager serializationManager;
+
+				r_data.detectionIcon = serializationManager.LoadFromFile("DetectionIcon.prefab"); 
+				ToggleEntity(r_data.detectionIcon, false); // set to inactive, it will only show when a cat is detected
+
+				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.detectionIcon); // attach child to parent				
+				PositionEntityRelative(r_data.detectionIcon, r_data.detectionIconOffset);
 		}
 
 

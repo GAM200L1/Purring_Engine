@@ -1,0 +1,53 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "AnimationComponent": {
+                            "AnimationIDs": [
+                                "../Assets/Animation/Animation_Detect.anim"
+                            ],
+                            "CurrentAnimationID": "../Assets/Animation/Animation_Detect.anim"
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 1,
+                            "Layer": 1,
+                            "Old ID": 98,
+                            "Prefab Type": "DetectionIcon",
+                            "children": [],
+                            "isActive": true,
+                            "name": "DetectionIcon",
+                            "parent": null,
+                            "sceneID": 37
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Animations/Rat_Detect.png"
+                        },
+                        "Transform": {
+                            "height": 50.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 50.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

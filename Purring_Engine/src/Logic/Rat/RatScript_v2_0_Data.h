@@ -132,9 +132,13 @@ namespace PE
 		// reference entities
 		EntityID myID{ 0 };								// id of the rat with this data
 		EntityID detectionRadiusId{};
-		EntityID pivotEntityID{ 0 };					// id of parent obj to rotate to adjust the orientation of the telegraphs
-		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
+		EntityID pivotEntityID{ 0 };						// id of parent obj to rotate to adjust the orientation of the telegraphs
+		EntityID telegraphArrowEntityID{ 0 };		// id of paw print movement telegraph
+		EntityID detectionIcon{ 0 };						// id of question mark icon
 		StateMachine* p_stateManager;
+		
+		// Positional offset from the center of the rat that the detection icon should be located
+		vec2 detectionIconOffset{ 45.f, 12.5f }; 
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 		EnumRatType ratType{ EnumRatType::GUTTER };
