@@ -53,23 +53,23 @@ namespace PE
              \brief     Getter for FMOD::Sound* object.
              \return    FMOD::Sound* The sound object.
             *************************************************************************************/
-            FMOD::Sound* GetSound() const { return m_sound; }
+            FMOD::Sound* GetSound() const { return p_sound; }
 
             /*!***********************************************************************************
              \brief     Setter for FMOD::Channel* object.
              \param     channel The channel object.
             *************************************************************************************/
-            void SetChannel(FMOD::Channel* channel) { m_channel = channel; }
+            void SetChannel(FMOD::Channel* channel) { p_channel = channel; }
 
             /*!***********************************************************************************
              \brief     Getter for FMOD::Channel* object.
              \return    FMOD::Channel* The channel object.
             *************************************************************************************/
-            FMOD::Channel* GetChannel() const { return m_channel; }
+            FMOD::Channel* GetChannel() const { return p_channel; }
 
         private:
-            FMOD::Sound* m_sound = nullptr;
-            FMOD::Channel* m_channel = nullptr;
+            FMOD::Sound* p_sound = nullptr;
+            FMOD::Channel* p_channel = nullptr;
         };
 
         /*!***********************************************************************************
@@ -85,51 +85,61 @@ namespace PE
 
         /*!***********************************************************************************
          \brief     Set master volume level.
+         \param     volume - float to set the new volume
         *************************************************************************************/
         void SetMasterVolume(float volume);
 
         /*!***********************************************************************************
          \brief     Set background music volume level.
+         \param     volume - float to set the new volume
         *************************************************************************************/
         void SetBGMVolume(float volume);
 
         /*!***********************************************************************************
          \brief     Set sound effects volume level.
+         \param     volume - float to set the new volume
         *************************************************************************************/
         void SetSFXVolume(float volume);
 
         /*!***********************************************************************************
          \brief     Set sound effects volume level.
+         \param     mute - true to mute, false to unmute
         *************************************************************************************/
         void MuteMaster(bool mute);
 
         /*!***********************************************************************************
          \brief     Set sound effects volume level.
+         \param     mute - true to mute, false to unmute
         *************************************************************************************/
         void MuteBGM(bool mute);
 
         /*!***********************************************************************************
          \brief     Set sound effects volume level.
+         \param     mute - true to mute, false to unmute
         *************************************************************************************/
         void MuteSFX(bool mute);
 
         /*!***********************************************************************************
          \brief     Getter for BGM channel group.
+         \return    FMOD::ChannelGroup* - Pointer to the channel group
         *************************************************************************************/
         FMOD::ChannelGroup* GetBGMGroup() const;
 
         /*!***********************************************************************************
-         \brief     // Getter for SFX channel group.
+         \brief     Getter for SFX channel group.
+         \return    FMOD::ChannelGroup* - Pointer to the channel group
         *************************************************************************************/
         FMOD::ChannelGroup* GetSFXGroup() const;
 
         /*!***********************************************************************************
-         \brief     // Getter for Master Volume.
+         \brief     Getter for Master Volume.
+         \return    float - Current master volume
         *************************************************************************************/
         float GetMasterVolume() const;
 
         /*!***********************************************************************************
-         \brief     // Getter for Master Mute.
+         \brief     Getter for Master Mute.
+         \return    bool - true for muted, false for unmuted
         *************************************************************************************/
         bool GetMasterMute() const;
 
@@ -148,7 +158,7 @@ namespace PE
          \brief     Get the FMOD system.
          \return    FMOD::System* The current FMOD system.
         *************************************************************************************/
-        FMOD::System* GetFMODSystem() { return m_system; }
+        FMOD::System* GetFMODSystem() { return p_system; }
 
     private:
         /*!***********************************************************************************
@@ -162,11 +172,11 @@ namespace PE
         ~AudioManager();
 
         // Audio Variables
-        FMOD::System* m_system;
+        FMOD::System* p_system;
 
-        FMOD::ChannelGroup* m_masterGroup;  // Master channel group
-        FMOD::ChannelGroup* m_bgmGroup;     // BGM channel group
-        FMOD::ChannelGroup* m_sfxGroup;     // SFX channel group
+        FMOD::ChannelGroup* p_masterGroup;  // Master channel group
+        FMOD::ChannelGroup* p_bgmGroup;     // BGM channel group
+        FMOD::ChannelGroup* p_sfxGroup;     // SFX channel group
 
     };
 }
