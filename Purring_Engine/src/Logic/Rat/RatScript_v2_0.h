@@ -133,6 +133,24 @@ namespace PE
 		*************************************************************************************/
 		static void RotateEntityRelative(EntityID const transformId, float const orientation);
 
+		/*!***********************************************************************************
+		 \brief Flips the sprite along the x axis depending on the direction it is facing.
+				(basically makes the x scale negative if facing left, makes it positive if facing right)
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] r_direction forward direction of the transform.
+		*************************************************************************************/
+		static void UpdateEntityFacingdirection(EntityID const transformId, vec2 const& r_direction);
+
+		/*!***********************************************************************************
+		 \brief Returns true if the direction is along the positive x axis.
+
+		 \param[in] r_direction direction to check if along the positive x axis.
+
+		 \return Returns true if the direction is along the positive x axis, false otherwise.
+		*************************************************************************************/
+		static bool GetIsFacingRight(vec2 const& r_direction);
+
 
 		// ----- Animation Helper Functions ----- //
 

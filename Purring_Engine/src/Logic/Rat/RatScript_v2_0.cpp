@@ -245,6 +245,23 @@ namespace PE
 			}
 		}
 
+
+		void RatScript_v2_0::UpdateEntityFacingdirection(EntityID const transformId, vec2 const& r_direction)
+		{
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.width = (GetIsFacingRight(r_direction) ? std::fabsf(r_transform.width) : (-1.f) * std::fabsf(r_transform.width));
+			}
+		}
+
+
+		bool RatScript_v2_0::GetIsFacingRight(vec2 const& r_direction)
+		{
+				return (r_direction.Dot(vec2{ 1.f, 0.f }) >= 0.f);
+		}
+
+
 		bool RatScript_v2_0::GetIsPlayingHurtAnim(EntityID const id)
 		{
 				auto it = m_scriptData.find(id);
@@ -497,6 +514,9 @@ namespace PE
 				RotateEntityRelative(it->second.pivotEntityID, orientation);
 				ToggleEntity(it->second.pivotEntityID, true); // enable the telegraph parent
 				ToggleEntity(it->second.telegraphArrowEntityID, true); // enable the telegraph
+
+				// Have the rat face where it's walking
+				UpdateEntityFacingdirection(it->second.myID, it->second.directionFromRatToPlayerCat);
 		}
 
 
@@ -733,6 +753,9 @@ namespace PE
 				PlayDetectionAudio(id);
 				EnableDetectionTelegraphs(id);
 			}
+
+			// Orient the rat
+			UpdateEntityFacingdirection(id, (GetEntityPosition(catID) - GetEntityPosition(id)));
 
 			// Store the cat in the container
 			it->second.catsInDetectionRadius.insert(catID);
