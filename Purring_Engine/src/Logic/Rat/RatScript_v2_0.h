@@ -284,8 +284,9 @@ namespace PE
 		 \brief Enables the detection telegraph (a question mark).Called by an animation event.
 
 		 \param[in] id - EntityID of the rat.
+		 \param[in] ratIconType - Type of icon animation (detect or confused) to play.
 		*************************************************************************************/
-		void EnableDetectionTelegraphs(EntityID id);
+		void EnableDetectionTelegraphs(EntityID id, EnumRatIconAnimations ratIconType);
 
 		/*!***********************************************************************************
 		 \brief Disables the detection telegraph (a question mark). Called by an animation event.

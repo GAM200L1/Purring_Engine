@@ -532,7 +532,7 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::EnableDetectionTelegraphs(EntityID id)
+		void RatScript_v2_0::EnableDetectionTelegraphs(EntityID id, EnumRatIconAnimations ratIconType)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
@@ -543,6 +543,7 @@ namespace PE
 				if (EntityManager::GetInstance().Has<AnimationComponent>(it->second.detectionIcon))
 				{
 						AnimationComponent& r_animationComponent{ EntityManager::GetInstance().Get<AnimationComponent>(it->second.detectionIcon) };
+						r_animationComponent.SetCurrentAnimationID(it->second.iconAnimationStates[static_cast<unsigned>(ratIconType)]);
 						r_animationComponent.ResetAnimation();
 						r_animationComponent.PlayAnimation();
 				}
@@ -630,6 +631,7 @@ namespace PE
 		void RatScript_v2_0::ChangeStateToReturn(EntityID const id, float const stateChangeDelay)
 		{
 				TriggerStateChange(id, new RatReturn_v2_0, stateChangeDelay);
+				EnableDetectionTelegraphs(id, EnumRatIconAnimations::CONFUSED);
 		}
 
 
@@ -751,7 +753,7 @@ namespace PE
 			{
 				// Play SFX and VFX
 				PlayDetectionAudio(id);
-				EnableDetectionTelegraphs(id);
+				EnableDetectionTelegraphs(id, EnumRatIconAnimations::DETECT);
 			}
 
 			// Orient the rat

@@ -6,7 +6,8 @@
                     "components": {
                         "AnimationComponent": {
                             "AnimationIDs": [
-                                "../Assets/Animation/Animation_Detect.anim"
+                                "../Assets/Animation/Animation_Detect.anim",
+                                "../Assets/Animation/Animation_Confused.anim"
                             ],
                             "CurrentAnimationID": "../Assets/Animation/Animation_Detect.anim"
                         },

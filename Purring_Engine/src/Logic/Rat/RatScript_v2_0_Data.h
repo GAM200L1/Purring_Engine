@@ -38,6 +38,13 @@ namespace PE
 		HURT,
 		DEATH,
 		RAT_ANIM_COUNT // Use this to get the number of rat animation states
+	};	
+
+	enum class EnumRatIconAnimations : char
+	{
+		DETECT,
+		CONFUSED,
+		ANIM_COUNT // Use this to get the number of rat icon animations
 	};
 
 
@@ -134,7 +141,7 @@ namespace PE
 		EntityID detectionRadiusId{};
 		EntityID pivotEntityID{ 0 };						// id of parent obj to rotate to adjust the orientation of the telegraphs
 		EntityID telegraphArrowEntityID{ 0 };		// id of paw print movement telegraph
-		EntityID detectionIcon{ 0 };						// id of question mark icon
+		EntityID detectionIcon{ 0 };						// id of question/exclamation mark icon
 		StateMachine* p_stateManager;
 		
 		// Positional offset from the center of the rat that the detection icon should be located
@@ -146,8 +153,14 @@ namespace PE
 
 		// animation
 		AnimationComponent* p_ratAnimationComponent = nullptr;
-		std::map<std::string, std::string> animationStates; // animation states of the rat <state name, file name>
-		EnumRatAnimations cachedRatAnimation{ EnumRatAnimations::RAT_ANIM_COUNT }; // The animation state to play when the rat is done with its hurt animation
+		// animation states of the rat <state name, file name>
+		std::map<std::string, std::string> animationStates; 
+		// The animation state to play when the rat is done with its hurt animation
+		EnumRatAnimations cachedRatAnimation{ EnumRatAnimations::RAT_ANIM_COUNT }; 
+		// animation states of the rat icon
+		std::vector<std::string> iconAnimationStates{ 
+				"../Assets/Animation/Animation_Detect.anim", 
+				"../Assets/Animation/Animation_Confused.anim" }; 
 		
 		// rat stats
 		int ratHealth{ 0 };								// health of the rat, needs manual setting
