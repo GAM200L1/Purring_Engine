@@ -7,7 +7,7 @@
  \author:              Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
  \par      code %:     95%
- \par      changes:    Defined the render pipeline and all the functions in this file 
+ \par      changes:    Defined the render pipeline and all the functions in this file
                        other than the RenderText function.
 
  \co-author            Brandon Ho Jun Jie
@@ -16,7 +16,7 @@
  \par      changes:    02-11-2023
                        Added function to render text.
 
- \brief    This file contains the RendererManager class, which manages 
+ \brief    This file contains the RendererManager class, which manages
            the render passes and includes helper functions to draw debug shapes.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -82,7 +82,7 @@ namespace PE
         unsigned RendererManager::debugDrawCalls{};   // Total draw calls for debug shapes
 
         RendererManager::RendererManager(CameraManager& r_cameraManagerArg, int const windowWidth, int const windowHeight)
-            :  r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
+            : r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
         {
             // Initialize GLEW
             if (glewInit() != GLEW_OK)
@@ -117,7 +117,7 @@ namespace PE
             m_backgroundColor.a = a;
         }
 
-        
+
         void RendererManager::InitializeSystem()
         {
             // Print the specs
@@ -127,7 +127,7 @@ namespace PE
             int width, height;
             glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
             m_renderFrameBuffer.CreateFrameBuffer(width, height, true, false);
-            m_cachedWindowWidth = static_cast<float>(width), 
+            m_cachedWindowWidth = static_cast<float>(width),
                 m_cachedWindowHeight = static_cast<float>(height);
 
             // Initialize the base meshes to use
@@ -143,7 +143,7 @@ namespace PE
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_textShaderProgramKey, "../Shaders/Text.vert", "../Shaders/Text.frag");
-            
+
             // Reserve memory for the vectors to build the buffer with
             m_isTextured.reserve(3000);
             m_modelToWorldMatrices.reserve(3000);
@@ -167,7 +167,7 @@ namespace PE
 
             // Reset counters
             totalDrawCalls = 0, textDrawCalls = 0, objectDrawCalls = 0, debugDrawCalls = 0;
-            
+
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
 
@@ -180,7 +180,7 @@ namespace PE
             {
                 Editor::GetInstance().GetWindowSize(windowWidth, windowHeight);
             }
-            else 
+            else
             {
                 int width, height;
                 glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
@@ -228,13 +228,13 @@ namespace PE
             {
                 // Update the ui camera viewport size to the size of the main camera if it exists,
                 // or the cached start window size
-                std::optional<std::reference_wrapper<Camera>> optional_mainCamera{r_cameraManager.GetMainCamera()};
+                std::optional<std::reference_wrapper<Camera>> optional_mainCamera{ r_cameraManager.GetMainCamera() };
 
-                if (optional_mainCamera.has_value()) 
+                if (optional_mainCamera.has_value())
                 {
                     r_cameraManager.GetUiCamera().SetViewDimensions(optional_mainCamera.value().get().GetViewportWidth(), optional_mainCamera.value().get().GetViewportHeight());
                 }
-                else 
+                else
                 {
                     r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
                 }
@@ -263,7 +263,7 @@ namespace PE
 #else
             glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(false) };
 #endif // !GAMERELEASE
-            
+
             // Draw objects in the scene
             DrawQuadsInstanced<Renderer>(worldToNdcMatrix, Hierarchy::GetInstance().GetRenderOrder());
 
@@ -353,187 +353,187 @@ namespace PE
                 0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
             };
 
-            Draw(EnumMeshType::QUAD, glm::vec4{ 1.f, 1.f, 1.f, 1.f }, 
+            Draw(EnumMeshType::QUAD, glm::vec4{ 1.f, 1.f, 1.f, 1.f },
                 m_renderFrameBuffer.GetTextureId(), *(shaderProgramIterator->second),
-                GL_TRIANGLES, windowToNdc* glmObjectTransform);
+                GL_TRIANGLES, windowToNdc * glmObjectTransform);
         }
 
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------------
 
-        //template<typename T>
-        //void RendererManager::DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
-        //{
-        //    auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
+                //template<typename T>
+                //void RendererManager::DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
+                //{
+                //    auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
-        //    // Check if shader program is valid
-        //    if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
-        //    {
-        //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-        //        engine_logger.SetTime();
-        //        engine_logger.AddLog(false, "Shader program " + m_defaultShaderProgramKey + " does not exist.", __FUNCTION__);
-        //        return;
-        //    }
+                //    // Check if shader program is valid
+                //    if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+                //    {
+                //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                //        engine_logger.SetTime();
+                //        engine_logger.AddLog(false, "Shader program " + m_defaultShaderProgramKey + " does not exist.", __FUNCTION__);
+                //        return;
+                //    }
 
-        //    // Make draw call for each game object with a renderer component
-        //    for (const EntityID& id : r_sceneView)
-        //    {
-        //        T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+                //    // Make draw call for each game object with a renderer component
+                //    for (const EntityID& id : r_sceneView)
+                //    {
+                //        T& renderer{ EntityManager::GetInstance().Get<T>(id) };
 
-        //        // Skip drawing this object is the entity or renderer is not enabled
-        //        if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
-        //            || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
+                //        // Skip drawing this object is the entity or renderer is not enabled
+                //        if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
+                //            || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
-        //        Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+                //        Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-        //        // Store the index of the rendered entity
-        //        renderedEntities.emplace_back(id);
+                //        // Store the index of the rendered entity
+                //        renderedEntities.emplace_back(id);
 
-        //        glm::mat4 glmObjectTransform
-        //        {
-        //            GenerateTransformMatrix(transform.width, // width
-        //                transform.height, transform.orientation, // height, orientation
-        //                transform.position.x, transform.position.y) // x, y position
-        //        };
+                //        glm::mat4 glmObjectTransform
+                //        {
+                //            GenerateTransformMatrix(transform.width, // width
+                //                transform.height, transform.orientation, // height, orientation
+                //                transform.position.x, transform.position.y) // x, y position
+                //        };
 
-        //        Draw(dynamic_cast<Renderer&>(renderer), *(shaderProgramIterator->second), GL_TRIANGLES,
-        //            r_worldToNdc * glmObjectTransform);
-        //    }
-        //}
+                //        Draw(dynamic_cast<Renderer&>(renderer), *(shaderProgramIterator->second), GL_TRIANGLES,
+                //            r_worldToNdc * glmObjectTransform);
+                //    }
+                //}
 
 
-        //template<typename T>
-        //void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
-        //{
-        //    auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
+                //template<typename T>
+                //void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
+                //{
+                //    auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
 
-        //    // Check if shader program is valid
-        //    if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
-        //    {
-        //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-        //        engine_logger.SetTime();
-        //        engine_logger.AddLog(false, "Shader program " + m_instancedShaderProgramKey + " does not exist.", __FUNCTION__);
-        //        return;
-        //    }
+                //    // Check if shader program is valid
+                //    if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+                //    {
+                //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                //        engine_logger.SetTime();
+                //        engine_logger.AddLog(false, "Shader program " + m_instancedShaderProgramKey + " does not exist.", __FUNCTION__);
+                //        return;
+                //    }
 
-        //    ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
-        //    r_shaderProgram.Use();
+                //    ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
+                //    r_shaderProgram.Use();
 
-        //    // Pass the world to NDC transform matrix as a uniform variable
-        //    r_shaderProgram.SetUniform("uWorldToNdc", r_worldToNdc);
+                //    // Pass the world to NDC transform matrix as a uniform variable
+                //    r_shaderProgram.SetUniform("uWorldToNdc", r_worldToNdc);
 
-        //    // Bind the quad mesh
-        //    size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
-        //    m_meshes[meshIndex].Bind();
+                //    // Bind the quad mesh
+                //    size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
+                //    m_meshes[meshIndex].Bind();
 
-        //    // Store the texture being used
-        //    std::string currentTexture{};
-        //    std::shared_ptr<Graphics::Texture> p_texture{};
+                //    // Store the texture being used
+                //    std::string currentTexture{};
+                //    std::shared_ptr<Graphics::Texture> p_texture{};
 
-        //    // Clear the buffers for the 
-        //    m_isTextured.clear();
-        //    m_UV.clear();
-        //    m_modelToWorldMatrices.clear();
-        //    m_colors.clear();
+                //    // Clear the buffers for the 
+                //    m_isTextured.clear();
+                //    m_UV.clear();
+                //    m_modelToWorldMatrices.clear();
+                //    m_colors.clear();
 
-        //    int count{};
+                //    int count{};
 
-        //    // Make draw call for each game object with a renderer component
+                //    // Make draw call for each game object with a renderer component
 
-        //    for (const EntityID& id : r_sceneView)
-        //    {
-        //        T& renderer{ EntityManager::GetInstance().Get<T>(id) };
-        //        
-        //        // Skip drawing this object is the entity or renderer is not enabled
-        //        if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
-        //            || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
+                //    for (const EntityID& id : r_sceneView)
+                //    {
+                //        T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+                //        
+                //        // Skip drawing this object is the entity or renderer is not enabled
+                //        if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
+                //            || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
-        //        // Store the index of the rendered entity
-        //        renderedEntities.emplace_back(id);
-        //        
-        //        const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+                //        // Store the index of the rendered entity
+                //        renderedEntities.emplace_back(id);
+                //        
+                //        const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-        //        // Attempt to retrieve and bind the texture
-        //        if (renderer.GetTextureKey().empty())
-        //        {
-        //            m_isTextured.emplace_back(0.f);
-        //        }
-        //        else if(currentTexture != renderer.GetTextureKey())
-        //        {
-        //            // Check if we were already 
-        //            if (!currentTexture.empty()) 
-        //            {
-        //                DrawInstanced(count, meshIndex, GL_TRIANGLES);
-        //                currentTexture.clear();
-        //                count = 0;
-        //            }
+                //        // Attempt to retrieve and bind the texture
+                //        if (renderer.GetTextureKey().empty())
+                //        {
+                //            m_isTextured.emplace_back(0.f);
+                //        }
+                //        else if(currentTexture != renderer.GetTextureKey())
+                //        {
+                //            // Check if we were already 
+                //            if (!currentTexture.empty()) 
+                //            {
+                //                DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                //                currentTexture.clear();
+                //                count = 0;
+                //            }
 
-        //            std::shared_ptr<Texture> texture { ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
+                //            std::shared_ptr<Texture> texture { ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
 
-        //            // Check if texture is null
-        //            if (!texture)
-        //            {
-        //                // Remove the texture and set the object to neon pink
-        //                renderer.SetTextureKey("");
-        //                renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+                //            // Check if texture is null
+                //            if (!texture)
+                //            {
+                //                // Remove the texture and set the object to neon pink
+                //                renderer.SetTextureKey("");
+                //                renderer.SetColor(1.f, 0.f, 1.f, 1.f);
 
-        //                m_isTextured.emplace_back(0.f);
-        //            }
-        //            else
-        //            {
-        //                // Unbind the existing texture
-        //                if (p_texture) 
-        //                {
-        //                    p_texture->Unbind();
-        //                }
+                //                m_isTextured.emplace_back(0.f);
+                //            }
+                //            else
+                //            {
+                //                // Unbind the existing texture
+                //                if (p_texture) 
+                //                {
+                //                    p_texture->Unbind();
+                //                }
 
-        //                // Store the texture key of the current texture
-        //                currentTexture = renderer.GetTextureKey();
+                //                // Store the texture key of the current texture
+                //                currentTexture = renderer.GetTextureKey();
 
-        //                // Bind the new texture
-        //                GLint textureUnit{ 0 };
-        //                p_texture = texture;
-        //                p_texture->Bind(textureUnit);
-        //                r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+                //                // Bind the new texture
+                //                GLint textureUnit{ 0 };
+                //                p_texture = texture;
+                //                p_texture->Bind(textureUnit);
+                //                r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
 
-        //                m_isTextured.emplace_back(1.f);
-        //            }
-        //        }
-        //        else 
-        //        {
-        //            m_isTextured.emplace_back(1.f);
-        //        }
+                //                m_isTextured.emplace_back(1.f);
+                //            }
+                //        }
+                //        else 
+                //        {
+                //            m_isTextured.emplace_back(1.f);
+                //        }
 
-        //        // Add the matrix and colors to the buffer
-        //        m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
-        //            transform.height, transform.orientation, // height, orientation
-        //            transform.position.x, transform.position.y)); // x, y position
-        //        m_colors.emplace_back(renderer.GetColor());
+                //        // Add the matrix and colors to the buffer
+                //        m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
+                //            transform.height, transform.orientation, // height, orientation
+                //            transform.position.x, transform.position.y)); // x, y position
+                //        m_colors.emplace_back(renderer.GetColor());
 
-        //        // Add the UV coordinate adjustments
-        //        m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
-        //        m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
-        //        m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
-        //        m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
+                //        // Add the UV coordinate adjustments
+                //        m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
+                //        m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
+                //        m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
+                //        m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
 
-        //        ++count; 
-        //    }
+                //        ++count; 
+                //    }
 
-        //    // Draw the remaining objects
-        //    DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                //    // Draw the remaining objects
+                //    DrawInstanced(count, meshIndex, GL_TRIANGLES);
 
-        //    // Unbind everything
-        //    m_meshes[meshIndex].Unbind();
-        //    r_shaderProgram.UnUse();
+                //    // Unbind everything
+                //    m_meshes[meshIndex].Unbind();
+                //    r_shaderProgram.UnUse();
 
-        //    if (p_texture != nullptr)
-        //    {
-        //        p_texture->Unbind();
-        //    }
-        //}
+                //    if (p_texture != nullptr)
+                //    {
+                //        p_texture->Unbind();
+                //    }
+                //}
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
-        
+        //--------------------------------------------------------------------------------------------------------------------------------------------
+
         template<typename T>
         void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_rendererIdContainer)
         {
@@ -639,8 +639,8 @@ namespace PE
                     case TEXTURED:
                     case ANIMATED:
                     {
-                        const glm::vec2 &minUV = renderer.GetUVCoordinatesMin();
-                        const glm::vec2 &maxUV = renderer.GetUVCoordinatesMax();
+                        const glm::vec2& minUV = renderer.GetUVCoordinatesMin();
+                        const glm::vec2& maxUV = renderer.GetUVCoordinatesMax();
                         if (EntityManager::GetInstance().Has<AnimationComponent>(id) && EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetFrameCount())
                         {
                             std::map<int, std::vector<const PE::Particle*>> particles;
@@ -650,7 +650,7 @@ namespace PE
                             }
                             for (auto& [k, v] : particles)
                             {
-                                int frame = (((em.particleType == ANIMATED)?EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() : 0) + k);
+                                int frame = ((em.particleType == ANIMATED)? EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() : 0) + k;
                                 frame %= EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetFrameCount();
                                 glm::vec2 minOffset{ EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_minUV.x, EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_minUV.y };
                                 glm::vec2 maxOffset{ EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_maxUV.x, EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetCurrentAnimationFrame(frame).m_maxUV.y };
@@ -723,10 +723,9 @@ namespace PE
                                     m_UV.emplace_back(minOffset.x, maxOffset.y); // top left
 
                                     ++count;
-                                
+
                                 }
                                 DrawInstanced(count, meshIndex, GL_TRIANGLES);
-
                                 count = 0;
                             }
                         }
@@ -803,12 +802,12 @@ namespace PE
                                 ++count;
                             }
                         }
-                        
+
                         DrawInstanced(count, meshIndex, GL_TRIANGLES);
-                       
+
                         count = 0;
                     }
-                        break;
+                    break;
                     default:
                         break;
                     }
@@ -828,8 +827,8 @@ namespace PE
                 }
 
                 // Skip this object if it has no renderer
-                if(!EntityManager::GetInstance().Has<T>(id)) 
-                { 
+                if (!EntityManager::GetInstance().Has<T>(id))
+                {
                     return;
                 }
 
@@ -851,17 +850,17 @@ namespace PE
                 {
                     m_isTextured.emplace_back(0.f);
                 }
-                else if(currentTexture != renderer.GetTextureKey())
+                else if (currentTexture != renderer.GetTextureKey())
                 {
                     // Check if we were already 
-                    if (!currentTexture.empty()) 
+                    if (!currentTexture.empty())
                     {
                         DrawInstanced(count, meshIndex, GL_TRIANGLES);
                         currentTexture.clear();
                         count = 0;
                     }
 
-                    std::shared_ptr<Texture> texture { ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
+                    std::shared_ptr<Texture> texture{ ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
 
                     // Check if texture is null
                     if (!texture)
@@ -875,7 +874,7 @@ namespace PE
                     else
                     {
                         // Unbind the existing texture
-                        if (p_texture) 
+                        if (p_texture)
                         {
                             p_texture->Unbind();
                         }
@@ -892,7 +891,7 @@ namespace PE
                         m_isTextured.emplace_back(1.f);
                     }
                 }
-                else 
+                else
                 {
                     m_isTextured.emplace_back(1.f);
                 }
@@ -909,7 +908,7 @@ namespace PE
                 m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
                 m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
 
-                ++count; 
+                ++count;
             }
 
             // Draw the remaining objects
@@ -1025,9 +1024,9 @@ namespace PE
                 }
 
                 // Draw a cross to represent the orientation and position of the canvas
-                DrawDebugRectangle(canvasComponent.GetWidth(), canvasComponent.GetHeight(), 
+                DrawDebugRectangle(canvasComponent.GetWidth(), canvasComponent.GetHeight(),
                     0.f, position.x, position.y, r_worldToNdc, *(shaderProgramIterator->second),
-                    glm::vec4{1.f, 1.f, 1.f, 1.f});
+                    glm::vec4{ 1.f, 1.f, 1.f, 1.f });
             }
 
             // Draw a rectangle for all the text component bounds
@@ -1054,7 +1053,7 @@ namespace PE
         }
 
 
-        void RendererManager::Draw(EnumMeshType meshType, glm::vec4 const& r_color, 
+        void RendererManager::Draw(EnumMeshType meshType, glm::vec4 const& r_color,
             ShaderProgram& r_shaderProgram, GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
         {
             r_shaderProgram.Use();
@@ -1095,7 +1094,7 @@ namespace PE
 
 
         void RendererManager::Draw(EnumMeshType meshType, glm::vec4 const& r_color,
-            GLuint textureId, ShaderProgram& r_shaderProgram, 
+            GLuint textureId, ShaderProgram& r_shaderProgram,
             GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
         {
             r_shaderProgram.Use();
@@ -1139,79 +1138,79 @@ namespace PE
             else
                 ++debugDrawCalls;
         }
-        
-//--------------------------------------------------------------------------------------------------------------------------------------------
 
-        //void RendererManager::Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram,
-        //    GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
-        //{
-        //    r_shaderProgram.Use();
+        //--------------------------------------------------------------------------------------------------------------------------------------------
 
-        //    // Check if mesh index is valid
-        //    unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.GetMeshType()) };
-        //    if (meshIndex >= m_meshes.size())
-        //    {
-        //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-        //        engine_logger.SetTime();
-        //        engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
-        //        return;
-        //    }
+                //void RendererManager::Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram,
+                //    GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
+                //{
+                //    r_shaderProgram.Use();
 
-        //    m_meshes[meshIndex].Bind();
+                //    // Check if mesh index is valid
+                //    unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.GetMeshType()) };
+                //    if (meshIndex >= m_meshes.size())
+                //    {
+                //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                //        engine_logger.SetTime();
+                //        engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+                //        return;
+                //    }
 
-        //    // Attempt to retrieve and bind the texture
-        //    std::shared_ptr<Graphics::Texture> p_texture{};
+                //    m_meshes[meshIndex].Bind();
 
-        //    if (r_renderer.GetTextureKey().empty()) 
-        //    {
-        //        r_shaderProgram.SetUniform("uIsTextured", false);
-        //    }
-        //    else 
-        //    {
-        //        std::shared_ptr<Texture> texture{ ResourceManager::GetInstance().GetTexture(r_renderer.GetTextureKey()) };
+                //    // Attempt to retrieve and bind the texture
+                //    std::shared_ptr<Graphics::Texture> p_texture{};
 
-        //        // Check if texture is null
-        //        if (!texture)
-        //        {
-        //            // Remove the texture and set the object to neon pink
-        //            r_renderer.SetTextureKey("");
-        //            r_renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+                //    if (r_renderer.GetTextureKey().empty()) 
+                //    {
+                //        r_shaderProgram.SetUniform("uIsTextured", false);
+                //    }
+                //    else 
+                //    {
+                //        std::shared_ptr<Texture> texture{ ResourceManager::GetInstance().GetTexture(r_renderer.GetTextureKey()) };
 
-        //            r_shaderProgram.SetUniform("uIsTextured", false);
-        //        }
-        //        else 
-        //        {
-        //            p_texture = texture;
-        //            GLint textureUnit{ 0 };
-        //            p_texture->Bind(textureUnit);
-        //            r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
-        //            r_shaderProgram.SetUniform("uIsTextured", true);
-        //        }
-        //    }
+                //        // Check if texture is null
+                //        if (!texture)
+                //        {
+                //            // Remove the texture and set the object to neon pink
+                //            r_renderer.SetTextureKey("");
+                //            r_renderer.SetColor(1.f, 0.f, 1.f, 1.f);
 
-        //    // Pass the model to NDC transform matrix as a uniform variable
-        //    r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
+                //            r_shaderProgram.SetUniform("uIsTextured", false);
+                //        }
+                //        else 
+                //        {
+                //            p_texture = texture;
+                //            GLint textureUnit{ 0 };
+                //            p_texture->Bind(textureUnit);
+                //            r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+                //            r_shaderProgram.SetUniform("uIsTextured", true);
+                //        }
+                //    }
 
-        //    // Pass the color of the quad as a uniform variable
-        //    r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
+                //    // Pass the model to NDC transform matrix as a uniform variable
+                //    r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
+
+                //    // Pass the color of the quad as a uniform variable
+                //    r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
 
 
-        //    glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-        //        GL_UNSIGNED_SHORT, NULL);
+                //    glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                //        GL_UNSIGNED_SHORT, NULL);
 
-        //    // Unbind everything
-        //    m_meshes[meshIndex].Unbind();
-        //    r_shaderProgram.UnUse();
+                //    // Unbind everything
+                //    m_meshes[meshIndex].Unbind();
+                //    r_shaderProgram.UnUse();
 
-        //    if (p_texture != nullptr)
-        //    {
-        //        p_texture->Unbind();
-        //    }
+                //    if (p_texture != nullptr)
+                //    {
+                //        p_texture->Unbind();
+                //    }
 
-        //    ++objectDrawCalls;
-        //}   
+                //    ++objectDrawCalls;
+                //}   
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------------
 
 
         void RendererManager::DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType)
@@ -1236,7 +1235,7 @@ namespace PE
             // Store UV coordinates in VBO
             glNamedBufferSubData(vertexBufferObject, 0,
                 static_cast<GLsizeiptr>(sizeOfUVVector),
-                reinterpret_cast<GLvoid*>(m_UV.data())); 
+                reinterpret_cast<GLvoid*>(m_UV.data()));
 
             // Bind the UV coordinates
             GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
@@ -1308,7 +1307,7 @@ namespace PE
             glDeleteBuffers(1, &vertexBufferObject);
 
             --attributeIndex;
-            while (attributeIndex >= 2) 
+            while (attributeIndex >= 2)
             {
                 glDisableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex--);
             }
@@ -1322,39 +1321,39 @@ namespace PE
             ++objectDrawCalls;
         }
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------------
 
-        //void RendererManager::DrawUi(glm::mat4 const& r_viewToNdc)
-        //{
-        //    if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
+                //void RendererManager::DrawUi(glm::mat4 const& r_viewToNdc)
+                //{
+                //    if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
 
-        //    std::vector<EntityID> guiToDraw{};
-        //    guiToDraw.reserve(100);
+                //    std::vector<EntityID> guiToDraw{};
+                //    guiToDraw.reserve(100);
 
-        //    for (EntityID objectID : SceneView<GUIRenderer>())
-        //    {
-        //        // Check if the object is childed to a canvas object
-        //        bool isChild{ GETGUISYSTEM()->IsChildedToCanvas(objectID) };
-        //        if (!isChild)
-        //        {
-        //            continue; // If not childed to a canvas or canvas is inactive, don't update
-        //        }
+                //    for (EntityID objectID : SceneView<GUIRenderer>())
+                //    {
+                //        // Check if the object is childed to a canvas object
+                //        bool isChild{ GETGUISYSTEM()->IsChildedToCanvas(objectID) };
+                //        if (!isChild)
+                //        {
+                //            continue; // If not childed to a canvas or canvas is inactive, don't update
+                //        }
 
-        //        // Check if the object has a renderer component
-        //        if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID))
-        //        {
-        //            // Store it to be drawn
-        //            if (EntityManager::GetInstance().Get<GUIRenderer>(objectID).GetEnabled())
-        //            {
-        //                guiToDraw.emplace_back(objectID);
-        //            }
-        //        }
-        //    } // end of sceneview loop
+                //        // Check if the object has a renderer component
+                //        if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID))
+                //        {
+                //            // Store it to be drawn
+                //            if (EntityManager::GetInstance().Get<GUIRenderer>(objectID).GetEnabled())
+                //            {
+                //                guiToDraw.emplace_back(objectID);
+                //            }
+                //        }
+                //    } // end of sceneview loop
 
-        //    DrawQuadsInstanced(r_viewToNdc, guiToDraw, true);
-        //}
+                //    DrawQuadsInstanced(r_viewToNdc, guiToDraw, true);
+                //}
 
-//--------------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------------
 
         void RendererManager::DrawCollider(AABBCollider const& r_aabbCollider,
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
@@ -1367,7 +1366,7 @@ namespace PE
                 0.f, // orientation
                 (r_aabbCollider.min.x + r_aabbCollider.max.x) * 0.5f, // x position
                 (r_aabbCollider.min.y + r_aabbCollider.max.y) * 0.5f, // y position
-                r_worldToNdc, r_shaderProgram, r_color); 
+                r_worldToNdc, r_shaderProgram, r_color);
         }
 
 
@@ -1451,7 +1450,7 @@ namespace PE
             DrawDebugLine(r_rightVector, r_position - r_rightVector * 0.5f, r_worldToNdc, r_shaderProgram, r_color);
         }
 
-        
+
         void RendererManager::RenderText(glm::mat4 const& r_worldToNdc)
         {
             // Don't bother if there are no active canvases
@@ -1470,28 +1469,28 @@ namespace PE
                                       EntityManager::GetInstance().Get<Transform>(id).width,
                                       EntityManager::GetInstance().Get<Transform>(id).height };
 
-                // if component has no font key
-                if (textComponent.GetFontKey() == "")
-                {
-                    break;
-                }
+                    // if component has no font key
+                    if (textComponent.GetFontKey() == "")
+                    {
+                        break;
+                    }
 
                     // Store the index of the rendered entity
                     renderedEntities.emplace_back(id);
 
-                std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(textComponent.GetFontKey()) };
+                    std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(textComponent.GetFontKey()) };
 
-                std::vector<std::string> lines{ SplitTextIntoLines(textComponent, textBox) };
-                float currentY{ 0.f };
-                float hAlignOffset, vAlignOffset;
+                    std::vector<std::string> lines{ SplitTextIntoLines(textComponent, textBox) };
+                    float currentY{ 0.f };
+                    float hAlignOffset, vAlignOffset;
 
                     // activate corresponding render state	
                     p_textShader->Use();
                     p_textShader->SetUniform("u_ViewProjection", r_worldToNdc);
                     p_textShader->SetUniform("textColor", textComponent.GetColor());
 
-                glActiveTexture(GL_TEXTURE0);
-                glBindVertexArray(p_font->vertexArrayObject);
+                    glActiveTexture(GL_TEXTURE0);
+                    glBindVertexArray(p_font->vertexArrayObject);
 
                     // get vertical alignment offset
                     VerticalTextAlignment(textComponent, lines, textBox, vAlignOffset);
@@ -1504,9 +1503,9 @@ namespace PE
 
                         RenderLine(textComponent, line, textBox.position, currentY, hAlignOffset, vAlignOffset);
 
-                    // add line height to current y, need to multiply by line spacing
-                    currentY += p_font->lineHeight * textComponent.GetLineSpacing();
-				}
+                        // add line height to current y, need to multiply by line spacing
+                        currentY += p_font->lineHeight * textComponent.GetLineSpacing();
+                    }
 
                     glBindTexture(GL_TEXTURE_2D, 0);
                     glBindVertexArray(0);
@@ -1625,7 +1624,7 @@ namespace PE
         }
 
         void RendererManager::InitializeCircleMesh(std::size_t const segments, MeshData& r_mesh)
-        { 
+        {
             r_mesh.vertices.clear();
             r_mesh.vertices.reserve(segments);
             r_mesh.indices.clear();
@@ -1637,8 +1636,8 @@ namespace PE
             for (int i{ 0 }; i < (int)segments; ++i) {
                 float const totalAngle{ static_cast<float>(i) * angle };
                 r_mesh.vertices.emplace_back(
-                    glm::vec2{glm::cos(totalAngle) * 0.5f, glm::sin(totalAngle) * 0.5f},
-                    glm::vec2{0.f, 0.f});
+                    glm::vec2{ glm::cos(totalAngle) * 0.5f, glm::sin(totalAngle) * 0.5f },
+                    glm::vec2{ 0.f, 0.f });
 
                 r_mesh.indices.emplace_back(((i - 1) < 0 ? (short)segments - 1 : (short)i - 1));
                 r_mesh.indices.emplace_back((short)i);
@@ -1656,11 +1655,11 @@ namespace PE
             r_mesh.vertices.reserve(3);
 
             // bottom-left
-            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ -0.5f, -0.5f }, glm::vec2{ 0.f, 0.f });
             // bottom-right
-            r_mesh.vertices.emplace_back(glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ 0.5f, -0.5f }, glm::vec2{ 1.f, 0.f });
             // top-center
-            r_mesh.vertices.emplace_back(glm::vec2{0.f, 0.5f}, glm::vec2{0.5f, 1.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ 0.f, 0.5f }, glm::vec2{ 0.5f, 1.f });
 
 
             // Add indices
@@ -1683,13 +1682,13 @@ namespace PE
             r_mesh.vertices.reserve(4);
 
             // bottom-left
-            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ -0.5f, -0.5f }, glm::vec2{ 0.f, 0.f });
             // bottom-right
-            r_mesh.vertices.emplace_back(glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ 0.5f, -0.5f }, glm::vec2{ 1.f, 0.f });
             // top-right
-            r_mesh.vertices.emplace_back(glm::vec2{0.5f, 0.5f}, glm::vec2{1.f, 1.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 1.f, 1.f });
             // top-left
-            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, 0.5f}, glm::vec2{0.f, 1.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ -0.5f, 0.5f }, glm::vec2{ 0.f, 1.f });
 
 
             // Add indices
@@ -1715,13 +1714,13 @@ namespace PE
             r_mesh.vertices.reserve(4);
 
             // bottom-left
-            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ -0.5f, -0.5f }, glm::vec2{ 0.f, 0.f });
             // bottom-right
-            r_mesh.vertices.emplace_back(glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ 0.5f, -0.5f }, glm::vec2{ 1.f, 0.f });
             // top-right
-            r_mesh.vertices.emplace_back(glm::vec2{0.5f, 0.5f}, glm::vec2{1.f, 1.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ 0.5f, 0.5f }, glm::vec2{ 1.f, 1.f });
             // top-left
-            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, 0.5f}, glm::vec2{0.f, 1.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ -0.5f, 0.5f }, glm::vec2{ 0.f, 1.f });
 
             // Add indices
             r_mesh.indices.clear();
@@ -1747,8 +1746,8 @@ namespace PE
             r_mesh.vertices.clear();
             r_mesh.vertices.reserve(2);
 
-            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, 0.f}, glm::vec2{0.f, 0.f});
-            r_mesh.vertices.emplace_back(glm::vec2{0.5f, 0.f}, glm::vec2{1.f, 0.f});
+            r_mesh.vertices.emplace_back(glm::vec2{ -0.5f, 0.f }, glm::vec2{ 0.f, 0.f });
+            r_mesh.vertices.emplace_back(glm::vec2{ 0.5f, 0.f }, glm::vec2{ 1.f, 0.f });
 
             // Add indices
             r_mesh.indices.clear();
@@ -1768,7 +1767,7 @@ namespace PE
             r_mesh.vertices.clear();
             r_mesh.vertices.reserve(1);
 
-            r_mesh.vertices.emplace_back( glm::vec2{0.f, 0.f}, glm::vec2{0.f, 0.f} );
+            r_mesh.vertices.emplace_back(glm::vec2{ 0.f, 0.f }, glm::vec2{ 0.f, 0.f });
 
             // Add indices
             r_mesh.indices.clear();
@@ -1780,7 +1779,7 @@ namespace PE
 
 
         glm::mat4 RendererManager::GenerateTransformMatrix(float const width, float const height,
-            float const orientation, float const positionX, float const positionY) 
+            float const orientation, float const positionX, float const positionY)
         {
             // Get rotation
             GLfloat sin_angle{ glm::sin(orientation) };

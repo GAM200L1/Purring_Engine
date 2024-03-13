@@ -134,7 +134,6 @@ namespace PE
 	{
 		particles.clear();
 		particles.reserve(maxParticles);
-		const auto& xform = EntityManager::GetInstance().Get<Transform>(m_id);
 		for (unsigned i = 0; i < maxParticles; i++)
 		{
 			auto pos = GeneratePosition(startEmissionRadius);

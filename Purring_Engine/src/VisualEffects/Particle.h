@@ -92,13 +92,6 @@ namespace PE
 			transform.width += deltaScale.x * dt;
 			transform.height += deltaScale.y * dt;
 
-			if (type == ANIMATED)
-			{
-				++spriteID;
-				if (spriteID > maxSpriteID)
-					spriteID = 0;
-			}
-
 			if (transform.width <= 0.f || transform.height <= 0.f)
 				lifetime = 0.f;
 			lifetime -= dt;

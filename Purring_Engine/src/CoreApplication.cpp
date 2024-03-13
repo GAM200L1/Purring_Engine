@@ -522,13 +522,13 @@ void PE::CoreApplication::Run()
     EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<ParticleEmitter>(), EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
     auto& pe = EntityManager::GetInstance().Get<ParticleEmitter>(id);
     pe.SetParent(id);
-    pe.particleType = TEXTURED;
+    pe.particleType = ANIMATED;
     pe.maxParticles = 50;
     pe.startColor = vec4(1.f, 1.f, 1.f,0.5f);
     pe.startScale = vec2(50.f, 50.f);
     pe.scaleChangeSpeed = vec2(-10.f, -10.f);
     pe.endScale = vec2(0.f, 0.f);
-    pe.startLifetime = 10;
+    pe.startLifetime = 20;
     pe.minMaxSpeed = vec2{ 20.f, 100.f };
     pe.isActive = true;
     pe.isLooping = true;

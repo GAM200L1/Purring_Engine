@@ -1199,28 +1199,44 @@ namespace PE {
 										bool tmp = vp.get_value<bool>();
 										std::string str = "##" + prop.get_name().to_string();
 										ImGui::SameLine(); ImGui::Checkbox(str.c_str(), &tmp);
-										//prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
-										if (prop.get_name().to_string() == "Active" && tmp != vp.get_value<bool>())
-										{
-											(tmp) ? EntityManager::GetInstance().Get<EntityDescriptor>(entityID).EnableEntity() : EntityManager::GetInstance().Get<EntityDescriptor>(entityID).DisableEntity();
-										}
+										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
 									}
 									else if (vp.get_type().get_name() == "unsignedint")
 									{
 										int tmp = vp.get_value<int>();
 										std::string str = "##" + prop.get_name().to_string();
 
-										ImGui::SameLine(); ImGui::InputInt(str.c_str(), &tmp, 0, 10);
+										ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::InputInt(str.c_str(), &tmp, 0, 10);
 
 										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
-
+										if (prop.get_name().to_string() == "Emission Arc")
+										{
+											float tmp = vp.get_value<float>();
+											std::string str = "##" + prop.get_name().to_string();
+											tmp = ConvertRadToDeg(tmp);
+											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::SliderFloat(str.c_str(), &tmp, 1, 360, "%.1f");
+											tmp = ConvertDegToRad(tmp);
+											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+										}
+										else
+										{
+											float tmp = vp.get_value<float>();
+											std::string str = "##" + prop.get_name().to_string();
+											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::InputFloat(str.c_str(), &tmp, 0.1f, 0.1f, "%.1f");
+											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+										}
 									}
 									else if (vp.get_type().get_name() == "structPE::vec2")
 									{
-
+										vec2 tmp = vp.get_value<vec2>();
+										std::string str = "##" + prop.get_name().to_string();
+										float x = tmp.x, y = tmp.y;
+										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(150.f);  ImGui::InputFloat((str + "x").c_str(), & x);
+										ImGui::SameLine(); ImGui::Text(" y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::InputFloat((str + "y").c_str(), &y);
+										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), vec2(x, y));
 									}
 									else if (vp.get_type().get_name() == "enumPE::EnumParticleType")
 									{
@@ -1233,7 +1249,6 @@ namespace PE {
 										{
 											for (int i{}; i < types.size(); ++i)
 											{
-												bool selected = types[tmp] == types[i];
 												if (ImGui::Selectable(types[i].c_str()))
 												{
 													tmp = i;
@@ -1242,9 +1257,6 @@ namespace PE {
 											}
 											ImGui::EndCombo();
 										}
-										
-
-										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), static_cast<EnumParticleType>(tmp));
 									}
 									else
 									{
