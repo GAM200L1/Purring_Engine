@@ -451,7 +451,9 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-    
+   
+
+
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
@@ -474,6 +476,8 @@ PE::CoreApplication::CoreApplication()
 PE::CoreApplication::~CoreApplication()
 {
     // future stuff can add here
+
+
 }
 
 void PE::CoreApplication::Run()

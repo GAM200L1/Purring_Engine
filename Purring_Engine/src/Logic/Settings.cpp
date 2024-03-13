@@ -25,7 +25,38 @@ namespace PE
 {
 	SettingsScript::SettingsScript()
 	{
+		std::ifstream settingsFile("../Assets/Settings/gamesettings.json");
+		if (!settingsFile.fail()) {
+			nlohmann::json settingsJson;
+			settingsFile >> settingsJson;
 
+
+			if (settingsJson.contains("settings"))
+			{
+				//m_firstLaunch needs to be serialized 
+				if (settingsJson["settings"].contains("master"))
+				{
+					float MasterVolume = settingsJson["settings"]["master"];
+					AudioManager::GetInstance().SetMasterVolume(MasterVolume);
+				}
+				if (settingsJson["settings"].contains("bgm"))
+				{
+					float BGMVolume = settingsJson["settings"]["bgm"];
+					AudioManager::GetInstance().SetBGMVolume(BGMVolume);
+				}
+				if (settingsJson["settings"].contains("sfx"))
+				{
+					float SFXVolume = settingsJson["settings"]["sfx"];
+					AudioManager::GetInstance().SetSFXVolume(SFXVolume);
+				}
+			}
+			else
+			{
+				AudioManager::GetInstance().SetMasterVolume(1.f);
+				AudioManager::GetInstance().SetBGMVolume(1.f);
+				AudioManager::GetInstance().SetSFXVolume(1.f);
+			}
+		}
 	}
 
 	void SettingsScript::Init(EntityID id)
@@ -72,6 +103,31 @@ namespace PE
 
 	SettingsScript::~SettingsScript()
 	{
+		const char* filepath = "../Assets/Settings/gamesettings.json";
+		std::ifstream settingsFile(filepath);
+		if (!settingsFile.fail())
+		{
+			nlohmann::json settingsJson;
+			settingsFile >> settingsJson;
+
+			// save the stuff
+			//m_firstLaunch needs to be serialized 
+			settingsJson["settings"]["master"] = AudioManager::GetInstance().GetMasterVolume();
+			settingsJson["settings"]["bgm"] = AudioManager::GetInstance().GetBGMVolume();
+			settingsJson["settings"]["sfx"] = AudioManager::GetInstance().GetSFXVolume();
+
+
+			std::ofstream outFile(filepath);
+			if (outFile)
+			{
+				outFile << settingsJson.dump(4);
+				outFile.close();
+			}
+			else
+			{
+				std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+			}
+		}
 	}
 
 	void SettingsScript::OnAttach(EntityID id)
