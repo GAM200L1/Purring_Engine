@@ -596,12 +596,15 @@ namespace PE
                 // handle particle effects
                 if (EntityManager::GetInstance().Has<PE::ParticleEmitter>(id))
                 {
+                    
                     // dump current 
                     DrawInstanced(count, meshIndex, GL_TRIANGLES);
                     currentTexture.clear();
                     count = 0;
                     // Render particle effects
                     auto& em = EntityManager::GetInstance().Get<ParticleEmitter>(id);
+                    if (!em.isActive)
+                        continue;
                     T& renderer{ EntityManager::GetInstance().Get<T>(id) };
 
                     switch (em.particleType)

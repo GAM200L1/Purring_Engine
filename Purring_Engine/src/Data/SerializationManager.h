@@ -261,6 +261,10 @@ private:
     *************************************************************************************/
     bool LoadGUISlider(const size_t& r_id, const nlohmann::json& r_json);
 
+    /*!***********************************************************************************
+     \brief Load the Particle Emitter component from JSON.
+    *************************************************************************************/
+    bool LoadParticleEmitter(const size_t& r_id, const nlohmann::json& r_json);
 
 
     // ----- Private Methods ----- //

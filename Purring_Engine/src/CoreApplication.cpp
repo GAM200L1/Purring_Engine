@@ -445,12 +445,12 @@ RTTR_REGISTRATION
         .property("animationStates", &PE::BossRatScriptData::animationStates);
 
     rttr::registration::class_<PE::ParticleEmitter>(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string())
-        .property("Is active", &PE::ParticleEmitter::isActive)
+        .property("Is Active", &PE::ParticleEmitter::isActive)
         .property("Type", &PE::ParticleEmitter::particleType)
         .property("Max particles", &PE::ParticleEmitter::maxParticles)
         .property("Emission Arc", &PE::ParticleEmitter::emissionArc)
-        //.property("", &PE::ParticleEmitter::emissionDirection)
-        .property("Emission Duration", &PE::ParticleEmitter::emissionDuration)
+        .property("Emission Direction", &PE::ParticleEmitter::emissionDirection)
+        //.property("Emission Duration", &PE::ParticleEmitter::emissionDuration)
         //.property("Emission Rate", &PE::ParticleEmitter::emissionRate)
         .property("Looping", &PE::ParticleEmitter::isLooping)
         .property("MinMax Speed", &PE::ParticleEmitter::minMaxSpeed)
@@ -458,6 +458,8 @@ RTTR_REGISTRATION
         .property("End Scale", &PE::ParticleEmitter::endScale)
         .property("Delta Scale", &PE::ParticleEmitter::scaleChangeSpeed)
         .property("Lifetime", &PE::ParticleEmitter::startLifetime)
+        .property("Color", &PE::ParticleEmitter::startColor)
+
         //.property("", &PE::ParticleEmitter::)
         ;
 }
@@ -517,39 +519,7 @@ void PE::CoreApplication::Run()
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE
 
-    // REMOVE LATER - TEST FOR PARTICLE SYSTEM //
-    EntityID id = serializationManager.LoadFromFile("EmptyObject.prefab");
-    EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<ParticleEmitter>(), EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
-    auto& pe = EntityManager::GetInstance().Get<ParticleEmitter>(id);
-    pe.SetParent(id);
-    pe.particleType = ANIMATED;
-    pe.maxParticles = 50;
-    pe.startColor = vec4(1.f, 1.f, 1.f,0.5f);
-    pe.startScale = vec2(50.f, 50.f);
-    pe.scaleChangeSpeed = vec2(-10.f, -10.f);
-    pe.endScale = vec2(0.f, 0.f);
-    pe.startLifetime = 20;
-    pe.minMaxSpeed = vec2{ 20.f, 100.f };
-    pe.isActive = true;
-    pe.isLooping = true;
-    pe.CreateAllParticles();
 
-    //id = serializationManager.LoadFromFile("EmptyObject.prefab");
-    //EntityFactory::GetInstance().Assign(id, {EntityManager::GetInstance().GetComponentID<ParticleEmitter>() });
-    //auto& pe2 = EntityManager::GetInstance().Get<ParticleEmitter>(id);
-    //pe2.SetParent(id);
-    //pe2.particleType = TEXTURED;
-    //pe2.maxParticles = 500;
-    //pe2.startColor = vec4(0.f, 1.f, 0.f, 0.5f);
-    //pe2.startScale = vec2(10.f, 10.f);
-    //pe2.scaleChangeSpeed = vec2(-20.f, -20.f);
-    //pe2.endScale = vec2(0.f, 0.f);
-    //pe2.startLifetime = 10;
-    //pe2.minMaxSpeed = vec2{ 1.f, 1000.f };
-    //pe2.isActive = true;
-    //pe2.isLooping = true;
-    //pe2.CreateAllParticles();
-    ////////////////////////////////////////////
     
     // Main Application Loop
     // Continue until the GLFW window is flagged to close

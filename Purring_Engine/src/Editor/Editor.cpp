@@ -1212,12 +1212,12 @@ namespace PE {
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
-										if (prop.get_name().to_string() == "Emission Arc")
+										if (prop.get_name().to_string() == "Emission Arc" || prop.get_name().to_string() == "Emission Direction")
 										{
 											float tmp = vp.get_value<float>();
 											std::string str = "##" + prop.get_name().to_string();
 											tmp = ConvertRadToDeg(tmp);
-											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::SliderFloat(str.c_str(), &tmp, 1, 360, "%.1f");
+											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::DragFloat(str.c_str(), &tmp);
 											tmp = ConvertDegToRad(tmp);
 											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
 										}
@@ -1225,7 +1225,7 @@ namespace PE {
 										{
 											float tmp = vp.get_value<float>();
 											std::string str = "##" + prop.get_name().to_string();
-											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::InputFloat(str.c_str(), &tmp, 0.1f, 0.1f, "%.1f");
+											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::DragFloat(str.c_str(), &tmp);
 											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
 										}
 									}
@@ -1234,9 +1234,23 @@ namespace PE {
 										vec2 tmp = vp.get_value<vec2>();
 										std::string str = "##" + prop.get_name().to_string();
 										float x = tmp.x, y = tmp.y;
-										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(150.f);  ImGui::InputFloat((str + "x").c_str(), & x);
-										ImGui::SameLine(); ImGui::Text(" y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::InputFloat((str + "y").c_str(), &y);
+										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(150.f);  ImGui::DragFloat((str + "x").c_str(), & x);
+										ImGui::SameLine(); ImGui::Text(" y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::DragFloat((str + "y").c_str(), &y);
+										if (prop.get_name().to_string() == "MinMax Speed")
+										{
+											y = (y >= x) ? y : x;
+										}
+										
 										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), vec2(x, y));
+									}
+									else if (vp.get_type().get_name() == "structPE::vec4")
+									{
+										vec4 tmp = vp.get_value<vec4>();
+										std::string str = "##" + prop.get_name().to_string();
+										float tmp2[4] = { tmp.x, tmp.y, tmp.z, tmp.w };
+										ImGui::ColorEdit4(str.c_str(), tmp2);
+										tmp = vec4{ tmp2[0], tmp2[1] ,tmp2[2] ,tmp2[3] };
+										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
 									}
 									else if (vp.get_type().get_name() == "enumPE::EnumParticleType")
 									{

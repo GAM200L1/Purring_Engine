@@ -19,6 +19,7 @@
 #include "Particle.h"
 #include "Singleton.h"
 #include "Layers/LayerManager.h"
+#include "Data/json.hpp"
 
 constexpr size_t DEFAULT_MAX_PARTICLES = 100;
 
@@ -37,6 +38,15 @@ namespace PE
 		void ResetAllParticles(); // resets emission duration, lifetime of each particle and the position of each particle
 		const std::vector<Particle>& GetParticles() const { return particles; }
 		void SetParent(size_t id) { m_id = id; }
+		/*!***********************************************************************************
+		 \brief Serializes this struct into a json file
+
+		 \param[in] id 				Entity ID of who owns this descriptor struct
+		 \return nlohmann::json 	The generated json
+		*************************************************************************************/
+		nlohmann::json ToJson(size_t id) const;
+
+
 	public:
 		// max number of particles
 		unsigned maxParticles;
@@ -120,4 +130,5 @@ namespace PE
 			}
 		}
 	};*/
+	
 }

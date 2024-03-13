@@ -122,10 +122,6 @@ namespace PE
 					}
 				}
 				
-				//r_particle.UpdatePosition(startSpeed * deltaTime);
-				//r_particle.UpdateRotation(orientationChangeSpeed * deltaTime);
-				//r_particle.UpdateScale(scaleChangeSpeed.x * deltaTime, scaleChangeSpeed.y * deltaTime);
-				//r_particle.UpdateColor(colorChangeSpeed * deltaTime);
 			}
 		}
 	}
@@ -176,14 +172,59 @@ namespace PE
 		}
 	}
 
+	nlohmann::json ParticleEmitter::ToJson(size_t id) const
+	{
+		rttr::type currType = rttr::type::get_by_name(EntityManager::GetInstance().GetComponentID<ParticleEmitter>().to_string().c_str());
+		nlohmann::json ret;
+		rttr::instance inst = EntityManager::GetInstance().Get<ParticleEmitter>(id);
+		if (inst.is_valid())
+		{
+			for (auto& prop : currType.get_properties())
+			{
+				rttr::variant var = prop.get_value(inst);
+
+				if (var.get_type().get_name() == "bool")
+				{
+					ret[prop.get_name().to_string().c_str()] = var.get_value<bool>();
+				}
+				else if (var.get_type().get_name() == "unsignedint")
+				{
+					ret[prop.get_name().to_string().c_str()] = var.get_value<unsigned>();
+				}
+				else if (var.get_type().get_name() == "float")
+				{
+					ret[prop.get_name().to_string().c_str()] = var.get_value<float>();
+				}
+				else if (var.get_type().get_name() == "structPE::vec2")
+				{
+					ret[prop.get_name().to_string().c_str()]["x"] = var.get_value<vec2>().x;
+					ret[prop.get_name().to_string().c_str()]["y"] = var.get_value<vec2>().y;
+				}
+				else if (var.get_type().get_name() == "structPE::vec4")
+				{
+					ret[prop.get_name().to_string().c_str()]["x"] = var.get_value<vec4>().x;
+					ret[prop.get_name().to_string().c_str()]["y"] = var.get_value<vec4>().y;
+					ret[prop.get_name().to_string().c_str()]["z"] = var.get_value<vec4>().z;
+					ret[prop.get_name().to_string().c_str()]["w"] = var.get_value<vec4>().w;
+				}
+				else if (var.get_type().get_name() == "enumPE::EnumParticleType")
+				{
+					ret[prop.get_name().to_string().c_str()] = var.get_value<EnumParticleType>();
+				}
+			}
+		}
+		return ret;
+	}
+
 	vec2 ParticleEmitter::GeneratePosition(float radius)
 	{
 		if (radius == 0.f)
 			return vec2{ 0.f, 0.f };
 		
 		// get the direction vector to the left and right of the emission direction
-		const auto& xform = EntityManager::GetInstance().Get<Transform>(m_id);
-		emissionVector = xform.position;
+		if (EntityManager::GetInstance().Has<Transform>(m_id))
+			emissionVector = EntityManager::GetInstance().Get<Transform>(m_id).position;
+
 		vec2 rightVector{ emissionVector.y, -emissionVector.x };
 		vec2 leftVector{ -emissionVector.y, emissionVector.x };
 
@@ -199,7 +240,7 @@ namespace PE
 			std::uniform_real_distribution<float> distributor(0.f, (leftVector * radius).Length());
 			return leftVector * distributor(generator);
 		}*/
-		return xform.position;
+		return emissionVector;
 	}
 
 	vec2 ParticleEmitter::GenerateDirectionVector(vec2 const& r_startPosition)
@@ -207,8 +248,9 @@ namespace PE
 		// internal formula is to get the end of the particle emission's 'radius'
 
 		std::mt19937 generator(seed());
-		const auto& xform = EntityManager::GetInstance().Get<Transform>(m_id);
-		float trueDir = emissionDirection - xform.orientation;
+		float trueDir{};
+		if (EntityManager::GetInstance().Has<Transform>(m_id))
+			trueDir = emissionDirection - EntityManager::GetInstance().Get<Transform>(m_id).orientation;
 		std::uniform_real_distribution<float> distributor(trueDir - emissionArc * 0.5f, trueDir + emissionArc * 0.5f);
 		float gen = distributor(generator);
 		vec2 dir{ sinf(gen), cosf(gen) };
