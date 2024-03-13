@@ -458,7 +458,7 @@ void SerializationManager::SaveToFile(const std::filesystem::path& filepath, int
     }
 }
 
-void SerializationManager::SaveAnimationToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData)
+void SerializationManager::SerializeAnimation(const std::filesystem::path& filepath, const nlohmann::json& serializedData)
 {
     std::ofstream outFile(filepath);
     if (outFile)
@@ -497,8 +497,7 @@ size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
         nlohmann::json j;
         inFile >> j;
         inFile.close();
-        size_t ret = LoadPrefabFromFile(j);
-        return ret;
+        return CreateEntityFromPrefab(j);
     }
     else
     {
@@ -507,7 +506,7 @@ size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
     }
 }
 
-nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem::path& filepath)
+nlohmann::json SerializationManager::DeserializeAnimation(const std::filesystem::path& filepath)
 {
     nlohmann::json loadedData;
     std::ifstream inFile(filepath);
@@ -552,51 +551,63 @@ nlohmann::json SerializationManager::LoadMetaDataFromFile(const std::filesystem:
 }
 
 #pragma warning (disable : 4702)
-size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
+size_t SerializationManager::CreateEntityFromPrefab(std::string const& r_filePath)
 {
-    if (r_json.contains("Prefab")) // following multi prefab method
+    std::ifstream inFile(r_filePath);
+    if (inFile)
     {
-        for (auto item : r_json["Prefab"]) // each set should be a group of entities, first is parent, following is children
+        nlohmann::json j;
+        inFile >> j;
+        inFile.close();
+
+        if (j.contains("Prefab")) // following multi prefab method
         {
-            size_t parent = MAXSIZE_T;
-            for (auto entity : item)
+            for (auto item : j["Prefab"]) // each set should be a group of entities, first is parent, following is children
             {
-                if (parent == MAXSIZE_T)
+                size_t parent = MAXSIZE_T;
+                for (auto entity : item)
                 {
-                    parent = DeserializeEntity(entity);
-                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).children.clear();
-                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).sceneID = parent;
-                }
-                else
-                {
-                    size_t id  = DeserializeEntity(entity);
-                    if (id == MAXSIZE_T) // child will have a child
+                    if (parent == MAXSIZE_T)
                     {
-                        nlohmann::json tmp;
-                        tmp["Prefab"].push_back(entity);
-                        //std::cout << tmp << std::endl;
-                        id = LoadPrefabFromFile(tmp);
+                        parent = DeserializeEntity(entity);
+                        PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).children.clear();
+                        PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).sceneID = parent;
                     }
                     else
                     {
-                        PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).children.clear();
-                    }
-                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).sceneID = id;
-                    PE::Hierarchy::GetInstance().AttachChild(parent, id);
-                    
-                }
-            }
+                        size_t id = DeserializeEntity(entity);
+                        if (id == MAXSIZE_T) // child will have a child
+                        {
+                            nlohmann::json tmp;
+                            tmp["Prefab"].push_back(entity);
+                            //std::cout << tmp << std::endl;
+                            id = CreateEntityFromPrefab(tmp);
+                        }
+                        else
+                        {
+                            PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).children.clear();
+                        }
+                        PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).sceneID = id;
+                        PE::Hierarchy::GetInstance().AttachChild(parent, id);
 
-            return parent;
+                    }
+                }
+
+                return parent;
+            }
+        }
+        else // following old format (handle old way)
+        {
+            return DeserializeEntity(j);
         }
     }
-    else // following old format (handle old way)
+    else
     {
-        //std::cout << r_json << std::endl;
-        return DeserializeEntity(r_json);
+        std::cerr << "Could not open the file for reading: " << r_filePath << std::endl;
+        return MAXSIZE_T;
     }
-    return MAXSIZE_T;
 }
+
 #pragma warning (default : 4702)
 void SerializationManager::LoadLoaders()
 {

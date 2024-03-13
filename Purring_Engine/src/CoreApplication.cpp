@@ -452,10 +452,9 @@ PE::CoreApplication::CoreApplication()
     InitializeSystems();
     InitializeAudio();
 
-    SerializationManager serializationManager;
     //create background from file
 
-    EntityID uiCameraId{ serializationManager.LoadFromFile("EditorDefaults/Camera.prefab") };
+    EntityID uiCameraId{ ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Camera.prefab") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
 

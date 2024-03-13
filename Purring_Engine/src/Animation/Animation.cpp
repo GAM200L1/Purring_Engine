@@ -424,7 +424,7 @@ namespace PE
 		std::filesystem::path filePath{ r_filePath.c_str() };
 
 		SerializationManager serializationManager;  // Create an instance
-		nlohmann::json loadedAnimationData = serializationManager.LoadAnimationFromFile(filePath);
+		nlohmann::json loadedAnimationData = serializationManager.DeserializeAnimation(filePath);
 
 		// if able to load animation
 		if (!loadedAnimationData.is_null())

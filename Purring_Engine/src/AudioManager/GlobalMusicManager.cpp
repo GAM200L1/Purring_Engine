@@ -50,7 +50,7 @@ namespace PE
 
     void GlobalMusicManager::PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration)
     {
-        EntityID audioEntity = m_serializationManager.LoadFromFile(r_prefabPath);
+        EntityID audioEntity = ResourceManager::GetInstance().LoadPrefabFromFile(r_prefabPath);
         if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
         {
             auto& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
@@ -73,7 +73,7 @@ namespace PE
 
     void GlobalMusicManager::PlaySFX(const std::string& r_prefabPath, bool loop)
     {
-        EntityID audioEntity = m_serializationManager.LoadFromFile(r_prefabPath);
+        EntityID audioEntity = ResourceManager::GetInstance().LoadPrefabFromFile(r_prefabPath);
         if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
         {
             auto audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);

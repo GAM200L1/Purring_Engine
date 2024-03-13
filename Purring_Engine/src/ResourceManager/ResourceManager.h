@@ -45,6 +45,7 @@
 #include "Animation/Animation.h"
 #include "imgui.h"
 #include "MetaData.h"
+#include "Data/SerializationManager.h"
 
 //class Resource
 //{
@@ -72,6 +73,7 @@ namespace PE
         std::map<std::string, std::shared_ptr<Font>> Fonts;
         std::map<std::string, std::shared_ptr<Graphics::Texture>> Icons;
         std::map<std::string, std::shared_ptr<Animation>> Animations;
+        std::map<std::string, nlohmann::json> Prefabs;
 
         /*!***********************************************************************************
          \brief Unloads all resources held by the resource manager.
@@ -156,6 +158,10 @@ namespace PE
         *************************************************************************************/
         bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
+        size_t LoadPrefabFromFile(std::string const& r_filePath, bool fp = false);
+
+        /*size_t GetPrefab(std::string const& r_name);*/
+
         /*!***********************************************************************************
             \brief Gets the size of a texture with the given name from the ResourceManager.
 
@@ -163,7 +169,7 @@ namespace PE
 
             \return An ImVec2 containing the width and height of the texture.
         *************************************************************************************/
-        ImVec2 GetTextureSize(const std::string& name);
+        ImVec2 GetTextureSize(const std::string& r_fileName);
 
         /*!***********************************************************************************
         \brief Load texture from Resource folder in Textures folder

@@ -32,6 +32,8 @@
 
 #include "Layers/LayerManager.h"
 
+#include "ResourceManager/ResourceManager.h"
+
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
@@ -189,9 +191,7 @@ namespace PE
 					}
 					else
 					{
-						SerializationManager sm;
-
-						slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob.prefab"));
+						slider.m_knobID = ResourceManager::GetInstance().LoadPrefabFromFile(("EditorDefaults/SliderKnob.prefab"));
 						Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
 					}
 

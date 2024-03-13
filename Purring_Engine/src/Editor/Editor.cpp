@@ -957,7 +957,7 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty.prefab");
+						EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Empty.prefab");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -966,7 +966,7 @@ namespace PE {
 				{
 					if (ImGui::MenuItem("Create Canvas Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas.prefab");
+						EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Canvas.prefab");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
 					}
@@ -974,7 +974,7 @@ namespace PE {
 					{
 		
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject.prefab");
+						EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/UIObject.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -982,7 +982,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button.prefab");
+						EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Button.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -990,7 +990,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create UI Slider")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody.prefab");
+						EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/SliderBody.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -998,7 +998,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text.prefab");
+						EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Text.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -1007,13 +1007,13 @@ namespace PE {
 				}
 				if (ImGui::Selectable("Create Audio Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio.prefab");
+					EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Audio.prefab");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera.prefab");
+					EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Camera.prefab");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					m_currentSelectedObject = static_cast<int>(s_id);
 				}
@@ -4409,7 +4409,7 @@ namespace PE {
 									}
 									ClearObjectList();
 									engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-									serializationManager.LoadFromFile(prefabFP, true);
+									ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP, true);
 								}
 								if (ImGui::Selectable("Edit properties"))
 								{
@@ -4507,7 +4507,7 @@ namespace PE {
 							{
 								if (m_files[draggedItemIndex].extension() == ".prefab")
 								{
-									EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string(), true);
+									EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile(m_files[draggedItemIndex].string(), true);
 									UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 									// change position of loaded prefab based on mouse cursor here
 								}
@@ -4712,7 +4712,7 @@ namespace PE {
 						// Serialize the current animation data to JSON
 						nlohmann::json serializedAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID)->ToJson();
 
-						serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
+						serializationManager.SerializeAnimation(filePath, serializedAnimation);
 						std::cout << "Animation created successfully at " << filePath << std::endl;
 
 						// Add animation component to entity
@@ -4747,7 +4747,7 @@ namespace PE {
 							// Check if filePath is not empty
 							if (!filePath.empty())
 							{
-								serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
+								serializationManager.SerializeAnimation(filePath, serializedAnimation);
 								std::cout << "Animation saved successfully to " << filePath << std::endl;
 							}
 							else
@@ -4766,7 +4766,7 @@ namespace PE {
 						// Check if filePath is not empty
 						if (!filePath.empty())
 						{
-							nlohmann::json loadedAnimationData = serializationManager.LoadAnimationFromFile(filePath);
+							nlohmann::json loadedAnimationData = serializationManager.DeserializeAnimation(filePath);
 
 							if (!loadedAnimationData.is_null())
 							{
@@ -6054,7 +6054,7 @@ namespace PE {
 			if (ImGui::Button("Apply"))
 			{
 				// exectue the changes!!
-				EntityID pfid = serializationManager.LoadFromFile(prefabFP, true);
+				EntityID pfid = ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP, true);
 				for (auto id : modify)
 				{
 					for (size_t i{}; i < prefabCID.size(); ++i)
@@ -6218,7 +6218,7 @@ namespace PE {
 		}
 		else
 		{
-			NextCanvasID = serializationManager.LoadFromFile("EditorDefaults/Canvas.prefab");
+			NextCanvasID = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Canvas.prefab");
 		}
 
 		return NextCanvasID;

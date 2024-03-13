@@ -1083,8 +1083,7 @@ namespace PE
 
 		EntityID RatScript_v2_0::CreateDetectionRadius(RatScript_v2_0_Data const& r_data)
 		{
-			SerializationManager serializationManager;
-			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius.prefab") };
+			EntityID radiusId{ ResourceManager::GetInstance().LoadPrefabFromFile("RatDetectionRadius.prefab") };
 			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
 			PositionEntity(radiusId, GetEntityPosition(r_data.myID));
 			PositionEntityRelative(radiusId, vec2{ 0.f, 0.f });
@@ -1126,13 +1125,12 @@ namespace PE
 
 		void RatScript_v2_0::CreateRatPathTelegraph(RatScript_v2_0_Data& r_data)
 		{
-				SerializationManager serializationManager;
 				r_data.pivotEntityID = EntityFactory::GetInstance().CreateEntity<Transform>();
 				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.pivotEntityID);
 				PositionEntityRelative(r_data.pivotEntityID, vec2{ 0.f, 0.f });
 
 				vec2 ratScale{ GetEntityScale(r_data.myID) };
-				r_data.telegraphArrowEntityID = serializationManager.LoadFromFile("PawPrints.prefab");
+				r_data.telegraphArrowEntityID = ResourceManager::GetInstance().LoadPrefabFromFile("PawPrints.prefab");
 				ToggleEntity(r_data.telegraphArrowEntityID, false); // set to inactive, it will only show during planning phase
 				ScaleEntity(r_data.telegraphArrowEntityID, ratScale.x * 0.5f, ratScale.y * 0.5f);
 				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent

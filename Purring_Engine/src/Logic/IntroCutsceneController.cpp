@@ -26,6 +26,7 @@
 #include "ECS/SceneView.h"
 #include "SceneManager/SceneManager.h"
 #include "PauseManager.h"
+#include "ResourceManager/ResourceManager.h"
 
 #include <limits>
 
@@ -49,12 +50,12 @@ namespace PE
 
 		if (PauseManager::GetInstance().IsPaused())
 		{
-			EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music.prefab");
+			EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
 				EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PauseSound();
 			EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 
-			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
+			EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -66,12 +67,12 @@ namespace PE
 
 			if (m_startCutscene)
 			{
-				EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music.prefab");
+				EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
 					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PlayAudioSound(AudioComponent::AudioType::BGM);
 				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 
-				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
+				EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
 				EntityManager::GetInstance().RemoveEntity(bgm);
@@ -80,12 +81,12 @@ namespace PE
 
 			if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 			{
-				EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music.prefab");
+				EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
 					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).StopSound();
 				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 
-				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
+				EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 				EntityManager::GetInstance().RemoveEntity(bgm);
@@ -109,7 +110,7 @@ namespace PE
 	}
 	void IntroCutsceneController::Destroy(EntityID id)
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music.prefab");
+		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
@@ -156,7 +157,7 @@ namespace PE
 
 	void IntroCutsceneController::PlayClickAudio()
 	{
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX.prefab");
+		EntityID buttonpress = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -164,7 +165,7 @@ namespace PE
 
 	void IntroCutsceneController::PlaySceneTransitionAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX.prefab");
+		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Scene Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);

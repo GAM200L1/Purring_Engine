@@ -135,7 +135,7 @@ public:
     \param[in] filepath  The path to the file to save to.
     \param[in] serializedData  The data to save.
     *************************************************************************************/
-    void SaveAnimationToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
+    void SerializeAnimation(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
 
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
@@ -148,7 +148,7 @@ public:
     \param[in] filename  The path to the file to load from.
     \return nlohmann::json  The loaded data.
     *************************************************************************************/
-    nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
+    nlohmann::json DeserializeAnimation(const std::filesystem::path& filepath);
 
     /*!***********************************************************************************
     \brief Save animation data to file
@@ -185,7 +185,7 @@ public:
 
     \param[in] r_json  The path to the file to save to.
     *************************************************************************************/
-    size_t LoadPrefabFromFile(nlohmann::json& r_json);
+    size_t CreateEntityFromPrefab(std::string const& r_filePath);
 
     // ----- Private Methods ----- //
 private:
