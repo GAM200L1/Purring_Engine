@@ -250,16 +250,17 @@ namespace PE
 		 \brief Rotates the movement telegraph to face the target position of the rat 
 				and enable it.
 
+		 \param[in] id - EntityID of the rat.
 		 \param[in] r_targetPosition - Position that the rat aims to move towards.
 		*************************************************************************************/
-		void EnableTelegraphs(EntityID id, vec2 const& r_targetPosition);
+		void EnableMovementTelegraphs(EntityID id, vec2 const& r_targetPosition);
 
 		/*!***********************************************************************************
 		 \brief Disables the movement telegraphs.
 
 		 \param[in] id - EntityID of the rat.
 		*************************************************************************************/
-		void DisableTelegraphs(EntityID id);
+		void DisableMovementTelegraphs(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Disables all entities spawned by the rat.

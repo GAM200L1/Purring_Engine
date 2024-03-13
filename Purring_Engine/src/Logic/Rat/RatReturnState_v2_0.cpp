@@ -55,7 +55,7 @@ namespace PE
 					if (StateJustChanged())
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
-							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(p_data->myID);
+							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableMovementTelegraphs(p_data->myID);
 
 							// Play animation
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::WALK);
@@ -93,7 +93,7 @@ namespace PE
 
 									// ---- Update telegraph
 									// Rotate the telegraph to face the target
-									GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableTelegraphs(p_data->myID, targetPosition);
+									GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableMovementTelegraphs(p_data->myID, targetPosition);
 							}
 							break;
 					}

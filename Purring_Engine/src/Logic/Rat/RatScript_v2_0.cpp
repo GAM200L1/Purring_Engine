@@ -472,7 +472,7 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::EnableTelegraphs(EntityID id, vec2 const& targetPosition)
+		void RatScript_v2_0::EnableMovementTelegraphs(EntityID id, vec2 const& targetPosition)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
@@ -487,7 +487,7 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::DisableTelegraphs(EntityID id)
+		void RatScript_v2_0::DisableMovementTelegraphs(EntityID id)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
@@ -1078,7 +1078,7 @@ namespace PE
 				it->second.delaySet = false;
 				it->second.SetQueuedState(nullptr, true);
 				it->second.hasRatStateChanged = true;
-				DisableTelegraphs(it->second.myID);
+				DisableMovementTelegraphs(it->second.myID);
 		}
 
 		EntityID RatScript_v2_0::CreateDetectionRadius(RatScript_v2_0_Data const& r_data)
