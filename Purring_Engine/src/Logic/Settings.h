@@ -90,16 +90,19 @@ namespace PE
 		rttr::instance GetScriptData(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief Destructor for the test script
-
-		 \return void
+		 \brief Destructor for the settings script
 		*************************************************************************************/
 		~SettingsScript();
-
+		/*!***********************************************************************************
+		 \brief Constructor for the settings script
+		*************************************************************************************/
 		SettingsScript();
 
 	private:
 		std::map<EntityID, SettingsScriptData> m_scriptData;
+		float m_masterVol{1.f};
+		float m_sfx{1.f};
+		float m_bgm{1.f};
 	};
 
 

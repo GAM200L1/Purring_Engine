@@ -36,18 +36,18 @@ namespace PE
 				//m_firstLaunch needs to be serialized 
 				if (settingsJson["settings"].contains("master"))
 				{
-					float MasterVolume = settingsJson["settings"]["master"];
-					AudioManager::GetInstance().SetMasterVolume(MasterVolume);
+					m_masterVol = settingsJson["settings"]["master"];
+					AudioManager::GetInstance().SetMasterVolume(m_masterVol);
 				}
 				if (settingsJson["settings"].contains("bgm"))
 				{
-					float BGMVolume = settingsJson["settings"]["bgm"];
-					AudioManager::GetInstance().SetBGMVolume(BGMVolume);
+					m_bgm = settingsJson["settings"]["bgm"];
+					AudioManager::GetInstance().SetBGMVolume(m_bgm);
 				}
 				if (settingsJson["settings"].contains("sfx"))
 				{
-					float SFXVolume = settingsJson["settings"]["sfx"];
-					AudioManager::GetInstance().SetSFXVolume(SFXVolume);
+					 m_sfx = settingsJson["settings"]["sfx"];
+					AudioManager::GetInstance().SetSFXVolume(m_sfx);
 				}
 			}
 			else
@@ -64,17 +64,17 @@ namespace PE
 
 		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].MasterSlider))
 		{
-			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].MasterSlider).SetSliderValue(AudioManager::GetInstance().GetMasterVolume());
+			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].MasterSlider).SetSliderValue(m_masterVol);
 		}
 
 		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].BGMSlider))
 		{
-			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].BGMSlider).SetSliderValue(AudioManager::GetInstance().GetBGMVolume());
+			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].BGMSlider).SetSliderValue(m_bgm);
 		}
 
 		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].SFXSlider))
 		{
-			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].SFXSlider).SetSliderValue(AudioManager::GetInstance().GetSFXVolume());
+			EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].SFXSlider).SetSliderValue(m_sfx);
 		}
 
 	}
@@ -82,18 +82,22 @@ namespace PE
 	{
 		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].MasterSlider))
 		{
-			AudioManager::GetInstance().SetMasterVolume(EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].MasterSlider).GetSliderValue());
+			m_masterVol = EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].MasterSlider).GetSliderValue();
+			AudioManager::GetInstance().SetMasterVolume(m_masterVol);
+
 		}
 
 		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].BGMSlider))
 		{
-			AudioManager::GetInstance().SetBGMVolume(EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].BGMSlider).GetSliderValue());
+			m_bgm = EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].BGMSlider).GetSliderValue();
+			AudioManager::GetInstance().SetBGMVolume(m_bgm);
 		
 		}
 
 		if (EntityManager::GetInstance().Has<GUISlider>(m_scriptData[id].SFXSlider))
 		{
-			AudioManager::GetInstance().SetSFXVolume(EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].SFXSlider).GetSliderValue());
+			m_sfx = EntityManager::GetInstance().Get<GUISlider>(m_scriptData[id].SFXSlider).GetSliderValue();
+			AudioManager::GetInstance().SetSFXVolume(m_sfx);
 		
 		}
 	}
@@ -112,9 +116,9 @@ namespace PE
 
 			// save the stuff
 			//m_firstLaunch needs to be serialized 
-			settingsJson["settings"]["master"] = AudioManager::GetInstance().GetMasterVolume();
-			settingsJson["settings"]["bgm"] = AudioManager::GetInstance().GetBGMVolume();
-			settingsJson["settings"]["sfx"] = AudioManager::GetInstance().GetSFXVolume();
+			settingsJson["settings"]["master"] = m_masterVol;
+			settingsJson["settings"]["bgm"] = m_bgm;
+			settingsJson["settings"]["sfx"] = m_sfx;
 
 
 			std::ofstream outFile(filepath);
