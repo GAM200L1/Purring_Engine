@@ -34,13 +34,13 @@
                         "EntityDescriptor": {
                             "InteractionLayer": 1,
                             "Layer": 1,
-                            "Old ID": 18446744073709551615,
+                            "Old ID": 1,
                             "Prefab Type": "",
                             "children": [],
                             "isActive": true,
                             "name": "SniperRat",
                             "parent": null,
-                            "sceneID": 18446744073709551615
+                            "sceneID": 1
                         },
                         "Renderer": {
                             "Color": {
@@ -66,7 +66,7 @@
                                         "Idle": "../Assets/Animation/AnimationSniperRat_Idle.anim",
                                         "Walk": "../Assets/Animation/AnimationSniperRat_Walk.anim"
                                     },
-                                    "detectionRadius": 320.0,
+                                    "detectionRadius": 340.0,
                                     "maxHuntTurns": 2,
                                     "maxMovementRange": 128.0,
                                     "movementSpeed": 400.0,

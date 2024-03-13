@@ -2292,8 +2292,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3307,8 +3307,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4354,8 +4354,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4433,8 +4433,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4524,8 +4524,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4631,11 +4631,11 @@
                                     "WalkFaster": "../Assets/Animation/AnimationRatKing_WalkFaster.anim"
                                 },
                                 "attackDelay": 0.25,
-                                "distanceBetweenPools": 180.0,
+                                "distanceBetweenPools": 220.0,
                                 "jumpSpeed": 1500.0,
                                 "leftSideSlam": 97,
                                 "leftSideSlamAnimation": 93,
-                                "maxHealth": 20.0,
+                                "maxHealth": 14.0,
                                 "rightSideSlam": 95,
                                 "rightSideSlamAnimation": 98,
                                 "slamAreaTelegraph": 100,
@@ -5031,8 +5031,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5355,8 +5355,8 @@
                         "height": 512.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -399.0,
-                            "y": -6.000022888183594
+                            "x": -317.0,
+                            "y": -6.000026702880859
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5437,7 +5437,7 @@
                         "height": 776.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -417.0000915527344,
+                            "x": -417.0,
                             "y": 27.000015258789063
                         },
                         "relativeposition": {
@@ -5484,7 +5484,7 @@
                         "height": 512.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 308.9999694824219,
+                            "x": 188.0,
                             "y": -6.000022888183594
                         },
                         "relativeposition": {

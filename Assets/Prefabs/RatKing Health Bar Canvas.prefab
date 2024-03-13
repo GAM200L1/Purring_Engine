@@ -57,7 +57,7 @@
                                 "isActive": true,
                                 "name": "Ratking Healthbar",
                                 "parent": 1,
-                                "sceneID": 5
+                                "sceneID": 2
                             },
                             "GUIRenderer": {
                                 "Color": {
@@ -182,7 +182,7 @@
                             "isActive": true,
                             "name": "RatKing Healthbar Backing",
                             "parent": 1,
-                            "sceneID": 2
+                            "sceneID": 5
                         },
                         "GUIRenderer": {
                             "Color": {

@@ -3306,8 +3306,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4899,8 +4899,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4978,8 +4978,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5014,8 +5014,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5105,8 +5105,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5662,8 +5662,8 @@
                         "collisionLayerIndex": 5,
                         "data": {
                             "center": {
-                                "x": 234.00050354003906,
-                                "y": -9.000188827514648
+                                "x": 208.50047302246094,
+                                "y": 82.49972534179688
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5741,8 +5741,8 @@
                         "height": 96.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 234.00050354003906,
-                            "y": -9.000188827514648
+                            "x": 208.50047302246094,
+                            "y": 82.49972534179688
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5782,8 +5782,8 @@
                         "height": 150.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 234.00050354003906,
-                            "y": -9.000188827514648
+                            "x": 208.50047302246094,
+                            "y": 82.49972534179688
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5813,8 +5813,8 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 123.99989318847656,
-                                "y": -107.99995422363281
+                                "x": 63.999847412109375,
+                                "y": -26.999950408935547
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5875,8 +5875,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 123.99989318847656,
-                            "y": -107.99995422363281
+                            "x": 63.999847412109375,
+                            "y": -26.999950408935547
                         },
                         "relativeposition": {
                             "x": 0.0,

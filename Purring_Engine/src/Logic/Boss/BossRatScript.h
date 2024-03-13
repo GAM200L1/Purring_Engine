@@ -52,7 +52,7 @@ namespace PE
 
 		//other boss stats
 
-		float maxHealth = 20;
+		float maxHealth = 14;
 		float currenthealth = maxHealth;
 		StateMachine* p_stateManager;
 		BossRatAttack* p_currentAttack;
@@ -77,7 +77,7 @@ namespace PE
 		//charge attack variables
 		float chargeSpeed{ 1000 };
 		bool isCharging{ false };
-		float distanceBetweenPools{ 180 };
+		float distanceBetweenPools{ 220 };
 
 		//animation variables
 		BossRatAnimationsEnum curr_Anim{ BossRatAnimationsEnum::IDLE };
@@ -102,9 +102,9 @@ namespace PE
 		float executionTimeOutTimer{ executionTimeOutTime };
 		BossRatAttacks bossRatAttackSets[3][3]
 		{
-			{BossRatAttacks::CHARGE,BossRatAttacks::SLAM,BossRatAttacks::BASH},
+			{BossRatAttacks::BASH,BossRatAttacks::CHARGE,BossRatAttacks::SLAM},
 			{BossRatAttacks::BASH,BossRatAttacks::SLAM,BossRatAttacks::CHARGE},
-			{BossRatAttacks::SLAM,BossRatAttacks::BASH,BossRatAttacks::CHARGE}
+			{BossRatAttacks::CHARGE,BossRatAttacks::BASH,BossRatAttacks::SLAM}
 		};
 		// ----- Constructors ----- //
 	public:
