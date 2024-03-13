@@ -1057,6 +1057,8 @@ namespace PE
 				// Prevent this function from getting called more than once
 				if (!(it->second.isAlive)) { return; }
 				it->second.isAlive = false;  // Marking the rat as not alive
+				
+				ClearCollisionContainers(id); // Clear collision containers
 
 				ChangeStateToDeath(it->second.myID, 0.f); 
 				// @TODO Check if this should take the current rat animation duration into account?
