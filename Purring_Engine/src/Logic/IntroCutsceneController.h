@@ -154,6 +154,9 @@ namespace PE
 		float m_transitionTimer{ 1.f };
 		float m_transitionElapsedTime{ 0 };
 		bool m_isTransitioning{ false };
+
+		// Fade out variable
+		bool m_isFadingOut{ false };
 	};
 
 

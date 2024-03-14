@@ -1,0 +1,127 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "Canvas": {
+                            "Height": 0.0,
+                            "Width": 0.0
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 6,
+                            "Prefab Type": "Canvas Object",
+                            "children": [
+                                7,
+                                13
+                            ],
+                            "isActive": false,
+                            "name": "SplashScreenCanvas",
+                            "parent": null,
+                            "sceneID": 7
+                        },
+                        "Transform": {
+                            "height": 100.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 7,
+                            "Prefab Type": "SplashScreen",
+                            "children": [],
+                            "isActive": false,
+                            "name": "SplashScreen",
+                            "parent": 6,
+                            "sceneID": 13
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/SplashScreen_1920x1080.png"
+                        },
+                        "Transform": {
+                            "height": 1080.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 1920.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 13,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": false,
+                            "name": "Black",
+                            "parent": 6,
+                            "sceneID": 7
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 0.0,
+                                "g": 0.0,
+                                "r": 0.0
+                            },
+                            "TextureKey": "../Assets/Textures/SplashScreen_1920x1080.png"
+                        },
+                        "Transform": {
+                            "height": 1080.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 1920.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

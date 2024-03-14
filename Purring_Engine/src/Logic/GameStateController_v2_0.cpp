@@ -110,7 +110,7 @@ namespace PE
 			m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
 
 			//resetting current turn
-			CurrentTurn = 0;
+			currentTurn = 0;
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
 
@@ -349,6 +349,7 @@ namespace PE
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
 			GETANIMATIONMANAGER()->PauseAllAnimations();
+			PauseBGM();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
 		}
@@ -706,6 +707,7 @@ namespace PE
 
 			PauseManager::GetInstance().SetPaused(false);
 
+			ResumeBGM();
 			PlayClickAudio();
 			PlayPageAudio();
 		}
@@ -814,7 +816,7 @@ namespace PE
 		}
 		else if (currentState == GameStates_v2_0::EXECUTE && !m_nextTurnOnce)
 		{
-			CurrentTurn++;
+			currentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
@@ -838,6 +840,7 @@ namespace PE
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayWinAudio();
+		PauseBGM();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
 	}
@@ -849,6 +852,7 @@ namespace PE
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayLoseAudio();
+		PauseBGM();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
 	}
@@ -1264,7 +1268,7 @@ namespace PE
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
 
-		CurrentTurn = 0;
+		currentTurn = 0;
 		m_leveltoLoad = m_level1SceneName;
 
 		GETANIMATIONMANAGER()->PlayAllAnimations();
@@ -1511,7 +1515,7 @@ namespace PE
 			{
 				if (EntityManager::GetInstance().Has<TextComponent>(id2))
 				{
-					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn " + std::to_string(CurrentTurn));
+					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn " + std::to_string(currentTurn));
 				}
 				continue;
 			}
