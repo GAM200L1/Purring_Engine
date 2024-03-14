@@ -5212,6 +5212,8 @@ namespace PE {
 
 					if (ImGui::Button("Play"))
 					{
+						LayerManager::GetInstance().StoreLayerState();
+						LayerManager::GetInstance().ResetLayerState();
 						m_isRunTime = true;
 						m_showEditor = false;
 						m_showGameView = true;
@@ -5223,6 +5225,7 @@ namespace PE {
 					ImGui::SameLine();
 					ImGui::BeginDisabled();
 					if (ImGui::Button("Stop")) {
+						LayerManager::GetInstance().RestoreLayerState();
 						m_showEditor = true;
 
 						if (m_isRunTime)
@@ -5976,6 +5979,7 @@ namespace PE {
 		ImGui::SameLine();
 		if (ImGui::Button("Stop")) 
 		{
+			LayerManager::GetInstance().RestoreLayerState();
 			GameStateManager::GetInstance().ResetDefaultState();
 			m_showEditor = true;
 			toDisable = true;
