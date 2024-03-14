@@ -65,7 +65,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cutscenes/Cutscene_Intro1_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -100,7 +100,7 @@
                         "sceneID": 3
                     },
                     "ScriptComponent": {
-                        "IntroCutsceneController": {
+                        "EndingCutsceneController": {
                             "data": {
                                 "CutsceneObject": 1,
                                 "FinalScene": 4,

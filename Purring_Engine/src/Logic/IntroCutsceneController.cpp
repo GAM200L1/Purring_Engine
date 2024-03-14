@@ -50,8 +50,6 @@ namespace PE
 	{
 		GlobalMusicManager::GetInstance().Update(deltaTime);
 
-		m_elapsedTime += deltaTime;
-
 		if (PauseManager::GetInstance().IsPaused())
 		{
 			EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
@@ -59,15 +57,24 @@ namespace PE
 				EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PauseSound();
 			EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 
-			m_startCutscene = true;
+			//m_startCutscene = true;
 		}
 		else
 		{
+			m_elapsedTime += deltaTime;
+
 			if (m_startCutscene)
 			{
 				PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Intro Cutscene Music.prefab", false, 5.0f);
 
 				m_startCutscene = false;
+			}
+			else
+			{
+				EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
+				if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
+					EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).ResumeSound();
+				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 			}
 
 			// Start a fade-out effect 3 seconds before the cutscene ends
@@ -119,6 +126,7 @@ namespace PE
 			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].windowFocusEventID);
 		}
 
+		m_scriptData.erase(id);
 	}
 
 	std::map<EntityID, IntroCutsceneControllerData>& IntroCutsceneController::GetScriptData()
