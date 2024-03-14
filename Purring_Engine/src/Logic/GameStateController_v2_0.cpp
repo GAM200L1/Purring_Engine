@@ -377,43 +377,62 @@ namespace PE
 			{
 				SetPauseStateV2();
 			}
+
+			return;
 		}
 
 		if (KTE.keycode == GLFW_KEY_F1)
 		{
 			WinGame();
+			return;
 		}
 
 		if (KTE.keycode == GLFW_KEY_F3)
 		{
 			LoseGame();
+			return;
 		}
+
+		int minNumber = (m_currentLevel < 2) ? 1 : 0;
 
 		if (KTE.keycode == GLFW_KEY_F4)
 		{
+			if (currentState == GameStates_v2_0::DEPLOYMENT)
+				return;
+
+
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > minNumber)
 			NextStage(0);
 		}		
 		
 		if (KTE.keycode == GLFW_KEY_F5)
 		{
+			if (currentState == GameStates_v2_0::DEPLOYMENT)
+				return;
+
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > minNumber)
 			NextStage(1);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F6)
 		{
+			if (currentState == GameStates_v2_0::DEPLOYMENT)
+				return;
+
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > minNumber)
 			NextStage(2);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F7)
 		{
+			if (currentState == GameStates_v2_0::DEPLOYMENT)
+				return;
+
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-			if(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			if(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > minNumber)
 			NextStage(3);
 		}
 
