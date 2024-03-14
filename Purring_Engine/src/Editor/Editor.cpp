@@ -1186,7 +1186,8 @@ namespace PE {
 									ImGui::OpenPopup(id.c_str());
 								for (auto& prop : currType.get_properties())
 								{
-
+									if (prop.get_name().to_string() == "Toggles")
+										continue;
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
