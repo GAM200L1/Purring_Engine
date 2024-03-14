@@ -207,6 +207,10 @@ namespace PE {
 
 	Editor::~Editor()
 	{
+		// Restore the layer settings 
+		if(m_showGameView)
+			LayerManager::GetInstance().RestoreLayerState();
+
 		const char* filepath = "../Assets/Settings/config.json";
 		std::ifstream configFile(filepath);
 		nlohmann::json configJson;
