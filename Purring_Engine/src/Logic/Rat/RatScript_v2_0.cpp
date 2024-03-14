@@ -641,7 +641,6 @@ namespace PE
 				if (it == m_scriptData.end()) { return; }
 				else if (!(it->second.isAlive)) { return; }
 				TriggerStateChange(id, new RatReturn_v2_0, stateChangeDelay);
-				EnableDetectionTelegraphs(id, EnumRatIconAnimations::CONFUSED);
 		}
 
 

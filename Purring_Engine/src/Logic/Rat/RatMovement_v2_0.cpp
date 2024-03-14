@@ -232,13 +232,11 @@ namespace PE
             }
             else
             {
-                std::cout << "RatMovement_v2_0::PickTargetPosition() couldn't pick a target position\n";
                 return RatScript_v2_0::GetEntityPosition(p_data->myID);
             }
         }        
         else
         {
-            std::cout << "RatMovement_v2_0::PickTargetPosition() couldn't pick a target position\n";
             return vec2{};
         }
     }
