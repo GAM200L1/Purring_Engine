@@ -1314,6 +1314,22 @@ namespace PE
 
 	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, int Current, int Max, bool isRat)
 	{
+		float healthPercentage = static_cast<float>(Current) / static_cast<float>(Max);
+		vec4 fillColor;
+
+		if (healthPercentage <= 0.34f)
+		{
+			fillColor = m_fillColorAlmostEmpty;
+		}
+		else if (healthPercentage <= 0.67f)
+		{
+			fillColor = m_fillColorHalf;
+		}
+		else
+		{
+			fillColor = m_fillColorFull;
+		}
+
 		if(isRat)
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].RatPortrait).children)
 		{
@@ -1333,6 +1349,13 @@ namespace PE
 					//get value from specific rat
 					EntityManager::GetInstance().Get<GUISlider>(id2).m_maxValue = static_cast<float>(Max);
 					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = static_cast<float>(Current);
+
+					EntityID fillId = EntityManager::GetInstance().Get<GUISlider>(id2).m_knobID.value();
+
+					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(fillId))
+					{
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(fillId).SetColor(fillColor.x, fillColor.y, fillColor.z, fillColor.w);
+					}
 				}
 			}
 
