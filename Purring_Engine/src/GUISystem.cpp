@@ -183,9 +183,7 @@ namespace PE
 						////if there is children but no knob
 						//if (!knobFound || EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).isAlive == false)
 						//{
-						//	SerializationManager sm;
-
-						//	slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob.prefab"));
+						//	slider.m_knobID = ResourceManager::GetInstance().LoadPrefabFromFile(("EditorDefaults/SliderKnob.prefab"));
 						//	Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
 						//}
 					}
