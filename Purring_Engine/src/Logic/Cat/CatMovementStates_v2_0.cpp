@@ -96,12 +96,9 @@ namespace PE
 		{
 			if (p_data->catCurrentEnergy) // Check if the player has sufficient energy
 			{
-				// Get the mouse position
-				vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
-
 				// Attempt to create a node at the position of the cursor
 				// and position the cat where the node is
-				CatHelperFunctions::PositionEntity(id, AttemptToDrawPath(cursorPosition));
+				CatHelperFunctions::PositionEntity(id, AttemptToDrawPath(CatHelperFunctions::GetCursorPositionInWorld()));
 			}
 			else // Path is being drawn but the player has run out of energy
 			{
@@ -147,9 +144,10 @@ namespace PE
 				p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
 			}
 		}
-
-		if (p_data->pathPositions.empty())
+		else if (p_data->pathPositions.empty())
+		{
 			p_data->pathPositions.emplace_back(r_position);
+		}
 
 		// Get the distance of the proposed position from the last node in the path
 		float distanceOfPosition = p_data->pathPositions.back().Distance(r_position);
@@ -326,6 +324,7 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
+		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionStay, CatMovement_v2_0EXECUTE::OnCollisionStay, this);
 
 		if (p_data->catType == EnumCatType::MAINCAT)
 			m_mainCatID = id;
@@ -335,6 +334,8 @@ namespace PE
 		
 		p_data->currentPositionIndex = 0;
 		m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
+
+		m_movementTimer = p_data->maxDistance / p_data->movementSpeed;
 	}
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -396,7 +397,7 @@ namespace PE
 
 				footstepTimer -= deltaTime;
 
-				if(footstepTimer <= 0)
+				if (footstepTimer <= 0)
 				{
 					CatScript_v2_0::PlayFootstepAudio();
 					footstepTimer = footstepDelay;
@@ -406,6 +407,23 @@ namespace PE
 				vec2 newScale{ CatHelperFunctions::GetEntityScale(id) };
 				newScale.x = std::abs(newScale.x) * ((directionToMove.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the cat is facing left
 				CatHelperFunctions::ScaleEntity(id, newScale.x, newScale.y);
+
+				// ensure the cat does not stay stuck in the wall
+				if (m_startMovementTimer)
+				{
+					m_movementTimer -= deltaTime;
+					if (m_movementTimer <= 0.f)
+					{
+						// Update the position of the cat
+						CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions[p_data->currentPositionIndex]);
+						//EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
+					}
+				}
+				else
+				{
+					m_movementTimer = p_data->maxDistance / p_data->movementSpeed;
+					EntityManager::GetInstance().Get<RigidBody>(id).velocity.Zero();
+				}
 			}
 		}
 		else
@@ -418,6 +436,7 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::StateCleanUp()
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
 	}
 
 	void CatMovement_v2_0EXECUTE::StateExit(EntityID id)
@@ -441,13 +460,29 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::OnTriggerEnter(const Event<CollisionEvents>& r_TriggerEvent)
 	{
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		OnTriggerEnterEvent OCEE{ dynamic_cast<const OnTriggerEnterEvent&>(r_TriggerEvent) };
-
-		auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
-		if ((CheckExitPoint(OCEE.Entity1) && OCEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
-			|| (CheckExitPoint(OCEE.Entity2) && OCEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
+		if (r_TriggerEvent.GetType() == CollisionEvents::OnTriggerEnter)
 		{
-			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage(p_gsc->GetCurrentLevel() + 1); // goes to the next stage
+			OnTriggerEnterEvent OTEE{ dynamic_cast<const OnTriggerEnterEvent&>(r_TriggerEvent) };
+
+			auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
+			if ((CheckExitPoint(OTEE.Entity1) && OTEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
+				|| (CheckExitPoint(OTEE.Entity2) && OTEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
+			{
+				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage(p_gsc->GetCurrentLevel() + 1); // goes to the next stage
+			}
+		}
+	}
+
+	void CatMovement_v2_0EXECUTE::OnCollisionStay(const Event<CollisionEvents>& r_collisionEvent)
+	{
+		if (r_collisionEvent.GetType() == CollisionEvents::OnCollisionStay)
+		{
+			// starts 
+			m_startMovementTimer = true; 
+		}
+		else
+		{
+			m_startMovementTimer = false;
 		}
 	}
 }

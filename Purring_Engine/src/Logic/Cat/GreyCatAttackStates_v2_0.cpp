@@ -392,26 +392,15 @@ namespace PE
 		return false;
 	}
 
-	void GreyCatAttack_v2_0EXECUTE::PlayProjectileHitAudio(bool isTerrain)
+	void GreyCatAttack_v2_0EXECUTE::PlayProjectileHitAudio(bool)
 	{
 		std::string soundPrefabPath = "AudioObject/Projectile Hit Sound SFX";
 
-		if (isTerrain)
-		{
-			// @TODOHANS
-			// add projectile hit terrain audio here
-
-			// KL say no terrain sound yet.
-		}
-		else
 		{
 			int randomSoundIndex = std::rand() % 3 + 1;  // random number between 1 and 3
 			soundPrefabPath += std::to_string(randomSoundIndex) + ".prefab";
 
 			PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 		}
-
-		
-
 	}
 }
