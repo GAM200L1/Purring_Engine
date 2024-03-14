@@ -1314,7 +1314,8 @@ namespace PE
 
 	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, int Current, int Max, bool isRat)
 	{
-		float healthPercentage = static_cast<float>(Current) / static_cast<float>(Max);
+		float maxFloat{ static_cast<float>(Max) };
+		float healthPercentage = static_cast<float>(Current) / (CompareFloats(0.f, maxFloat) ? 1.f : maxFloat);
 		vec4 fillColor;
 
 		if (healthPercentage <= 0.34f)
