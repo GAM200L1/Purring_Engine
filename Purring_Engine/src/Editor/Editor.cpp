@@ -1159,7 +1159,14 @@ namespace PE {
 									{
 										if (prop.is_readonly())
 										{
-											ImGui::SameLine(); ImGui::Text(std::to_string(vp.get_value<EntityID>()).c_str());
+											if (prop.get_name().to_string() == "Entity ID")
+											{
+												ImGui::SameLine(); ImGui::Text(std::to_string(entityID).c_str());
+											}
+											else
+											{
+												ImGui::SameLine(); ImGui::Text(std::to_string(vp.get_value<EntityID>()).c_str());
+											}
 										}
 									}
 								}
