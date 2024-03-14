@@ -138,7 +138,7 @@ namespace PE
 			m_attackIsLeft = true;
 			if (EntityManager::GetInstance().Has<Transform>(p_data->rightSideSlam))
 			m_slamLandLocation = EntityManager::GetInstance().Get<Transform>(p_data->leftSideSlam).position;
-			m_slamLandLocation.x += 110;
+			m_slamLandLocation.x += 200;
 		}
 	}
 
@@ -212,7 +212,7 @@ namespace PE
 
 			if(EntityManager::GetInstance().Has<Transform>(p_data->slamAreaTelegraph))
 				EntityManager::GetInstance().Get<Transform>(p_data->slamAreaTelegraph).position = EntityManager::GetInstance().Get<Transform>(p_data->leftSideSlam).position;
-				EntityManager::GetInstance().Get<Transform>(p_data->slamAreaTelegraph).position.x += 110;
+				EntityManager::GetInstance().Get<Transform>(p_data->slamAreaTelegraph).position.x += 200;
 		}
 		else
 		{
