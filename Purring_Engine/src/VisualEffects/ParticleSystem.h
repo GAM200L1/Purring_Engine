@@ -53,7 +53,6 @@ namespace PE
 		*************************************************************************************/
 		nlohmann::json ToJson(size_t id) const;
 
-
 	public:
 		// max number of particles
 		unsigned maxParticles;

@@ -174,9 +174,6 @@ namespace PE
 	{
 		for (Particle& r_particle : particles)
 		{
-			//vec2 const& r_particleStartPosition{ GeneratePosition(startEmissionRadius) };
-			//r_particle.Reset(r_particleStartPosition, GenerateDirectionVector(r_particleStartPosition), startScale.x, startScale.y, startRotation, startLifetime);
-			//r_particle.enabled = true;
 			auto pos = GeneratePosition(startEmissionRadius);
 			std::mt19937 generator(seed());
 			std::uniform_real_distribution<float> distributor(minMaxSpeed.x, minMaxSpeed.y);
@@ -255,29 +252,16 @@ namespace PE
 		if (EntityManager::GetInstance().Has<Transform>(m_id))
 			emissionVector = GenerateDirectionVector(EntityManager::GetInstance().Get<Transform>(m_id).position);
 		else
+		{
+			initPos = false;
 			return vec2{ 0.f,0.f };
+		}
 
 		std::mt19937 generator(seed());
 		if (emitterType == POINT)
 			emittorLength = 0.f;
 		std::uniform_real_distribution<float> distributor(-emittorLength * 0.5f, emittorLength * 0.5f);
 		const float scale = distributor(generator);
-
-		//vec2 rightVector{ emissionVector.y, -emissionVector.x };
-		//vec2 leftVector{ -emissionVector.y, emissionVector.x };
-
-		/*std::mt19937 generator(seed());
-
-		if (std::rand() % 2)
-		{
-			std::uniform_real_distribution<float> distributor(0.f, (rightVector * radius).Length());
-			return rightVector * distributor(generator);
-		}
-		else
-		{
-			std::uniform_real_distribution<float> distributor(0.f, (leftVector * radius).Length());
-			return leftVector * distributor(generator);
-		}*/
 		return vec2{ EntityManager::GetInstance().Get<Transform>(m_id).position.x + (-emissionVector.y * scale), EntityManager::GetInstance().Get<Transform>(m_id).position.y + emissionVector.x * scale };
 	}
 
@@ -289,6 +273,11 @@ namespace PE
 		float trueDir{};
 		if (EntityManager::GetInstance().Has<Transform>(m_id))
 			trueDir = emissionDirection - EntityManager::GetInstance().Get<Transform>(m_id).orientation;
+		else
+		{
+			initPos = false;
+			return vec2{ 0.f,0.f };
+		}
 
 		float gen{};
 		if (!toggles.count("Emission Arc") || toggles.at("Emission Arc"))
