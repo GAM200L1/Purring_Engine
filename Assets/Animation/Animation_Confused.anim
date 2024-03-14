@@ -73,10 +73,10 @@
             "textureKey": ""
         }
     ],
-    "animationID": "../Assets/Animation/Animation_Detect.anim",
+    "animationID": "../Assets/Animation/Animation_Confused.anim",
     "frameRate": 30,
     "isLooping": false,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Rat_Detect.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Rat_Confused.png",
     "totalSprites": 6
 }

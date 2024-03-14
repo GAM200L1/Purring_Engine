@@ -45,7 +45,7 @@ namespace PE
 		m_mouseClicked = false;
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, PlayerControllerScript::OnMouseClick, this)
 
-		//EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
+		//EntityID buttonpress = m_ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music1.prefab");
 		//if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 		//	EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 		//EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -73,7 +73,7 @@ namespace PE
 	{
 		id;
 
-		//EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
+		//EntityID buttonpress = m_ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music1.prefab");
 		//if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 		//	EntityManager::GetInstance().Get<AudioComponent>(buttonpress).StopSound();
 		//EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -243,7 +243,7 @@ namespace PE
 		//{
 		//case 1:
 		//{
-		//	EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 1.prefab");
+		//	EntityID buttonpress = m_ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Cat Movement SFX 1.prefab");
 		//	if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 		//		EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 		//	EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -251,7 +251,7 @@ namespace PE
 		//}
 		//case 2:
 		//{
-		//	EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 2.prefab");
+		//	EntityID buttonpress = m_ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Cat Movement SFX 2.prefab");
 		//	if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 		//		EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 		//	EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -259,7 +259,7 @@ namespace PE
 		//}
 		//case 3:
 		//{
-		//	EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 3.prefab");
+		//	EntityID buttonpress = m_ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Cat Movement SFX 3.prefab");
 		//	if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 		//		EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 		//	EntityManager::GetInstance().RemoveEntity(buttonpress);

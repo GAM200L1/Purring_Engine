@@ -33,6 +33,7 @@
 
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/CatController_v2_0.h"
+#include "ResourceManager/ResourceManager.h"
 
 
 namespace PE
@@ -366,14 +367,12 @@ namespace PE
 		vec2 const& ratScale = GetEntityScale(m_scriptData[id].ratID);
 		RatScriptData& data = m_scriptData[id];
 
-		SerializationManager serializationManager;
-
 		data.psudoRatID = EntityFactory::GetInstance().CreateEntity<Transform>();
 		Hierarchy::GetInstance().AttachChild(id, data.psudoRatID);
 		EntityManager::GetInstance().Get<Transform>(data.psudoRatID).relPosition = vec2{ 0.f, 0.f };
 
 		// create the arrow telegraph
-		data.arrowTelegraphID = serializationManager.LoadFromFile("PawPrints.prefab");
+		data.arrowTelegraphID = ResourceManager::GetInstance().LoadPrefabFromFile("PawPrints.prefab");
 		ToggleEntity(data.arrowTelegraphID, false); // set to inactive, it will only show during planning phase
 		ScaleEntity(data.arrowTelegraphID, ratScale.x * 0.5f, ratScale.y * 0.5f);
 		Hierarchy::GetInstance().AttachChild(data.psudoRatID, data.arrowTelegraphID); // attach child to parent
@@ -381,14 +380,14 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.x = ratScale.x * 0.7f;
 		
 		// create cross attack telegraph
-		data.attackTelegraphID = serializationManager.LoadFromFile("EnemyAttackTelegraph.prefab");
+		data.attackTelegraphID = ResourceManager::GetInstance().LoadPrefabFromFile("EnemyAttackTelegraph.prefab");
 		ToggleEntity(data.attackTelegraphID, false); // set to inactive, it will only show during planning phase if the cat is in the area
 		ScaleEntity(data.attackTelegraphID, data.attackDiameter, data.attackDiameter);
 		//Hierarchy::GetInstance().AttachChild(id, data.attackTelegraphID);
 		EntityManager::GetInstance().Get<Transform>(data.attackTelegraphID).relPosition = vec2{ 0.f,0.f };
 
 		// create the detection radius
-		data.detectionTelegraphID = serializationManager.LoadFromFile("EnemyDetectionTelegraph.prefab");
+		data.detectionTelegraphID = ResourceManager::GetInstance().LoadPrefabFromFile("EnemyDetectionTelegraph.prefab");
 		ToggleEntity(data.detectionTelegraphID, false); // set to inactive it will only show during planning phase
 		ScaleEntity(data.detectionTelegraphID, ratScale.x * 2.f * data.detectionRadius, ratScale.y * 2.f * data.detectionRadius);
 		Hierarchy::GetInstance().AttachChild(id, data.detectionTelegraphID);
@@ -482,8 +481,7 @@ namespace PE
 
 	void RatScript::PlayAudio(std::string const& r_soundPrefab)
 	{
-			SerializationManager serializationManager;
-			EntityID sound = serializationManager.LoadFromFile(r_soundPrefab);
+			EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile(r_soundPrefab);
 			if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			{
 					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);

@@ -65,6 +65,9 @@ namespace PE
 	class GameStateController_v2_0 : public Script
 	{
 	public:
+		/*!***********************************************************************************
+		 \brief Default constructor registers ui functions.
+		*************************************************************************************/
 		GameStateController_v2_0();
 		/*!***********************************************************************************
 		 \brief Initialize the test script for an entity (RTTR)
@@ -424,7 +427,7 @@ namespace PE
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
-		int CurrentTurn{1};
+		int currentTurn{1};
 
 	private:
 		//Script Variables

@@ -72,6 +72,8 @@ namespace PE
 			if (it == m_scriptData.end()) { return; }
 
 			// Initialize some variables
+			it->second.isAlive = true;
+			it->second.hasChangedToDeathState = false;
 			it->second.ratHealth = it->second.ratMaxHealth;
 			it->second.timeBeforeChangingState = 0.f;
 
@@ -81,6 +83,9 @@ namespace PE
 			// Create a detection radius and configure
 			it->second.detectionRadiusId = CreateDetectionRadius(it->second);
 			CreateRatPathTelegraph(it->second);
+
+			// Create the detection telegraph
+			CreateRatDetectionTelegraph(it->second);
 
 			// Create the corresponding attack data object
 			InstantiateRatAttack(it->second);
@@ -102,14 +107,23 @@ namespace PE
 					previousGameState = gameStateController->currentState;
 					return;
 			}
-
+			
+			// Update the rat state
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
+			// Change back to the animation that the rat should have after the hurt animation
 			if (GetIsPlayingHurtAnim(id) && GetHasAnimEnded(id))
 			{
 					PlayAnimation(id, it->second.cachedRatAnimation);
 					it->second.cachedRatAnimation = EnumRatAnimations::RAT_ANIM_COUNT;
+			}
+
+			// Disable the detection icon if the animation is done
+			if (EntityManager::GetInstance().Has<AnimationComponent>(it->second.detectionIcon) &&
+				EntityManager::GetInstance().Get<AnimationComponent>(it->second.detectionIcon).HasAnimationEnded())
+			{
+					DisableDetectionTelegraphs(id);
 			}
 
 			// If we just changed to the execution state
@@ -126,13 +140,14 @@ namespace PE
 					it->second.totalTimeCollidingIntoWall = 0.f;
 			}
 
-			if (CheckShouldStateChange(id, deltaTime))
-			{
-					ChangeRatState(id);
-			}
-
 			previousGameState = gameStateController->currentState;
 			it->second.hasRatStateChanged = false;
+
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+					if (it->second.isAlive || !(it->second.hasChangedToDeathState))
+						ChangeRatState(id);
+			}
 		}
 
 
@@ -172,6 +187,7 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
+					it->second.DeleteAttackData();
 					m_scriptData.erase(id);
 			}
 		}
@@ -231,6 +247,23 @@ namespace PE
 				r_transform.relOrientation = orientation;
 			}
 		}
+
+
+		void RatScript_v2_0::UpdateEntityFacingdirection(EntityID const transformId, vec2 const& r_direction)
+		{
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.width = (GetIsFacingRight(r_direction) ? std::fabsf(r_transform.width) : (-1.f) * std::fabsf(r_transform.width));
+			}
+		}
+
+
+		bool RatScript_v2_0::GetIsFacingRight(vec2 const& r_direction)
+		{
+				return (r_direction.Dot(vec2{ 1.f, 0.f }) >= 0.f);
+		}
+
 
 		bool RatScript_v2_0::GetIsPlayingHurtAnim(EntityID const id)
 		{
@@ -472,7 +505,7 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::EnableTelegraphs(EntityID id, vec2 const& targetPosition)
+		void RatScript_v2_0::EnableMovementTelegraphs(EntityID id, vec2 const& targetPosition)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
@@ -484,10 +517,13 @@ namespace PE
 				RotateEntityRelative(it->second.pivotEntityID, orientation);
 				ToggleEntity(it->second.pivotEntityID, true); // enable the telegraph parent
 				ToggleEntity(it->second.telegraphArrowEntityID, true); // enable the telegraph
+
+				// Have the rat face where it's walking
+				UpdateEntityFacingdirection(it->second.myID, it->second.directionFromRatToPlayerCat);
 		}
 
 
-		void RatScript_v2_0::DisableTelegraphs(EntityID id)
+		void RatScript_v2_0::DisableMovementTelegraphs(EntityID id)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
@@ -496,6 +532,33 @@ namespace PE
 
 				// Disable attack objects
 				if (it->second.p_attackData) { it->second.p_attackData->DisableAttackObjects(); }
+		}
+
+
+		void RatScript_v2_0::EnableDetectionTelegraphs(EntityID id, EnumRatIconAnimations ratIconType)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				ToggleEntity(it->second.detectionIcon, true); // enable the telegraph
+
+				// Play the detection icon animation
+				if (EntityManager::GetInstance().Has<AnimationComponent>(it->second.detectionIcon))
+				{
+						AnimationComponent& r_animationComponent{ EntityManager::GetInstance().Get<AnimationComponent>(it->second.detectionIcon) };
+						r_animationComponent.SetCurrentAnimationID(it->second.iconAnimationStates[static_cast<unsigned>(ratIconType)]);
+						r_animationComponent.ResetAnimation();
+						r_animationComponent.PlayAnimation();
+				}
+		}
+
+
+		void RatScript_v2_0::DisableDetectionTelegraphs(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				ToggleEntity(it->second.detectionIcon, false); // disable the telegraph
 		}
 		
 
@@ -508,6 +571,7 @@ namespace PE
 				ToggleEntity(it->second.detectionRadiusId, false);
 				ToggleEntity(it->second.pivotEntityID, false);
 				ToggleEntity(it->second.telegraphArrowEntityID, false);
+				ToggleEntity(it->second.detectionIcon, false);
 
 				// Disable attack objects
 				if (it->second.p_attackData) { it->second.p_attackData->DisableAttackObjects(); }
@@ -516,13 +580,14 @@ namespace PE
 
 		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
 		{
-#ifdef DEBUG_PRINT
-			//std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << p_nextState->GetName() << ", " << stateChangeDelay << ")\n";
-#endif // DEBUG_PRINT
 
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
-			else if (m_scriptData[id].delaySet) { return; }
+			else if (it->second.delaySet) { return; }
+
+#ifdef DEBUG_PRINT
+			std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << (p_nextState ? p_nextState->GetName() : "nullptr") << ", " << stateChangeDelay << "): [START] current queued state before change is" << (it->second.GetQueuedState() ? it->second.GetQueuedState()->GetName() : "nullptr") << "\n";
+#endif // DEBUG_PRINT
 
 			it->second.shouldChangeState = true;
 			it->second.timeBeforeChangingState = stateChangeDelay;
@@ -563,13 +628,20 @@ namespace PE
 
 		void RatScript_v2_0::ChangeStateToHunt(EntityID const id, EntityID const targetId, float const stateChangeDelay)
 		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+				else if (!(it->second.isAlive)) { return; }
 				TriggerStateChange(id, new RatHunt_v2_0{ targetId }, stateChangeDelay);
 		}
 
 
 		void RatScript_v2_0::ChangeStateToReturn(EntityID const id, float const stateChangeDelay)
 		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+				else if (!(it->second.isAlive)) { return; }
 				TriggerStateChange(id, new RatReturn_v2_0, stateChangeDelay);
+				EnableDetectionTelegraphs(id, EnumRatIconAnimations::CONFUSED);
 		}
 
 
@@ -577,6 +649,7 @@ namespace PE
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
+				else if (!(it->second.isAlive)) { return; }
 
 				// Check the type of idle behaviour based on the type of rat
 				RatType idleBehaviour{ RatType::IDLE };
@@ -597,12 +670,18 @@ namespace PE
 
 		void RatScript_v2_0::ChangeStateToMovement(EntityID const id, float const stateChangeDelay)
 		{
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
+			else if (!(it->second.isAlive)) { return; }
 			TriggerStateChange(id, new RatMovement_v2_0, stateChangeDelay);
 		}
 
 
 		void RatScript_v2_0::ChangeStateToAttack(EntityID const id, float const stateChangeDelay)
 		{
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
+			else if (!(it->second.isAlive)) { return; }
 			TriggerStateChange(id, new RatAttack_v2_0, stateChangeDelay);
 		}
 
@@ -612,11 +691,22 @@ namespace PE
 			TriggerStateChange(id, new RatDeathState_v2_0, stateChangeDelay);
 		}
 
+
 		bool RatScript_v2_0::GetExecutionPhaseTimeout(EntityID const id)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return false; }
 				return (it->second.totalTimeCollidingIntoWall >= it->second.maxObstacleCollisionTime);
+		}
+
+
+		bool RatScript_v2_0::GetIsAggressive(EntityID const id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return false; }
+				return (it->second.p_stateManager && // Null check
+						(it->second.p_stateManager->GetStateName() == GETSCRIPTNAME(RatMovement_v2_0) ||
+						it->second.p_stateManager->GetStateName() == GETSCRIPTNAME(RatAttack_v2_0)));
 		}
 
 		// ------------ CAT DETECTION ------------ //
@@ -675,10 +765,16 @@ namespace PE
 			// Check if the cat is alive
 			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
 
-			if (it->second.catsInDetectionRadius.find(catID) == it->second.catsInDetectionRadius.end())
+			if (it->second.catsInDetectionRadius.find(catID) == it->second.catsInDetectionRadius.end()
+					&& !GetIsAggressive(id)) // Only play detection FX if the cat is newly discovered
 			{
+				// Play SFX and VFX
 				PlayDetectionAudio(id);
+				EnableDetectionTelegraphs(id, EnumRatIconAnimations::DETECT);
 			}
+
+			// Orient the rat
+			UpdateEntityFacingdirection(id, (GetEntityPosition(catID) - GetEntityPosition(id)));
 
 			// Store the cat in the container
 			it->second.catsInDetectionRadius.insert(catID);
@@ -1039,6 +1135,8 @@ namespace PE
 				// Prevent this function from getting called more than once
 				if (!(it->second.isAlive)) { return; }
 				it->second.isAlive = false;  // Marking the rat as not alive
+				
+				ClearCollisionContainers(id); // Clear collision containers
 
 				ChangeStateToDeath(it->second.myID, 0.f); 
 				// @TODO Check if this should take the current rat animation duration into account?
@@ -1078,13 +1176,13 @@ namespace PE
 				it->second.delaySet = false;
 				it->second.SetQueuedState(nullptr, true);
 				it->second.hasRatStateChanged = true;
-				DisableTelegraphs(it->second.myID);
+				DisableMovementTelegraphs(it->second.myID);
+				it->second.hasChangedToDeathState = !(it->second.isAlive);
 		}
 
 		EntityID RatScript_v2_0::CreateDetectionRadius(RatScript_v2_0_Data const& r_data)
 		{
-			SerializationManager serializationManager;
-			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius.prefab") };
+			EntityID radiusId{ ResourceManager::GetInstance().LoadPrefabFromFile("RatDetectionRadius.prefab") };
 			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
 			PositionEntity(radiusId, GetEntityPosition(r_data.myID));
 			PositionEntityRelative(radiusId, vec2{ 0.f, 0.f });
@@ -1124,25 +1222,52 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::CreateRatPathTelegraph(RatScript_v2_0_Data& r_data)
+		void RatScript_v2_0::CreateRatTelegraphPivot(RatScript_v2_0_Data& r_data)
 		{
-				SerializationManager serializationManager;
+				// Check if the pivot entity alr exists
+				if (r_data.pivotEntityID != 0UL && r_data.pivotEntityID != MAXSIZE_T) { return; }
+
 				r_data.pivotEntityID = EntityFactory::GetInstance().CreateEntity<Transform>();
 				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.pivotEntityID);
 				PositionEntityRelative(r_data.pivotEntityID, vec2{ 0.f, 0.f });
+		}
+
+
+		void RatScript_v2_0::CreateRatPathTelegraph(RatScript_v2_0_Data& r_data)
+		{
+				// Check if the path telegraph entity alr exists
+				if (r_data.telegraphArrowEntityID != 0UL && r_data.telegraphArrowEntityID != MAXSIZE_T) { return; }
+				
+				// Create telegraph pivot point if it doesn't exist yet
+				CreateRatTelegraphPivot(r_data);
 
 				vec2 ratScale{ GetEntityScale(r_data.myID) };
-				r_data.telegraphArrowEntityID = serializationManager.LoadFromFile("PawPrints.prefab");
+				r_data.telegraphArrowEntityID = ResourceManager::GetInstance().LoadPrefabFromFile("PawPrints.prefab");
 				ToggleEntity(r_data.telegraphArrowEntityID, false); // set to inactive, it will only show during planning phase
 				ScaleEntity(r_data.telegraphArrowEntityID, ratScale.x * 0.5f, ratScale.y * 0.5f);
 				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent
 				
 				PositionEntityRelative(r_data.telegraphArrowEntityID, vec2{ ratScale.x * 0.7f, 0.f });
 		}
+		
+
+		void RatScript_v2_0::CreateRatDetectionTelegraph(RatScript_v2_0_Data& r_data)
+		{
+				if (r_data.detectionIcon != 0UL && r_data.detectionIcon != MAXSIZE_T) { return; }
+
+				r_data.detectionIcon = ResourceManager::GetInstance().LoadPrefabFromFile("DetectionIcon.prefab");
+				ToggleEntity(r_data.detectionIcon, false); // set to inactive, it will only show when a cat is detected
+
+				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.detectionIcon); // attach child to parent				
+				PositionEntityRelative(r_data.detectionIcon, r_data.detectionIconOffset);
+		}
 
 
 		void RatScript_v2_0::InstantiateRatAttack(RatScript_v2_0_Data& r_data)
 		{
+				// Delete any existing attack data
+				r_data.DeleteAttackData();
+
 				switch (r_data.ratType) 
 				{
 				case EnumRatType::SNIPER:

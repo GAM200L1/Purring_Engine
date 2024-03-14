@@ -248,30 +248,29 @@ namespace PE
 		{
 			if (!m_inNoGoArea && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
 			{
-				SerializationManager sm;
 				EntityID NewCatID{};
 				auto test = m_catController->GetDeployableCats(m_catController->mainInstance);
 					switch (test[m_catPlaced])
 					{
 						case EnumCatType::MAINCAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("Meowsalot.prefab"));
+							NewCatID = ResourceManager::GetInstance().LoadPrefabFromFile(("Meowsalot.prefab"));
 							break;
 						}
 						case EnumCatType::GREYCAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("Grey Cat.prefab"));
+							NewCatID = ResourceManager::GetInstance().LoadPrefabFromFile(("Grey Cat.prefab"));
 							break;
 						}
 						case EnumCatType::ORANGECAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("OrangeCat.prefab"));
+							NewCatID = ResourceManager::GetInstance().LoadPrefabFromFile(("OrangeCat.prefab"));
 							break;
 						}
 						//case EnumCatType::FLUFFYCAT:
 						//{
 						//	//to be replaced
-						//	NewCatID = sm.LoadFromFile(("DeploymentTest.prefab"));
+						//	NewCatID = ResourceManager::GetInstance().LoadPrefabFromFile(("DeploymentTest.prefab"));
 						//	break;
 						//}
 					}

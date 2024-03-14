@@ -112,7 +112,7 @@ namespace PE
 
          \return A string view representing the state's name.
         *************************************************************************************/
-        virtual std::string_view GetName() { return "RatIdle_v2_0"; }
+        virtual std::string_view GetName() { return GETSCRIPTNAME(RatIdle_v2_0); }
 
 
         // --- COLLISION DETECTION --- // 
