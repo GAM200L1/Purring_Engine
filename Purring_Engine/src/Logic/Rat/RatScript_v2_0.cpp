@@ -1138,7 +1138,6 @@ namespace PE
 				ClearCollisionContainers(id); // Clear collision containers
 
 				ChangeStateToDeath(it->second.myID, 0.f); 
-				// @TODO Check if this should take the current rat animation duration into account?
 		}
 
 
@@ -1212,7 +1211,7 @@ namespace PE
 					Collider& detectionCollider{ EntityManager::GetInstance().Get<Collider>(radiusId) };
 					detectionCollider.colliderVariant = CircleCollider();
 					detectionCollider.isTrigger = true;
-					detectionCollider.collisionLayerIndex = detectionColliderLayer; // @TODO To configure the collision matrix of the game scene
+					detectionCollider.collisionLayerIndex = detectionColliderLayer; 
 
 					CircleCollider& circleCollider{ std::get<CircleCollider>(detectionCollider.colliderVariant) };
 					circleCollider.scaleOffset = r_data.detectionRadius;
