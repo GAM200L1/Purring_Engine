@@ -415,6 +415,11 @@ namespace PE
 		 \brief			Resume the BGM
 		*************************************************************************************/
 		void ResumeBGM();
+		/*!***********************************************************************************
+		 \brief			Play BGM Ambience and BGM and its respective layers based on stage.
+		*************************************************************************************/
+		void PlayBackgroundMusicForStage();
+
 
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;

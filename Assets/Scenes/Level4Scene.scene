@@ -1493,11 +1493,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2999999523162842,
+                        "Size": 1.5499999523162842,
                         "Text": "End Planning",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2101,7 +2101,7 @@
                         },
                         "relativeposition": {
                             "x": -500.0,
-                            "y": -320.0
+                            "y": -310.0
                         },
                         "relorientation": 0.0,
                         "width": 624.0
@@ -2213,11 +2213,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
-                        "HAlignment": 4,
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.5,
+                        "Size": 1.399999976158142,
                         "Text": "Planning",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2226,12 +2226,12 @@
                         "height": 103.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 779.001220703125,
-                            "y": 476.4999084472656
+                            "x": 861.0,
+                            "y": 468.0
                         },
                         "relativeposition": {
-                            "x": 779.001220703125,
-                            "y": 476.4999084472656
+                            "x": 861.0,
+                            "y": 468.0
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -2261,11 +2261,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
-                        "HAlignment": 4,
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2999999523162842,
+                        "Size": 1.5,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2274,12 +2274,12 @@
                         "height": 103.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 533.9995727539063,
-                            "y": 473.4997863769531
+                            "x": 639.0,
+                            "y": 468.0
                         },
                         "relativeposition": {
-                            "x": 533.9995727539063,
-                            "y": 473.4997863769531
+                            "x": 639.0,
+                            "y": 468.0
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -2292,8 +2292,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3307,8 +3307,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4354,8 +4354,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4433,8 +4433,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4524,8 +4524,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5031,8 +5031,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5145,11 +5145,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 432.0
+                            "y": 457.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 432.0
+                            "y": 457.0
                         },
                         "relorientation": 0.0,
                         "width": 750.0
@@ -5186,7 +5186,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -37.5,
-                            "y": 432.0
+                            "y": 457.0
                         },
                         "relativeposition": {
                             "x": -37.5,
@@ -5227,11 +5227,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 432.0
+                            "y": 457.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 432.0
+                            "y": 457.0
                         },
                         "relorientation": 0.0,
                         "width": 760.0
@@ -5268,11 +5268,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 432.0
+                            "y": 457.00006103515625
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 432.0
+                            "y": 457.00006103515625
                         },
                         "relorientation": 0.0,
                         "width": 760.0
@@ -5308,12 +5308,12 @@
                         "height": 146.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 432.0
+                            "x": -4.800004959106445,
+                            "y": 463.39996337890625
                         },
                         "relativeposition": {
-                            "x": 0.0,
-                            "y": 432.0
+                            "x": -4.800004959106445,
+                            "y": 463.39996337890625
                         },
                         "relorientation": 0.0,
                         "width": 818.0
@@ -5515,9 +5515,9 @@
                     "Renderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
+                            "b": 0.2862745225429535,
+                            "g": 0.3333333432674408,
+                            "r": 0.8156862854957581
                         },
                         "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Slam_100x140.png"
                     },
@@ -5525,12 +5525,12 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 581.9998779296875,
-                            "y": 122.49993896484375
+                            "x": 541.999755859375,
+                            "y": 42.499908447265625
                         },
                         "relativeposition": {
-                            "x": 116.9998779296875,
-                            "y": 95.49993896484375
+                            "x": 76.999755859375,
+                            "y": 15.499908447265625
                         },
                         "relorientation": 0.0,
                         "width": 100.0

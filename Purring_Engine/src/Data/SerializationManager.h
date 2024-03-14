@@ -139,6 +139,11 @@ public:
 
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
+
+     \param[in] filename  The path to the file to load from.
+     \param[in] fp  Whether to use the file path as the entity name.
+
+     \return ID of the entity loaded.
     *************************************************************************************/
     size_t LoadFromFile(std::string const& filename, bool fp = false);
 

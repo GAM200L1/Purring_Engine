@@ -537,10 +537,10 @@ namespace PE
 			// updates only active entities animation
 			for (EntityID const& id : InternalView(layer))
 			{
+				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
 				// update animation and get current frame
 				p_currentFrame = UpdateAnimation(id, deltaTime);
-
-				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
 
 				// update entity based on frame data
 				// in the future probably check for bools in animation component, then update data accordingly
@@ -588,6 +588,7 @@ namespace PE
 
 	AnimationFrame AnimationManager::UpdateAnimation(EntityID id, float deltaTime)
 	{
+
 		AnimationComponent& animationComponent = EntityManager::GetInstance().Get<AnimationComponent>(id);
 
 		// store animations in resource manager instead
@@ -658,6 +659,36 @@ namespace PE
 			for (EntityID const& id : InternalView(layer, true))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(id).StopAnimation();
+			}
+		}
+	}
+
+	void AnimationManager::SetEntityFirstFrame(EntityID id) const
+	{
+		// update animation and get current frame
+
+		// update entity based on frame data
+		// in the future probably check for bools in animation component, then update data accordingly
+		// check if theres animation
+		if(EntityManager::GetInstance().Has<AnimationComponent>(id))
+		if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+		{
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
+			{
+				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
+				AnimationFrame p_firstFrame = p_animation->GetCurrentAnimationFrame(0);
+				// spritesheet animation
+				if (p_animation->IsSpriteSheet())
+				{
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_firstFrame.m_minUV);
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_firstFrame.m_maxUV);
+				}
+				else // texture key animation
+				{
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_firstFrame.m_textureKey);
+				}
 			}
 		}
 	}

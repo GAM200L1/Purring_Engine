@@ -472,6 +472,7 @@ void SerializationManager::SerializeAnimation(const std::filesystem::path& filep
     }
 }
 
+// deprecated
 size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
 {
     std::filesystem::path filepath;
@@ -606,6 +607,8 @@ size_t SerializationManager::CreateEntityFromPrefab(std::string const& r_filePat
         std::cerr << "Could not open the file for reading: " << r_filePath << std::endl;
         return MAXSIZE_T;
     }
+
+    return MAXSIZE_T;
 }
 
 #pragma warning (default : 4702)
@@ -813,7 +816,11 @@ bool SerializationManager::LoadAnimationComponent(const size_t& r_id, const nloh
         static_cast<void*>(&comp));
 
     // load resource
-    PE::ResourceManager::GetInstance().AddAnimationKeyToLoad(comp.GetAnimationID());
+    for (auto const& key: comp.GetAnimationList())
+    {
+        PE::ResourceManager::GetInstance().AddAnimationKeyToLoad(key);
+    }
+    //PE::ResourceManager::GetInstance().AddAnimationKeyToLoad(comp.GetAnimationID());
    // PE::ResourceManager::GetInstance().AddTextureKeyToLoad(PE::ResourceManager::GetInstance().GetAnimation(comp.GetAnimationID())->GetSpriteSheetKey());
     return true;
 }

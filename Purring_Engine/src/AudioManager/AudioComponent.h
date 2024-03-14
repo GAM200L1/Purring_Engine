@@ -107,7 +107,7 @@ namespace PE
         \brief     Sets the audio to loop or not.
         \param     loop True if the audio should loop, false otherwise.
         *************************************************************************************/
-        void SetLoop(bool loop) { m_loop = loop; }
+        void SetLoop(bool loop);
 
         /*!***********************************************************************************
         \brief     Gets whether the audio is looping or not.
@@ -156,7 +156,6 @@ namespace PE
         \param     duration Fade-out time in seconds.
         *************************************************************************************/
         void StartIndividualFadeOut(float duration);
-
 
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.

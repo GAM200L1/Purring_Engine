@@ -607,6 +607,13 @@ namespace PE
 		*************************************************************************************/
 		void StopAllAnimations() const;
 
+		/*!***********************************************************************************
+		 \brief Set the renderer data of the entity with the first frame of the animation.
+
+		 \param[in] id Identifier for the entity to set the first frame to.
+		*************************************************************************************/
+		void SetEntityFirstFrame(EntityID id) const;
+
 		// ----- Private Variables ----- //
 	private:
 		//std::map<std::string, Animation> m_animations;
