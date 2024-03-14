@@ -1203,14 +1203,15 @@ namespace PE {
 									}
 									else if (vp.get_type().get_name() == "unsignedint")
 									{
-										int tmp = vp.get_value<int>();
+										int tmp = static_cast<unsigned>(vp.get_value<unsigned>());
+										int prev = tmp;
 										std::string str = "##" + prop.get_name().to_string();
 
 										ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::InputInt(str.c_str(), &tmp, 0, 10);
 
-										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
-										if (prop.get_name().to_string() == "Max Particles")
+										if (prop.get_name().to_string() == "Max particles" && tmp != prev)
 										{
+											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), static_cast<unsigned>(tmp));
 											EntityManager::GetInstance().Get<ParticleEmitter>(entityID).CreateAllParticles();
 										}
 									}

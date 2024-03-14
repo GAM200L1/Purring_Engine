@@ -79,6 +79,8 @@ namespace PE
 	void ParticleEmitter::Update(float deltaTime)
 	{
 		// if at any point particle system becomes inactive, reset the particles
+		if (pause)
+			return;
 		static bool particlesResetted{ false };
 		if (!initPos)
 		{

@@ -43,9 +43,10 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
+                            "../Assets/Animation/AnimParticleTest.anim",
                             "../Assets/Animation/AnimationGrey_Death.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Death.anim"
+                        "CurrentAnimationID": "../Assets/Animation/AnimParticleTest.anim"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -54,13 +55,13 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject",
+                        "name": "ParticleAnimationTest",
                         "parent": null,
                         "sceneID": 1
                     },
                     "ParticleEmitter": {
                         "Color": {
-                            "w": 0.5,
+                            "w": 1.0,
                             "x": 1.0,
                             "y": 1.0,
                             "z": 1.0
@@ -101,7 +102,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Death.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Detect.png"
                     },
                     "Transform": {
                         "height": 100.0,

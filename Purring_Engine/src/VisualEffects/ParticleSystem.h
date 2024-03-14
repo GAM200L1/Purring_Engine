@@ -152,6 +152,8 @@ namespace PE
 		vec2 minMaxSpeed;
 		vec2 scaleChangeSpeed{ -10.f, -10.f };
 		std::map<std::string, bool> toggles;
+
+		bool pause{false};
 	private:
 		/*!***********************************************************************************
 		 \brief Generates a position for a particle (can be random according to settings in 

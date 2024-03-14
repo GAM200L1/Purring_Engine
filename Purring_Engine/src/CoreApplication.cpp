@@ -438,6 +438,7 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::ParticleEmitter>(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string())
         .property("Is Active", &PE::ParticleEmitter::isActive)
+        .property("Paused", &PE::ParticleEmitter::pause)
         .property("Type", &PE::ParticleEmitter::particleType)
         .property("Mode", &PE::ParticleEmitter::emitterType)
         .property("Emittor Length", &PE::ParticleEmitter::emittorLength)
