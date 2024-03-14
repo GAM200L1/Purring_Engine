@@ -56,38 +56,33 @@ namespace PE
 
         /*!***********************************************************************************
         \brief     Plays an audio sound associated with the given identifier.
-        \param     r_id The identifier of the audio sound.
+        \param     type The type of the audio sound.
         *************************************************************************************/
         void PlayAudioSound(AudioType type);
 
         /*!***********************************************************************************
         \brief     Checks if the audio sound with the specified identifier is currently playing.
-        \param     r_id The identifier of the audio sound.
         *************************************************************************************/
         bool IsPlaying() const;
 
         /*!***********************************************************************************
         \brief     Sets the volume for the audio sound with the specified identifier.
-        \param     r_id The identifier of the audio sound.
         \param     volume The volume level to set.
         *************************************************************************************/
         void SetVolume(float volume);
 
         /*!***********************************************************************************
         \brief     Pauses the audio sound with the given identifier.
-        \param     r_id The identifier of the audio sound.
         *************************************************************************************/
         void PauseSound();
 
         /*!***********************************************************************************
         \brief     Resumes the paused audio sound with the specified identifier.
-        \param     r_id The identifier of the audio sound.
         *************************************************************************************/
         void ResumeSound();
 
         /*!***********************************************************************************
         \brief     Stops the audio sound associated with the given identifier.
-        \param     r_id The identifier of the audio sound.
         *************************************************************************************/
         void StopSound();
 
@@ -107,7 +102,7 @@ namespace PE
         \brief     Sets the audio to loop or not.
         \param     loop True if the audio should loop, false otherwise.
         *************************************************************************************/
-        void SetLoop(bool loop) { m_loop = loop; }
+        void SetLoop(bool loop);
 
         /*!***********************************************************************************
         \brief     Gets whether the audio is looping or not.
@@ -156,7 +151,6 @@ namespace PE
         \param     duration Fade-out time in seconds.
         *************************************************************************************/
         void StartIndividualFadeOut(float duration);
-
 
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
