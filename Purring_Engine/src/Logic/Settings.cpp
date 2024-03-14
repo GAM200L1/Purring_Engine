@@ -9,7 +9,7 @@
  \par      email:      jarranyanzhi.tan@digipen.edu
 
 
- \brief  This file contains the definitions of testScript
+ \brief  This file contains the definitions of functions to set, load and save game settings.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
 
