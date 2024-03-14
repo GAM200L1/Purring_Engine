@@ -87,6 +87,7 @@ namespace PE
 		vec4 endColor;
 		vec2 minMaxSpeed;
 		vec2 scaleChangeSpeed{ -10.f, -10.f };
+		std::map<std::string, bool> toggles;
 	private:
 		// Random value generators
 		vec2 GeneratePosition(float radius);
@@ -107,6 +108,8 @@ namespace PE
 
 		// random seed
 		std::random_device seed;
+
+		
 
 		// Owner's ID
 		size_t m_id;

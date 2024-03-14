@@ -459,7 +459,7 @@ RTTR_REGISTRATION
         .property("Delta Scale", &PE::ParticleEmitter::scaleChangeSpeed)
         .property("Lifetime", &PE::ParticleEmitter::startLifetime)
         .property("Color", &PE::ParticleEmitter::startColor)
-
+        .property("Toggles", &PE::ParticleEmitter::toggles)
         //.property("", &PE::ParticleEmitter::)
         ;
 }

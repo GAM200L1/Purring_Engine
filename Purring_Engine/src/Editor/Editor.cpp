@@ -1215,10 +1215,33 @@ namespace PE {
 										if (prop.get_name().to_string() == "Emission Arc" || prop.get_name().to_string() == "Emission Direction")
 										{
 											float tmp = vp.get_value<float>();
+											bool enabled = true;
+											if (EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.count(prop.get_name().to_string()))
+											{
+												enabled = EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.at(prop.get_name().to_string());
+											}
+											if (!enabled)
+											{
+												tmp = 0.f;
+												ImGui::BeginDisabled();
+											}
 											std::string str = "##" + prop.get_name().to_string();
 											tmp = ConvertRadToDeg(tmp);
 											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::DragFloat(str.c_str(), &tmp);
+											tmp = std::clamp(tmp, 0.f, 360.f);
 											tmp = ConvertDegToRad(tmp);
+
+											if (!enabled)
+											{
+												ImGui::EndDisabled();
+											}
+
+											if (EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.count(prop.get_name().to_string()))
+											{
+												ImGui::SameLine();  ImGui::Text("Enabled: "); ImGui::SameLine();  ImGui::Checkbox((str + "toggle").c_str(), &enabled);
+												EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.at(prop.get_name().to_string()) = enabled;
+											}
+
 											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
 										}
 										else
@@ -1240,7 +1263,6 @@ namespace PE {
 										{
 											y = (y >= x) ? y : x;
 										}
-										
 										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), vec2(x, y));
 									}
 									else if (vp.get_type().get_name() == "structPE::vec4")
@@ -1271,10 +1293,6 @@ namespace PE {
 											}
 											ImGui::EndCombo();
 										}
-									}
-									else
-									{
-										std::cout << vp.get_type().get_name() << std::endl;
 									}
 								}
 							}

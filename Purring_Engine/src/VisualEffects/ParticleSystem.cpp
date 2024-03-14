@@ -35,6 +35,9 @@ namespace PE
 		orientationChangeSpeed = (endRotation - startRotation) / emissionDuration;
 		//scaleChangeSpeed = (endScale - startScale) / emissionDuration;
 		colorChangeSpeed = (endColor - startColor) / emissionDuration;
+
+		toggles["Emission Arc"] = true;
+
 	}
 
 	ParticleEmitter::ParticleEmitter(ParticleEmitter const& r_cpy) :
@@ -50,6 +53,7 @@ namespace PE
 			orientationChangeSpeed = (endRotation - startRotation) / emissionDuration;
 			scaleChangeSpeed = (endScale - startScale) / emissionDuration;
 			colorChangeSpeed = (endColor - startColor) / emissionDuration;
+			toggles = r_cpy.toggles;
 		}
 
 	ParticleEmitter& ParticleEmitter::operator=(ParticleEmitter const& r_cpy)
@@ -211,6 +215,14 @@ namespace PE
 				{
 					ret[prop.get_name().to_string().c_str()] = var.get_value<EnumParticleType>();
 				}
+				else if (var.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,bool,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,bool>> >")
+				{
+					ret[prop.get_name().to_string().c_str()] = var.get_value<std::map<std::string, bool>>();
+				}
+				else
+				{
+					std::cout << prop.get_type().get_name().to_string() << std::endl;
+				}
 			}
 		}
 		return ret;
@@ -251,8 +263,19 @@ namespace PE
 		float trueDir{};
 		if (EntityManager::GetInstance().Has<Transform>(m_id))
 			trueDir = emissionDirection - EntityManager::GetInstance().Get<Transform>(m_id).orientation;
-		std::uniform_real_distribution<float> distributor(trueDir - emissionArc * 0.5f, trueDir + emissionArc * 0.5f);
-		float gen = distributor(generator);
+
+		float gen{};
+		if (!toggles.count("Emission Arc") || toggles.at("Emission Arc"))
+		{
+			std::uniform_real_distribution<float> distributor(trueDir - emissionArc * 0.5f, trueDir + emissionArc * 0.5f);
+			gen = distributor(generator);
+		}
+		else
+		{
+			std::uniform_real_distribution<float> distributor(trueDir * 0.5f, trueDir * 0.5f);
+			gen = distributor(generator);
+		}
+		
 		vec2 dir{ sinf(gen), cosf(gen) };
 		dir.Normalize();
 

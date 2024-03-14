@@ -1050,6 +1050,11 @@ bool SerializationManager::LoadParticleEmitter(const size_t& r_id, const nlohman
                     if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
                         prop.set_value(inst, r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()].get<PE::EnumParticleType>());
                 }
+                else if (var.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,bool,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,bool>> >")
+                { 
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                        prop.set_value(inst, r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()].get<std::map<std::string, bool>>());
+                }
             }
         }
         PE::EntityManager::GetInstance().Get<PE::ParticleEmitter>(r_id).SetParent(r_id);
