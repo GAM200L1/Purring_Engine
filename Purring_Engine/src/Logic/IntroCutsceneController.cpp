@@ -113,6 +113,7 @@ namespace PE
 		m_startCutscene = true;
 		m_transitionElapsedTime = 0;
 		m_isTransitioning = false;
+		m_isFadingOut = false;
 	}
 
 	void IntroCutsceneController::OnAttach(EntityID id)
