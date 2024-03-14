@@ -800,6 +800,13 @@ namespace PE
 
 	void GameStateController_v2_0::NextState(EntityID)
 	{
+		if (m_currentLevel == 3)
+		{
+			BossRatScriptData* p_brsd = GETSCRIPTDATA(BossRatScript, GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss);
+			if (p_brsd->currenthealth <= 0)
+				return;
+		}
+
 		if (currentState == GameStates_v2_0::PLANNING && !m_nextTurnOnce)
 		{
 			SetGameState(GameStates_v2_0::EXECUTE);
