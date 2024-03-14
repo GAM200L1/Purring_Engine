@@ -62,7 +62,7 @@ namespace PE
 
 		// Play BGM
 		SerializationManager serializationManager;
-		bgm = serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+		bgm = serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm)) 
 		{
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
@@ -89,7 +89,7 @@ namespace PE
 				m_ScriptData[id].timeSinceExitedState = 0.f;
 
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
 			}
 
 			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();

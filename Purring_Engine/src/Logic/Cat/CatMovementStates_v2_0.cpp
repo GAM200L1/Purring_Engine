@@ -32,6 +32,7 @@
 #include "Graphics/CameraManager.h"
 #include "Animation/Animation.h"
 #include "Logic/Script.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 
 namespace PE
@@ -44,13 +45,13 @@ namespace PE
 		// Subscribe to events
 		m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, CatMovement_v2_0PLAN::OnMouseClick, this);
 		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
-		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovement_v2_0PLAN::OnPathCollision, this);
+		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
+
+		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
 
 		if (p_data->catType == EnumCatType::MAINCAT)
 		{
-			FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, id);
 			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
-			p_data->followCatPositions = follow_data->nextPosition;
 		}
 		
 		ResetDrawnPath();
@@ -93,7 +94,7 @@ namespace PE
 		// If the mouse is being pressed
 		if (m_mouseClick && m_pathBeingDrawn)
 		{
-			if (p_data->catCurrentEnergy && !m_invalidPath) // Check if the player has sufficient energy
+			if (p_data->catCurrentEnergy) // Check if the player has sufficient energy
 			{
 				// Get the mouse position
 				vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
@@ -119,8 +120,6 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::CleanUp()
 	{
-		// Return if this cat is not the main cat
-		//if (!p_data->isMainCat) { return; }
 		REMOVE_MOUSE_EVENT_LISTENER(m_clickEventListener);
 		REMOVE_MOUSE_EVENT_LISTENER(m_releaseEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
@@ -129,6 +128,10 @@ namespace PE
 	void CatMovement_v2_0PLAN::Exit(EntityID id)
 	{
 		EndPathDrawing(id);
+		// set follow cats to their previous positions
+		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+
+		p_data = nullptr;
 	}
 
 
@@ -196,7 +199,7 @@ namespace PE
 		// Invalidate the path if the position is out of bounds of the window
 		if (!coordinatesInWindow) {
 			m_invalidPath = true;
-			SetPathColor(1.f, 0.f, 0.f, 1.f);
+			SetPathColor(m_invalidPathColor);
 			return false;
 		}
 
@@ -205,12 +208,7 @@ namespace PE
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
 		CatHelperFunctions::ToggleEntity(nodeId, true);
 		
-		// Plays path placing audio
-		SerializationManager m_serializationManager;
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Movement Planning SFX.prefab");
-		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-		EntityManager::GetInstance().RemoveEntity(sound);
+		CatScript_v2_0::PlayPathPlacementAudio();
 
 		// Add the position to the path positions list
 		p_data->pathPositions.emplace_back(r_nodePosition);
@@ -233,79 +231,53 @@ namespace PE
 	}
 
 
-	void CatMovement_v2_0PLAN::SetPathColor(float const r, float const g, float const b, float const a)
+	void CatMovement_v2_0PLAN::SetPathColor(vec4 const& r_color)
 	{
 		// Set the color of all the nodes
 		for (EntityID& nodeID : p_data->pathQuads)
 		{
-			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(r, g, b, a);
+			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(r_color.x, r_color.y, r_color.z, r_color.w);
 		}
 	}
 
 	void CatMovement_v2_0PLAN::ResetDrawnPath()
 	{
-		FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, p_data->catID);
-
-		for (auto s : follow_data->followers)
+		if (p_data->catType == EnumCatType::MAINCAT)
 		{
-			auto dat = GETSCRIPTDATA(CatScript_v2_0, s);
-
-			if ((dat->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
-			{
-				CatHelperFunctions::PositionEntity(dat->catID, dat->resetPosition);
-			} // if cat is following cat in the chain )
+			// reset follower cats positions
+			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
 		}
 
+		// reset main cat position
 		CatHelperFunctions::PositionEntity(p_data->catID, p_data->resetPosition);
 	
 		// reset to max energy
 		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
 		m_mouseClickPrevious = false;
 		
-
 		// Clear all the path data
 		if (!p_data->pathPositions.empty())
 		{
 			CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions.front());
-			follow_data->prevPosition = p_data->pathPositions.front();
 		}
 		p_data->pathPositions.clear();
-
-
-
-		//set it to current so that it doesnt update followers
-		//i only update followers if current position does not match the transform position
-		/*follow_data->NextPosition = p_data->followCatPositions;
-		for (int i = 1; i < follow_data->NumberOfFollower; i++)
-		{
-			EntityManager::GetInstance().Get<Transform>(follow_data->FollowingObject[i]).position = p_data->followCatPositions[i];
-		}*/
 
 		// Disable all the path nodes
 		for (EntityID& nodeId : p_data->pathQuads)
 		{
 			CatHelperFunctions::ToggleEntity(nodeId, false);
-			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(); // Reset to white
 		}
 
+		SetPathColor(m_defaultPathColor);
+
 		// Add the player's starting position as a node
-		try
-		{
-			Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(p_data->catID) };
-			p_data->pathPositions.emplace_back(r_transform.position);
-		}
-		catch (...)
-		{
-			p_data->pathPositions.emplace_back(vec2{ 0.f, 0.f });
-			return;
-		}
+		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
 	}
 
 	bool CatMovement_v2_0PLAN::CheckInvalid()
 	{
 		return m_invalidPath;
 	}
-
 
 	void CatMovement_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
@@ -315,8 +287,6 @@ namespace PE
 			MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
 			if (MBPE.button != 1)
 				m_mouseClick = true; // Flag that the mouse has been clicked
-		
-
 		}
 	}
 
@@ -330,22 +300,22 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 	{
-		if (r_CE.GetType() == CollisionEvents::OnTriggerStay)
+		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
-			OnTriggerStayEvent OCEE = dynamic_cast<const OnTriggerStayEvent&>(r_CE);
+			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
 			// Check if the cat is colliding with an obstacle
-			if ((OCEE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OCEE.Entity2))
-				|| (OCEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OCEE.Entity1)))
+			if ((OTEE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity2))
+				|| (OTEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity1)))
 			{
 				// The entity is colliding with is an obstacle
-				SetPathColor(1.f, 0.f, 0.f, 1.f); // Set the color of the path nodes to red
+				SetPathColor(m_invalidPathColor); // Set the color of the path nodes to red
 				m_invalidPath = true;
 
-				SerializationManager m_serializationManager;
-				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Path Denial SFX1.prefab");
-				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-				EntityManager::GetInstance().RemoveEntity(sound);
+				// Play audio
+				std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
+				PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+				
 			}
 		}
 	}
@@ -369,12 +339,11 @@ namespace PE
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		/*if (p_data->catType != EnumCatType::MAINCAT && CatHelperFunctions::IsFirstLevel())
-		{ return; }*/// if cat is following cat in the chain )
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
 		// Check if pause state 
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) { return; } // if cat is following cat in the chain
 
 		// Check if the player is still moving
 		if (!m_doneMoving)
@@ -429,7 +398,8 @@ namespace PE
 
 				if(footstepTimer <= 0)
 				{
-					PlayFootStep();
+					CatScript_v2_0::PlayFootstepAudio();
+					footstepTimer = footstepDelay;
 				}
 
 				// Ensure the cat is facing the direction of their movement
@@ -440,24 +410,8 @@ namespace PE
 		}
 		else
 		{
-			// for cat chain level
-			if (id == m_mainCatID)
-			{
-				//auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-				// triggers state change for cats in the chain to sync animations
-				for (EntityID followersID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
-				{
-					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(followersID);
-					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(followersID, 0.5f);
-				}
-				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
-			}
-			// for other levels where cats move independently
-			else if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id))
-			{
-				// Wait a second before changing state
-				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
-			}
+			// Wait a second before changing state
+			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
 		}
 	}
 
@@ -470,7 +424,8 @@ namespace PE
 	{
 		StopMoving(id);
 		p_data->pathPositions.clear();
-		//EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
+
+		p_data = nullptr;
 	}
 
 	void CatMovement_v2_0EXECUTE::StopMoving(EntityID id)
@@ -480,42 +435,6 @@ namespace PE
 		// Position the player at the end of the path
 		if (p_data->pathPositions.size())
 			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.back());
-	}
-
-	void CatMovement_v2_0EXECUTE::PlayFootStep()
-	{
-		int randNum = (std::rand() % 3) + 1;
-		SerializationManager m_serializationManager;
-
-		switch (randNum)
-		{
-		case 1:
-		{
-			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 1.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		case 2:
-		{
-			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 2.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		case 3:
-		{
-			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 3.prefab");
-			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
-			break;
-		}
-		}
-
-		footstepTimer = footstepDelay;
 	}
 
 

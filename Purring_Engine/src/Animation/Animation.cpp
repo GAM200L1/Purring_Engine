@@ -25,6 +25,7 @@
 #include "Animation.h"
 #include "GameStateManager.h"
 #include "Layers/LayerManager.h"
+#include "Logic/LogicSystem.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -34,11 +35,6 @@ extern Logger engine_logger;
 
 namespace PE
 {
-#ifndef GAMERELEASE
-
-#endif // !GAMERELEASE
-
-
 	Animation::Animation() : m_totalSprites{ 6 }, m_frameRate{ 30 }
 	{
 
@@ -99,44 +95,80 @@ namespace PE
 		}
 	}
 
-	void Animation::UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent)
+	void Animation::UpdateAnimationFrame(float deltaTime, EntityID id)
 	{
-		r_animationComponent.m_currentFrameTime += deltaTime;
+		AnimationComponent& animationComponent = EntityManager::GetInstance().Get<AnimationComponent>(id);
+		animationComponent.m_currentFrameTime += deltaTime;
 
 		try
 		{
-			if (r_animationComponent.m_currentFrameTime >= m_animationFrames.at(r_animationComponent.m_currentFrameIndex).m_duration)
+			if (animationComponent.m_currentFrameTime >= m_animationFrames.at(animationComponent.m_currentFrameIndex).m_duration)
 			{
+				// reset current frame time
+				animationComponent.m_currentFrameTime = 0.f;
+
 				if (m_isLooping)
 				{
 					// if not last frame, set animation ended to true
-					if (r_animationComponent.m_currentFrameIndex < m_animationFrames.size() - 1)
+					if (animationComponent.m_currentFrameIndex < m_animationFrames.size() - 1)
 					{
-						r_animationComponent.SetAnimationEnded(false);
+						animationComponent.SetAnimationEnded(false);
 					}
 					else
 					{
-						r_animationComponent.SetAnimationEnded(true);
+						animationComponent.SetAnimationEnded(true);
 					}
 
 					// move on the the next frame when current frame duration is reached
-					r_animationComponent.m_currentFrameIndex = (r_animationComponent.m_currentFrameIndex + 1) % m_animationFrames.size();					
+					animationComponent.m_currentFrameIndex = (animationComponent.m_currentFrameIndex + 1) % m_animationFrames.size();
+					animationComponent.m_frameChanged = true;
 				}
 				else
 				{
 					// if not last frame, move on to the next frame
-					if (r_animationComponent.m_currentFrameIndex < m_animationFrames.size() - 1)
+					if (animationComponent.m_currentFrameIndex < m_animationFrames.size() - 1)
 					{
-						++r_animationComponent.m_currentFrameIndex;
+						++animationComponent.m_currentFrameIndex;
+						animationComponent.m_frameChanged = true;
 					}
 					else // if last frame, pause animation
 					{
-						r_animationComponent.PauseAnimation();
-						r_animationComponent.SetAnimationEnded(true);
+						animationComponent.PauseAnimation();
+						animationComponent.SetAnimationEnded(true);
+
+						return;
 					}
 				}
+			}
 
-				r_animationComponent.m_currentFrameTime = 0.f;
+			// if frame changed just changed
+			if (animationComponent.m_frameChanged)
+			{
+				// set on frame enter to true and frame changed to false
+				animationComponent.m_onFrameEnter = true;
+				animationComponent.m_frameChanged = false;
+			}
+			else
+			{
+				animationComponent.m_onFrameEnter = false;
+			}
+
+			// if animation entered a new frame
+			if (animationComponent.OnFrameEnter())
+			{
+				// trigger all actions in the current frame
+				for (AnimationAction const& action : m_animationFrames[animationComponent.m_currentFrameIndex].actions)
+				{
+					// check if entity has the script
+					if (EntityManager::GetInstance().Has<ScriptComponent>(id))
+					{
+						ScriptComponent& scriptComponent = EntityManager::GetInstance().Get<ScriptComponent>(id);
+						if (scriptComponent.m_scriptKeys.find(action.scriptName) != scriptComponent.m_scriptKeys.end())
+						{
+							LogicSystem::m_scriptContainer[action.scriptName]->animationFunctions[action.scriptFunction](id);
+						}
+					}
+				}
 			}
 		}
 		catch (const std::out_of_range&)
@@ -219,6 +251,32 @@ namespace PE
 		try
 		{
 			m_animationFrames.at(currentFrameIndex).m_textureKey = textureKey;
+		}
+		catch (std::out_of_range const&)
+		{
+			return;
+		}
+	}
+
+	void Animation::AddCurrentAnimationFrameAction(unsigned currentFrameIndex, AnimationAction action)
+	{
+		try
+		{
+			if(std::find(m_animationFrames.at(currentFrameIndex).actions.begin(), m_animationFrames.at(currentFrameIndex).actions.end(), action) == m_animationFrames.at(currentFrameIndex).actions.end())
+			m_animationFrames.at(currentFrameIndex).actions.emplace_back(action);
+		}
+		catch (std::out_of_range const&)
+		{
+			return;
+		}
+	}
+
+	void Animation::RemoveCurrentAnimationFrameAction(unsigned currentFrameIndex, AnimationAction action)
+	{
+		try
+		{
+			auto itr = std::remove(m_animationFrames.at(currentFrameIndex).actions.begin(), m_animationFrames.at(currentFrameIndex).actions.end(), action);
+			m_animationFrames.at(currentFrameIndex).actions.erase(itr, m_animationFrames.at(currentFrameIndex).actions.end());
 		}
 		catch (std::out_of_range const&)
 		{
@@ -353,6 +411,11 @@ namespace PE
 		j["maxUV"] = { m_maxUV.x, m_maxUV.y };
 		j["duration"] = m_duration;
 		j["textureKey"] = m_textureKey;
+		
+		for (auto const& action : actions)
+		{
+			j["actions"].push_back(action.ToJson());
+		}
 		return j;
 	}
 
@@ -428,6 +491,16 @@ namespace PE
 				ResourceManager::GetInstance().AddTextureKeyToLoad(frame.m_textureKey);
 			}
 
+			if(frameJson.contains("actions"))
+			for (const auto& actionJson : frameJson["actions"])
+			{
+				AnimationAction action;
+				action.scriptName = actionJson["scriptName"].get<std::string>();
+				action.scriptFunction = actionJson["scriptFunction"].get<std::string>();
+
+				frame.actions.push_back(action);
+			}
+
 			m_animationFrames.push_back(frame);
 		}
 
@@ -436,6 +509,14 @@ namespace PE
 		ResourceManager::GetInstance().AddTextureKeyToLoad(m_spriteSheetKey);
 
 		return *this;
+	}
+
+	nlohmann::json AnimationAction::ToJson() const
+	{
+		nlohmann::json j;
+		j["scriptName"] = scriptName;
+		j["scriptFunction"] = scriptFunction;
+		return j;
 	}
 
 	// AnimationManager
@@ -456,10 +537,10 @@ namespace PE
 			// updates only active entities animation
 			for (EntityID const& id : InternalView(layer))
 			{
+				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
 				// update animation and get current frame
 				p_currentFrame = UpdateAnimation(id, deltaTime);
-
-				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
 
 				// update entity based on frame data
 				// in the future probably check for bools in animation component, then update data accordingly
@@ -507,6 +588,7 @@ namespace PE
 
 	AnimationFrame AnimationManager::UpdateAnimation(EntityID id, float deltaTime)
 	{
+
 		AnimationComponent& animationComponent = EntityManager::GetInstance().Get<AnimationComponent>(id);
 
 		// store animations in resource manager instead
@@ -517,16 +599,16 @@ namespace PE
 			if (Editor::GetInstance().IsRunTime())
 			{
 				if (animationComponent.IsPlaying())
-					ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+					ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, id);
 			}
 			else // else, in editor use editor play variable
 			{
 				if (animationComponent.isPlayingEditor)
-					ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+					ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, id);
 			}		
 #else
 			if (animationComponent.IsPlaying())
-				ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+				ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, id);
 #endif // !GAMERELEASE			
 			
 
@@ -577,6 +659,36 @@ namespace PE
 			for (EntityID const& id : InternalView(layer, true))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(id).StopAnimation();
+			}
+		}
+	}
+
+	void AnimationManager::SetEntityFirstFrame(EntityID id) const
+	{
+		// update animation and get current frame
+
+		// update entity based on frame data
+		// in the future probably check for bools in animation component, then update data accordingly
+		// check if theres animation
+		if(EntityManager::GetInstance().Has<AnimationComponent>(id))
+		if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+		{
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
+			{
+				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
+				AnimationFrame p_firstFrame = p_animation->GetCurrentAnimationFrame(0);
+				// spritesheet animation
+				if (p_animation->IsSpriteSheet())
+				{
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_firstFrame.m_minUV);
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_firstFrame.m_maxUV);
+				}
+				else // texture key animation
+				{
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_firstFrame.m_textureKey);
+				}
 			}
 		}
 	}

@@ -26,6 +26,8 @@
 #include "Logic/Rat/RatController_v2_0.h"
 #include "CatScript_v2_0.h"
 #include "CatHelperFunctions.h"
+#include "Logic/Boss/BossRatScript.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 namespace PE
 {
@@ -70,9 +72,6 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::Enter(EntityID id)
 	{
-		// retrieve pointer to game controller
-		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 
@@ -83,7 +82,7 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE) { return; }
 
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
@@ -128,6 +127,8 @@ namespace PE
 	void OrangeCatAttack_v2_0PLAN::Exit(EntityID id)
 	{
 		ToggleTelegraphs(false, false);
+
+		p_attackData = nullptr;
 	}
 
 	void OrangeCatAttack_v2_0PLAN::ResetSelection(EntityID id)
@@ -178,22 +179,20 @@ namespace PE
 
 		// reset animation
 		EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID).SetCurrentFrameIndex(0);
-		m_attackLifetime = ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID).GetAnimationID())->GetAnimationDuration();
 	}
 
 	void OrangeCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		CatScript_v2_0Data* p_catData = GETSCRIPTDATA(CatScript_v2_0, id);
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE || !p_catData->attackSelected) { return; }
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE || !(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected) { return; }
 
 		AnimationComponent& r_seismicAnimation = EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID);
 
 		if (m_seismicSlammed)
 		{	
-			if (m_attackLifetime <= 0.f)
+			if (r_seismicAnimation.HasAnimationEnded())
 			{
-				p_catData->finishedExecution = true;
+				(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = true;
+				r_seismicAnimation.StopAnimation();
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
 			}
 			else
@@ -204,18 +203,18 @@ namespace PE
 					r_seismicCollider.scaleOffset += 0.25f;
 
 				m_seismicPrevAnimationFrame = r_seismicAnimation.GetCurrentFrameIndex();
-				m_attackLifetime -= deltaTime;
 			}
 		}
 		// if seismic is not yet done, attack is selected, and animation is at the point where seismic would play
-		else if (!p_catData->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->seismicSlamAnimationIndex)
+		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).HasAnimationEnded())
 		{
 			if (m_seismicDelay <= 0.f)
 			{
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, true);
 				m_seismicSlammed = true;
-				r_seismicAnimation.SetCurrentFrameIndex(0);
-				// @TODO add sound
+				r_seismicAnimation.PlayAnimation();
+				CatScript_v2_0::PlayCatAttackAudio(EnumCatType::ORANGECAT);
+				PlaySeismicAudio();
 			}
 			else 
 			{
@@ -237,6 +236,8 @@ namespace PE
 		CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
 		// @TODO remove this temp solution
 		EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
+
+		p_attackData = nullptr;
 	}
 
 	void OrangeCatAttack_v2_0EXECUTE::SeismicCollided(const Event<CollisionEvents>& r_CE)
@@ -246,41 +247,58 @@ namespace PE
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
 
 			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID)
-			// if the seismic hits a cat or rat
-				(SeismicHitCat(OCEE.Entity1, OCEE.Entity2) || SeismicHitRat(OCEE.Entity1, OCEE.Entity2));
+			{
+				// if the seismic hits a cat or rat
+				SeismicHitCatOrRat(OCEE.Entity1, OCEE.Entity2);
+			}
 		}
 	}
 
-	bool OrangeCatAttack_v2_0EXECUTE::SeismicHitCat(EntityID id1, EntityID id2)
+	void OrangeCatAttack_v2_0EXECUTE::SeismicHitCatOrRat(EntityID id1, EntityID id2)
 	{
-		CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-		// kill cat if not in chain and seismic hits a cat
-		if (id1 == p_attackData->seismicID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+		// kill cat if it is not following and not in cage and projectile hits catif (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+		if (id1 == p_attackData->seismicID)
 		{
-			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
-			return true;
+			if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+			{
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
+				return;
+			}
+			else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id2) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id2))
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
+				return;
+			}
+			else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
+			{
+				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+			}
 		}
-		else if (id2 == p_attackData->seismicID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
+		else if (id2 == p_attackData->seismicID)
 		{
-			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
-			return true;
+			if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
+			{
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+				return;
+			}
+			else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id1) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id1))
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
+				return;
+			}
+			else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
+			{
+				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+			}
 		}
-		return false;
 	}
 
-	bool OrangeCatAttack_v2_0EXECUTE::SeismicHitRat(EntityID id1, EntityID id2)
+	void OrangeCatAttack_v2_0EXECUTE::PlaySeismicAudio()
 	{
-		// damage rat
-		if (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
-		{
-			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
-			return true;
-		}
-		else if (id2 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
-		{
-			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
-			return true;
-		}
-		return false;
+		// Path to the seismic shockwave audio prefab
+		std::string soundPrefabPath = "AudioObject/Cat Shockwave SFX1.prefab";
+		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+	
 	}
 }

@@ -446,7 +446,7 @@
                         "isActive": false,
                         "name": "areyousure",
                         "parent": 8,
-                        "sceneID": 9
+                        "sceneID": 5
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -487,7 +487,7 @@
                         "isActive": false,
                         "name": "yesbutton",
                         "parent": 8,
-                        "sceneID": 5
+                        "sceneID": 11
                     },
                     "GUI": {
                         "disabled": false,
@@ -564,7 +564,7 @@
                         "isActive": false,
                         "name": "LeaveSadCat",
                         "parent": 8,
-                        "sceneID": 11
+                        "sceneID": 9
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -583,7 +583,7 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 47.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -795,6 +795,8 @@
                                 "PauseMenuCanvas": 3,
                                 "PhaseBanner": 17,
                                 "Portrait": 47,
+                                "RatKingJournal": 0,
+                                "RatKingPortrait": 0,
                                 "RatPortrait": 53,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
@@ -1490,11 +1492,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2999999523162842,
+                        "Size": 1.5499999523162842,
                         "Text": "End Planning",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -1707,7 +1709,7 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 64.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -1943,8 +1945,8 @@
                             "y": -17.499980926513672
                         },
                         "relativeposition": {
-                            "x": 47.0,
-                            "y": -17.499980926513672
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relorientation": 0.0,
                         "width": 1920.0
@@ -1965,7 +1967,7 @@
                         "isActive": false,
                         "name": "LoseRestartButton",
                         "parent": 37,
-                        "sceneID": 13
+                        "sceneID": 40
                     },
                     "GUI": {
                         "disabled": false,
@@ -2042,7 +2044,7 @@
                         "isActive": false,
                         "name": "LoseRetryButton",
                         "parent": 37,
-                        "sceneID": 40
+                        "sceneID": 41
                     },
                     "GUI": {
                         "disabled": false,
@@ -2098,7 +2100,7 @@
                         },
                         "relativeposition": {
                             "x": -500.0,
-                            "y": -320.0
+                            "y": -310.0
                         },
                         "relorientation": 0.0,
                         "width": 624.0
@@ -2119,7 +2121,7 @@
                         "isActive": false,
                         "name": "youlosetextobj",
                         "parent": 37,
-                        "sceneID": 41
+                        "sceneID": 13
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2210,11 +2212,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
-                        "HAlignment": 4,
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.5,
+                        "Size": 1.399999976158142,
                         "Text": "Plan Movement",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2227,8 +2229,8 @@
                             "y": 473.4999084472656
                         },
                         "relativeposition": {
-                            "x": 779.0,
-                            "y": 473.4999084472656
+                            "x": 861.0,
+                            "y": 468.0
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -2258,11 +2260,11 @@
                             "y": 0.2549019753932953,
                             "z": 0.21176470816135406
                         },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
-                        "HAlignment": 4,
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
-                        "Size": 1.2999999523162842,
+                        "Size": 1.5,
                         "Text": "Turn No",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -2275,8 +2277,8 @@
                             "y": 473.4997863769531
                         },
                         "relativeposition": {
-                            "x": 534.0,
-                            "y": 473.4997863769531
+                            "x": 639.0,
+                            "y": 470.0
                         },
                         "relorientation": 0.0,
                         "width": 356.0
@@ -3076,7 +3078,7 @@
                         "isActive": false,
                         "name": "RestartYes",
                         "parent": 64,
-                        "sceneID": 65
+                        "sceneID": 67
                     },
                     "GUI": {
                         "disabled": false,
@@ -3153,7 +3155,7 @@
                         "isActive": false,
                         "name": "AreYouSure",
                         "parent": 64,
-                        "sceneID": 66
+                        "sceneID": 65
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3194,7 +3196,7 @@
                         "isActive": false,
                         "name": "RestartSadCat",
                         "parent": 64,
-                        "sceneID": 67
+                        "sceneID": 66
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3213,7 +3215,7 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 47.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -3304,8 +3306,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4897,8 +4899,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4976,8 +4978,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5012,8 +5014,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5103,8 +5105,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5209,7 +5211,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 102,
+                                "FollowObjectID": 106,
                                 "fillColorAlmostEmpty": {
                                     "w": 1.0,
                                     "x": 0.9800000190734863,
@@ -5236,11 +5238,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1159.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1159.999755859375,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -5277,7 +5279,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1159.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5362,7 +5364,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 103,
+                                "FollowObjectID": 102,
                                 "fillColorAlmostEmpty": {
                                     "w": 1.0,
                                     "x": 0.9800000190734863,
@@ -5389,11 +5391,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1128.0,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": 1128.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -5430,7 +5432,7 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1128.0,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5471,7 +5473,7 @@
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1159.999755859375,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5506,13 +5508,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 1128.0,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5521,198 +5523,6 @@
                         },
                         "relorientation": 0.0,
                         "width": 70.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack.anim",
-                            "../Assets/Animation/AnimationRat_Death.anim",
-                            "../Assets/Animation/AnimationRat_Hurt.anim",
-                            "../Assets/Animation/AnimationRat_Idle.anim",
-                            "../Assets/Animation/AnimationRat_walk.anim"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 175.00021362304688,
-                                "y": -27.999717712402344
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 102,
-                        "Prefab Type": "Rat",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Rat",
-                        "parent": null,
-                        "sceneID": 41
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "RatScript": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationRat_Attack.anim",
-                                    "Death": "../Assets/Animation/AnimationRat_Death.anim",
-                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt.anim",
-                                    "Idle": "../Assets/Animation/AnimationRat_Idle.anim",
-                                    "Walk": "../Assets/Animation/AnimationRat_walk.anim"
-                                },
-                                "attackDamage": 1,
-                                "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
-                                "attackDuration": 0.5,
-                                "collisionDamage": 1,
-                                "detectionRadius": 4.0,
-                                "health": 3,
-                                "mainCatID": 3,
-                                "movementSpeed": 200.0
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 175.00021362304688,
-                            "y": -27.999717712402344
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack.anim",
-                            "../Assets/Animation/AnimationRat_Death.anim",
-                            "../Assets/Animation/AnimationRat_Hurt.anim",
-                            "../Assets/Animation/AnimationRat_Idle.anim",
-                            "../Assets/Animation/AnimationRat_walk.anim"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 565.0003662109375,
-                                "y": 87.99986267089844
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 103,
-                        "Prefab Type": "Rat",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Rat",
-                        "parent": null,
-                        "sceneID": 42
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "RatScript": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationRat_Attack.anim",
-                                    "Death": "../Assets/Animation/AnimationRat_Death.anim",
-                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt.anim",
-                                    "Idle": "../Assets/Animation/AnimationRat_Idle.anim",
-                                    "Walk": "../Assets/Animation/AnimationRat_walk.anim"
-                                },
-                                "attackDamage": 1,
-                                "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
-                                "attackDuration": 0.5,
-                                "collisionDamage": 1,
-                                "detectionRadius": 4.0,
-                                "health": 3,
-                                "mainCatID": 3,
-                                "movementSpeed": 200.0
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 565.0003662109375,
-                            "y": 87.99986267089844
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
                     }
                 },
                 "name": ""
@@ -5846,20 +5656,20 @@
                             "../Assets/Animation/AnimationOrange_Idle.anim",
                             "../Assets/Animation/AnimationOrange_walk.anim"
                         ],
-                        "CurrentAnimationID": ""
+                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 5,
                         "data": {
                             "center": {
-                                "x": 350.0005798339844,
-                                "y": 35.99993896484375
+                                "x": 234.00050354003906,
+                                "y": -9.000188827514648
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 48.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": true,
@@ -5876,7 +5686,7 @@
                         "isActive": true,
                         "name": "OrangeCat",
                         "parent": null,
-                        "sceneID": 104
+                        "sceneID": 41
                     },
                     "Renderer": {
                         "Color": {
@@ -5885,7 +5695,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Citrus_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5913,7 +5723,7 @@
                                     }
                                 },
                                 "catID": 0,
-                                "catMaxMovementEnergy": 21,
+                                "catMaxMovementEnergy": 6,
                                 "catType": 2,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
@@ -5928,18 +5738,18 @@
                         }
                     },
                     "Transform": {
-                        "height": 64.0,
+                        "height": 96.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 350.0005798339844,
-                            "y": 35.99993896484375
+                            "x": 234.00050354003906,
+                            "y": -9.000188827514648
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 64.0
+                        "width": 96.0
                     }
                 },
                 "name": ""
@@ -5969,18 +5779,204 @@
                         "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 150.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 350.0005798339844,
-                            "y": 35.99993896484375
+                            "x": 234.00050354003906,
+                            "y": -9.000188827514648
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 150.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                            "../Assets/Animation/AnimationGutterRat_Death.anim",
+                            "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                            "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                            "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "center": {
+                                "x": 123.99989318847656,
+                                "y": -107.99995422363281
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 1,
+                        "Layer": 1,
+                        "Old ID": 1,
+                        "Prefab Type": "GutterRat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GutterRat",
+                        "parent": null,
+                        "sceneID": 106
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationGutterRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                                },
+                                "detectionRadius": 200.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 200.0,
+                                "movementSpeed": 250.0,
+                                "ratMaxHealth": 2,
+                                "ratType": 1
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 123.99989318847656,
+                            "y": -107.99995422363281
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationSniperRat_Attack.anim",
+                            "../Assets/Animation/AnimationSniperRat_Death.anim",
+                            "../Assets/Animation/AnimationSniperRat_Hurt.anim",
+                            "../Assets/Animation/AnimationSniperRat_Idle.anim",
+                            "../Assets/Animation/AnimationSniperRat_Walk.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationSniperRat_Idle.anim"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "center": {
+                                "x": 391.000244140625,
+                                "y": 60.000221252441406
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 1,
+                        "Layer": 1,
+                        "Old ID": 106,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SniperRat",
+                        "parent": null,
+                        "sceneID": 107
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Sniper_Idle.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationSniperRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationSniperRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationSniperRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationSniperRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationSniperRat_Walk.anim"
+                                },
+                                "detectionRadius": 320.0,
+                                "maxHuntTurns": 2,
+                                "maxMovementRange": 128.0,
+                                "movementSpeed": 400.0,
+                                "ratMaxHealth": 3,
+                                "ratType": 3
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 391.000244140625,
+                            "y": 60.000221252441406
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""

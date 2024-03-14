@@ -2553,7 +2553,7 @@ namespace PE {
 
 								if (ImGui::Button("Play"))
 								{
-									audioComponent.PlayAudioSound();
+									audioComponent.PlayAudioSound(AudioComponent::AudioType::SFX);
 								}
 
 								ImGui::SameLine();
@@ -3319,9 +3319,11 @@ namespace PE {
 										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
 										int CatPortID = static_cast<int> (it->second.CatPortrait);
 										int RatPortID = static_cast<int> (it->second.RatPortrait);
+										int RatKingPortraitID = static_cast<int> (it->second.RatKingPortrait);
 										int PortID = static_cast<int> (it->second.Portrait);
 										int BackgroundID = static_cast<int> (it->second.Background);
 										int JournalID = static_cast<int> (it->second.Journal);
+										int RatKingJournalID = static_cast<int> (it->second.RatKingJournal);
 										int JournalButtonID = static_cast<int> (it->second.JournalButton);
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
@@ -3385,6 +3387,12 @@ namespace PE {
 
 										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
 										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }
+
+										ImGui::Text("Rat King Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rkpid", &RatKingPortraitID);
+										if (RatKingPortraitID != m_currentSelectedObject) { it->second.RatKingPortrait = RatKingPortraitID; }
+
+										ImGui::Text("Rat King Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rkjid", &RatKingJournalID);
+										if (RatKingJournalID != m_currentSelectedObject) { it->second.RatKingJournal = RatKingJournalID; }
 
 										for (int i = 0; i < 5; i++)
 										{
@@ -3576,6 +3584,7 @@ namespace PE {
 										int leftSideSlamAnimationID = static_cast<int> (it->second.leftSideSlamAnimation);
 										int slamTelegraphID = static_cast<int> (it->second.slamTelegraph);
 										int slamAreaTelegraphID = static_cast<int> (it->second.slamAreaTelegraph);
+										float distanceBetweenPoolsID = it->second.distanceBetweenPools;
 
 										ImGui::SeparatorText("Boss Rat Stats");
 										ImGui::Text("Boss Max Health: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bhid", &healthID);
@@ -3597,6 +3606,10 @@ namespace PE {
 										if (jumpSpeedID != m_currentSelectedObject) it->second.jumpSpeed = jumpSpeedID;										
 										ImGui::Text("Slam Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjssid", &slamSpeedID);
 										if (slamSpeedID != m_currentSelectedObject) it->second.slamSpeed = slamSpeedID;
+
+										ImGui::SeparatorText("Dash Attack Stats");
+										ImGui::Text("Distance Between Each Poison: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjdbpid", &distanceBetweenPoolsID);
+										if (distanceBetweenPoolsID != m_currentSelectedObject) it->second.distanceBetweenPools = distanceBetweenPoolsID;
 
 										ImGui::SeparatorText("Entities");
 										ImGui::Text("Left Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssid", &leftSideSlamID);
@@ -3702,53 +3715,46 @@ namespace PE {
 
 								if (it != p_Script->GetScriptData().end())
 								{
-									if (ImGui::CollapsingHeader("Rat Settings", ImGuiTreeNodeFlags_DefaultOpen))
+									if (ImGui::CollapsingHeader("RatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
-									}
-
-									if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-									{
-										if (it->second.patrolPoints.empty())
+										// --- Set the rat type
+										ImGui::Text("Rat Type"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f);
+										if (ImGui::BeginCombo("##ratType", RatScript_v2_0_Data::GetRatName(it->second.ratType).c_str())) // The second param is the value previewed before the user clicks on it
 										{
-											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
-											it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
+											char maxValue{ static_cast<char>(EnumRatType::RAT_TYPE_COUNT) };
+											bool selected{ false };
+											for (char i{ 1 }; i < maxValue; ++i)
+											{
+												if (ImGui::Selectable(RatScript_v2_0_Data::GetRatName(i).c_str(), &selected))
+												{
+													it->second.ratType = static_cast<EnumRatType>(i);
+												}
+											}
+											ImGui::EndCombo();
 										}
+										ImGui::Separator();
 
-										for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
-										{
-											ImGui::PushID(static_cast<int>(i)); // Use i as the ID
-											ImGui::Text("Point %zu:", i + 1); // Display point number
-											ImGui::SameLine();
-											float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
-											ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
-											it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
-											ImGui::PopID();
-										}
 
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+										// --- Start of rat variables
+										ImGui::Text("Movement speed:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratSpeed", &(it->second.movementSpeed));
+										ImGui::Text("Movement range:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratRange", &(it->second.maxMovementRange));
+										ImGui::Text("Maximum health:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputInt("##ratHealth", &(it->second.ratMaxHealth));
+										ImGui::Text("Detection radius:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputFloat("##ratDetect", &(it->second.detectionRadius));
+										ImGui::Text("Max hunting turns:"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); 
+										ImGui::InputInt("##ratHunt", &(it->second.maxHuntTurns));
+										// --- End of rat variables
 
-										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
-										if (ImGui::Button("Add Patrol Point"))
-										{
-											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
-										}
-										ImGui::PopStyleColor(1); // Pop button color style
 
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+										// --- Rat animation states
 
-										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
-										if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
-										{
-											it->second.patrolPoints.pop_back();
-										}
-										ImGui::PopStyleColor(1); // Pop button color style
-									}
-									ImGui::Separator();
-									int num{};
-									ImGui::Text("Add Animation state"); ImGui::SameLine();
-									bool worked{ false };
-									if (ImGui::Button("+"))
+										int num{};
+										ImGui::Text("Add Animation state"); ImGui::SameLine();
+										bool worked{ false };
+										if (ImGui::Button("+"))
 									{
 										std::string str = "NewState";
 										while (!worked)
@@ -3764,9 +3770,9 @@ namespace PE {
 											}
 										}
 									}
-									static std::pair<std::string, std::string> whoToRemove;
-									static bool rmFlag{ false };
-									for (auto& [k, v] : it->second.animationStates)
+										static std::pair<std::string, std::string> whoToRemove;
+										static bool rmFlag{ false };
+										for (auto& [k, v] : it->second.animationStates)
 									{
 										ImGui::Text("State: "); ImGui::SameLine();
 										std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
@@ -3809,17 +3815,68 @@ namespace PE {
 										}
 										ImGui::Separator();
 									}
-									if (rmFlag)
+										if (rmFlag)
 									{
 										it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
 										it->second.animationStates.erase(whoToRemove.first);
 										whoToRemove.first = "";
 										whoToRemove.second = "";
 										rmFlag = false;
+									}								
+
+										// --- End of rat animation states
+
+
+										// --- Rat Patrolling Settings
+										//ImGui::Text("Rat Patrolling Settings");
+										//ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
+										//ImGui::Separator();
+
+										// Dynamic list for adding patrol point positions
+										//if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+										//{
+										//	if (it->second.patrolPoints.empty())
+										//	{
+										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
+										//		it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
+										//	}
+
+										//	for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
+										//	{
+										//		ImGui::PushID(static_cast<int>(i)); // Use i as the ID
+										//		ImGui::Text("Point %zu:", i + 1); // Display point number
+										//		ImGui::SameLine();
+										//		float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
+										//		ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
+										//		it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
+										//		ImGui::PopID();
+										//	}
+
+										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
+										//	if (ImGui::Button("Add Patrol Point"))
+										//	{
+										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
+										//	}
+										//	ImGui::PopStyleColor(1); // Pop button color style
+
+										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
+										//	if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
+										//	{
+										//		it->second.patrolPoints.pop_back();
+										//	}
+										//	ImGui::PopStyleColor(1); // Pop button color style
+										//}
+										//ImGui::Separator();
+
 									}
-								
-								}
-							}
+
+								} // end of if (ImGui::CollapsingHeader("RatScript_v2_0...
+
+							} // end of if(key == "RatScript_v2_0")
 
 							if (key == "CatScript_v2_0")
 							{
@@ -4937,7 +4994,8 @@ namespace PE {
 					}
 
 					ImGui::Dummy(ImVec2(0, 5));
-					ImGui::SeparatorText("Sprite Sheet");
+					ImGui::SeparatorText("Animation");
+					ImGui::Columns(2, "PlaybackColumns", true);
 
 					// if there's animation to preview
 					if (currentAnimation)
@@ -5021,27 +5079,6 @@ namespace PE {
 							currentAnimation->SetSpriteSheetKey(filepaths[textureIndex].string());
 					}
 
-					// deprecated
-					//// Load texture through file explorer
-					//if (ImGui::Button("Load Spritesheet"))
-					//{
-					//	std::string filePath = serializationManager.OpenFileExplorerRequestPath();
-
-					//	// Check if filePath is not empty
-					//	if (!filePath.empty())
-					//	{
-					//		std::replace(filePath.begin(), filePath.end(), '\\', '/');
-					//		filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".png";
-
-					//		ResourceManager::GetInstance().LoadTextureFromFile(filePath, filePath);
-					//	}
-					//	else
-					//	{
-					//		std::cerr << "No file path was selected for loading." << std::endl;
-					//	}
-					//}
-
-
 					if (ImGui::Button("Play"))
 					{
 						playAnimation = true;
@@ -5054,7 +5091,6 @@ namespace PE {
 					}
 
 					// slider
-					ImGui::SameLine();
 					int frame{ static_cast<int>(previewCurrentFrameIndex) };
 					ImGui::SetNextItemWidth(300);
 
@@ -5087,6 +5123,94 @@ namespace PE {
 						frameRate = currentAnimation->GetFrameRate();
 						isLooping = currentAnimation->IsLooping();
 					}
+
+					ImGui::NextColumn();
+
+					if (currentAnimation)
+					{
+						// show script functions for current selected object
+						if (EntityManager::GetInstance().Has<ScriptComponent>(m_currentSelectedObject))
+						{
+							// setting animations
+							std::map<const char*, std::vector<const char*>> scriptAndFunctionNames;
+							std::vector<const char*> scriptFunctionNames;
+
+							// get all the script keys for the entity
+							for (auto& [scriptName, state] : EntityManager::GetInstance().Get<ScriptComponent>(m_currentSelectedObject).m_scriptKeys)
+							{
+								// get all the animation functions from the scripts
+								for (auto& [functionName, function] : LogicSystem::m_scriptContainer[scriptName]->animationFunctions)
+								{
+									scriptFunctionNames.push_back(functionName.c_str());
+								}
+
+								scriptAndFunctionNames[scriptName.c_str()] = scriptFunctionNames;
+							}
+
+							// Begin Script Functions Menu
+							if (ImGui::BeginMenu("Script Functions"))
+							{
+								for (auto& [scriptName, functionNames] : scriptAndFunctionNames)
+								{
+									// Show functions for script
+									if (ImGui::BeginMenu(scriptName))
+									{
+										for (auto& functionName : functionNames)
+										{
+											if (ImGui::MenuItem(functionName))
+											{
+												currentAnimation->AddCurrentAnimationFrameAction(previewCurrentFrameIndex, AnimationAction{ scriptName, functionName });
+											}
+										}
+										ImGui::EndMenu();
+									}
+								}
+								// End Script Functions Menu
+								ImGui::EndMenu();
+							}
+
+							ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+							static int actionIndex{ -1 };
+							static AnimationAction selectedAction{};
+							ImGui::Text("Actions List");
+							//loop to show all the items ins the vector
+							if (ImGui::BeginChild("Actions", ImVec2(-1, 200), true, ImGuiWindowFlags_NoResize))
+							{
+								int index = 0;
+								for (auto& action : currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).actions)
+								{
+									const bool is_selected = (actionIndex == index);
+
+									std::string scriptAndFunctionName{ action.scriptName + " :: " + action.scriptFunction };
+
+									if (ImGui::Selectable(scriptAndFunctionName.c_str(), is_selected))
+									{
+										actionIndex = index; //seteting current index to check for selection
+										selectedAction = action;
+									}//imgui selectable is the function to make the clickable bar of text
+
+									// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+									if (is_selected) // to show the highlight if selected
+										ImGui::SetItemDefaultFocus();
+
+									++index;
+								}
+							}
+							ImGui::EndChild();
+							ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
+							if (ImGui::Button("Remove Action"))
+							{
+								if (actionIndex >= 0)
+								{
+									currentAnimation->RemoveCurrentAnimationFrameAction(previewCurrentFrameIndex, selectedAction);
+									actionIndex = -1;
+								}
+							}
+							ImGui::PopStyleColor(1);
+						}
+					}
+					ImGui::EndColumns();
 
 					ImGui::Dummy(ImVec2(0, 5));
 					ImGui::SeparatorText("Animation Properties");
@@ -5153,10 +5277,7 @@ namespace PE {
 					if (currentAnimation)
 					{
 						currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, static_cast<unsigned>(framesHeld));
-					}
-
-					// save animation here
-
+					}	
 				}
 				else
 				{

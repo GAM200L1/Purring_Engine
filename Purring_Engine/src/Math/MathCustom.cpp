@@ -745,6 +745,18 @@ namespace PE
 		return r_lhs.Dot(r_rhs);
 	}
 
+	vec2 Rotate(vec2 const& inputVector, float const radians)
+	{
+		float sineValue		{ std::sin(radians) };
+		float cosineValue	{ std::cos(radians) };
+
+		return vec2
+		{
+			inputVector.x * cosineValue	- inputVector.y * sineValue,
+			inputVector.x * sineValue		+ inputVector.y * cosineValue
+		};
+	}
+
 	float ConvertRadToDeg(float radAngle)
 	{
 		return radAngle * 180.f / static_cast<float>(PE_PI);

@@ -22,6 +22,7 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "Animation/Animation.h"
 
 #include <limits>
 
@@ -30,6 +31,15 @@
 
 namespace PE 
 {
+	testScript::testScript()
+	{
+		REGISTERANIMATIONFUNCTION(TestFunction, PE::testScript);
+		REGISTERANIMATIONFUNCTION(TestFunction2, PE::testScript);
+		REGISTERANIMATIONFUNCTION(TestFunction3, PE::testScript);
+
+
+	}
+
 	void testScript::Init(EntityID id)
 	{
 		id;
@@ -69,4 +79,18 @@ namespace PE
 		return rttr::instance(m_ScriptData.at(id));
 	}
 
+	void testScript::TestFunction(EntityID)
+	{
+		std::cout << "Test Function Called" << std::endl;
+	}
+
+	void testScript::TestFunction2(EntityID)
+	{
+		std::cout << "Test Function 2 Called" << std::endl;
+	}
+
+	void testScript::TestFunction3(EntityID)
+	{
+		std::cout << "Test Function 3 Called" << std::endl;
+	}
 }

@@ -29,10 +29,14 @@ namespace PE
 		p_data = GETSCRIPTDATA(BossRatScript, id);
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
+		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT)
+			p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
+
 		DecideAttack();
 		p_script->FindAllObstacles();
 		if(p_data->p_currentAttack)
 		p_data->p_currentAttack->DrawTelegraphs(id);
+		PoisonPuddleUpdate();
 	}
 
 
@@ -41,6 +45,7 @@ namespace PE
 		// Can conduct state checks and call for state changes here
 		if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
 		{
+			p_script->executionTimeOutTimer = p_script->executionTimeOutTime;
 			p_data->finishExecution = false;
 			p_data->p_stateManager->ChangeState(new BossRatExecuteState(),id);
 		}
@@ -67,7 +72,7 @@ namespace PE
 			p_data-> currentAttackSet = rand() % 3;
 		}
 
-		switch (p_script->BossRatAttackSets[p_data->currentAttackSet][p_data->currentAttackInSet])
+		switch (p_script->bossRatAttackSets[p_data->currentAttackSet][p_data->currentAttackInSet])
 		{
 		case BossRatAttacks::BASH:
 			p_data->p_currentAttack = new BossRatBashAttack(p_script->FindClosestCat());
@@ -84,6 +89,27 @@ namespace PE
 		}
 
 		p_data->currentAttackInSet++;
+	}
+
+	void BossRatPlanningState::PoisonPuddleUpdate()
+	{
+		for (auto& [id, timer] : p_script->poisonPuddles)
+		{
+			--timer;
+		}
+
+		for (auto it = p_script->poisonPuddles.cbegin(); it != p_script->poisonPuddles.cend() /* not hoisted */; /* no increment */)
+		{
+			if (it->second <= 0)
+			{
+				EntityManager::GetInstance().RemoveEntity(it->first);
+				p_script->poisonPuddles.erase(it++);    // or "it = m.erase(it)" since C++11
+			}
+			else
+			{
+				++it;
+			}
+		}
 	}
 
 } // End of namespace PE

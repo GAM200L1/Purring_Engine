@@ -29,6 +29,9 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
+		/*!**********************************************************************************
+		 \brief Destructor for CatMovement_v2_0PLAN
+		*************************************************************************************/
 		~CatMovement_v2_0PLAN() { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
@@ -106,12 +109,9 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Sets the color of all the nodes in the path.
 
-		 \param[in] r - Red component of the color to set the path to (from [0, 1]).
-		 \param[in] g - Green component of the color to set the path to (from [0, 1]).
-		 \param[in] b - Blue component of the color to set the path to (from [0, 1]).
-		 \param[in] a - Alpha component of the color to set the path to (from [0, 1]).
+		 \param[in] r_color - new color to set the path
 		*************************************************************************************/
-		void SetPathColor(float const r = 1.f, float const g = 1.f, float const b = 1.f, float const a = 1.f);
+		void SetPathColor(vec4 const& r_color = {1.f, 1.f, 1.f, 1.f});
 
 
 		// ----- Events ----- // 
@@ -139,19 +139,24 @@ namespace PE
 		*************************************************************************************/
 		void OnPathCollision(const Event<CollisionEvents>& r_TE);
 
-
 		/*!**********************************************************************************
 		 \brief Resets the position of the player to the beginning of their drawn path,
 						clears the drawn path, and resets the energy level of the player.
 		*************************************************************************************/
 		void ResetDrawnPath();
 
+		/*!**********************************************************************************
+		 \brief Checks if the path drawn is invalid
+		*************************************************************************************/
 		bool CheckInvalid();
 
 
 	private:
 		// ----- Private Variables ----- //
-		CatScript_v2_0Data* p_data;
+		CatScript_v2_0Data* p_data = nullptr;
+		vec4 m_invalidPathColor{ 1.f, 0.f, 0.f, 1.f };
+		vec4 m_defaultPathColor{ 0.506f, 0.490f, 0.490f, 1.f };
+
 		int m_clickEventListener{}, m_releaseEventListener{}, m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
 		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
@@ -165,7 +170,13 @@ namespace PE
 	public:
 		
 		// ----- Destructor ----- //
-		virtual ~CatMovement_v2_0EXECUTE() override { p_data = nullptr; }
+		/*!**********************************************************************************
+		 \brief Destructor for CatMovement_v2_0EXECUTE
+		*************************************************************************************/
+		virtual ~CatMovement_v2_0EXECUTE() override 
+		{ 
+			p_data = nullptr;
+		}
 
 		// ----- Public Functions ----- //
 
@@ -205,12 +216,10 @@ namespace PE
 		*************************************************************************************/
 		void StopMoving(EntityID id);
 
-		/*!***********************************************************************************
-		 \brief Playfootstep sounds
-		*************************************************************************************/
-		void PlayFootStep();
-
 		// ----- Public Getters ----- //
+		/*!**********************************************************************************
+		 \brief Returns name of this state
+		*************************************************************************************/
 		virtual std::string_view GetName() override { return "MovementEXECUTE"; }
 
 

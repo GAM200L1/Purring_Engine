@@ -112,7 +112,7 @@ namespace PE
 
          \return A string view representing the state's name.
         *************************************************************************************/
-        virtual std::string_view GetName() { return "Idle_v2_0"; }
+        virtual std::string_view GetName() { return "RatIdle_v2_0"; }
 
 
         // --- COLLISION DETECTION --- // 
@@ -123,6 +123,15 @@ namespace PE
                 hunting states respectively.
         *************************************************************************************/
         void CheckIfShouldChangeStates();
+
+        /*!***********************************************************************************
+         \brief Called when a collision enter or stay event has occurred. If an event has
+          occurred between this script's rat's collider and a cat, the parent rat
+          is notified.
+
+         \param[in] r_event - Event data.
+        *************************************************************************************/
+        void OnCollisionEnter(const Event<CollisionEvents>& r_event);
 
         /*!***********************************************************************************
          \brief Called when a trigger enter or stay event has occured. If an event has
@@ -152,7 +161,8 @@ namespace PE
         bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
 
         // Event listener IDs 
-        int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+        int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+        int m_triggerEnterEventListener{}, m_triggerStayEventListener{}, m_triggerExitEventListener{};
 
         // ----- PRIVATE METHODS ---- //
     private:

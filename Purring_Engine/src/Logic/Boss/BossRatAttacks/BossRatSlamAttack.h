@@ -132,8 +132,8 @@ namespace PE
 		bool m_slamTelegraphAnimated{ false };
 		float m_slamShrinkSpeed{ 350 };
 		bool m_attackIsLeft{};
-		float m_slamAttackDelay{ .5f };
+		float m_slamAttackDelay{ 2.f };
 		bool m_ratSpawned{ false };
-
+		bool m_playedSlamAudio{ false };
 	};
 }

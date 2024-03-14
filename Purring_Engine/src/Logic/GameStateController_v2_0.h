@@ -43,12 +43,15 @@ namespace PE
 		EntityID TurnCounterCanvas;
 
 		EntityID Journal;
+		EntityID RatKingJournal;
 		EntityID JournalButton;
 
 		EntityID PhaseBanner;
 
 		EntityID CatPortrait,RatPortrait;
 		EntityID Portrait;
+
+		EntityID RatKingPortrait;
 
 		EntityID Background;
 		EntityID TransitionPanel;
@@ -412,6 +415,11 @@ namespace PE
 		 \brief			Resume the BGM
 		*************************************************************************************/
 		void ResumeBGM();
+		/*!***********************************************************************************
+		 \brief			Play BGM Ambience and BGM and its respective layers based on stage.
+		*************************************************************************************/
+		void PlayBackgroundMusicForStage();
+
 
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
@@ -440,7 +448,6 @@ namespace PE
 		std::string m_defaultPotraitTextureKey;
 		std::string m_deploymentPhaseBanner, m_planningPhaseBanner, m_exexcutePhaseBanner;
 
-
 		//Pause and Win/Lose Variables
 		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
 		bool m_isTransitioning{ false };
@@ -451,16 +458,16 @@ namespace PE
 		const float m_UIFadeTimer{.5f};
 		float m_timeSinceEnteredState{ 1.f };
 		float m_timeSinceExitedState{};
-		const float m_transitionTimer{ .5f };
+		const float m_transitionTimer{ .75f };
 		float m_timeSinceTransitionStarted{};
 		float m_timeSinceTransitionEnded{};
 
 		//portrait
 		bool m_isPotraitShowing{};
 		bool m_isRat{};
+		bool m_bossRatSelected{};
 		EntityID m_lastSelectedEntity{};
 		std::string nextPortraitTexture{};
-
 
 		//journal object testing
 		bool m_journalShowing{};
@@ -474,6 +481,9 @@ namespace PE
 		bool m_isPhaseBannerTransition{true};
 
 		float prevVolume;
+
+		// Audio Controls
+		bool bgmStarted = false;
 
 	};
 }

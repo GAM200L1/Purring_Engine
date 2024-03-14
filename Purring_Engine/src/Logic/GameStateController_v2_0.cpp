@@ -36,10 +36,12 @@
 #include "Cat/FollowScript_v2_0.h"
 #include "AudioManager/GlobalMusicManager.h"
 #include "Boss/BossRatScript.h"
+#include "Animation/Animation.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif
+
 namespace PE
 {
 
@@ -129,10 +131,7 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
-		// Play audio BGM and BGM Ambience via GlobalMusicManager
-		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Music.prefab", true);
-		GlobalMusicManager::GetInstance().PlayAudioPrefab("AudioObject/Background Ambience.prefab", true);
-		GlobalMusicManager::GetInstance().StartFadeIn(5.0f);
+		PlayBackgroundMusicForStage();
 
 		ResetPhaseBanner(true);
 		m_nextTurnOnce = false;
@@ -194,10 +193,11 @@ namespace PE
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			FadeAllObject(m_scriptData[id].RatKingJournal, 0);
 			FadeAllObject(m_scriptData[id].Journal, 0);
 
 			PhaseBannerTransition(id, deltaTime);
-			UpdateTurnCounter("Deployment");
+			UpdateTurnCounter("Deploying");
 
 			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].HUDCanvas).children)
 			{
@@ -246,6 +246,7 @@ namespace PE
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
+			DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
 			DeactiveAllMenu();
 
 			ExecutionStateHUD(id, deltaTime);
@@ -307,7 +308,11 @@ namespace PE
 		PauseManager::GetInstance().SetPaused(false);
 
 		//pause the background music so it does not double play on next scene
-		PauseBGM();
+		//PauseBGM();
+		GlobalMusicManager::GetInstance().StopAllAudio();
+
+		// reset bgm flag
+		bgmStarted = false;
 	}
 
 	void GameStateController_v2_0::OnAttach(EntityID id)
@@ -343,6 +348,7 @@ namespace PE
 	{
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
+			GETANIMATIONMANAGER()->PauseAllAnimations();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
 		}
@@ -384,12 +390,38 @@ namespace PE
 
 		if (KTE.keycode == GLFW_KEY_F4)
 		{
-			NextStage(1);
+			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			NextStage(0);
 		}		
 		
 		if (KTE.keycode == GLFW_KEY_F5)
 		{
-			NextStage(0);
+			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			NextStage(1);
+		}
+
+		if (KTE.keycode == GLFW_KEY_F6)
+		{
+			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			NextStage(2);
+		}
+
+		if (KTE.keycode == GLFW_KEY_F7)
+		{
+			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
+			if(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			NextStage(3);
+		}
+
+		if (KTE.keycode == GLFW_KEY_F8)
+		{
+			if (m_currentLevel == 3)
+			{
+				*GETSCRIPTDATA(BossRatScript,GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss).currenthealth = 2;
+			}
 		}
 
 		if (KTE.keycode == GLFW_KEY_F9)
@@ -412,14 +444,51 @@ namespace PE
 			{
 				RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
 				CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+				BossRatScript* BossRat = GETSCRIPTINSTANCEPOINTER(BossRatScript);
+				EntityID BossID = BossRat->currentBoss;
+			
+				//get mouse position
+				vec2 cursorPosition{};
+				GetMouseCurrentPosition(cursorPosition);
+
+				//for boss
+				if (BossID != 0 && m_currentLevel == 3)
+				{
+					if (EntityManager::GetInstance().Has<Transform>(BossID) && EntityManager::GetInstance().Has<Collider>(BossID))
+					{
+						//activate ratbossportrait
+						//Get collider of the rat
+						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(BossID).colliderVariant);
+						if (PointCollision(col, cursorPosition))
+						{
+							m_isPotraitShowing = true;
+							m_bossRatSelected = true;
+							m_isRat = true;
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Rat King_256px.png"));
+							ActiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
+							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
+							DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
+							return;
+						}
+						else
+						{
+							m_isPotraitShowing = false;
+							m_bossRatSelected = false;
+							m_isRat = false;
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
+							DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
+						}
+					}
+				}
+
 				//for rats
 				for (auto [RatID, RatType] : RatManager->GetRats(RatManager->mainInstance))
 				{
 					if (EntityManager::GetInstance().Has<Transform>(RatID) && EntityManager::GetInstance().Has<Collider>(RatID))
 					{
-						//get mouse position
-						vec2 cursorPosition{};
-						GetMouseCurrentPosition(cursorPosition);
+						////get mouse position
+						//vec2 cursorPosition{};
+						//GetMouseCurrentPosition(cursorPosition);
 
 						//Get collider of the rat
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(RatID).colliderVariant);
@@ -433,7 +502,7 @@ namespace PE
 							m_isRat = true;
 							m_isPotraitShowing = true;
 							//debug
-							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
+							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << "EntityID: "<< RatID << std::endl;
 							//add a switch statement here
 							//need specific texture
 							m_lastSelectedEntity = RatID;
@@ -444,21 +513,27 @@ namespace PE
 							//RatScript_v2_0* RatScript = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0);
 							//RatScript* _RatScript = GETSCRIPTINSTANCEPOINTER(RatScript);
 
+							std::string soundPath;
+							int randomSoundIndex = std::rand() % 5 + 1;	// Random selection from 1 to 5
+
 							switch (RatType)
 							{
 							case EnumRatType::GUTTER_V1: //GUTTER V1 (M3)
 							case EnumRatType::GUTTER: //GUTTER
+								soundPath = "AudioObject/Rat Gutter Selection SFX" + std::to_string(randomSoundIndex) + ".prefab";
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_GutterRat_753x402.png"));
 								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 								break;
 							case EnumRatType::BRAWLER: //BRAWLER
+								soundPath = "AudioObject/Rat Brawler Selection SFX" + std::to_string(randomSoundIndex) + ".prefab";
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Brawler_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_BrawlerRat_753x402.png"));
 								
 								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 								break;
 							case EnumRatType::SNIPER: //SNIPER
+								soundPath = "AudioObject/Rat Sniper Selection SFX" + std::to_string(randomSoundIndex) + ".prefab";
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Sniper_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_SniperRat_753x402.png"));
 								SetPortraitInformation("UnitPortrait_RatNameFrame_SniperRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
@@ -467,6 +542,10 @@ namespace PE
 								//case 3: //HERALD
 									//break;
 							}
+
+							
+							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
+
 							return;
 						}
 						else
@@ -496,13 +575,13 @@ namespace PE
 				{
 					if (EntityManager::GetInstance().Has<Transform>(CatID) && EntityManager::GetInstance().Has<Collider>(CatID))
 					{
-						//get mouse position
-						vec2 cursorPosition{};
-						GetMouseCurrentPosition(cursorPosition);
+						////get mouse position
+						//vec2 cursorPosition{};
+						//GetMouseCurrentPosition(cursorPosition);
 						//Get collider of the rat
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(CatID).colliderVariant);
 						//debug
-						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
+						//std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
 						// Check if the rat/cat has been clicked
 						if (PointCollision(col, cursorPosition))
 						{
@@ -510,31 +589,11 @@ namespace PE
 							m_isPotraitShowing = true;
 							m_lastSelectedEntity = CatID;
 
-							EntityID sound{};
-								int randomInteger = std::rand() % 4 + 1;
-
-								switch (randomInteger)
-								{
-								case 1:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX1.prefab");
-									break;
-								case 2:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX2.prefab");
-									break;
-								case 3:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX3.prefab");
-									break;							
-								case 4:
-									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX4.prefab");
-									break;
-								}
-
-							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-							EntityManager::GetInstance().RemoveEntity(sound);
-
+							std::string soundPath;
+							int randomSelection = std::rand() % 5 + 1;
+							
 							//debug
-							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
+							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
 							//add a switch statement here
 							//need specific texture
 							//set cat portrait active
@@ -543,24 +602,31 @@ namespace PE
 							switch (CatType)
 							{
 							case EnumCatType::MAINCAT: //
+								soundPath = "AudioObject/Cat Meowsalot Selection SFX" + std::to_string(randomSelection) + ".prefab";
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_Meowsalot_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_Meowsalot_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_Meowsalot_753x402.png"));
 								break;
 							case EnumCatType::GREYCAT: //
+								soundPath = "AudioObject/Cat Grey Selection SFX" + std::to_string(randomSelection) + ".prefab";
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_GreyCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_GreyCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Grey_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_GreyCat_753x402.png"));
 								break;
 							case EnumCatType::ORANGECAT: //
+								soundPath = "AudioObject/Cat Orange Selection SFX" + std::to_string(randomSelection) + ".prefab";
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_OrangeCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_OrangeCat_753x402.png"));
 								break;
 							}
+
+							
+							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
+
 							return;
 						}
 						else
@@ -594,7 +660,6 @@ namespace PE
 		}
 	}
 
-
 	void GameStateController_v2_0::SetPauseStateV2(EntityID)
 	{
 		if (currentState != GameStates_v2_0::PAUSE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
@@ -602,6 +667,7 @@ namespace PE
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
 
+			
 			GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
 
 			//PauseBGM();
@@ -768,8 +834,9 @@ namespace PE
 	void GameStateController_v2_0::WinGame()
 	{
 		//PauseBGM();
-		GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+		GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
 
+		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayWinAudio();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
@@ -778,8 +845,9 @@ namespace PE
 	void GameStateController_v2_0::LoseGame()
 	{
 		//PauseBGM();
-		GlobalMusicManager::GetInstance().StartFadeOut(2.0f);
+		GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
 
+		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayLoseAudio();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
@@ -879,11 +947,28 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
 		}
 		else
 		{
-			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeInSpeed);
+			if (m_bossRatSelected)
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(fadeInSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+			}
+			else
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeInSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
+			}
 		}
 
 
@@ -920,11 +1005,28 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
 		}
 		else
 		{
-			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeOutSpeed);
+			if (m_bossRatSelected)
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(fadeOutSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+			}
+			else
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeOutSpeed);
+
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal))
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].RatKingJournal).SetAlpha(0);
+			}
 		}
 
 
@@ -1064,19 +1166,22 @@ namespace PE
 		m_timeSinceTransitionEnded = m_transitionTimer;
 		PlayClickAudio();
 		PlaySceneTransition();
+		GETANIMATIONMANAGER()->PlayAllAnimations();
+
+		bgmStarted = false;
 
 		m_leveltoLoad = SceneManager::GetInstance().GetActiveScene();
 	}
 
 	void GameStateController_v2_0::NextStage(int nextStage)
 	{
-		GlobalMusicManager::GetInstance().StartFadeOut(0.01f);
+		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
 
 		PlaySceneTransition();
 
 		switch (nextStage)
 		{
-		case 0: // 2nd level
+		case 0: // 1st level
 		{
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
@@ -1162,6 +1267,7 @@ namespace PE
 		CurrentTurn = 0;
 		m_leveltoLoad = m_level1SceneName;
 
+		GETANIMATIONMANAGER()->PlayAllAnimations();
 		PlayClickAudio();
 		PlaySceneTransition();
 	}
@@ -1218,6 +1324,21 @@ namespace PE
 					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = static_cast<float>(Current);
 				}
 			}
+
+			if (Max == 2 && EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "HealthFrame")
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_HealthBar_TwoSeg_180x46.png"));
+				}
+			}
+			else if (Max == 3 && EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "HealthFrame")
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_EnergyBar_ThreeSeg_180x46.png"));
+				}
+			}
 		}
 		else
 		for (auto catid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
@@ -1252,7 +1373,7 @@ namespace PE
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
@@ -1260,7 +1381,7 @@ namespace PE
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
@@ -1268,7 +1389,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Menu Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
@@ -1276,7 +1397,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Win SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
@@ -1284,7 +1405,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Lose SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
@@ -1292,7 +1413,7 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
@@ -1300,16 +1421,26 @@ namespace PE
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Phase Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
 	void GameStateController_v2_0::PauseBGM()
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		EntityID bgm2 = m_serializationManager.LoadFromFile("AudioObject/Background Music2.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm2))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm2).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bgm2);
+
+		EntityID bgm3 = m_serializationManager.LoadFromFile("AudioObject/Background Music3.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm3))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm3).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bgm3);
 
 		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
@@ -1319,15 +1450,57 @@ namespace PE
 
 	void GameStateController_v2_0::ResumeBGM()
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music.prefab");
+		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		EntityID bgm2 = m_serializationManager.LoadFromFile("AudioObject/Background Music2.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm2))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm2).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bgm2);
+
+		EntityID bgm3 = m_serializationManager.LoadFromFile("AudioObject/Background Music3.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm3))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm3).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bgm3);
 
 		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
 			EntityManager::GetInstance().Get<AudioComponent>(bga).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bga);
+	}
+
+	void GameStateController_v2_0::PlayBackgroundMusicForStage()
+	{
+		if (bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
+		{
+			return;
+		}
+
+		// Defining the audio tracks for each stage
+		std::vector<std::vector<std::string>> stageAudio =
+		{
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab"}, // Stage 1
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab"}, // Stage 2
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"},
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"} // Stage 3 & Boss (boss temp for now till m6-hans)
+		};
+
+		if (m_currentLevel >= 0 && m_currentLevel < stageAudio.size())
+		{
+			// Play each audio track based on the concurrent level
+			for (const std::string& track : stageAudio[m_currentLevel])
+			{
+				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f);
+			}
+			bgmStarted = true; // Flag the background music as started
+		}
+		else
+		{
+			//std::cout << "[PlayBackgroundMusicForStage] Invalid level index: " << m_currentLevel << std::endl;
+
+		}
 	}
 
 	void GameStateController_v2_0::UpdateTurnCounter(std::string currentphase)

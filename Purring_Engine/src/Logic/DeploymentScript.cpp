@@ -83,24 +83,43 @@ namespace PE
 
 		auto test = m_catController->GetDeployableCats(m_catController->mainInstance);
 
+		if(test.size() > 0)
 		switch (test[m_catPlaced])
 		{
 		case EnumCatType::MAINCAT:
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Meowsalot_512px.png"));
+
+			if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].FollowingTextureObject))
+			{
+				EntityManager::GetInstance().Get<Transform>(m_scriptData[id].FollowingTextureObject).width = 64;
+				EntityManager::GetInstance().Get<Transform>(m_scriptData[id].FollowingTextureObject).height = 64;
+			}
 			break;
 		}
 		case EnumCatType::GREYCAT:
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Grey_512px.png"));
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Smokey_512px.png"));
+
+			if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].FollowingTextureObject))
+			{
+				EntityManager::GetInstance().Get<Transform>(m_scriptData[id].FollowingTextureObject).width = 64;
+				EntityManager::GetInstance().Get<Transform>(m_scriptData[id].FollowingTextureObject).height = 64;
+			}
 			break;
 		}
 		case EnumCatType::ORANGECAT:
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Orange_512px.png"));
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Citrus_512px.png"));
+
+			if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].FollowingTextureObject))
+			{
+				EntityManager::GetInstance().Get<Transform>(m_scriptData[id].FollowingTextureObject).width = 96;
+				EntityManager::GetInstance().Get<Transform>(m_scriptData[id].FollowingTextureObject).height = 96;
+			}
 			break;
 		}
 		/*case EnumCatType::FLUFFYCAT:
@@ -118,7 +137,7 @@ namespace PE
 		else
 			return;
 
-		if (CheckArea(m_deploymentZone, m_mousepos, cc.radius))
+		if (CheckArea(m_deploymentZone, m_mousepos, cc.radius + 10))
 		{
 			for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].NoGoArea).children)
 			{

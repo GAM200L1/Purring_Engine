@@ -32,13 +32,22 @@ namespace PE
 		
 		// ----- Destructor ----- //
 		Cat_v2_0PLAN() = delete;
+		/*!***********************************************************************************
+		\brief Constructor for Cat_v2_0PLAN
 
+		\param[in] p_catAttackTypePLAN - grey or orange cat plan
+		\param[in] p_movementPLAN - movement plan
+		*************************************************************************************/
 		Cat_v2_0PLAN(CatAttackBase_v2_0* p_catAttackTypePLAN, CatMovement_v2_0PLAN* p_catMovementPLAN) : p_catAttack{ p_catAttackTypePLAN }, p_catMovement{ p_catMovementPLAN }, p_data{ nullptr } {}
 
+		/*!***********************************************************************************
+		\brief Destructor for Cat_v2_0PLAN
+		*************************************************************************************/
 		virtual ~Cat_v2_0PLAN() 
 		{
 			delete p_catMovement;
 			delete p_catAttack;
+			p_data = nullptr;
 		}
 
 		/*!***********************************************************************************
@@ -84,7 +93,7 @@ namespace PE
 		bool m_mouseRelease{ false };
 		bool m_mouseClicked{ false };
 		bool m_mouseClickPrevious{ false };
-		//bool m_rightMouseClicked{ false };
+		bool m_collidedPreviously{ false };
 
 		int m_doubleClick{ 0 };
 		float m_timer{ 0.f };
@@ -92,7 +101,18 @@ namespace PE
 
 		vec2 m_prevCursorPosition{ 0.f, 0.f };
 
+		/*!***********************************************************************************
+		 \brief Function to handle mouse click events for GreyCatPLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
+		/*!***********************************************************************************
+		 \brief Function to handle mouse release events for GreyCatPLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
 		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 	};
 }

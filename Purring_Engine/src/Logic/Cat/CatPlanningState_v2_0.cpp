@@ -28,13 +28,11 @@ namespace PE
 {
 	void Cat_v2_0PLAN::StateEnter(EntityID id)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
+
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		
-		//EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
-
-		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
-
-		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) { return; } // if cat is following cat in the chain )
+		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
 
 		// initializes the cat movement planning sub state
 		p_catMovement->Enter(id);
@@ -47,9 +45,9 @@ namespace PE
 	}
 
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
-	{
-		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) { return; } // if cat is following cat in the chain )
-		
+	{	
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
+
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 
@@ -60,15 +58,10 @@ namespace PE
 		}
 		else
 		{
-			if (m_timer >= 2.f) // resets double click when 1 second has passed
+			if (m_timer >= 1.f) // resets double click when 1 second has passed
 			{
 				m_doubleClick = 0;
 				m_timer = 0.f;
-			}
-			else
-			{
-				if (PointCollision(r_catCollider, r_cursorPosition) && m_mouseClicked && !m_mouseClickPrevious)
-					m_doubleClick++;
 			}
 
 			if (m_doubleClick >= 2)
@@ -76,7 +69,6 @@ namespace PE
 				p_data->planningAttack = true;
 				m_doubleClick = 0;
 				p_catAttack->ForceZeroMouse();
-				// @TODO: Add open attack sound here
 			}
 			
 			if (PointCollision(r_catCollider, r_cursorPosition))
@@ -95,6 +87,7 @@ namespace PE
 		m_timer += deltatime;
 		m_prevCursorPosition = r_cursorPosition;
 		m_mouseClickPrevious = m_mouseClicked;
+		m_collidedPreviously = PointCollision(r_catCollider, r_cursorPosition);
 	}
 
 	void Cat_v2_0PLAN::StateCleanUp()
@@ -108,15 +101,17 @@ namespace PE
 
 	void Cat_v2_0PLAN::StateExit(EntityID id)
 	{
-		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id)) { return; } // if cat is following cat in the chain )
+		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
 
 		p_catMovement->Exit(id);
 		p_catAttack->Exit(id);
+
+		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
 	}
 
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
-		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
+		if (!p_data->planningAttack && !GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		if (MBPE.button == 1 && p_data->attackSelected)
 		{
@@ -139,7 +134,12 @@ namespace PE
 	void Cat_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
-		m_mouseClicked = false;
+		if (m_mouseClicked)
+		{
+			if (m_collidedPreviously && PointCollision(std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_data->catID).colliderVariant), CatHelperFunctions::GetCursorPositionInWorld()))
+				++m_doubleClick;
+			m_mouseClicked = false;
+		}
 		m_moving = false;
 	}
 

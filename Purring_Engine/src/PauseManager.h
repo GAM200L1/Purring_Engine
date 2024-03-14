@@ -17,7 +17,8 @@
 #pragma once
 
 #include "Singleton.h"
-
+#include "Animation/Animation.h"
+#include "System.h"
 namespace PE
 {
 	class PauseManager : public Singleton<PauseManager>
@@ -44,7 +45,12 @@ namespace PE
 			 \brief     Sets the game to paused or unpaused.
 			\param     paused    True if the game is to be paused, false if the game is to be unpaused.
 			*************************************************************************************/
-			void SetPaused(bool paused) { m_paused = paused; }
+			void SetPaused(bool paused)
+			{ 
+				m_paused = paused; 
+				//if the game is unpaused, play the animation
+				paused ? GETANIMATIONMANAGER()->PauseAllAnimations() : GETANIMATIONMANAGER()->PlayAllAnimations();
+			}
 
 		private:
 			bool m_paused = false;

@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Rat_Brawler_Attack3.wav",
+                "loop": false
+            },
+          "EntityDescriptor": {
+            "Prefab Type": "Rat Brawler Attack SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Rat Brawler Attack SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
+        },
+        "name": ""
+    }
+}

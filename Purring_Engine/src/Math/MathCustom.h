@@ -1050,6 +1050,16 @@ namespace PE
 	float Dot(mat3x3 const& r_lhs, mat3x3 const& r_rhs);
 
 	/*!***********************************************************************************
+	 \brief Rotates the vector counter clockwise by the angle passed in.
+
+	 \param[in] inputVector - Vector to rotate.
+	 \param[in] radians - Angle in radians from the x-axis in the counter clockwise 
+				direction to rotate the vector by.
+	 \return vec2 - Rotated vector.
+	*************************************************************************************/
+	vec2 Rotate(vec2 const& inputVector, float const radians);
+
+	/*!***********************************************************************************
 	 \brief Converts input angle to degrees
 	 
 	 \param[in,out] radAngle - angle in radians

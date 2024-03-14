@@ -50,8 +50,8 @@ namespace PE
 		// projectile variables
 		float bulletDelay{ 0.f }; // for after the bullet fire frame if slight 
 		float bulletRange{ 3.f };
-		float bulletLifeTime{ 1.f };
-		float bulletForce{ 1000.f };
+		float bulletLifeTime{ 0.5f };
+		float bulletForce{ 750.f };
 
 		// for syncing
 		unsigned int bulletFireAnimationIndex{ 3 };
@@ -70,7 +70,10 @@ namespace PE
 	public:
 		
 		// ----- Destructor ----- //
-		~GreyCatAttack_v2_0PLAN() { p_attackData = nullptr; p_gsc = nullptr; }
+		~GreyCatAttack_v2_0PLAN()
+		{
+			p_attackData = nullptr;
+		}
 
 		// ----- Public Functions ----- //
 		/*!***********************************************************************************
@@ -122,8 +125,7 @@ namespace PE
 	
 	private:
 		// ----- Private Variables ----- //
-		GameStateController_v2_0* p_gsc; // pointer to the game state controller
-		GreyCatAttackVariables* p_attackData; // attack data for the cat
+		GreyCatAttackVariables* p_attackData = nullptr; // attack data for the cat
 
 		bool m_showTelegraphs{ false }; // True if telegraphs are to be displayed
 
@@ -158,7 +160,10 @@ namespace PE
 	public:
 
 		// ----- Destructor ----- //
-		virtual ~GreyCatAttack_v2_0EXECUTE() { p_attackData = nullptr; }
+		virtual ~GreyCatAttack_v2_0EXECUTE() 
+		{ 
+			p_attackData = nullptr;
+		}
 
 		/*!***********************************************************************************
 			\brief Set up the state and subscribe to the collision events
@@ -196,7 +201,7 @@ namespace PE
 	private:
 
 		// cat attacks
-		GreyCatAttackVariables* p_attackData;
+		GreyCatAttackVariables* p_attackData = nullptr;
 
 		EntityID m_catID{ 0 };
 
@@ -229,5 +234,12 @@ namespace PE
 		 \param[in] id2 - ID of the second entity to check
 		*************************************************************************************/
 		bool CollideCatOrRat(EntityID id1, EntityID id2);
+
+		/*!***********************************************************************************
+		 \brief Plays projectile collided with another entity audio
+
+		 \param[in] isTerrain - if the projectile hit a terrain
+		*************************************************************************************/
+		void PlayProjectileHitAudio(bool isTerrain);
 	};
 }

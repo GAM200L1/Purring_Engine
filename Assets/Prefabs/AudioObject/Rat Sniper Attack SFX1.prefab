@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Rat_Sniper_Attack1.wav",
+                "loop": false
+            },
+          "EntityDescriptor": {
+            "Prefab Type": "Rat Sniper Attack SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Rat Sniper Attack SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
+        },
+        "name": ""
+    }
+}

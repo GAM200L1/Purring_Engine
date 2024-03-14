@@ -27,6 +27,7 @@ namespace PE
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);
 
 		m_activationTime = p_data->activationTime;
+		m_distanceTravelled = p_data->distanceBetweenPools;
 	}
 
 	void BossRatChargeAttack::DrawTelegraphs(EntityID id)
@@ -55,46 +56,83 @@ namespace PE
 			TelegraphTransform->orientation = atan2(unitDirection.y, unitDirection.x);
 		}	
 	}
+	
 	void BossRatChargeAttack::EnterAttack(EntityID)
 	{
-		m_isCharging = true;
+		if (!m_isCharging)
+		{
+			if (p_data->curr_Anim != BossRatAnimationsEnum::CHARGE)
+			p_script->PlayAnimation(BossRatAnimationsEnum::CHARGE);
+		}
+
 		EntityManager::GetInstance().RemoveEntity(m_telegraph);
 	}
 
 	void BossRatChargeAttack::UpdateAttack(EntityID id, float dt)
 	{	
-		if (m_activationTime > 0)
+		if (EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetAnimationMaxIndex() && p_data->curr_Anim == BossRatAnimationsEnum::CHARGE)
+		{
+			m_animationPlayed = true;
+			p_script->PlayAttackAudio();
+			p_script->PlayAnimation(BossRatAnimationsEnum::WALKFASTER);
+			m_isCharging = true;
+		}
+
+		if (m_isCharging && m_activationTime > 0)
 		{
 			m_activationTime -= dt;
 			return;
 		}
 
-		if (m_isCharging)
+		if (m_isCharging && m_animationPlayed)
 		{
 			if (EntityManager::GetInstance().Has<Transform>(id))
 			{
 				Transform* BossTransform = &EntityManager::GetInstance().Get<Transform>(id);
 				BossTransform->position += m_chargeDirection * p_data->chargeSpeed * dt;
+
+				m_distanceTravelled += p_data->chargeSpeed * dt;
+				if (m_distanceTravelled >= p_data->distanceBetweenPools)
+				{
+					SerializationManager sm;
+					EntityID puddle = sm.LoadFromFile(m_poisonPuddlePrefab);
+					if (EntityManager::GetInstance().Has<Transform>(puddle))
+					{
+						Transform* puddleTransform = &EntityManager::GetInstance().Get<Transform>(puddle);
+						puddleTransform->position = BossTransform->position;
+						p_script->PlayPoisonPuddleAudio();
+					}
+					p_script->poisonPuddles.insert(std::pair<EntityID,int>(puddle,3));
+					m_distanceTravelled = 0;
+				}
 			}
 
 			m_travelTime -= dt;
 		}
-		else
+		else if(m_animationPlayed)
 		{
 			m_chargeEndDelay -= dt;
 
-			if(m_chargeEndDelay <=0)
-			p_data->finishExecution = true;
+			if (m_chargeEndDelay <= 0)
+			{
+				p_data->finishExecution = true;
+			}
 		}
 	}
+	
 	void BossRatChargeAttack::ExitAttack(EntityID)
 	{
 	}
 
 	void BossRatChargeAttack::StopAttack()
 	{
-		if(m_travelTime < 0)
-		m_isCharging = false;
+		if (m_travelTime < 0)
+		{
+			if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && m_isCharging && p_data->curr_Anim != BossRatAnimationsEnum::DEATH)
+				p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
+			m_isCharging = false;
+
+		}
 	}
 
 	BossRatChargeAttack::~BossRatChargeAttack()

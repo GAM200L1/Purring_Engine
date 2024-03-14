@@ -8,7 +8,7 @@
  \par      email:      krystal.y@digipen.edu
 
  \brief
-	This file contains functions for a temp rat state for testing purposes.
+	This file contains functions for the rat's return state.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -43,6 +43,11 @@ namespace PE
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 
 		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+		*************************************************************************************/
+		virtual void StateCleanUp();
+
+		/*!***********************************************************************************
 			\brief does nothing
 		*************************************************************************************/
 		virtual void StateExit(EntityID id) override;
@@ -61,7 +66,8 @@ namespace PE
 		bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
 
 		// Event listener IDs 
-		int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+		int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+		int m_triggerEnterEventListener{}, m_triggerStayEventListener{}, m_triggerExitEventListener{};
 
 	private:
 		/*!***********************************************************************************
@@ -74,18 +80,6 @@ namespace PE
 		}
 
 		/*!***********************************************************************************
-		 \brief Displays and updates the rotation of the rat telegraphs.
-
-		 \param targetPosition - Position that is being targeted
-		*************************************************************************************/
-		void EnableTelegraphs(vec2 const& targetPosition);
-
-		/*!***********************************************************************************
-		 \brief Disables the rat telegraphs.
-		*************************************************************************************/
-		void DisableTelegraphs();
-
-		/*!***********************************************************************************
 		 \brief Checks if any cats entered or executed the rat's detection radius during
 						the last execution phase and decides whether to swap to the attacking or
 						hunting states respectively.
@@ -94,6 +88,24 @@ namespace PE
 
 
 		// --- COLLISION DETECTION --- // 
+
+		/*!***********************************************************************************
+		 \brief Called when a collision enter event has occurred. If an event has
+			occurred between this script's rat's collider and a cat or an obstacle,
+			the parent rat is notified.
+
+		 \param[in] r_event - Event data.
+		*************************************************************************************/
+		void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+
+		/*!***********************************************************************************
+		 \brief Called when a collision exit event has occurred. If an event has
+			occurred between this script's rat's collider and an obstacle, the parent rat
+			is notified.
+
+		 \param[in] r_event - Event data.
+		*************************************************************************************/
+		void OnCollisionExit(const Event<CollisionEvents>& r_event);
 
 		/*!***********************************************************************************
 		 \brief Called when a trigger enter or stay event has occured. If an event has

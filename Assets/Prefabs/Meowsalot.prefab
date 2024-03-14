@@ -11,7 +11,7 @@
                                 "../Assets/Animation/AnimationMeowsalot_Idle.anim",
                                 "../Assets/Animation/AnimationMeowsalot_walk.anim"
                             ],
-                            "CurrentAnimationID": ""
+                            "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle.anim"
                         },
                         "Collider": {
                             "collisionLayerIndex": 0,
@@ -33,13 +33,13 @@
                         "EntityDescriptor": {
                             "InteractionLayer": 0,
                             "Layer": 2,
-                            "Old ID": 1,
+                            "Old ID": 61,
                             "Prefab Type": "Meowsalot",
                             "children": [],
                             "isActive": true,
                             "name": "Meowsalot",
                             "parent": null,
-                            "sceneID": 1
+                            "sceneID": 63
                         },
                         "Renderer": {
                             "Color": {
@@ -48,7 +48,7 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
+                            "TextureKey": "../Assets/Textures/Animations/Cat_Meowsalot_Idle.png"
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,
@@ -69,8 +69,8 @@
                                             "attacKDirection": 0,
                                             "bulletDelay": 0.0,
                                             "bulletFireAnimationIndex": 3,
-                                            "bulletForce": 500.0,
-                                            "bulletLifeTime": 1.0,
+                                            "bulletForce": 750.0,
+                                            "bulletLifeTime": 0.5,
                                             "bulletRange": 3.0,
                                             "damage": 2,
                                             "projectileID": 0,

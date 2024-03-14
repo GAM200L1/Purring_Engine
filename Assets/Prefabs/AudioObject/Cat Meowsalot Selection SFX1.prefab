@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Cat_Meowsalot_Selected1.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Cat Meowsalot Selection SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Cat Meowsalot Selection SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

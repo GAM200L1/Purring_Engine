@@ -18,9 +18,9 @@
                         "Renderer": {
                             "Color": {
                                 "a": 1.0,
-                                "b": 1.0,
-                                "g": 1.0,
-                                "r": 1.0
+                                "b": 0.2862745225429535,
+                                "g": 0.3333333432674408,
+                                "r": 0.8156862854957581
                             },
                             "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Charge_350x160.png"
                         },

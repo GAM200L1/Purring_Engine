@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/vo_Rat_Brawler_Detection1.wav",
+            "loop": false
+          },
+          "EntityDescriptor": {
+            "Prefab Type": "Rat Brawler Detection SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Rat Brawler Detection SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
+        },
+        "name": ""
+    }
+}

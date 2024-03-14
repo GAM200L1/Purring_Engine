@@ -68,12 +68,28 @@ namespace PE
         *************************************************************************************/
         virtual void StateExit(EntityID id) override;
 
-        /*!***********************************************************************************
-            \brief Handles the event where the rat collides with a cat
+        
 
-            \param[in,out] r_TE - Event data related to the collision
+
+        // --- COLLISION DETECTION --- // 
+
+        /*!***********************************************************************************
+         \brief Called when a collision enter event has occurred. If an event has
+          occurred between this script's rat's collider and a cat or an obstacle, 
+          the parent rat is notified.
+
+         \param[in] r_event - Event data.
         *************************************************************************************/
-        void RatHitCat(const Event<CollisionEvents>& r_TE);
+        void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+
+        /*!***********************************************************************************
+         \brief Called when a collision exit event has occurred. If an event has
+          occurred between this script's rat's collider and an obstacle, the parent rat
+          is notified.
+
+         \param[in] r_event - Event data.
+        *************************************************************************************/
+        void OnCollisionExit(const Event<CollisionEvents>& r_event);
 
         /*!***********************************************************************************
             \brief Called when a trigger enter or stay event has occurred
@@ -83,11 +99,20 @@ namespace PE
         void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
 
         /*!***********************************************************************************
+         \brief Called when a trigger exit event has occured. If an event has occurred
+          between this script's rat's detection collider and a cat, the parent rat
+          is notified.
+
+         \param[in,out] r_TE - Trigger event data.
+        *************************************************************************************/
+        void OnTriggerExit(const Event<CollisionEvents>& r_TE);
+
+        /*!***********************************************************************************
             \brief Returns the name of this state
 
             \return A string view representing the name of the state, useful for debugging and logging
         *************************************************************************************/
-        virtual std::string_view GetName() { return "Movement_v2_0"; }
+        virtual std::string_view GetName() { return "RatMovement_v2_0"; }
 
     private:
 
@@ -102,15 +127,9 @@ namespace PE
         *************************************************************************************/
         RatScript_v2_0_Data* p_data{ nullptr };
 
-        /*!***********************************************************************************
-            \brief ID of the event listener for collision events, used to register and unregister the rat for collision notifications
-        *************************************************************************************/
-        int m_collisionEventListener{};
-
-        /*!***********************************************************************************
-            \brief ID of the event listener for collision stay events, used to continuously check for collisions while the rat remains in contact with another entity
-        *************************************************************************************/
-        int m_collisionStayEventListener{};
+        // ID of the event listener for collision events, used to register and unregister the rat for collision notifications
+        int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+        int m_triggerEnterEventListener{}, m_triggerStayEventListener{}, m_triggerExitEventListener{};
 
         bool m_planningRunOnce{}; // True if the planning phase has been run once
 
@@ -127,15 +146,16 @@ namespace PE
         }
 
         /*!***********************************************************************************
-          \brief Sets the animation to be played based on whether the rat is moving or not.
-        *************************************************************************************/
-        void UpdateAnimation(bool const isRatMoving);
-
-        /*!***********************************************************************************
           \brief Pick the position that the rat should move toward (in a straight line).
 
           \return Returns a next viable target for the rat.
         *************************************************************************************/
         vec2 PickTargetPosition();
+        
+
+        /*!***********************************************************************************
+          \brief Stop the movement anim and change to the attack state.
+        *************************************************************************************/        
+        void OnMovementDone();
     };
 }
