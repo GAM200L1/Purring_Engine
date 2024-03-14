@@ -44,7 +44,7 @@
 
 extern Logger engine_logger;
 
-#define REGISTERPREFAB(prefab) PE::ResourceManager::GetInstance().AddPrefabKeyToLoad(prefab)
+#define REGISTERPREFAB(prefabName) PE::ResourceManager::GetInstance().AddPrefabKeyToLoad(prefabName)
 
 namespace PE
 {
@@ -287,9 +287,66 @@ namespace PE
         return true;
     }
 
-    ImVec2 ResourceManager::GetTextureSize(const std::string& name)
+    size_t ResourceManager::LoadPrefabFromFile(std::string const& r_filePath, bool useFilePath)
     {
-        auto it = Icons.find(name);
+        std::filesystem::path filepath;
+        SerializationManager serializationManager;
+
+        // if using filepath
+        if (useFilePath)
+        {
+            filepath = r_filePath;
+        }
+        else
+        {
+            filepath = std::string{ "../Assets/Prefabs/" } + r_filePath;
+        }
+        if (!std::filesystem::exists(filepath))
+        {
+            std::cerr << "File does not exist: " << filepath << std::endl;
+            return serializationManager.CreateEntityFromPrefab(m_defaultPrefabKey);
+        }        
+
+        size_t id = serializationManager.CreateEntityFromPrefab(filepath.string());
+
+        // if prefab not found
+        if (id == MAXSIZE_T)
+        {
+            serializationManager.CreateEntityFromPrefab(m_defaultPrefabKey);
+        }
+
+        return id;
+    }
+
+    //size_t ResourceManager::GetPrefab(std::string const& r_name)
+    //{
+    //    SerializationManager serializationManager;
+    //    // if prefab is not found
+    //    if (Prefabs.find(r_name) == Prefabs.end())
+    //    {
+    //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+    //        engine_logger.SetTime();
+    //        engine_logger.AddLog(false, "Prefab " + r_name + " not loaded, loading prefab.", __FUNCTION__);
+
+    //        // load texture
+    //        if (LoadTextureFromFile(r_name, r_name))
+    //        {
+    //            return serializationManager.CreateEntityFromPrefab(Prefabs[r_name]);
+    //        }
+    //        else
+    //        {
+    //            // return default prefab change
+    //            return Prefabs[r_name];
+    //        }
+    //    }
+
+    //    // if found, create entity from prefab
+    //    return serializationManager.CreateEntityFromPrefab(Prefabs[r_name]);
+    //}
+
+    ImVec2 ResourceManager::GetTextureSize(const std::string& r_name)
+    {
+        auto it = Icons.find(r_name);
         if (it != Icons.end()) {
             auto texture = it->second;
             return ImVec2(static_cast<float>(texture->GetWidth()), static_cast<float>(texture->GetHeight()));

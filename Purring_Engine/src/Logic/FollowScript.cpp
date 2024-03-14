@@ -24,6 +24,7 @@
 #include "AudioManager/AudioComponent.h"
 #include "LogicSystem.h"
 #include "CatScript.h"
+#include "ResourceManager/ResourceManager.h"
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
@@ -65,8 +66,7 @@ namespace PE
 							CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
 							CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
 
-							SerializationManager serializationManager;
-							EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX.prefab");
+							EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Cat Rescue SFX.prefab");
 							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 							EntityManager::GetInstance().RemoveEntity(sound);

@@ -24,6 +24,8 @@
 #include "PauseManager.h"
 #include "GameStateController_v2_0.h"
 #include "AudioManager/GlobalMusicManager.h"
+#include "ResourceManager/ResourceManager.h"
+
 namespace PE
 {
 	MainMenuController::MainMenuController()
@@ -71,7 +73,7 @@ namespace PE
 			{
 				if (!m_isPausedOnce)
 				{	
-					EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
+					EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 						EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 					EntityManager::GetInstance().RemoveEntity(bgm);
@@ -83,7 +85,7 @@ namespace PE
 			{
 				if (!m_isResumedOnce)
 				{
-					EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
+					EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 						EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
 					EntityManager::GetInstance().RemoveEntity(bgm);
@@ -98,7 +100,7 @@ namespace PE
 	void MainMenuController::Destroy(EntityID id)
 	{
 		//stop the background music
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
+		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
@@ -246,7 +248,7 @@ namespace PE
 				DeactiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value());
 				EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value()).isActive = false;
 
-				EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music.prefab");
+				EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
 				EntityManager::GetInstance().RemoveEntity(bgm);
@@ -380,21 +382,21 @@ namespace PE
 
 	void MainMenuController::PlayClickAudio()
 	{
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX.prefab");
+		EntityID buttonpress = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 	void MainMenuController::PlayPositiveFeedback()
 	{
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Positive Feedback.prefab");
+		EntityID buttonpress = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Positive Feedback.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 	void MainMenuController::PlayNegativeFeedback()
 	{
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback.prefab");
+		EntityID buttonpress = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Negative Feedback.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);

@@ -37,8 +37,7 @@ namespace PE
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(catID);
 
 		// create seismic //
-		SerializationManager serializationManager;
-		seismicID = serializationManager.LoadFromFile("Seismic.prefab");
+		seismicID = ResourceManager::GetInstance().LoadPrefabFromFile("Seismic.prefab");
 		
 		/*EntityManager::GetInstance().Get<EntityDescriptor>(seismicID).layer = 0;
 		EntityManager::GetInstance().Get<Collider>(seismicID).collisionLayerIndex = 0;*/
@@ -54,7 +53,7 @@ namespace PE
 		CatHelperFunctions::ScaleEntity(seismicID, catTransform.width * seismicRadius, catTransform.height * seismicRadius);
 		
 		// create telegraph //
-		telegraphID = serializationManager.LoadFromFile("OrangeCatAttackTelegraph.prefab");
+		telegraphID = ResourceManager::GetInstance().LoadPrefabFromFile("OrangeCatAttackTelegraph.prefab");
 
 		Hierarchy::GetInstance().AttachChild(catID, telegraphID);
 		EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.Zero();
