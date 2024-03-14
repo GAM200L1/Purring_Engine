@@ -78,6 +78,7 @@
 #include "Logic/Rat/RatIdle_v2_0.h"
 #include "Layers/LayerManager.h"
 #include "Logic/IntroCutsceneController.h"
+#include "Logic/EndingCutsceneController.h"
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
 #include "Logic/Settings.h"
@@ -3343,16 +3344,44 @@ namespace PE {
 										int TextID = static_cast<int> (it->second.Text);
 										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
 
-										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##csoi", &CutsceneObjectID);
+										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##icsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
 
-										ImGui::Text("Final Frame Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##fsidd", &FinalSceneID);
+										ImGui::Text("Final Frame Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ifsidd", &FinalSceneID);
 										{ it->second.FinalScene = FinalSceneID; }
 
-										ImGui::Text("Text Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tttid", &TextID);
+										ImGui::Text("Text Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itttid", &TextID);
 										{ it->second.Text = TextID; }
 
-										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tssid", &TransitionScreenID);
+										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itssid", &TransitionScreenID);
+										{ it->second.TransitionScreen = TransitionScreenID; }
+									}
+								}
+							}
+
+							if (key == "EndingCutsceneController")
+							{
+								EndingCutsceneController* p_script = dynamic_cast<EndingCutsceneController*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("EndingCutsceneController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int CutsceneObjectID = static_cast<int> (it->second.CutsceneObject);
+										int FinalSceneID = static_cast<int> (it->second.FinalScene);
+										int TextID = static_cast<int> (it->second.Text);
+										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
+
+										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ecsoi", &CutsceneObjectID);
+										it->second.CutsceneObject = CutsceneObjectID;
+
+										ImGui::Text("Final Frame Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##efsidd", &FinalSceneID);
+										{ it->second.FinalScene = FinalSceneID; }
+
+										ImGui::Text("Text Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etttid", &TextID);
+										{ it->second.Text = TextID; }
+
+										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etssid", &TransitionScreenID);
 										{ it->second.TransitionScreen = TransitionScreenID; }
 									}
 								}

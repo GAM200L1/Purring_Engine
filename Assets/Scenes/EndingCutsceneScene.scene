@@ -43,9 +43,9 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/IntroCutscene.anim"
+                            "../Assets/Animation/EndingCutscene.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/IntroCutscene.anim"
+                        "CurrentAnimationID": "../Assets/Animation/EndingCutscene.anim"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,

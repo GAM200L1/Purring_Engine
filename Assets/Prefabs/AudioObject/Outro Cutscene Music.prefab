@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "../Assets/Audio/MOTM_M5_IntroCutscene_AudioOnly.wav",
+                "audioKey": "../Assets/Audio/MOTM_M5_EndingCutscene_AudioOnly.wav",
                 "loop": true
             },
             "EntityDescriptor": {

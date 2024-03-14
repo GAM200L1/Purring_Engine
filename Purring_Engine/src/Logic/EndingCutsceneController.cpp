@@ -18,7 +18,7 @@
 
 #include "prpch.h"
 #include "Data/SerializationManager.h"
-#include "IntroCutsceneController.h"
+#include "EndingCutsceneController.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
@@ -36,17 +36,17 @@
 
 namespace PE 
 {
-	void IntroCutsceneController::Init(EntityID id)
+	void EndingCutsceneController::Init(EntityID id)
 	{
 		m_elapsedTime = 0;
 		m_endCutscene = false;
 		m_startCutscene = true;
 
-		m_scriptData[id].windowNotFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, IntroCutsceneController::OnWindowOutOfFocus, this)
-		m_scriptData[id].windowFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus, IntroCutsceneController::OnWindowFocus, this)
+		m_scriptData[id].windowNotFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, EndingCutsceneController::OnWindowOutOfFocus, this)
+		m_scriptData[id].windowFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus, EndingCutsceneController::OnWindowFocus, this)
 	}
 
-	void IntroCutsceneController::Update(EntityID id, float deltaTime)
+	void EndingCutsceneController::Update(EntityID id, float deltaTime)
 	{
 		GlobalMusicManager::GetInstance().Update(deltaTime);
 
@@ -54,7 +54,7 @@ namespace PE
 
 		if (PauseManager::GetInstance().IsPaused())
 		{
-			EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
+			EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Outro Cutscene Music.prefab");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
 				EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PauseSound();
 			EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
@@ -65,7 +65,7 @@ namespace PE
 		{
 			if (m_startCutscene)
 			{
-				PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Intro Cutscene Music.prefab", false, 5.0f);
+				PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Outro Cutscene Music.prefab", false, 5.0f);
 
 				m_startCutscene = false;
 			}
@@ -90,9 +90,9 @@ namespace PE
 		}
 
 	}
-	void IntroCutsceneController::Destroy(EntityID id)
+	void EndingCutsceneController::Destroy(EntityID id)
 	{
-		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
+		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Outro Cutscene Music.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
@@ -105,12 +105,12 @@ namespace PE
 		m_isFadingOut = false;
 	}
 
-	void IntroCutsceneController::OnAttach(EntityID id)
+	void EndingCutsceneController::OnAttach(EntityID id)
 	{
-		m_scriptData[id] = IntroCutsceneControllerData();
+		m_scriptData[id] = EndingCutsceneControllerData();
 	}
 
-	void IntroCutsceneController::OnDetach(EntityID id)
+	void EndingCutsceneController::OnDetach(EntityID id)
 	{
 		auto it = m_scriptData.find(id);
 		if (it != m_scriptData.end())
@@ -121,23 +121,23 @@ namespace PE
 
 	}
 
-	std::map<EntityID, IntroCutsceneControllerData>& IntroCutsceneController::GetScriptData()
+	std::map<EntityID, EndingCutsceneControllerData>& EndingCutsceneController::GetScriptData()
 	{
 		return m_scriptData;
 	}
 
-	rttr::instance IntroCutsceneController::GetScriptData(EntityID id)
+	rttr::instance EndingCutsceneController::GetScriptData(EntityID id)
 	{
 		return rttr::instance(m_scriptData.at(id));
 	}
 
-	void IntroCutsceneController::ContinueToLevel(EntityID id)
+	void EndingCutsceneController::ContinueToLevel(EntityID id)
 	{
 		m_isTransitioning = true;
 		PlayClickAudio();
 	}
 
-	void IntroCutsceneController::PlayClickAudio()
+	void EndingCutsceneController::PlayClickAudio()
 	{
 		EntityID buttonpress = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
@@ -145,7 +145,7 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
-	void IntroCutsceneController::PlaySceneTransitionAudio()
+	void EndingCutsceneController::PlaySceneTransitionAudio()
 	{
 		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Scene Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
@@ -153,13 +153,13 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
-	IntroCutsceneController::IntroCutsceneController()
+	EndingCutsceneController::EndingCutsceneController()
 	{
-		REGISTER_UI_FUNCTION(ContinueToLevel, PE::IntroCutsceneController);
-		REGISTERANIMATIONFUNCTION(SetButtonText, PE::IntroCutsceneController);
+		//REGISTER_UI_FUNCTION(ContinueToLevel, PE::EndingCutsceneController);
+		//REGISTERANIMATIONFUNCTION(SetButtonText, PE::EndingCutsceneController);
 	}
 
-	void IntroCutsceneController::TransitionPanelFade(EntityID const id, float deltaTime)
+	void EndingCutsceneController::TransitionPanelFade(EntityID const id, float deltaTime)
 	{
 		m_transitionElapsedTime += deltaTime;
 
@@ -174,7 +174,7 @@ namespace PE
 		}
 	}
 
-	void IntroCutsceneController::FadeAllObject(EntityID id, float const alpha)
+	void EndingCutsceneController::FadeAllObject(EntityID id, float const alpha)
 	{
 		//fade all the children objects first
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
@@ -196,17 +196,17 @@ namespace PE
 		EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetAlpha(alpha);
 	}
 
-	void IntroCutsceneController::SetButtonText(EntityID id)
+	void EndingCutsceneController::SetButtonText(EntityID id)
 	{
 		
 	}
 
-	void IntroCutsceneController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)
+	void EndingCutsceneController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)
 	{
 		PauseManager::GetInstance().SetPaused(true);
 	}
 
-	void IntroCutsceneController::OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event)
+	void EndingCutsceneController::OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event)
 	{
 		PauseManager::GetInstance().SetPaused(false);
 	}
