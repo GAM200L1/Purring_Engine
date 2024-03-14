@@ -128,6 +128,24 @@ namespace PE
 		void SetLayerState(size_t pos, bool set) { m_layerStates[pos] = set; }
 
 		/*!***********************************************************************************
+		 \brief Store the Layer State in a class private variable to restore later
+
+		*************************************************************************************/
+		void StoreLayerState() { m_storeState = m_layerStates; }
+
+		/*!***********************************************************************************
+		 \brief Restore the Layer State to what was previously stored
+
+		*************************************************************************************/
+		void RestoreLayerState() { m_layerStates = m_storeState; }
+
+		/*!***********************************************************************************
+		 \brief Reset the Layer State to all TRUE
+
+		*************************************************************************************/
+		void ResetLayerState() { m_layerStates.reset(); m_layerStates.flip(); }
+
+		/*!***********************************************************************************
 		 \brief Resets the layer caches (will skip entityID 0 as that is the UI camera)
 		 
 		*************************************************************************************/
@@ -146,7 +164,7 @@ namespace PE
         std::map<ComponentID, InteractionLayers, Comparer2> m_cachedLayers;
 
 		// stores the states (enabled/disabled) 
-        LayerState m_layerStates;
+        LayerState m_layerStates, m_storeState;
     };
 
 
