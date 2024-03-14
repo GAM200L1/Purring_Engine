@@ -59,6 +59,7 @@ namespace PE
 
             FMOD_MODE mode = FMOD_DEFAULT;
             mode |= m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
+            std::cout << "[Audio Playback] Starting audio playback for " << m_audioKey << std::endl;
 
             FMOD_RESULT result = p_system->playSound(audio->GetSound(), targetGroup, false, &p_channel);
             if (result == FMOD_OK)
@@ -183,6 +184,7 @@ namespace PE
             ? m_fadeProgressIndividual
             : (1.0f - m_fadeProgressIndividual);
 
+        std::cout << "[Fade-in Update] Current volume: " << volume << " for " << m_audioKey << std::endl;
         SetVolume(volume * m_originalVolume);
 
         if (m_fadeProgressIndividual >= 1.0f) m_isFadingIndividual = false;

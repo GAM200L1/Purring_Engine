@@ -41,10 +41,15 @@ namespace PE
             // Calculate the current volume based on whether we are fading in or out
             float volume = (m_isFadingIn ? m_fadeProgress : (1.0f - m_fadeProgress)) * m_maxVolume;
             SetBackgroundMusicVolume(volume);
+            std::cout << "Current BGM Volume: " << volume << std::endl;
 
             // Check if the fade operation has completed
             if (m_fadeProgress >= 1.0f)
             {
+                if (m_isFadingIn) {
+                    // Debug log to indicate the end of fade-in
+                    std::cout << "[Fade-in End] Fade-in completed for " << m_currentTrackKey << std::endl;
+                }
                 m_isFading = false;  // Mark the fade operation as complete
 
                 if (!m_isFadingIn)
@@ -74,9 +79,12 @@ namespace PE
         {
             auto& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
             audioComponent.SetLoop(loop);
+            std::cout << "[Audio Start] Initial volume set to 0 for " << r_prefabPath << "." << std::endl;
+            audioComponent.SetVolume(0.0f);
 
             if (fadeInDuration > 0.0f)
             {
+                std::cout << "[Fade-in Start] Starting fade-in for " << r_prefabPath << " with duration: " << fadeInDuration << std::endl;
                 audioComponent.StartIndividualFadeIn(fadeInDuration);
             }
             else
@@ -91,6 +99,11 @@ namespace PE
 
             // Store the audio component in the map using the prefab path as the key
             m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+
+            // Debug log to check if multiple instances of the same audio track are being played
+            int instances = std::count_if(m_audioComponents.begin(), m_audioComponents.end(),
+                [&r_prefabPath](const auto& pair) { return pair.first == r_prefabPath; });
+            std::cout << "Instances of " << r_prefabPath << ": " << instances << std::endl;
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
