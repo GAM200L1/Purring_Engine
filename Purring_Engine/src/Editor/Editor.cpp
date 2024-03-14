@@ -1199,9 +1199,14 @@ namespace PE {
 									if (vp.get_type().get_name() == "bool")
 									{
 										bool tmp = vp.get_value<bool>();
+										bool prev = tmp;
 										std::string str = "##" + prop.get_name().to_string();
 										ImGui::SameLine(); ImGui::Checkbox(str.c_str(), &tmp);
 										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+										if (prop.get_name().to_string() == "Looping" && prev != tmp)
+										{
+											EntityManager::GetInstance().Get<ParticleEmitter>(entityID).CreateAllParticles();
+										}
 									}
 									else if (vp.get_type().get_name() == "unsignedint")
 									{
