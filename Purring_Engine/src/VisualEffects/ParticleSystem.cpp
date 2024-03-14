@@ -80,7 +80,13 @@ namespace PE
 				CreateAllParticles();
 			}
 			else
+			{
+				for (auto& p : particles)
+				{
+					p.enabled = false;
+				}
 				return;
+			}
 		}
 
 		if (!isActive)
