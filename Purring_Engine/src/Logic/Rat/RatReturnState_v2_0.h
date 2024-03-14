@@ -57,7 +57,7 @@ namespace PE
 
 			\return std::string_view name of state
 		*************************************************************************************/
-		virtual std::string_view GetName() override { return "RatReturnState_v2_0"; }
+		virtual std::string_view GetName() override { return GETSCRIPTNAME(RatReturn_v2_0); }
 
 	private:
 	  RatScript_v2_0_Data* p_data; // pointer to script instance data
