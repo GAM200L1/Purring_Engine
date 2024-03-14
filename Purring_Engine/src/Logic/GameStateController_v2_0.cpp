@@ -1487,6 +1487,7 @@ namespace PE
 		{
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab"}, // Stage 1
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab"}, // Stage 2
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"},
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"} // Stage 3 & Boss (boss temp for now till m6-hans)
 		};
 
@@ -1498,6 +1499,11 @@ namespace PE
 				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f);
 			}
 			bgmStarted = true; // Flag the background music as started
+		}
+		else
+		{
+			//std::cout << "[PlayBackgroundMusicForStage] Invalid level index: " << m_currentLevel << std::endl;
+
 		}
 	}
 
