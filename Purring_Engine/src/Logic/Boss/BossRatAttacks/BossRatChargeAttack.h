@@ -82,7 +82,7 @@ namespace PE
 		EntityID m_telegraph;
 
 
-		float m_travelTime{ .05f };
+		float m_travelTime{ .5f };
 		float m_travelTimer{ m_travelTime };
 		bool m_isCharging{};
 		float m_activationTime{};

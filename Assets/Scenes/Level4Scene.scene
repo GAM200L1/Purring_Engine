@@ -5437,7 +5437,7 @@
                         "height": 776.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -417.0,
+                            "x": -510.00006103515625,
                             "y": 27.000015258789063
                         },
                         "relativeposition": {
@@ -5445,7 +5445,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 707.0
+                        "width": 894.0
                     }
                 },
                 "name": ""
