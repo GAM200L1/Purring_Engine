@@ -26,6 +26,13 @@ constexpr size_t DEFAULT_MAX_PARTICLES = 100;
 
 namespace PE
 {
+	enum EnumEmitterType
+	{
+		POINT = 0,
+		LINE = 1,
+		NUM_EMITTOR
+	};
+
 	// component assigned to an entity to make it spit out particles
 	class ParticleEmitter
 	{
@@ -59,6 +66,8 @@ namespace PE
 
 		// type of particle
 		EnumParticleType particleType;
+		// type of emitter
+		EnumEmitterType emitterType{ POINT };
 
 		// emission variables
 		unsigned emissionRate; // particles per second
@@ -66,6 +75,8 @@ namespace PE
 		float emissionDirection; // in radians - East: 0, North: PI/2, West: PI, South: 3*PI/2
 		float emissionArc; // 'angle' of the cone (360 for circle around entity etc.)
 		float startEmissionRadius; // idk how to explain (start position of each particle will be more varying ?)
+
+		float emittorLength{ 0.f };
 
 		// how long each particle should exist
 		float startLifetime;
@@ -113,6 +124,8 @@ namespace PE
 
 		// Owner's ID
 		size_t m_id;
+
+		bool initPos{ false };
 	};
 
 	// not a true system, it is called by the VisualEffectsManager

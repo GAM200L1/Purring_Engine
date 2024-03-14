@@ -1209,6 +1209,10 @@ namespace PE {
 										ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::InputInt(str.c_str(), &tmp, 0, 10);
 
 										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+										if (prop.get_name().to_string() == "Max Particles")
+										{
+											EntityManager::GetInstance().Get<ParticleEmitter>(entityID).CreateAllParticles();
+										}
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
@@ -1220,6 +1224,8 @@ namespace PE {
 											{
 												enabled = EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.at(prop.get_name().to_string());
 											}
+											
+
 											if (!enabled)
 											{
 												tmp = 0.f;
@@ -1246,10 +1252,14 @@ namespace PE {
 										}
 										else
 										{
+											if (prop.get_name().to_string() == "Emittor Length" && EntityManager::GetInstance().Get<ParticleEmitter>(entityID).emitterType != LINE)
+												ImGui::BeginDisabled();
 											float tmp = vp.get_value<float>();
 											std::string str = "##" + prop.get_name().to_string();
 											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::DragFloat(str.c_str(), &tmp);
 											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+											if (prop.get_name().to_string() == "Emittor Length" && EntityManager::GetInstance().Get<ParticleEmitter>(entityID).emitterType != LINE)
+												ImGui::EndDisabled();
 										}
 									}
 									else if (vp.get_type().get_name() == "structPE::vec2")
@@ -1293,6 +1303,27 @@ namespace PE {
 											}
 											ImGui::EndCombo();
 										}
+									}
+									else if (vp.get_type().get_name() == "enumPE::EnumEmitterType")
+									{
+										int tmp = static_cast<int>(vp.get_value<EnumEmitterType>());
+										std::string str = "##" + prop.get_name().to_string();
+
+										ImGui::SameLine();
+										const std::array<std::string, EnumEmitterType::NUM_EMITTOR> types{ "Point", "Line" };
+										if (ImGui::BeginCombo("##EmitterType", types[tmp].c_str()))
+										{
+											for (int i{}; i < types.size(); ++i)
+											{
+												if (ImGui::Selectable(types[i].c_str()))
+												{
+													tmp = i;
+													prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), static_cast<EnumEmitterType>(tmp));
+												}
+											}
+											ImGui::EndCombo();
+										}
+
 									}
 								}
 							}

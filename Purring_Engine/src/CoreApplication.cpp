@@ -447,6 +447,8 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::ParticleEmitter>(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string())
         .property("Is Active", &PE::ParticleEmitter::isActive)
         .property("Type", &PE::ParticleEmitter::particleType)
+        .property("Mode", &PE::ParticleEmitter::emitterType)
+        .property("Emittor Length", &PE::ParticleEmitter::emittorLength)
         .property("Max particles", &PE::ParticleEmitter::maxParticles)
         .property("Emission Arc", &PE::ParticleEmitter::emissionArc)
         .property("Emission Direction", &PE::ParticleEmitter::emissionDirection)

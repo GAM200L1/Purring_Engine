@@ -752,7 +752,7 @@ namespace PE
 
 	float ConvertDegToRad(float degAngle)
 	{
-		return degAngle * static_cast<float>(PE_PI) / 180.f;
+		return degAngle * (static_cast<float>(PE_PI) / 180.f);
 	}
 
 	void Clamp(float& r_varToClamp, float min, float max)

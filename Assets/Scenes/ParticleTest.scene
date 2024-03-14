@@ -70,7 +70,8 @@
                             "y": -10.0
                         },
                         "Emission Arc": 0.0,
-                        "Emission Direction": 0.0,
+                        "Emission Direction": 2.7925267219543457,
+                        "Emittor Length": 815.0,
                         "End Scale": {
                             "x": 0.0,
                             "y": 0.0
@@ -83,6 +84,7 @@
                             "x": 20.0,
                             "y": 100.0
                         },
+                        "Mode": 1,
                         "Starting Scale": {
                             "x": 50.0,
                             "y": 50.0

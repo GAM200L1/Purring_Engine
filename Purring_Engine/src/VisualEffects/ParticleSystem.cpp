@@ -72,6 +72,17 @@ namespace PE
 	{
 		// if at any point particle system becomes inactive, reset the particles
 		static bool particlesResetted{ false };
+		if (!initPos)
+		{
+			initPos = EntityManager::GetInstance().Has<Transform>(m_id);
+			if (initPos)
+			{
+				CreateAllParticles();
+			}
+			else
+				return;
+		}
+
 		if (!isActive)
 		{
 			if (!particlesResetted)
@@ -215,6 +226,10 @@ namespace PE
 				{
 					ret[prop.get_name().to_string().c_str()] = var.get_value<EnumParticleType>();
 				}
+				else if (var.get_type().get_name() == "enumPE::EnumEmitterType")
+				{
+					ret[prop.get_name().to_string().c_str()] = var.get_value<EnumEmitterType>();
+				}
 				else if (var.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,bool,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,bool>> >")
 				{
 					ret[prop.get_name().to_string().c_str()] = var.get_value<std::map<std::string, bool>>();
@@ -229,16 +244,21 @@ namespace PE
 	}
 
 	vec2 ParticleEmitter::GeneratePosition(float radius)
-	{
-		if (radius == 0.f)
-			return vec2{ 0.f, 0.f };
-		
+	{	
 		// get the direction vector to the left and right of the emission direction
 		if (EntityManager::GetInstance().Has<Transform>(m_id))
-			emissionVector = EntityManager::GetInstance().Get<Transform>(m_id).position;
+			emissionVector = GenerateDirectionVector(EntityManager::GetInstance().Get<Transform>(m_id).position);
+		else
+			return vec2{ 0.f,0.f };
 
-		vec2 rightVector{ emissionVector.y, -emissionVector.x };
-		vec2 leftVector{ -emissionVector.y, emissionVector.x };
+		std::mt19937 generator(seed());
+		if (emitterType == POINT)
+			emittorLength = 0.f;
+		std::uniform_real_distribution<float> distributor(-emittorLength * 0.5f, emittorLength * 0.5f);
+		const float scale = distributor(generator);
+
+		//vec2 rightVector{ emissionVector.y, -emissionVector.x };
+		//vec2 leftVector{ -emissionVector.y, emissionVector.x };
 
 		/*std::mt19937 generator(seed());
 
@@ -252,7 +272,7 @@ namespace PE
 			std::uniform_real_distribution<float> distributor(0.f, (leftVector * radius).Length());
 			return leftVector * distributor(generator);
 		}*/
-		return emissionVector;
+		return vec2{ EntityManager::GetInstance().Get<Transform>(m_id).position.x + (-emissionVector.y * scale), EntityManager::GetInstance().Get<Transform>(m_id).position.y + emissionVector.x * scale };
 	}
 
 	vec2 ParticleEmitter::GenerateDirectionVector(vec2 const& r_startPosition)
@@ -272,8 +292,7 @@ namespace PE
 		}
 		else
 		{
-			std::uniform_real_distribution<float> distributor(trueDir * 0.5f, trueDir * 0.5f);
-			gen = distributor(generator);
+			gen = trueDir;
 		}
 		
 		vec2 dir{ sinf(gen), cosf(gen) };
