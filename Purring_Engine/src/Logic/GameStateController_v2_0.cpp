@@ -131,33 +131,7 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
-		if (m_currentLevel == 0)		// Stage 1
-		{
-			if (!bgmStarted)
-			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
-				bgmStarted = true;
-			}
-		}
-		else if (m_currentLevel == 1)	// Stage 2
-		{
-			if (!bgmStarted)
-			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
-				bgmStarted = true;
-			}
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 2.5f);
-		}
-		else //if (m_currentLevel == 2)	// Stage 3
-		{
-			if (!bgmStarted)
-			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 2.5f);
-				bgmStarted = true;
-			}
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music3.prefab", true, 2.5f);
-		}
+		PlayBackgroundMusicForStage();
 
 		ResetPhaseBanner(true);
 		m_nextTurnOnce = false;
@@ -1495,6 +1469,38 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
 			EntityManager::GetInstance().Get<AudioComponent>(bga).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bga);
+	}
+
+	void GameStateController_v2_0::PlayBackgroundMusicForStage()
+	{
+		if (bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
+		{
+			return;
+		}
+
+		// Defining the audio tracks for each stage
+		std::vector<std::vector<std::string>> stageAudio =
+		{
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab"}, // Stage 1
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab"}, // Stage 2
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"},
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"} // Stage 3 & Boss (boss temp for now till m6-hans)
+		};
+
+		if (m_currentLevel >= 0 && m_currentLevel < stageAudio.size())
+		{
+			// Play each audio track based on the concurrent level
+			for (const std::string& track : stageAudio[m_currentLevel])
+			{
+				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f);
+			}
+			bgmStarted = true; // Flag the background music as started
+		}
+		else
+		{
+			//std::cout << "[PlayBackgroundMusicForStage] Invalid level index: " << m_currentLevel << std::endl;
+
+		}
 	}
 
 	void GameStateController_v2_0::UpdateTurnCounter(std::string currentphase)
