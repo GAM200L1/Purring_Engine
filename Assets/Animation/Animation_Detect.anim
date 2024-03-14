@@ -75,7 +75,7 @@
     ],
     "animationID": "../Assets/Animation/Animation_Detect.anim",
     "frameRate": 30,
-    "isLooping": true,
+    "isLooping": false,
     "isSpriteSheet": true,
     "spriteSheetKey": "../Assets/Textures/Animations/Rat_Detect.png",
     "totalSprites": 6

@@ -49,7 +49,7 @@
 
 #include "Layers/LayerManager.h"
 
-
+#include "Logic/Settings.h"
 
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/CatController_v2_0.h"
@@ -105,6 +105,8 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(BossRatScript);
 	REGISTER_SCRIPT(ObjectAttachScript);
 	REGISTER_SCRIPT(BossRatHealthBarScript);
+
+	REGISTER_SCRIPT(SettingsScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

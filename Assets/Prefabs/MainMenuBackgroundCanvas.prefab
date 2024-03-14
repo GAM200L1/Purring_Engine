@@ -1,0 +1,85 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "Canvas": {
+                            "Height": 1080.0,
+                            "Width": 1920.0
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 1,
+                            "Prefab Type": "Canvas Object",
+                            "children": [
+                                3
+                            ],
+                            "isActive": true,
+                            "name": "MainMenuBackgroundCanvas",
+                            "parent": null,
+                            "sceneID": 3
+                        },
+                        "Transform": {
+                            "height": 100.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 3,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "MainMenuBackground",
+                            "parent": 1,
+                            "sceneID": 0
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Overlay_MenuBackground_1920x1080.png"
+                        },
+                        "Transform": {
+                            "height": 1080.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 1920.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

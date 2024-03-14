@@ -19,6 +19,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/LogicSystem.h"
 #include "Hierarchy/HierarchyManager.h"
 #include "Logic/Cat/CatController_v2_0.h"
+#include "ResourceManager/ResourceManager.h"
 namespace PE
 {
 	BossRatChargeAttack::BossRatChargeAttack(EntityID furthestCat) : m_furthestCat{furthestCat}
@@ -46,8 +47,7 @@ namespace PE
 		vec2 direction = furthestCatTransform.position - BossTransform.position;
 		vec2 unitDirection = m_chargeDirection = direction.GetNormalized();
 
-		SerializationManager sm;
-		m_telegraph = sm.LoadFromFile(m_telegraphPrefab);
+		m_telegraph = ResourceManager::GetInstance().LoadPrefabFromFile(m_telegraphPrefab);
 
 		if (EntityManager::GetInstance().Has<Transform>(m_telegraph))
 		{
@@ -94,8 +94,7 @@ namespace PE
 				m_distanceTravelled += p_data->chargeSpeed * dt;
 				if (m_distanceTravelled >= p_data->distanceBetweenPools)
 				{
-					SerializationManager sm;
-					EntityID puddle = sm.LoadFromFile(m_poisonPuddlePrefab);
+					EntityID puddle = ResourceManager::GetInstance().LoadPrefabFromFile(m_poisonPuddlePrefab);
 					if (EntityManager::GetInstance().Has<Transform>(puddle))
 					{
 						Transform* puddleTransform = &EntityManager::GetInstance().Get<Transform>(puddle);

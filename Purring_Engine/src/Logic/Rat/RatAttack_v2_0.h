@@ -102,7 +102,7 @@ namespace PE
 
             \return A string view representing the name of the state.
         *************************************************************************************/
-        virtual std::string_view GetName() { return "RatAttack_v2_0"; }
+        virtual std::string_view GetName() { return GETSCRIPTNAME(RatAttack_v2_0); }
 
     private:
         GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller

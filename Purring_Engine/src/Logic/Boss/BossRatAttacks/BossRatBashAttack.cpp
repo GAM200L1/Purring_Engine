@@ -19,6 +19,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/LogicSystem.h"
 #include "Hierarchy/HierarchyManager.h"
 #include "Logic/Cat/CatController_v2_0.h"
+#include "ResourceManager/ResourceManager.h"
 namespace PE
 {
 	BossRatBashAttack::BossRatBashAttack(EntityID closestCat) : m_closestCat{ closestCat }
@@ -45,10 +46,8 @@ namespace PE
 		vec2 direction = closestCatTransform.position - BossTransform.position;
 		vec2 unitDirection = direction.GetNormalized();
 
-		SerializationManager sm;
-
 		//atleast 1
-		EntityID telegraph = sm.LoadFromFile(m_telegraphPrefab);
+		EntityID telegraph = ResourceManager::GetInstance().LoadPrefabFromFile(m_telegraphPrefab);
 		m_telegraphPoitions.push_back(telegraph);
 		vec2 NextPosition;
 		
@@ -73,7 +72,7 @@ namespace PE
 		//more than 1
 		while (CheckOutsideOfWall(NextPosition))
 		{
-			telegraph = sm.LoadFromFile(m_telegraphPrefab);
+			telegraph = ResourceManager::GetInstance().LoadPrefabFromFile(m_telegraphPrefab);
 			m_telegraphPoitions.push_back(telegraph);
 
 			if (EntityManager::GetInstance().Has<Transform>(telegraph))
