@@ -27,6 +27,7 @@
 #include "Hierarchy/HierarchyManager.h"
 #include "Physics/CollisionManager.h"
 #include "AudioManager/GlobalMusicManager.h"
+#include "ResourceManager/ResourceManager.h"
 
 namespace PE
 {
@@ -34,8 +35,7 @@ namespace PE
 	void GreyCatAttackVariables::CreateProjectileAndTelegraphs(EntityID catID, bool isMainCat)
 	{
 		// create projectile //
-		SerializationManager serializationManager;
-		projectileID = serializationManager.LoadFromFile("Projectile.prefab");
+		projectileID = ResourceManager::GetInstance().LoadPrefabFromFile("Projectile.prefab");
 		CatHelperFunctions::ToggleEntity(projectileID, false);
 		/*EntityManager::GetInstance().Get<EntityDescriptor>(projectileID).layer = 0;
 		EntityManager::GetInstance().Get<Collider>(projectileID).collisionLayerIndex = 0;*/
@@ -49,9 +49,7 @@ namespace PE
 		{
 			Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(catID);
 
-			SerializationManager serializationManager;
-
-			EntityID telegraphID = serializationManager.LoadFromFile("PlayerAttackTelegraph.prefab");
+			EntityID telegraphID = ResourceManager::GetInstance().LoadPrefabFromFile("PlayerAttackTelegraph.prefab");
 			Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
 			//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity

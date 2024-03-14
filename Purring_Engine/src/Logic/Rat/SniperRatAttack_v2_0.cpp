@@ -17,6 +17,7 @@
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "SniperRatAttack_v2_0.h"
+#include "ResourceManager/ResourceManager.h"
 
 //#define DEBUG_PRINT
 
@@ -80,7 +81,7 @@ namespace PE
 
 	void SniperRatAttack_v2_0::CreateAttackObjects()
 	{
-		spikeballID = SerializationManager{}.LoadFromFile("RatSpikeball.prefab");
+		spikeballID = ResourceManager::GetInstance().LoadPrefabFromFile("RatSpikeball.prefab");
 
 		RatScript_v2_0::ToggleEntity(spikeballID, false); // deactivate spikeball
 		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(mainID));
