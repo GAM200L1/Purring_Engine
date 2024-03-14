@@ -6,12 +6,18 @@
 
  \author               Liew Yeni
  \par      email:      yeni.l@digipen.edu
+ \par      code %:     30%
+ \par      changes:    Created Base defenitions and functions
 
- \brief
+ \co-author            Foong Jun Wei 
+ \par      email:      f.junwei@digipen.edu
+ \par      code %:     70%
+ \par      changes:    Expanded on existing functions and completed functionality
+ 
+ \brief 	Contains the function declerations for the Particle emittor component
 	
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-
 *************************************************************************************/
 #pragma once
 #include <random>
@@ -37,14 +43,62 @@ namespace PE
 	class ParticleEmitter
 	{
 	public:
+		/*!***********************************************************************************
+		 \brief Construct a new Particle Emitter object
+		 
+		*************************************************************************************/
 		ParticleEmitter();
+
+		/*!***********************************************************************************
+		 \brief Copy Construct a new Particle Emitter object
+		 
+		 \param[in,out] r_cpy 
+		*************************************************************************************/
 		ParticleEmitter(ParticleEmitter const& r_cpy);
+
+		/*!***********************************************************************************
+		 \brief Assingmnet operator overload to copy rhs
+		 
+		 \param[in] r_cpy 			Particle emitter to copy
+		 \return ParticleEmitter& 
+		*************************************************************************************/
 		ParticleEmitter& operator=(ParticleEmitter const& r_cpy);
+
+		/*!***********************************************************************************
+		\brief Updates the particle emitter (if enabled, it will update each active particle)
+			   according to deltaTime
+		 
+		 \param[in] deltaTime 
+		*************************************************************************************/
 		void Update(float deltaTime);
+
+		/*!***********************************************************************************
+		 \brief Generate all the particles according to the current particle max
+		 
+		*************************************************************************************/
 		void CreateAllParticles();
-		void ResetAllParticles(); // resets emission duration, lifetime of each particle and the position of each particle
+
+		/*!***********************************************************************************
+		 \brief Resets all particles to starting postion
+		 
+		*************************************************************************************/
+		void ResetAllParticles();
+
+		/*!***********************************************************************************
+		 \brief Get the Particles owned by this emitter
+		 
+		 \return const std::vector<Particle>& 
+		*************************************************************************************/
 		const std::vector<Particle>& GetParticles() const { return particles; }
+
+		/*!***********************************************************************************
+		 \brief Set the id of the owner, this is used to retrieve the transform to use
+		 		in spawning
+		 
+		 \param[in] id 
+		*************************************************************************************/
 		void SetParent(size_t id) { m_id = id; }
+		
 		/*!***********************************************************************************
 		 \brief Serializes this struct into a json file
 
@@ -99,8 +153,22 @@ namespace PE
 		vec2 scaleChangeSpeed{ -10.f, -10.f };
 		std::map<std::string, bool> toggles;
 	private:
-		// Random value generators
+		/*!***********************************************************************************
+		 \brief Generates a position for a particle (can be random according to settings in 
+		        the emittor)
+		 
+		 \param[in] radius 
+		 \return vec2 
+		*************************************************************************************/
 		vec2 GeneratePosition(float radius);
+
+		/*!***********************************************************************************
+		 \brief Generates a direction for a particle (can be random according to settings in 
+		 		the emittor)
+		 
+		 \param[in] r_startPosition 
+		 \return vec2 
+		*************************************************************************************/
 		vec2 GenerateDirectionVector(vec2 const& r_startPosition);
 
 	private:
@@ -114,7 +182,7 @@ namespace PE
 
 		// track how long particle system has been emitting particles
 		float emissionElapsed;
-		unsigned existingParticles;
+		unsigned existingParticles{};
 
 		// random seed
 		std::random_device seed;
@@ -122,28 +190,8 @@ namespace PE
 		
 
 		// Owner's ID
-		size_t m_id;
+		size_t m_id{MAXSIZE_T};
 
 		bool initPos{ false };
-	};
-
-	// not a true system, it is called by the VisualEffectsManager
-	/*class ParticleSubSystem
-	{
-		bool enabled{ true };
-	public:
-		void Update(const float& r_dt)
-		{
-			if (!enabled)
-				return;
-			for (const auto& layer : LayerView<ParticleEmitter>())
-			{
-				for (const auto& id : InternalView(layer))
-				{
-					EntityManager::GetInstance().Get<ParticleEmitter>(id).Update(r_dt);
-				}
-			}
-		}
-	};*/
-	
+	};	
 }

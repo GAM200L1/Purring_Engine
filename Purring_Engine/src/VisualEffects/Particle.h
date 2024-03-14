@@ -6,8 +6,15 @@
 
  \author               Liew Yeni
  \par      email:      yeni.l@digipen.edu
+ \par      code %:     40%
+ \par      changes:    Created Base defenitions and functions
 
- \brief
+ \co-author            Foong Jun Wei 
+ \par      email:      f.junwei@digipen.edu
+ \par      code %:     60%
+ \par      changes:    Expanded on existing functions and completed functionality
+
+ \brief		Contains the defenition of an individual particle (not an entity)
 
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -36,6 +43,19 @@ namespace PE
 		// prevent default construcion
 		Particle() = delete;
 
+		/*!***********************************************************************************
+		 \brief Construct a new Particle object
+		 
+		 \param[in] r_tp 
+		 \param[in] r_p 
+		 \param[in] r_scl 
+		 \param[in] r_dir 
+		 \param[in] r_dScl 
+		 \param[in] r_dr 
+		 \param[in] r_spd 
+		 \param[in] r_lifetime 
+		 \param[in] r_animIdx 
+		*************************************************************************************/
 		Particle(const EnumParticleType& r_tp, 
 				 const vec2& r_p, 
 				 const vec2& r_scl, 
@@ -55,6 +75,19 @@ namespace PE
 			enabled = true;
 		}
 		
+		/*!***********************************************************************************
+		 \brief Resets a particle according to the input parameters
+		 
+		 \param[in] r_tp 
+		 \param[in] r_p 
+		 \param[in] r_scl 
+		 \param[in] r_dir 
+		 \param[in] r_dScl 
+		 \param[in] r_dr 
+		 \param[in] r_spd 
+		 \param[in] r_lifetime 
+		 \param[in] r_animIdx 
+		*************************************************************************************/
 		void Reset(const EnumParticleType& r_tp,
 				   const vec2& r_p,
 				   const vec2& r_scl,
@@ -83,6 +116,14 @@ namespace PE
 			enabled = true;
 		}
 
+		/*!***********************************************************************************
+		 \brief Updates the particle's position, orientation, scale and lifetime. Will return
+		 		the state of the particle.
+		 
+		 \param[in] dt 
+		 \return true 	particle is alive
+		 \return false 	particle is not alive
+		*************************************************************************************/
 		bool Update(const float& dt)
 		{
 			if (!enabled)

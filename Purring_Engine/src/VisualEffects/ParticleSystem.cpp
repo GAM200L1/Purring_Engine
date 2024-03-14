@@ -6,8 +6,16 @@
 
  \author               Liew Yeni
  \par      email:      yeni.l@digipen.edu
+ \par      code %:     30%
+ \par      changes:    Created Base defenitions and functions
 
- \brief
+ \co-author            Foong Jun Wei 
+ \par      email:      f.junwei@digipen.edu
+ \par      code %:     70%
+ \par      changes:    Expanded on existing functions and completed functionality
+
+ \brief 	Contains the function defenitions for the particle effect/emittor 
+ 			component.
 	
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -81,9 +89,9 @@ namespace PE
 			}
 			else
 			{
-				for (auto& p : particles)
+				for (auto& r_p : particles)
 				{
-					p.enabled = false;
+					r_p.enabled = false;
 				}
 				return;
 			}

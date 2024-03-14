@@ -7,7 +7,7 @@
  \author               Liew Yeni
  \par      email:      yeni.l@digipen.edu
 
- \brief
+ \brief		Manages all visual effects for the engine
 
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
