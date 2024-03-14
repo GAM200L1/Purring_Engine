@@ -155,7 +155,7 @@
                                 "isActive": false,
                                 "name": "SliderKnob",
                                 "parent": 26,
-                                "sceneID": 0
+                                "sceneID": 36
                             },
                             "GUIRenderer": {
                                 "Color": {
@@ -283,7 +283,7 @@
                                 "isActive": false,
                                 "name": "SliderKnob",
                                 "parent": 30,
-                                "sceneID": 0
+                                "sceneID": 34
                             },
                             "GUIRenderer": {
                                 "Color": {
@@ -421,7 +421,7 @@
                             "isActive": false,
                             "name": "ReturnFromSettingsButton",
                             "parent": 25,
-                            "sceneID": 0
+                            "sceneID": 36
                         },
                         "GUI": {
                             "disabled": false,
@@ -584,7 +584,7 @@
                                 "isActive": false,
                                 "name": "SliderKnob",
                                 "parent": 35,
-                                "sceneID": 0
+                                "sceneID": 3
                             },
                             "GUIRenderer": {
                                 "Color": {

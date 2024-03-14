@@ -144,7 +144,7 @@
                         "isActive": true,
                         "name": "MainMenuBackground",
                         "parent": 1,
-                        "sceneID": 3
+                        "sceneID": 4
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1412,8 +1412,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 0.0,
-                        "Width": 0.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1561,7 +1561,7 @@
                         "isActive": false,
                         "name": "SliderKnob",
                         "parent": 26,
-                        "sceneID": 0
+                        "sceneID": 36
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1687,7 +1687,7 @@
                         "isActive": false,
                         "name": "SliderKnob",
                         "parent": 30,
-                        "sceneID": 0
+                        "sceneID": 34
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1824,7 +1824,7 @@
                         "isActive": false,
                         "name": "ReturnFromSettingsButton",
                         "parent": 25,
-                        "sceneID": 0
+                        "sceneID": 36
                     },
                     "GUI": {
                         "disabled": false,
@@ -1986,7 +1986,7 @@
                         "isActive": false,
                         "name": "SliderKnob",
                         "parent": 35,
-                        "sceneID": 0
+                        "sceneID": 3
                     },
                     "GUIRenderer": {
                         "Color": {
