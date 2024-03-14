@@ -270,12 +270,18 @@ namespace PE
 	void CatScript_v2_0::CreatePathNode(EntityID id)
 	{
 		// create the entity
-		EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Graphics::Renderer>() };
+		EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>() };
 
 		EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(0.506f, 0.490f, 0.490f, 1.f); // sets the color of the node to white
 
 		EntityManager::GetInstance().Get<Transform>(nodeId).width = m_scriptData[id].nodeSize;
 		EntityManager::GetInstance().Get<Transform>(nodeId).height = m_scriptData[id].nodeSize;
+
+		CircleCollider circleCollider;
+		circleCollider.scaleOffset = CatHelperFunctions::GetEntityScale(id).x / m_scriptData[id].nodeSize;
+
+		EntityManager::GetInstance().Get<Collider>(nodeId).colliderVariant = circleCollider;
+		EntityManager::GetInstance().Get<Collider>(nodeId).isTrigger = true;
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).toSave = false;

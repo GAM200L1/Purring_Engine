@@ -226,13 +226,19 @@ namespace PE
 		// ----- Events ----- // 
 
 		/*!***********************************************************************************
-		 \brief Callback function for the collision enter event. Checks if the player has
-						collided with the rat.
+		 \brief Callback function for the collision enter event. Checks if the player entered
+				the exit point which will bring them to the next stage
 
 		 \param[in] r_collisionEvent - Trigger event data.
 		*************************************************************************************/
 		void OnTriggerEnter(const Event<CollisionEvents>& r_triggerEvent);
 
+		/*!***********************************************************************************
+		 \brief Callback function for the collision stay event. Checks if the player has
+						collided with an obstacle for too long.
+
+		 \param[in] r_collisionEvent - Collision event data
+		*************************************************************************************/
 		void OnCollisionStay(const Event<CollisionEvents>& r_collisionEvent);
 
 	private:

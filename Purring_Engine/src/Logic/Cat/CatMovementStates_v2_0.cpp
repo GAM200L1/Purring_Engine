@@ -298,12 +298,8 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 	{
-		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
-		{
-			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
-			// Check if the cat is colliding with an obstacle
-			if ((OTEE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity2))
-				|| (OTEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity1)))
+		auto InvalidPath =
+			[&]()
 			{
 				// The entity is colliding with is an obstacle
 				SetPathColor(m_invalidPathColor); // Set the color of the path nodes to red
@@ -312,8 +308,33 @@ namespace PE
 				// Play audio
 				std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
 				PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+			};
 
-				
+		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
+		{
+			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
+			// Check if the cat is colliding with an obstacle
+			if (CatHelperFunctions::IsObstacle(OTEE.Entity2))
+			{
+				if (OTEE.Entity1 == p_data->catID)
+				{
+					InvalidPath();
+				}
+				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
+				{
+					InvalidPath();
+				}
+			}
+			else if (CatHelperFunctions::IsObstacle(OTEE.Entity1))
+			{
+				if (OTEE.Entity2 == p_data->catID)
+				{
+					InvalidPath();
+				}
+				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
+				{
+					InvalidPath();
+				}
 			}
 		}
 	}
@@ -414,9 +435,8 @@ namespace PE
 					m_movementTimer -= deltaTime;
 					if (m_movementTimer <= 0.f)
 					{
-						// Update the position of the cat
-						CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions[p_data->currentPositionIndex]);
-						//EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
+						// extra in case prevent going through does not work well
+						EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
 					}
 				}
 				else
@@ -478,7 +498,16 @@ namespace PE
 		if (r_collisionEvent.GetType() == CollisionEvents::OnCollisionStay)
 		{
 			// starts 
-			m_startMovementTimer = true; 
+			OnCollisionStayEvent OCSE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionEvent) };
+			if ((OCSE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OCSE.Entity2))
+				|| (OCSE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OCSE.Entity1)))
+			{
+				m_startMovementTimer = true;
+			}
+			else
+			{
+				m_startMovementTimer = false;
+			}
 		}
 		else
 		{
