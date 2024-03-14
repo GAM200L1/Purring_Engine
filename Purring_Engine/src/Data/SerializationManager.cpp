@@ -810,7 +810,10 @@ bool SerializationManager::LoadEntityDescriptor(const EntityID& r_id, const nloh
     
     // Pass the descriptor to the EntityFactory to create/update the EntityDescriptor component for the entity with id 'r_id'
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>(), static_cast<void*>(&descriptor));
-
+    if (!PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(r_id).sceneID)
+    {
+        PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(r_id).sceneID = r_id;
+    }
     return true;
 }
 
