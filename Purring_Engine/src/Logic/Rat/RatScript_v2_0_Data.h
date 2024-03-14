@@ -122,10 +122,13 @@ namespace PE
 	*************************************************************************************/
 	struct RatScript_v2_0_Data
 	{
+		/*!***********************************************************************************
+		 \brief Destructor.
+		*************************************************************************************/
 		~RatScript_v2_0_Data()
 		{
-			delete p_attackData;
-			delete p_queuedState;
+			DeleteAttackData();
+			DeleteQueuedState();
 			delete p_stateManager;
 		}
 
@@ -134,21 +137,22 @@ namespace PE
 		EntityID detectionRadiusId{};
 		EntityID pivotEntityID{ 0 };					// id of parent obj to rotate to adjust the orientation of the telegraphs
 		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
-		StateMachine* p_stateManager;
+		StateMachine* p_stateManager{};
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
+		bool hasChangedToDeathState{ false }; // True if the rat has been changed to the death state
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		AttackDataBase_v2_0* p_attackData{ nullptr };
 
 		// animation
-		AnimationComponent* p_ratAnimationComponent = nullptr;
-		std::map<std::string, std::string> animationStates; // animation states of the rat <state name, file name>
+		AnimationComponent* p_ratAnimationComponent{ nullptr };
+		std::map<std::string, std::string> animationStates{}; // animation states of the rat <state name, file name>
 		EnumRatAnimations cachedRatAnimation{ EnumRatAnimations::RAT_ANIM_COUNT }; // The animation state to play when the rat is done with its hurt animation
 		
 		// rat stats
 		int ratHealth{ 0 };								// health of the rat, needs manual setting
 		int ratMaxHealth{ 3 };						// maximum health of the rat
-		std::unordered_set<EntityID> hitBy; // IDs of attacks that the rat has been hit by during this execution phase
+		std::unordered_set<EntityID> hitBy{}; // IDs of attacks that the rat has been hit by during this execution phase
 
 		// Movement Variables
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
@@ -170,8 +174,8 @@ namespace PE
 
 		// Detection and movement
 		float detectionRadius{ 200.f };
-		std::set<EntityID> catsInDetectionRadius;
-		std::set<EntityID> catsExitedDetectionRadius;
+		std::set<EntityID> catsInDetectionRadius{};
+		std::set<EntityID> catsExitedDetectionRadius{};
 		EntityID targetedCat{}; // Cat to move towards in the hunting phase
 		std::unordered_set<EntityID> attackedCats{}; // Cats that were attacked
 
@@ -184,12 +188,9 @@ namespace PE
 		vec2 originalPosition{ 0.f, 0.f }; // Position to return to
 		
 		// Patrol Points
-		std::vector<vec2> patrolPoints;
+		std::vector<vec2> patrolPoints{};
 		int patrolIndex{ 0 };										// Index of the current patrol point the rat is moving towards
 		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
-
-		// @TODO remove this later; for debugging purposes
-		bool DEBUG_BOOL{ false };
 
 	private:
 		State* p_queuedState{ nullptr }; // State to load
@@ -222,7 +223,7 @@ namespace PE
 		{
 			if (!bypassDeletion && p_queuedState)
 			{
-				delete p_queuedState;
+				DeleteQueuedState();
 			}
 
 			p_queuedState = p_newState;
@@ -234,6 +235,30 @@ namespace PE
 		State* GetQueuedState()
 		{
 			return p_queuedState;
+		}
+
+		/*!***********************************************************************************
+		 \brief Deletes the attack data object if it hasn't already been deleted.
+		*************************************************************************************/
+		void DeleteAttackData()
+		{
+			if (p_attackData) 
+			{
+				delete p_attackData;
+				p_attackData = nullptr;
+			}
+		}
+
+		/*!***********************************************************************************
+		 \brief Deletes the queued data obj if it hasn't already been deleted.
+		*************************************************************************************/
+		void DeleteQueuedState()
+		{
+			if (p_queuedState)
+			{
+				delete p_queuedState;
+				p_queuedState = nullptr;
+			}
 		}
 
 	}; // end of struct RatScript_v2_0_Data
