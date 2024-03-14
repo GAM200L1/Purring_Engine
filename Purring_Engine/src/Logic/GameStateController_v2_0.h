@@ -472,6 +472,11 @@ namespace PE
 		EntityID m_lastSelectedEntity{};
 		std::string nextPortraitTexture{};
 
+		//portrait healthbar colors
+		vec4 m_fillColorFull{ 0.36f, 0.98f, 0.21f, 1.f };  // Color of the healthbar when it's full
+		vec4 m_fillColorHalf{ 0.92f, 0.98f, 0.21f, 1.f };  // Color of the healthbar when it's half full
+		vec4 m_fillColorAlmostEmpty{ 0.98f, 0.23f, 0.21f, 1.f }; // Color of the healthbar when it's almost empty
+
 		//journal object testing
 		bool m_journalShowing{};
 

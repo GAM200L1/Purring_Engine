@@ -139,11 +139,11 @@ namespace PE
 				{
 					vec4 fillColor{ *(GETSCRIPTDATA(HealthBarScript_v2_0, id).fillColorFull) };
 
-					if (fillAmount < 0.333f) // only a third of the health is left
+					if (fillAmount < 0.34f) // only a third of the health is left
 					{
 							fillColor = *(GETSCRIPTDATA(HealthBarScript_v2_0, id).fillColorAlmostEmpty);
 					}
-					else if (fillAmount < 0.666f) // two thirds of the health is left
+					else if (fillAmount < 0.67f) // two thirds of the health is left
 					{
 							fillColor = *(GETSCRIPTDATA(HealthBarScript_v2_0, id).fillColorHalf);
 					}
