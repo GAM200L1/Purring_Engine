@@ -110,7 +110,7 @@ namespace PE
 			m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
 
 			//resetting current turn
-			CurrentTurn = 0;
+			currentTurn = 0;
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
 
@@ -131,33 +131,7 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
-		if (m_currentLevel == 0)		// Stage 1
-		{
-			if (!bgmStarted)
-			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
-				bgmStarted = true;
-			}
-		}
-		else if (m_currentLevel == 1)	// Stage 2
-		{
-			if (!bgmStarted)
-			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
-				bgmStarted = true;
-			}
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 2.5f);
-		}
-		else //if (m_currentLevel == 2)	// Stage 3
-		{
-			if (!bgmStarted)
-			{
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music1.prefab", true, 2.5f);
-				GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music2.prefab", true, 2.5f);
-				bgmStarted = true;
-			}
-			GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Background Music3.prefab", true, 2.5f);
-		}
+		PlayBackgroundMusicForStage();
 
 		ResetPhaseBanner(true);
 		m_nextTurnOnce = false;
@@ -375,6 +349,7 @@ namespace PE
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
 			GETANIMATIONMANAGER()->PauseAllAnimations();
+			PauseBGM();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
 		}
@@ -732,6 +707,7 @@ namespace PE
 
 			PauseManager::GetInstance().SetPaused(false);
 
+			ResumeBGM();
 			PlayClickAudio();
 			PlayPageAudio();
 		}
@@ -840,7 +816,7 @@ namespace PE
 		}
 		else if (currentState == GameStates_v2_0::EXECUTE && !m_nextTurnOnce)
 		{
-			CurrentTurn++;
+			currentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
@@ -864,6 +840,7 @@ namespace PE
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayWinAudio();
+		PauseBGM();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
 	}
@@ -875,6 +852,7 @@ namespace PE
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayLoseAudio();
+		PauseBGM();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
 	}
@@ -1290,7 +1268,7 @@ namespace PE
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
 
-		CurrentTurn = 0;
+		currentTurn = 0;
 		m_leveltoLoad = m_level1SceneName;
 
 		GETANIMATIONMANAGER()->PlayAllAnimations();
@@ -1497,6 +1475,38 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(bga);
 	}
 
+	void GameStateController_v2_0::PlayBackgroundMusicForStage()
+	{
+		if (bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
+		{
+			return;
+		}
+
+		// Defining the audio tracks for each stage
+		std::vector<std::vector<std::string>> stageAudio =
+		{
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab"}, // Stage 1
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab"}, // Stage 2
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"},
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"} // Stage 3 & Boss (boss temp for now till m6-hans)
+		};
+
+		if (m_currentLevel >= 0 && m_currentLevel < stageAudio.size())
+		{
+			// Play each audio track based on the concurrent level
+			for (const std::string& track : stageAudio[m_currentLevel])
+			{
+				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f);
+			}
+			bgmStarted = true; // Flag the background music as started
+		}
+		else
+		{
+			//std::cout << "[PlayBackgroundMusicForStage] Invalid level index: " << m_currentLevel << std::endl;
+
+		}
+	}
+
 	void GameStateController_v2_0::UpdateTurnCounter(std::string currentphase)
 	{
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].TurnCounterCanvas).children)
@@ -1505,7 +1515,7 @@ namespace PE
 			{
 				if (EntityManager::GetInstance().Has<TextComponent>(id2))
 				{
-					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn " + std::to_string(CurrentTurn));
+					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn " + std::to_string(currentTurn));
 				}
 				continue;
 			}

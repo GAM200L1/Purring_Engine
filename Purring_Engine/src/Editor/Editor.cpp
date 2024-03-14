@@ -80,6 +80,7 @@
 #include "Logic/IntroCutsceneController.h"
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
+#include "Logic/Settings.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -3371,6 +3372,7 @@ namespace PE {
 										int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
 										int HowToPlayPageOneID = static_cast<int> (it->second.HowToPlayPageOne);
 										int HowToPlayPageTwoID = static_cast<int> (it->second.HowToPlayPageTwo);
+										int SettingsMenuID = static_cast<int> (it->second.SettingsMenu);
 
 										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCID", &MainMenuCanvasID);
 										if (MainMenuCanvasID != m_currentSelectedObject) { it->second.MainMenuCanvas = MainMenuCanvasID; }
@@ -3381,7 +3383,7 @@ namespace PE {
 										ImGui::Text("Are You Sure Canvas Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##AYSMMID", &AreYouSureID);
 										if (AreYouSureID != m_currentSelectedObject) it->second.AreYouSureCanvas = AreYouSureID;
 
-										ImGui::Text("How To Place Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTPCID", &HowToPlayCanvasID);
+										ImGui::Text("How To Play Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTPCID", &HowToPlayCanvasID);
 										if (HowToPlayCanvasID != m_currentSelectedObject) { it->second.HowToPlayCanvas = HowToPlayCanvasID; }
 
 										ImGui::Text("HowToPlayPageOne ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTP1ID", &HowToPlayPageOneID);
@@ -3389,6 +3391,46 @@ namespace PE {
 
 										ImGui::Text("HowToPlayPageTwo ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMHTP2ID", &HowToPlayPageTwoID);
 										if (HowToPlayPageTwoID != m_currentSelectedObject) it->second.HowToPlayPageTwo = HowToPlayPageTwoID;
+
+										ImGui::Text("Settings Menu ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMSMID", &SettingsMenuID);
+										if (SettingsMenuID != m_currentSelectedObject) it->second.SettingsMenu = SettingsMenuID;
+									}
+								}
+							}
+
+							if (key == "SettingsScript")
+							{
+								SettingsScript* p_script = dynamic_cast<SettingsScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("SettingsScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int BGMSliderID = static_cast<int> (it->second.BGMSlider);
+										int SFXSliderID = static_cast<int> (it->second.SFXSlider);
+										int MasterSliderID = static_cast<int> (it->second.MasterSlider);
+										int WindowedButtonID = static_cast<int> (it->second.WindowedButton);
+										int FullScreenButtonID = static_cast<int> (it->second.FullScreenButton);
+
+
+										ImGui::SeparatorText("Audio Settings");
+
+										ImGui::Text("Master Volume Slider ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##SSMVSID", &MasterSliderID);
+										if (MasterSliderID != m_currentSelectedObject) { it->second.MasterSlider = MasterSliderID; }
+
+										ImGui::Text("BGM Slider ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##SSBGMSID", &BGMSliderID);
+										if (BGMSliderID != m_currentSelectedObject) { it->second.BGMSlider = BGMSliderID; }
+
+										ImGui::Text("SFX Slider ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##SSSFXSID", &SFXSliderID);
+										if (SFXSliderID != m_currentSelectedObject) it->second.SFXSlider = SFXSliderID;
+
+										ImGui::SeparatorText("Window Settings");
+
+										ImGui::Text("Full Screen Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##SSFSBID", &FullScreenButtonID);
+										if (FullScreenButtonID != m_currentSelectedObject) { it->second.FullScreenButton = FullScreenButtonID; }
+
+										ImGui::Text("Window Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##SSWBID", &WindowedButtonID);
+										if (WindowedButtonID != m_currentSelectedObject) { it->second.WindowedButton = WindowedButtonID; }
 									}
 								}
 							}

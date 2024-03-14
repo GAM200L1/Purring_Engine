@@ -72,6 +72,8 @@ namespace PE
 			if (it == m_scriptData.end()) { return; }
 
 			// Initialize some variables
+			it->second.isAlive = true;
+			it->second.hasChangedToDeathState = false;
 			it->second.ratHealth = it->second.ratMaxHealth;
 			it->second.timeBeforeChangingState = 0.f;
 
@@ -138,14 +140,14 @@ namespace PE
 					it->second.totalTimeCollidingIntoWall = 0.f;
 			}
 
-			// Check if the state should get updated
-			if (CheckShouldStateChange(id, deltaTime))
-			{
-					ChangeRatState(id);
-			}
-
 			previousGameState = gameStateController->currentState;
 			it->second.hasRatStateChanged = false;
+
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+					if (it->second.isAlive || !(it->second.hasChangedToDeathState))
+						ChangeRatState(id);
+			}
 		}
 
 
@@ -185,6 +187,7 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
+					it->second.DeleteAttackData();
 					m_scriptData.erase(id);
 			}
 		}
@@ -577,13 +580,14 @@ namespace PE
 
 		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
 		{
-#ifdef DEBUG_PRINT
-			//std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << p_nextState->GetName() << ", " << stateChangeDelay << ")\n";
-#endif // DEBUG_PRINT
 
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
-			else if (m_scriptData[id].delaySet) { return; }
+			else if (it->second.delaySet) { return; }
+
+#ifdef DEBUG_PRINT
+			std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << (p_nextState ? p_nextState->GetName() : "nullptr") << ", " << stateChangeDelay << "): [START] current queued state before change is" << (it->second.GetQueuedState() ? it->second.GetQueuedState()->GetName() : "nullptr") << "\n";
+#endif // DEBUG_PRINT
 
 			it->second.shouldChangeState = true;
 			it->second.timeBeforeChangingState = stateChangeDelay;
@@ -624,12 +628,18 @@ namespace PE
 
 		void RatScript_v2_0::ChangeStateToHunt(EntityID const id, EntityID const targetId, float const stateChangeDelay)
 		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+				else if (!(it->second.isAlive)) { return; }
 				TriggerStateChange(id, new RatHunt_v2_0{ targetId }, stateChangeDelay);
 		}
 
 
 		void RatScript_v2_0::ChangeStateToReturn(EntityID const id, float const stateChangeDelay)
 		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+				else if (!(it->second.isAlive)) { return; }
 				TriggerStateChange(id, new RatReturn_v2_0, stateChangeDelay);
 				EnableDetectionTelegraphs(id, EnumRatIconAnimations::CONFUSED);
 		}
@@ -639,6 +649,7 @@ namespace PE
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
+				else if (!(it->second.isAlive)) { return; }
 
 				// Check the type of idle behaviour based on the type of rat
 				RatType idleBehaviour{ RatType::IDLE };
@@ -659,12 +670,18 @@ namespace PE
 
 		void RatScript_v2_0::ChangeStateToMovement(EntityID const id, float const stateChangeDelay)
 		{
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
+			else if (!(it->second.isAlive)) { return; }
 			TriggerStateChange(id, new RatMovement_v2_0, stateChangeDelay);
 		}
 
 
 		void RatScript_v2_0::ChangeStateToAttack(EntityID const id, float const stateChangeDelay)
 		{
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
+			else if (!(it->second.isAlive)) { return; }
 			TriggerStateChange(id, new RatAttack_v2_0, stateChangeDelay);
 		}
 
@@ -1118,6 +1135,8 @@ namespace PE
 				// Prevent this function from getting called more than once
 				if (!(it->second.isAlive)) { return; }
 				it->second.isAlive = false;  // Marking the rat as not alive
+				
+				ClearCollisionContainers(id); // Clear collision containers
 
 				ChangeStateToDeath(it->second.myID, 0.f); 
 				// @TODO Check if this should take the current rat animation duration into account?
@@ -1158,6 +1177,7 @@ namespace PE
 				it->second.SetQueuedState(nullptr, true);
 				it->second.hasRatStateChanged = true;
 				DisableMovementTelegraphs(it->second.myID);
+				it->second.hasChangedToDeathState = !(it->second.isAlive);
 		}
 
 		EntityID RatScript_v2_0::CreateDetectionRadius(RatScript_v2_0_Data const& r_data)
@@ -1252,6 +1272,9 @@ namespace PE
 
 		void RatScript_v2_0::InstantiateRatAttack(RatScript_v2_0_Data& r_data)
 		{
+				// Delete any existing attack data
+				r_data.DeleteAttackData();
+
 				switch (r_data.ratType) 
 				{
 				case EnumRatType::SNIPER:
