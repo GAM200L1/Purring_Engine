@@ -61,6 +61,8 @@ namespace PE
 		REGISTER_UI_FUNCTION(OpenAYSR, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(JournalHoverEnter, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(JournalHoverExit, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(OpenSettings, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(CloseSettings, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -751,6 +753,8 @@ namespace PE
 
 	void GameStateController_v2_0::DeactiveObject(EntityID id)
 	{
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
 		//deactive all the children objects first
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
@@ -796,6 +800,7 @@ namespace PE
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].AreYouSureCanvas);
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].LoseCanvas);
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].WinCanvas);
+		DeactiveObject(m_scriptData[m_currentGameStateControllerID].SettingsMenu);
 	}
 
 	void GameStateController_v2_0::NextState(EntityID)
@@ -1160,6 +1165,18 @@ namespace PE
 	void GameStateController_v2_0::JournalHoverExit(EntityID)
 	{
 		m_journalShowing = false;
+	}
+
+	void GameStateController_v2_0::OpenSettings(EntityID)
+	{
+		DeactiveAllMenu();
+		ActiveObject(m_scriptData[m_currentGameStateControllerID].SettingsMenu);
+	}
+
+	void GameStateController_v2_0::CloseSettings(EntityID)
+	{
+		DeactiveAllMenu();
+		ActiveObject(m_scriptData[m_currentGameStateControllerID].PauseMenuCanvas);
 	}
 
 	void GameStateController_v2_0::RetryStage(EntityID)

@@ -3156,6 +3156,7 @@ namespace PE {
 										int RatKingJournalID = static_cast<int> (it->second.RatKingJournal);
 										int JournalButtonID = static_cast<int> (it->second.JournalButton);
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
+										int SettingsMenuID = static_cast<int> (it->second.SettingsMenu);
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
@@ -3175,6 +3176,9 @@ namespace PE {
 
 										ImGui::Text("LoseCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ls", &LoseCanvasID);
 										if (LoseCanvasID != m_currentSelectedObject) { it->second.LoseCanvas = LoseCanvasID; }
+
+										ImGui::Text("Settings Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##gplsm", &SettingsMenuID);
+										if (SettingsMenuID != m_currentSelectedObject) { it->second.SettingsMenu = SettingsMenuID; }
 
 										ImGui::Text("HowToPlayCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htps", &HowToPlayCanvasID);
 										if (HowToPlayCanvasID != m_currentSelectedObject) { it->second.HowToPlayCanvas = HowToPlayCanvasID; }

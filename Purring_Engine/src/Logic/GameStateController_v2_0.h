@@ -56,6 +56,8 @@ namespace PE
 		EntityID Background;
 		EntityID TransitionPanel;
 
+		EntityID SettingsMenu;
+
 		int NumberInList{5};
 		std::vector<EntityID> clicklisttest;
 
@@ -379,6 +381,20 @@ namespace PE
 		 \param[in]		EntityID so that this function can be called by a button
 		*************************************************************************************/
 		void JournalHoverExit(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Open Settings in Main Menu
+
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
+		void OpenSettings(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Close Settings in Main Menu
+
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
+		void CloseSettings(EntityID);
 
 		// ----- Audio Helper Functions ----- //
 	private:
