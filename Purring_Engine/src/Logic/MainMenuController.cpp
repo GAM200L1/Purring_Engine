@@ -44,13 +44,25 @@ namespace PE
 
 	void MainMenuController::Init(EntityID id)
 	{
-		if(EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].SplashScreen))
-		ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value());
-		m_timeSinceEnteredState = 0;
-		m_timeSinceExitedState = m_splashTimer;
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].SplashScreen) && m_firstStart)
+		{
+			ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value());
 
-		//set the main menu canvas to be inactive
-		ActiveObject(m_scriptData[id].MainMenuCanvas);
+			m_timeSinceEnteredState = 0;
+			m_timeSinceExitedState = m_splashTimer;
+		}
+		else
+		{
+			EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+				EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
+			EntityManager::GetInstance().RemoveEntity(bgm);
+
+			ActiveObject(m_scriptData[id].TransitionPanel);
+		}
+
+		//set the main menu canvas to be deactive
+		m_firstStart ? DeactiveObject(m_scriptData[id].MainMenuCanvas) : ActiveObject(m_scriptData[id].MainMenuCanvas);
 
 		//set the are you sure canvas to be inactive
 		DeactiveObject(m_scriptData[id].AreYouSureCanvas);
@@ -61,6 +73,8 @@ namespace PE
 		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, MainMenuController::OnMouseClick, this);
 		m_scriptData[id].windowNotFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, MainMenuController::OnWindowOutOfFocus, this)
 		m_scriptData[id].windowFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus, MainMenuController::OnWindowFocus, this)
+	
+		
 	}
 
 	void MainMenuController::Update(EntityID id, float deltaTime)
@@ -83,6 +97,11 @@ namespace PE
 			}
 			else
 			{
+				if (m_isTransitioning)
+				{
+					TransitionPanelFade(id, deltaTime, m_isTransitioningIn);
+				}
+
 				if (!m_isResumedOnce)
 				{
 					EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Background Music.prefab");
@@ -111,10 +130,9 @@ namespace PE
 			REMOVE_MOUSE_EVENT_LISTENER(m_scriptData[id].mouseClickEventID);
 			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].windowNotFocusEventID);
 			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].windowFocusEventID);
+			m_firstStart = true;
 		}
 
-
-		m_firstStart = true;
 	}
 
 
@@ -162,6 +180,14 @@ namespace PE
 	void MainMenuController::OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event)
 	{
 		PauseManager::GetInstance().SetPaused(false);
+	}
+
+	void MainMenuController::NotFirstStart()
+	{
+		m_firstStart = false;
+
+		m_isTransitioning = true;
+		m_isTransitioningIn = true;
 	}
 
 	void MainMenuController::ActiveObject(EntityID id)
@@ -260,6 +286,41 @@ namespace PE
 		}
 	}
 
+	void MainMenuController::TransitionPanelFade(EntityID const id, float deltaTime, bool in)
+	{
+		ActiveObject(m_scriptData[id].TransitionPanel);
+
+		m_timeSinceTransitionStarted += deltaTime;
+		m_timeSinceTransitionEnded -= deltaTime;
+
+		float fadeOutSpeed = std::clamp(m_timeSinceTransitionEnded / m_transitionTimer, 0.0f, 1.0f);
+		float fadeInSpeed = std::clamp(m_timeSinceTransitionStarted / m_transitionTimer, 0.0f, 1.0f);
+
+		FadeAllObject(m_scriptData[id].TransitionPanel, in ? fadeOutSpeed : fadeInSpeed);
+
+		if (fadeInSpeed >= 1 && !in)
+		{
+			m_isTransitioning = false;
+			m_isTransitioningIn = true;
+			LogicSystem::restartingScene = true;
+			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
+			SceneManager::GetInstance().LoadScene("IntroCutsceneScene.scene");
+
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
+		}
+		else if (fadeOutSpeed >= 1 && in)
+		{
+			m_isTransitioning = false;
+			m_isTransitioningIn = false;
+			DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].TransitionPanel);
+
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
+		}
+		
+	}
+
 	void MainMenuController::FadeAllObject(EntityID id, float const alpha)
 	{
 		//fade all the children objects first
@@ -287,8 +348,8 @@ namespace PE
 
 	void MainMenuController::PlayGameMM(EntityID)
 	{
-		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
-		SceneManager::GetInstance().LoadScene("IntroCutsceneScene.scene");
+		m_isTransitioning = true;
+		m_isTransitioningIn = false;
 		PlayPositiveFeedback();
 	}
 

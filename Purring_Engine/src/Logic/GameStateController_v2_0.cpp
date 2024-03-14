@@ -37,6 +37,7 @@
 #include "AudioManager/GlobalMusicManager.h"
 #include "Boss/BossRatScript.h"
 #include "Animation/Animation.h"
+#include "Logic/MainMenuController.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -63,6 +64,7 @@ namespace PE
 		REGISTER_UI_FUNCTION(JournalHoverExit, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(OpenSettings, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(CloseSettings, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(ReturnToMainMenu, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -1256,10 +1258,23 @@ namespace PE
 		}
 		default:
 			WinGame();
-			m_leveltoLoad = "MainMenu.scene";
+			m_leveltoLoad = m_mainMenuSceneName;
 			break;
 		}
 	
+	}
+
+	void GameStateController_v2_0::ReturnToMainMenu(EntityID ID)
+	{
+		m_isTransitioning = true;
+		m_isTransitioningIn = false;
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		m_currentLevel = 0;
+		m_leveltoLoad = m_mainMenuSceneName;
+
+		GETSCRIPTINSTANCEPOINTER(MainMenuController)->NotFirstStart();
 	}
 
 	void GameStateController_v2_0::StartGameLoop()

@@ -278,6 +278,7 @@ RTTR_REGISTRATION
         .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
         .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo)
+        .property("TransitionPanel", &PE::MainMenuControllerData::TransitionPanel)
         .property("SettingsMenu", &PE::MainMenuControllerData::SettingsMenu);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")

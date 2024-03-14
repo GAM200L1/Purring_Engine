@@ -3377,6 +3377,7 @@ namespace PE {
 										int HowToPlayPageOneID = static_cast<int> (it->second.HowToPlayPageOne);
 										int HowToPlayPageTwoID = static_cast<int> (it->second.HowToPlayPageTwo);
 										int SettingsMenuID = static_cast<int> (it->second.SettingsMenu);
+										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 
 										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCID", &MainMenuCanvasID);
 										if (MainMenuCanvasID != m_currentSelectedObject) { it->second.MainMenuCanvas = MainMenuCanvasID; }
@@ -3398,6 +3399,9 @@ namespace PE {
 
 										ImGui::Text("Settings Menu ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMSMID", &SettingsMenuID);
 										if (SettingsMenuID != m_currentSelectedObject) it->second.SettingsMenu = SettingsMenuID;
+
+										ImGui::Text("Transition Panel Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMTPID", &TransitionPanelID);
+										if (TransitionPanelID != m_currentSelectedObject) it->second.TransitionPanel = TransitionPanelID;
 									}
 								}
 							}
