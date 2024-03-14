@@ -112,7 +112,7 @@ namespace PE
 
             \return A string view representing the name of the state, useful for debugging and logging
         *************************************************************************************/
-        virtual std::string_view GetName() { return "RatMovement_v2_0"; }
+        virtual std::string_view GetName() { return GETSCRIPTNAME(RatMovement_v2_0); }
 
     private:
 

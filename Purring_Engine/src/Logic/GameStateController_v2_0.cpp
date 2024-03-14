@@ -110,7 +110,7 @@ namespace PE
 			m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
 
 			//resetting current turn
-			CurrentTurn = 0;
+			currentTurn = 0;
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
 
@@ -349,6 +349,7 @@ namespace PE
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
 			GETANIMATIONMANAGER()->PauseAllAnimations();
+			PauseBGM();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
 		}
@@ -706,6 +707,7 @@ namespace PE
 
 			PauseManager::GetInstance().SetPaused(false);
 
+			ResumeBGM();
 			PlayClickAudio();
 			PlayPageAudio();
 		}
@@ -814,7 +816,7 @@ namespace PE
 		}
 		else if (currentState == GameStates_v2_0::EXECUTE && !m_nextTurnOnce)
 		{
-			CurrentTurn++;
+			currentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
@@ -838,6 +840,7 @@ namespace PE
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayWinAudio();
+		PauseBGM();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
 	}
@@ -849,6 +852,7 @@ namespace PE
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayLoseAudio();
+		PauseBGM();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
 	}
@@ -1264,7 +1268,7 @@ namespace PE
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
 
-		CurrentTurn = 0;
+		currentTurn = 0;
 		m_leveltoLoad = m_level1SceneName;
 
 		GETANIMATIONMANAGER()->PlayAllAnimations();
@@ -1371,7 +1375,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayClickAudio()
 	{
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX.prefab");
+		EntityID buttonpress = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Button Click SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -1379,7 +1383,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayNegativeFeedback()
 	{
-		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback.prefab");
+		EntityID buttonpress = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Negative Feedback.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
@@ -1387,7 +1391,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayPageAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Menu Transition SFX.prefab");
+		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Menu Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1395,7 +1399,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayWinAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Win SFX.prefab");
+		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Game Win SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1403,7 +1407,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayLoseAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Lose SFX.prefab");
+		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Game Lose SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1411,7 +1415,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlaySceneTransition()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX.prefab");
+		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Scene Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1419,7 +1423,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayPhaseChangeAudio()
 	{
-		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Phase Transition SFX.prefab");
+		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Phase Transition SFX.prefab");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1427,22 +1431,22 @@ namespace PE
 
 	void GameStateController_v2_0::PauseBGM()
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
+		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
-		EntityID bgm2 = m_serializationManager.LoadFromFile("AudioObject/Background Music2.prefab");
+		EntityID bgm2 = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music2.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm2))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm2).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm2);
 
-		EntityID bgm3 = m_serializationManager.LoadFromFile("AudioObject/Background Music3.prefab");
+		EntityID bgm3 = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music3.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm3))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm3).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm3);
 
-		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
+		EntityID bga = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
 			EntityManager::GetInstance().Get<AudioComponent>(bga).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bga);
@@ -1450,22 +1454,22 @@ namespace PE
 
 	void GameStateController_v2_0::ResumeBGM()
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
+		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
-		EntityID bgm2 = m_serializationManager.LoadFromFile("AudioObject/Background Music2.prefab");
+		EntityID bgm2 = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music2.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm2))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm2).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm2);
 
-		EntityID bgm3 = m_serializationManager.LoadFromFile("AudioObject/Background Music3.prefab");
+		EntityID bgm3 = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music3.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm3))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm3).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm3);
 
-		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience.prefab");
+		EntityID bga = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Ambience.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
 			EntityManager::GetInstance().Get<AudioComponent>(bga).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bga);
@@ -1511,7 +1515,7 @@ namespace PE
 			{
 				if (EntityManager::GetInstance().Has<TextComponent>(id2))
 				{
-					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn " + std::to_string(CurrentTurn));
+					EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn " + std::to_string(currentTurn));
 				}
 				continue;
 			}

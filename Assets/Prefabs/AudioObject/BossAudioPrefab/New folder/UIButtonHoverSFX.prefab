@@ -2,14 +2,14 @@
     "Entity": {
         "components": {
           "AudioComponent": {
-            "audioKey": "../Assets/Audio/BossAudio/sfx_RatKingAttack_SlamShockwave.wav",
+            "audioKey": "../Assets/Audio/sfx_UI_ButtonHover.wav",
             "loop": false
           },
           "EntityDescriptor": {
-            "Prefab Type": "RatKing SlamShockwave SFX",
+            "Prefab Type": "UI Button Hover SFX",
             "children": [],
             "isActive": true,
-            "name": "RatKing SlamShockwave SFX",
+            "name": "UI Button Hover SFX",
             "parent": null,
             "sceneID": 18446744073709551615
           }

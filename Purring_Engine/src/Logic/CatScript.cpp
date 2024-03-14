@@ -487,9 +487,7 @@ namespace PE
 	{
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);
 
-		SerializationManager serializationManager;
-
-		EntityID telegraphID = serializationManager.LoadFromFile("PlayerAttackTelegraph.prefab");
+		EntityID telegraphID = ResourceManager::GetInstance().LoadPrefabFromFile("PlayerAttackTelegraph.prefab");
 		Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
 		//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
@@ -533,8 +531,7 @@ namespace PE
 	void CatScript::CreateProjectile(EntityID id)
 	{
 			// Creates an entity for the projectile
-			SerializationManager serializationManager;
-			m_scriptData[id].projectileID = serializationManager.LoadFromFile("Projectile.prefab");
+			m_scriptData[id].projectileID = ResourceManager::GetInstance().LoadPrefabFromFile("Projectile.prefab");
 			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
 	}
 

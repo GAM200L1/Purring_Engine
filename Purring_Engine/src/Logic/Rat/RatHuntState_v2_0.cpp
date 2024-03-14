@@ -63,7 +63,7 @@ namespace PE
 				if (StateJustChanged() && m_previousGameState != GameStates_v2_0::PAUSE)
 				{
 						--huntingTurnsLeft;
-						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableMovementTelegraphs(id);
 
 						// Play animation
 						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::WALK);
@@ -129,7 +129,7 @@ namespace PE
 
 					// ---- Update telegraph
 					// Rotate the telegraph to face the target
-					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableTelegraphs(id, targetPosition);
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableMovementTelegraphs(id, targetPosition);
 				}
 
 				break; // end of BRAWLER rat type
@@ -249,10 +249,6 @@ namespace PE
 
 	void RatHunt_v2_0::CheckIfShouldChangeStates()
 	{
-#ifdef DEBUG_PRINT
-			std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft = " << huntingTurnsLeft << "\n";
-#endif // DEBUG_PRINT
-
       // Clear dead cats from the collision sets
 			RatScript_v2_0::ClearDeadCats(p_data->catsInDetectionRadius);
 			RatScript_v2_0::ClearDeadCats(p_data->catsExitedDetectionRadius);
@@ -261,50 +257,32 @@ namespace PE
 			// Check if there are any cats in the detection range
 			if (!(p_data->catsInDetectionRadius.empty()))
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats in range\n";
-#endif // DEBUG_PRINT
 					// there's a cat in the detection range, move to attack it
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
 			}
 			// Check if any cats exited the detection range in the last turn
 			else if (!(p_data->catsExitedDetectionRadius.empty()))
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats exited range\n";
-#endif // DEBUG_PRINT
 					// cats just passed by us, hunt the closest one down
 					SetHuntTarget( RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) );
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 			}
-			// Check if the current cat is alive // @TODO to replace when we have a method for checking cat's alive status
-			else if (!EntityManager::GetInstance().IsEntityValid(p_data->myID))
+			// Check if the current cat is alive 
+			else if (!RatScript_v2_0::GetIsNonCagedCat(targetId))
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat is dead\n";
-#endif // DEBUG_PRINT
 					// the cat we're chasing is dead, return to the original position
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
 			}
 			// Check if we should switch to the returning state
 			else if (huntingTurnsLeft == 0)
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft == 0\n";
-#endif // DEBUG_PRINT
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableDetectionTelegraphs(p_data->myID, EnumRatIconAnimations::CONFUSED);
 			}
 			else 
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): don't change states, just clear collision\n";
-#endif // DEBUG_PRINT
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 			}
-
-#ifdef DEBUG_PRINT
-			std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): --- end huntingTurnsLeft = " << huntingTurnsLeft << "\n";
-#endif // DEBUG_PRINT
 	}
 
 	void RatHunt_v2_0::OnCollisionEnter(const Event<CollisionEvents>& r_event)

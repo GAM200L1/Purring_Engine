@@ -37,6 +37,7 @@
 #include "CatScript.h"
 #include "RatScript.h"
 #include "Layers/LayerManager.h"
+#include "ResourceManager/ResourceManager.h"
 
 # define M_PI           3.14159265358979323846 
 
@@ -61,8 +62,7 @@ namespace PE
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
 
 		// Play BGM
-		SerializationManager serializationManager;
-		bgm = serializationManager.LoadFromFile("AudioObject/Background Music1.prefab");
+		bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm)) 
 		{
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
@@ -514,11 +514,10 @@ namespace PE
 			if (KTE.keycode == GLFW_KEY_F3)
 			{
 				GameStateManager::GetInstance().godMode = !GameStateManager::GetInstance().godMode;
-				SerializationManager serializationManager;
 
 				if (GameStateManager::GetInstance().godMode)
 				{
-					godModeText = serializationManager.LoadFromFile("HUD/God Mode.prefab");
+					godModeText = ResourceManager::GetInstance().LoadPrefabFromFile("HUD/God Mode.prefab");
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(godModeText))
 						EntityManager::GetInstance().Get<EntityDescriptor>(godModeText).toSave = false;
 				}

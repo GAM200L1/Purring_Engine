@@ -101,6 +101,7 @@
 
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
+#include "Logic/Settings.h"
 
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Logic/Cat/CatScript_v2_0.h"
@@ -275,10 +276,18 @@ RTTR_REGISTRATION
         .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen)
         .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
-        .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo);
+        .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo)
+        .property("SettingsMenu", &PE::MainMenuControllerData::SettingsMenu);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);    
+
+    rttr::registration::class_<PE::SettingsScriptData>("SettingsScript")
+        .property("BGMSlider", &PE::SettingsScriptData::BGMSlider)
+        .property("SFXSlider", &PE::SettingsScriptData::SFXSlider)
+        .property("MasterSlider", &PE::SettingsScriptData::MasterSlider)
+        .property("FullScreenButton", &PE::SettingsScriptData::FullScreenButton)
+        .property("WindowedButton", &PE::SettingsScriptData::WindowedButton);
     
     rttr::registration::class_<PE::IntroCutsceneControllerData>("IntroCutsceneController")
         .property("CutsceneObject", &PE::IntroCutsceneControllerData::CutsceneObject)
@@ -442,7 +451,9 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-    
+   
+
+
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
@@ -452,10 +463,9 @@ PE::CoreApplication::CoreApplication()
     InitializeSystems();
     InitializeAudio();
 
-    SerializationManager serializationManager;
     //create background from file
 
-    EntityID uiCameraId{ serializationManager.LoadFromFile("EditorDefaults/Camera.prefab") };
+    EntityID uiCameraId{ ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Camera.prefab") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
 
@@ -465,6 +475,8 @@ PE::CoreApplication::CoreApplication()
 PE::CoreApplication::~CoreApplication()
 {
     // future stuff can add here
+
+
 }
 
 void PE::CoreApplication::Run()
