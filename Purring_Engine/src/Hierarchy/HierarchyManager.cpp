@@ -185,6 +185,8 @@ namespace PE
 					// only if it is base layer
 					if (!HasParent(id))
 					{
+						while (m_sceneOrder.count(EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID))
+							++EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID;
 						m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
 					}
 				}
@@ -203,6 +205,8 @@ namespace PE
 					// only if it is base layer
 					if (!HasParent(id))
 					{
+						while (m_sceneOrder.count(EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID))
+							++EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID;
 						m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
 					}
 				}
@@ -232,7 +236,7 @@ namespace PE
 	void Hierarchy::RenderOrderUpdateHelper(const EntityID& r_parent, float min, float max)
 	{
 		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children.size() + 1);
-		EntityID prevSceneID{ ULLONG_MAX };
+		EntityID prevSceneID{ EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).sceneID };
 		std::map<EntityID, std::pair<EntityDescriptor*, EntityID>> descs;
 		std::vector<EntityID> rm;
 		for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children)
@@ -243,7 +247,7 @@ namespace PE
 				continue;
 			}
 			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-			if (desc.sceneID == ULLONG_MAX || desc.sceneID == prevSceneID)
+			if (!desc.sceneID || desc.sceneID == ULLONG_MAX || desc.sceneID == prevSceneID)
 				desc.sceneID = prevSceneID + 1;
 			descs[desc.sceneID] = std::make_pair(&desc, id);
 			prevSceneID = desc.sceneID;
