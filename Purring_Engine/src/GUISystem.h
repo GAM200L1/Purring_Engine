@@ -279,6 +279,10 @@ namespace PE
 		*************************************************************************************/
 		float CalculateKnobValue(float currentX);
 
+		void SetSliderValue(float value);
+
+		float GetSliderValue();
+
 		/*!***********************************************************************************
 		 \brief Calculate the current position of the knob based on given min and max values.
 		*************************************************************************************/

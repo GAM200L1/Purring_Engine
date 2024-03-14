@@ -25,24 +25,43 @@ namespace PE
 
     void GlobalMusicManager::Update(float deltaTime)
     {
+        // This is to check and update the individual fade effects for each audio component
         for (auto& [key, audioComponent] : m_audioComponents)
         {
             audioComponent->UpdateIndividualFade(deltaTime);
         }
 
+        // Handle global fading effect
         if (m_isFading)
         {
+            // Update the fade progress
             m_fadeProgress += deltaTime / m_fadeDuration;
-            m_fadeProgress = std::min(m_fadeProgress, 1.0f); // Ensure progress does not exceed 1
+            m_fadeProgress = std::min(m_fadeProgress, 1.0f);  // Clamp the progress to a maximum of 1.0
 
-            // Calculate volume based on fade progress and max volume
+            // Calculate the current volume based on whether we are fading in or out
             float volume = (m_isFadingIn ? m_fadeProgress : (1.0f - m_fadeProgress)) * m_maxVolume;
             SetBackgroundMusicVolume(volume);
 
-            // Stop fading if the progress has completed
+            // Check if the fade operation has completed
             if (m_fadeProgress >= 1.0f)
             {
-                m_isFading = false;
+                m_isFading = false;  // Mark the fade operation as complete
+
+                if (!m_isFadingIn)
+                {
+                    // Check if the track is set to loop and initiate a fade-in
+                    auto it = m_audioComponents.find(m_currentTrackKey);
+                    if (it != m_audioComponents.end() && it->second->IsLooping())
+                    {
+                        // Start fade-in for the looping track
+                        StartFadeIn(5.0f);
+                    }
+                    else
+                    {
+                        // Stop the music if not looping
+                        StopBackgroundMusic();
+                    }
+                }
             }
         }
 
@@ -66,6 +85,11 @@ namespace PE
             }
 
             audioComponent.PlayAudioSound(AudioComponent::AudioType::BGM);
+
+            // Update the current track key to reflect the newly playing BGM
+            m_currentTrackKey = r_prefabPath;
+
+            // Store the audio component in the map using the prefab path as the key
             m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
@@ -120,6 +144,10 @@ namespace PE
         if (it != m_audioComponents.end())
         {
             it->second->SetVolume(volume);
+        }
+        else
+        {
+            //std::cout << "No audio component found for key: " << m_currentTrackKey << std::endl;
         }
     }
 

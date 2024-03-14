@@ -71,7 +71,7 @@ namespace PE
         if (gameStateController->currentState == GameStates_v2_0::EXECUTE)
         {
             m_planningRunOnce = false;
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableMovementTelegraphs(id);
 
             if (!triggerWalkAnim) 
             {
@@ -118,7 +118,7 @@ namespace PE
 
                     // ---- Update telegraph
                     // Rotate the telegraph to face the target
-                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableTelegraphs(id, targetPosition);
+                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableMovementTelegraphs(id, targetPosition);
 
                     // Clear the collision containers
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);

@@ -63,7 +63,7 @@ namespace PE
 				if (StateJustChanged() && m_previousGameState != GameStates_v2_0::PAUSE)
 				{
 						--huntingTurnsLeft;
-						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableMovementTelegraphs(id);
 
 						// Play animation
 						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::WALK);
@@ -129,7 +129,7 @@ namespace PE
 
 					// ---- Update telegraph
 					// Rotate the telegraph to face the target
-					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableTelegraphs(id, targetPosition);
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableMovementTelegraphs(id, targetPosition);
 				}
 
 				break; // end of BRAWLER rat type

@@ -677,6 +677,29 @@ namespace PE
 		return m_currentValue;
 	}
 
+	void GUISlider::SetSliderValue(float value)
+	{
+		//current value will be 
+		//current x transform / total transform * (max value - min value)	
+		float totalVal = m_maxValue - m_minValue;
+		float totalDistance = m_endPoint - m_startPoint;
+		float currentTransform = (value - m_minValue) / totalVal * totalDistance;
+		m_currentXpos = m_startPoint + currentTransform;
+
+		if (EntityManager::GetInstance().Has<Transform>(m_knobID.value()))
+		{
+			Transform& transform = EntityManager::GetInstance().Get<Transform>(m_knobID.value());
+
+			transform.relPosition.x = m_currentXpos;
+			m_currentValue = value;
+		}
+	}
+
+	float GUISlider::GetSliderValue()
+	{
+		return m_currentValue;
+	}
+
 	float GUISlider::CalculateKnobCenter(float currentValue)
 	{
 		//current value will be 

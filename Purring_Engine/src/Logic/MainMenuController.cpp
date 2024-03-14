@@ -23,6 +23,7 @@
 #include "Graphics/Text.h"
 #include "PauseManager.h"
 #include "GameStateController_v2_0.h"
+#include "AudioManager/GlobalMusicManager.h"
 #include "ResourceManager/ResourceManager.h"
 
 namespace PE
@@ -36,10 +37,14 @@ namespace PE
 		REGISTER_UI_FUNCTION(MMOpenHTP, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(MMHTPPage1, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(MMHTPPage2, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMOpenSettings, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMCloseSettings, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(PlayButtonHoverAudio, PE::MainMenuController);
 	}
 
 	void MainMenuController::Init(EntityID id)
 	{
+		if(EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].SplashScreen))
 		ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value());
 		m_timeSinceEnteredState = 0;
 		m_timeSinceExitedState = m_splashTimer;
@@ -49,6 +54,8 @@ namespace PE
 
 		//set the are you sure canvas to be inactive
 		DeactiveObject(m_scriptData[id].AreYouSureCanvas);
+		DeactiveObject(m_scriptData[id].HowToPlayCanvas);
+		DeactiveObject(m_scriptData[id].SettingsMenu);
 
 		//add the mouse click event listener
 		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, MainMenuController::OnMouseClick, this);
@@ -196,6 +203,7 @@ namespace PE
 	void MainMenuController::DeactiveObject(EntityID id)
 	{
 		//deactive all the children objects first
+		if(EntityManager::GetInstance().Has<EntityDescriptor>(id))
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
 			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
@@ -215,6 +223,7 @@ namespace PE
 	{
 		if (!m_inSplashScreen && m_firstStart) //replace with boolean
 		{
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].SplashScreen))
 			ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value());
 			m_firstStart = false;
 			m_inSplashScreen = true;
@@ -254,6 +263,9 @@ namespace PE
 	void MainMenuController::FadeAllObject(EntityID id, float const alpha)
 	{
 		//fade all the children objects first
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
+
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
 			if (EntityManager::GetInstance().Has<TextComponent>(id2))
@@ -354,6 +366,19 @@ namespace PE
 		PlayClickAudio();
 	}
 
+	void MainMenuController::MMOpenSettings(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].SettingsMenu);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+	}
+
+
+	void MainMenuController::MMCloseSettings(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].SettingsMenu);
+	
+	}
 
 	void MainMenuController::PlayClickAudio()
 	{
@@ -375,5 +400,10 @@ namespace PE
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound(AudioComponent::AudioType::SFX);
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
+	}
+
+	void MainMenuController::PlayButtonHoverAudio(EntityID)
+	{
+		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/UIButtonHoverSFX.prefab",false);
 	}
 }
