@@ -494,11 +494,13 @@ void PE::CoreApplication::Run()
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
-    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0,0,0);
     SceneManager::GetInstance().SetStartScene("MainMenu.scene"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE
+
+    // Set the default background colour to black
+    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
 
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
@@ -567,11 +569,15 @@ void PE::CoreApplication::Run()
         // if the scene is being loaded, skip the rest of the frame
         if (SceneManager::GetInstance().IsLoadingScene())
         {
+            // Set the default background colour to black
+            const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
             SceneManager::GetInstance().LoadSceneToLoad();
             skipFrame = true;
         }
         else if (SceneManager::GetInstance().IsRestartingScene())
         {
+            // Set the default background colour to black
+            const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
             SceneManager::GetInstance().RestartScene(SceneManager::GetInstance().GetActiveScene());
             skipFrame = true;
         }
