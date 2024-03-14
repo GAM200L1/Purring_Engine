@@ -453,11 +453,12 @@ namespace PE {
 					ImGui::Separator();
 					if (ImGui::Selectable("Yes"))
 					{
-						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+						size_t tid{ Hierarchy::GetInstance().GetParentOrder().front() };
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(tid))
 						{
-							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
-							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
-							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(tid));
+							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(tid).prefabType;
+							prefabCID = EntityManager::GetInstance().GetComponentIDs(tid);
 							m_applyPrefab = true;
 
 							std::ofstream outFile(prefabFP);
@@ -693,11 +694,21 @@ namespace PE {
 		{
 			ImGui::Indent();
 			std::map<EntityID, EntityID> childOrder;
+			std::vector<EntityID> rm;
 			for (const auto& childID : EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children)
 			{
+				if (!EntityManager::GetInstance().IsEntityValid(childID))
+				{
+					rm.push_back(childID);
+					continue;
+				}
 				while (childOrder.count(EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID))
 					++EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID;
 				childOrder[EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID] = childID;
+			}
+			for (const auto& id : rm)
+			{
+				Hierarchy::GetInstance().DetachChild(id);
 			}
 			for (auto [k,v] : childOrder)
 			{
@@ -1028,7 +1039,7 @@ namespace PE {
 	void Editor::ShowComponentWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs) || (m_isPrefabMode && !EntityManager::GetInstance().Has<EntityDescriptor>(1)))
+		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
 		{
 			ImGui::End();
 		}
@@ -1045,9 +1056,6 @@ namespace PE {
 					for (const ComponentID& name : components)
 					{
 						++componentCount;//increment unique id
-
-						
-
 
 						// ---------- ENTITY DESCRIPTOR ---------- //
 						ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
@@ -4459,7 +4467,8 @@ namespace PE {
 									}
 									ClearObjectList();
 									engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-									ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP, true);
+									m_currentSelectedObject = static_cast<int>(ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP, true));
+									m_objectIsSelected = true;
 								}
 								if (ImGui::Selectable("Edit properties"))
 								{
@@ -5266,9 +5275,10 @@ namespace PE {
 					ImGui::SameLine();
 					if (ImGui::Button(" Save "))
 					{
-						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+						size_t tid{ Hierarchy::GetInstance().GetParentOrder().front() };
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(tid))
 						{
-							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(tid));
 							std::ofstream outFile(prefabFP);
 							if (outFile)
 							{
@@ -5286,11 +5296,12 @@ namespace PE {
 
 						if (ImGui::Selectable("Yes"))
 						{
-							if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+							size_t tid{ Hierarchy::GetInstance().GetParentOrder().front() };
+							if (EntityManager::GetInstance().Has<EntityDescriptor>(tid))
 							{
-								nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
-								prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
-								prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
+								nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(tid));
+								prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(tid).prefabType;
+								prefabCID = EntityManager::GetInstance().GetComponentIDs(tid);
 								std::ofstream outFile(prefabFP);
 								if (outFile)
 								{
@@ -5388,9 +5399,11 @@ namespace PE {
 								{
 									engine_logger.AddLog(false, "Attempting to save prefab entities to file...", __FUNCTION__);
 									
-									if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+									size_t tid{ Hierarchy::GetInstance().GetParentOrder().front() };
+									if (EntityManager::GetInstance().Has<EntityDescriptor>(tid))
 									{
-										nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
+										nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(tid));
+	
 
 										std::ofstream outFile(prefabFP);
 										if (outFile)

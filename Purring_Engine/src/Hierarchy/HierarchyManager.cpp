@@ -234,13 +234,23 @@ namespace PE
 		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children.size() + 1);
 		EntityID prevSceneID{ ULLONG_MAX };
 		std::map<EntityID, std::pair<EntityDescriptor*, EntityID>> descs;
+		std::vector<EntityID> rm;
 		for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children)
 		{
+			if (!EntityManager::GetInstance().IsEntityValid(id))
+			{ 
+				rm.push_back(id);
+				continue;
+			}
 			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
 			if (desc.sceneID == ULLONG_MAX || desc.sceneID == prevSceneID)
 				desc.sceneID = prevSceneID + 1;
 			descs[desc.sceneID] = std::make_pair(&desc, id);
 			prevSceneID = desc.sceneID;
+		}
+		for (const auto& id : rm)
+		{
+			Hierarchy::GetInstance().DetachChild(id);
 		}
 
 		unsigned cnt{ 1 };
