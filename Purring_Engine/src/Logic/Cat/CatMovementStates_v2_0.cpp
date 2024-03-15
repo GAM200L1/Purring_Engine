@@ -476,6 +476,7 @@ namespace PE
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
 	}
 
 	void CatMovement_v2_0EXECUTE::StateExit(EntityID id)
