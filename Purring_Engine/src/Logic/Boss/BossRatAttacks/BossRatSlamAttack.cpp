@@ -338,7 +338,7 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->rightSideSlamAnimation))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive = false;
 
-		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT)
+		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT && p_data->curr_Anim != BossRatAnimationsEnum::DEATH)
 			p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
 
 		p_data->finishExecution = true;

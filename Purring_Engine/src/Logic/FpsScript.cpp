@@ -30,6 +30,8 @@ namespace PE
 	void FpsScript::Init(EntityID id)
 	{
 		m_currentEntityID = id;
+		if(EntityManager::GetInstance().Has<EntityDescriptor>(m_currentEntityID))
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_currentEntityID).isActive = false;
 		m_keyPressedKey = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, FpsScript::OnKeyEvent, this)
 	}
 

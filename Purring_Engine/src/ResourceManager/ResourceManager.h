@@ -158,26 +158,28 @@ namespace PE
         *************************************************************************************/
         bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
+        /*size_t GetPrefab(std::string const& r_name);*/
+
         /*!***********************************************************************************
          \brief Load an entity from a prefab file, returning its ID.
 
-         \param[in] filename  The path to the file to load from.
-         \param[in] fp  Whether to use the file path as the entity name.
+         \param[in] r_filePath  The path to the file to load from.
+         \param[in] useFilePath  Whether to use the file path as the entity name.
 
          \return ID of the entity loaded.
         *************************************************************************************/
-        size_t LoadPrefabFromFile(std::string const& r_filePath, bool fp = false);
+        size_t LoadPrefabFromFile(std::string const& r_filePath, bool useFilePath = false);
 
         /*size_t GetPrefab(std::string const& r_name);*/
 
         /*!***********************************************************************************
             \brief Gets the size of a texture with the given name from the ResourceManager.
 
-            \param[in] name The name of the texture to retrieve the size for.
+            \param[in] r_name The name of the texture to retrieve the size for.
 
             \return An ImVec2 containing the width and height of the texture.
         *************************************************************************************/
-        ImVec2 GetTextureSize(const std::string& r_fileName);
+        ImVec2 GetTextureSize(const std::string& r_name);
 
         /*!***********************************************************************************
         \brief Load texture from Resource folder in Textures folder

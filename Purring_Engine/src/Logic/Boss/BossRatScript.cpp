@@ -38,7 +38,8 @@ namespace PE
 		m_scriptData[id].collisionStayEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
 
 		m_scriptData[id].currentAttackInSet = 3;
-
+		m_scriptData[id].currenthealth = m_scriptData[id].maxHealth;
+		
 		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(3);
 	}
 
@@ -68,12 +69,11 @@ namespace PE
 			if (m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::DEATH)
 			{
 				PlayAnimation(BossRatAnimationsEnum::DEATH);
-				std::cout << "playaud" << std::endl;
 				PlayDeathAudio();
 			}
 
 			//keep in execution phase
-			m_scriptData[id].finishExecution = false;
+			//m_scriptData[id].finishExecution = false;
 			if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
 			{
 				p_gsc->WinGame();

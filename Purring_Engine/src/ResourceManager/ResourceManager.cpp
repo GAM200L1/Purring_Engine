@@ -287,13 +287,13 @@ namespace PE
         return true;
     }
 
-    size_t ResourceManager::LoadPrefabFromFile(std::string const& r_filePath, bool fp)
+    size_t ResourceManager::LoadPrefabFromFile(std::string const& r_filePath, bool useFilePath)
     {
         std::filesystem::path filepath;
         SerializationManager serializationManager;
 
         // if using filepath
-        if (fp)
+        if (useFilePath)
         {
             filepath = r_filePath;
         }
@@ -344,9 +344,9 @@ namespace PE
     //    return serializationManager.CreateEntityFromPrefab(Prefabs[r_name]);
     //}
 
-    ImVec2 ResourceManager::GetTextureSize(const std::string& name)
+    ImVec2 ResourceManager::GetTextureSize(const std::string& r_name)
     {
-        auto it = Icons.find(name);
+        auto it = Icons.find(r_name);
         if (it != Icons.end()) {
             auto texture = it->second;
             return ImVec2(static_cast<float>(texture->GetWidth()), static_cast<float>(texture->GetHeight()));
