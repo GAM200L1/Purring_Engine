@@ -52,7 +52,7 @@ namespace PE
 
 		//other boss stats
 
-		float maxHealth = 20;
+		float maxHealth = 14;
 		float currenthealth = maxHealth;
 		StateMachine* p_stateManager;
 		BossRatAttack* p_currentAttack;
@@ -102,9 +102,9 @@ namespace PE
 		float executionTimeOutTimer{ executionTimeOutTime };
 		BossRatAttacks bossRatAttackSets[3][3]
 		{
-			{BossRatAttacks::CHARGE,BossRatAttacks::SLAM,BossRatAttacks::BASH},
+			{BossRatAttacks::BASH,BossRatAttacks::CHARGE,BossRatAttacks::SLAM},
 			{BossRatAttacks::BASH,BossRatAttacks::SLAM,BossRatAttacks::CHARGE},
-			{BossRatAttacks::SLAM,BossRatAttacks::BASH,BossRatAttacks::CHARGE}
+			{BossRatAttacks::CHARGE,BossRatAttacks::BASH,BossRatAttacks::SLAM}
 		};
 		// ----- Constructors ----- //
 	public:
