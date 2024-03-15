@@ -153,15 +153,6 @@ namespace PE
         void StartIndividualFadeOut(float targetVolume, float duration);
 
         /*!***********************************************************************************
-        \brief     Determines if an individual fade-in effect is active for this audio component.
-        \return    True if a fade-in is active, otherwise false.
-        *************************************************************************************/
-        bool IsFadingInIndividual() const;
-
-        void StartIndividualFade(float targetVolume, float duration);
-        float lerp(float start, float end, float progress);
-
-        /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
         \return    JSON representation of the AudioComponent state.
         *************************************************************************************/

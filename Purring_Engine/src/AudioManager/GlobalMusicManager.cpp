@@ -110,35 +110,26 @@ namespace PE
 
     void GlobalMusicManager::PauseBackgroundMusic()
     {
-        std::cout << "[GlobalMusicManager] Pausing background music." << std::endl;
-
         m_isPaused = true;
 
         // Fade all audio components to 20% of their original volume
         for (auto& [key, audioComponent] : m_audioComponents)
         {
-            std::cout << "[GlobalMusicManager] Fading audio component with key: " << key << " to 20% volume." << std::endl;
-
             // Start fading out to 20% volume over 1 second
-            audioComponent->StartIndividualFadeOut(0.2f, 1.0f);  // Assuming this method sets m_isFadingInIndividual to false
+            audioComponent->StartIndividualFadeOut(0.2f, 1.0f);
         }
     }
 
     void GlobalMusicManager::ResumeBackgroundMusic()
     {
-        std::cout << "[GlobalMusicManager] Resuming background music." << std::endl;
         m_isPaused = false;
 
         for (auto& [key, audioComponent] : m_audioComponents)
         {
-            std::cout << "[GlobalMusicManager] Restoring audio component with key: " << key << " to full volume." << std::endl;
-
             // Start fading in back to full volume over 1 second
-            audioComponent->StartIndividualFadeIn(1.0f, 1.0f);  // Assuming this method sets m_isFadingInIndividual to true
+            audioComponent->StartIndividualFadeIn(1.0f, 1.0f);
         }
     }
-
-
 
     void GlobalMusicManager::StopBackgroundMusic()
     {
