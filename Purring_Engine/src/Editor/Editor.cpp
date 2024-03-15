@@ -93,6 +93,8 @@
 // interaction layer manager
 #include "Layers/LayerManager.h"
 
+#include "VisualEffects/ParticleSystem.h"
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -458,12 +460,11 @@ namespace PE {
 					ImGui::Separator();
 					if (ImGui::Selectable("Yes"))
 					{
-						size_t tid{ Hierarchy::GetInstance().GetParentOrder().front() };
-						if (EntityManager::GetInstance().Has<EntityDescriptor>(tid))
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(tid));
-							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(tid).prefabType;
-							prefabCID = EntityManager::GetInstance().GetComponentIDs(tid);
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
+							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
+							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 							m_applyPrefab = true;
 
 							std::ofstream outFile(prefabFP);
@@ -711,10 +712,12 @@ namespace PE {
 					++EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID;
 				childOrder[EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID] = childID;
 			}
+
 			for (const auto& id : rm)
 			{
 				Hierarchy::GetInstance().DetachChild(id);
 			}
+
 			for (auto [k,v] : childOrder)
 			{
 				if (!EntityManager::GetInstance().Get<EntityDescriptor>(v).isAlive)
@@ -1021,13 +1024,13 @@ namespace PE {
 						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					ImGui::EndMenu();
-				}
+				}/*
 				if (ImGui::Selectable("Create Audio Object"))
 				{
 					EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Audio.prefab");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					m_currentSelectedObject = static_cast<int>(s_id);
-				}
+				}*/
 				if (ImGui::Selectable("Create Camera Object"))
 				{
 					EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile("EditorDefaults/Camera.prefab");
@@ -1044,7 +1047,7 @@ namespace PE {
 	void Editor::ShowComponentWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
+		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs) || (m_isPrefabMode && !EntityManager::GetInstance().Has<EntityDescriptor>(1)))
 		{
 			ImGui::End();
 		}
@@ -1061,6 +1064,9 @@ namespace PE {
 					for (const ComponentID& name : components)
 					{
 						++componentCount;//increment unique id
+
+						
+
 
 						// ---------- ENTITY DESCRIPTOR ---------- //
 						ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
@@ -1172,12 +1178,212 @@ namespace PE {
 											{
 												ImGui::SameLine(); ImGui::Text(std::to_string(vp.get_value<EntityID>()).c_str());
 											}
+											
 										}
 									}
 								}
 							}
 						}
 
+						// ---------- Particle ---------- //
+						if (name == EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>())
+						{
+
+
+							//search through each component, create a collapsible header if the component exist
+							rttr::type currType = rttr::type::get_by_name(name.to_string());
+
+							if (ImGui::CollapsingHeader("Particle Emitter", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+
+								id = "Reset##ResButton123";
+								if (ImGui::Selectable(id.c_str())) 
+								{
+									EntityManager::GetInstance().Get<PE::ParticleEmitter>(entityID).CreateAllParticles();
+								}
+
+								for (auto& prop : currType.get_properties())
+								{
+									if (prop.get_name().to_string() == "Toggles")
+										continue;
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+									std::string nm(prop.get_name());
+									nm += ": ";
+									ImGui::Text(nm.c_str());
+
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<PE::ParticleEmitter>(entityID));
+
+									// handle types
+									if (vp.get_type().get_name() == "bool")
+									{
+										bool tmp = vp.get_value<bool>();
+										bool prev = tmp;
+										std::string str = "##" + prop.get_name().to_string();
+										ImGui::SameLine(); ImGui::Checkbox(str.c_str(), &tmp);
+										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+										if (prop.get_name().to_string() == "Looping" && prev != tmp)
+										{
+											EntityManager::GetInstance().Get<ParticleEmitter>(entityID).CreateAllParticles();
+										}
+									}
+									else if (vp.get_type().get_name() == "unsignedint")
+									{
+										int tmp = static_cast<unsigned>(vp.get_value<unsigned>());
+										int prev = tmp;
+										std::string str = "##" + prop.get_name().to_string();
+
+										ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::InputInt(str.c_str(), &tmp, 0, 10);
+
+										if (prop.get_name().to_string() == "Max particles" && tmp != prev)
+										{
+											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), static_cast<unsigned>(tmp));
+											EntityManager::GetInstance().Get<ParticleEmitter>(entityID).CreateAllParticles();
+										}
+									}
+									else if (vp.get_type().get_name() == "float")
+									{
+										if (prop.get_name().to_string() == "Emission Arc" || prop.get_name().to_string() == "Emission Direction")
+										{
+											float tmp = vp.get_value<float>();
+											bool enabled = true;
+											if (EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.count(prop.get_name().to_string()))
+											{
+												enabled = EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.at(prop.get_name().to_string());
+											}
+											
+
+											if (!enabled)
+											{
+												tmp = 0.f;
+												ImGui::BeginDisabled();
+											}
+											std::string str = "##" + prop.get_name().to_string();
+											tmp = ConvertRadToDeg(tmp);
+											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::DragFloat(str.c_str(), &tmp);
+											tmp = std::clamp(tmp, 0.f, 360.f);
+											tmp = ConvertDegToRad(tmp);
+
+											if (!enabled)
+											{
+												ImGui::EndDisabled();
+											}
+
+											if (EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.count(prop.get_name().to_string()))
+											{
+												ImGui::SameLine();  ImGui::Text("Enabled: "); ImGui::SameLine();  ImGui::Checkbox((str + "toggle").c_str(), &enabled);
+												EntityManager::GetInstance().Get<ParticleEmitter>(entityID).toggles.at(prop.get_name().to_string()) = enabled;
+											}
+
+											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+										}
+										else
+										{
+											if (prop.get_name().to_string() == "Emittor Length" && EntityManager::GetInstance().Get<ParticleEmitter>(entityID).emitterType != LINE)
+												ImGui::BeginDisabled();
+											float tmp = vp.get_value<float>();
+											std::string str = "##" + prop.get_name().to_string();
+											ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::DragFloat(str.c_str(), &tmp);
+											prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+											if (prop.get_name().to_string() == "Emittor Length" && EntityManager::GetInstance().Get<ParticleEmitter>(entityID).emitterType != LINE)
+												ImGui::EndDisabled();
+										}
+									}
+									else if (vp.get_type().get_name() == "structPE::vec2")
+									{
+										vec2 tmp = vp.get_value<vec2>();
+										std::string str = "##" + prop.get_name().to_string();
+										float x = tmp.x, y = tmp.y;
+										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(150.f);  ImGui::DragFloat((str + "x").c_str(), & x);
+										ImGui::SameLine(); ImGui::Text(" y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(150.f); ImGui::DragFloat((str + "y").c_str(), &y);
+										if (prop.get_name().to_string() == "MinMax Speed")
+										{
+											y = (y >= x) ? y : x;
+										}
+										if (prop.get_name().to_string() == "End Scale" || prop.get_name().to_string() == "Start Scale")
+										{
+											y = (y >= 0.f) ? y : 0.f;
+											x = (x >= 0.f) ? x : 0.f;
+										}
+										/*if (prop.get_name().to_string() == "End Scale")
+										{
+											auto& pe = EntityManager::GetInstance().Get<ParticleEmitter>(entityID);
+											if (x > pe.startScale.x)
+												x = pe.startScale.x;
+											if (y > pe.startScale.y)
+												y = pe.startScale.y;
+										}*/
+										
+										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), vec2(x, y));
+										if (tmp.x != x || tmp.y != y)
+											EntityManager::GetInstance().Get<PE::ParticleEmitter>(entityID).CreateAllParticles();
+									}
+									else if (vp.get_type().get_name() == "structPE::vec4")
+									{
+										vec4 tmp = vp.get_value<vec4>();
+										std::string str = "##" + prop.get_name().to_string();
+										float tmp2[4] = { tmp.x, tmp.y, tmp.z, tmp.w };
+										ImGui::ColorEdit4(str.c_str(), tmp2);
+										tmp = vec4{ tmp2[0], tmp2[1] ,tmp2[2] ,tmp2[3] };
+										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), tmp);
+									}
+									else if (vp.get_type().get_name() == "enumPE::EnumParticleType")
+									{
+										int tmp = static_cast<int>(vp.get_value<EnumParticleType>());
+										std::string str = "##" + prop.get_name().to_string();
+
+										ImGui::SameLine(); 
+										const std::array<std::string, EnumParticleType::NUM_TYPES> types{ "Square", "Textured", "Animated" };
+										if (ImGui::BeginCombo("##ParticleType", types[tmp].c_str()))
+										{
+											for (int i{}; i < types.size(); ++i)
+											{
+												if (ImGui::Selectable(types[i].c_str()))
+												{
+													tmp = i;
+													prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), static_cast<EnumParticleType>(tmp));
+												}
+											}
+											ImGui::EndCombo();
+										}
+									}
+									else if (vp.get_type().get_name() == "enumPE::EnumEmitterType")
+									{
+										int tmp = static_cast<int>(vp.get_value<EnumEmitterType>());
+										std::string str = "##" + prop.get_name().to_string();
+
+										ImGui::SameLine();
+										const std::array<std::string, EnumEmitterType::NUM_EMITTOR> types{ "Point", "Line" };
+										if (ImGui::BeginCombo("##EmitterType", types[tmp].c_str()))
+										{
+											for (int i{}; i < types.size(); ++i)
+											{
+												if (ImGui::Selectable(types[i].c_str()))
+												{
+													tmp = i;
+													prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), static_cast<EnumEmitterType>(tmp));
+												}
+											}
+											ImGui::EndCombo();
+										}
+
+									}
+								}
+							}
+						}
 
 						// ---------- TRANSFORM ---------- //
 
@@ -4091,6 +4297,16 @@ namespace PE {
 								else
 									AddErrorLog("ALREADY HAS CANVAS");
 							}
+							if (ImGui::Selectable("Add Particle Emitter"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>()))
+									EntityFactory::GetInstance().LoadComponent(entityID, { EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>() }, nullptr);
+								else
+									AddErrorLog("ALREADY HAS PARTICLE EMITTER");
+							}
 						}
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
 							&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
@@ -4497,7 +4713,7 @@ namespace PE {
 
 									engine_logger.AddLog(false, "Enterting PreFabEditorMode...", __FUNCTION__);
 									prefabFP = (m_isPrefabMode) ? prefabFP : m_files[n].string();
-
+									auto id = Hierarchy::GetInstance().GetParentOrder().front();
 									if (!m_isPrefabMode)
 									{
 										m_isPrefabMode = true;
@@ -4506,10 +4722,10 @@ namespace PE {
 										engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 
 									}
-									else if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+									else if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
 									{
 
-										auto save = serializationManager.SerializeEntityPrefab(1);
+										auto save = serializationManager.SerializeEntityPrefab(static_cast<int>(id));
 										std::ofstream outFile(prefabFP);
 										if (outFile)
 										{
@@ -4520,8 +4736,7 @@ namespace PE {
 									}
 									ClearObjectList();
 									engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-									m_currentSelectedObject = static_cast<int>(ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP, true));
-									m_objectIsSelected = true;
+									ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP, true);
 								}
 								if (ImGui::Selectable("Edit properties"))
 								{
@@ -4679,6 +4894,9 @@ namespace PE {
 
 			ImGui::Text("Camera: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA) * 100.f);
 			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Visual Effects: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::VISUALEFFECTS) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::VISUALEFFECTS), ImVec2(400.f, 30.0f), NULL);
 
 			ImGui::Text("Graphics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS) * 100.f);
 			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS), ImVec2(400.f, 30.0f), NULL);
@@ -5287,8 +5505,6 @@ namespace PE {
 						m_isRunTime = true;
 						m_showEditor = false;
 						m_showGameView = true;
-						UndoStack::GetInstance().ClearStack();
-
 						if (!m_gameplayPaused)
 						{
 							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
@@ -5299,6 +5515,16 @@ namespace PE {
 						{
 							m_gameplayPaused = false;
 						}
+						for (const auto& layer : LayerView<ParticleEmitter>())
+						{
+							for (const auto& id : InternalView(layer))
+							{
+
+								EntityManager::GetInstance().Get<ParticleEmitter>(id).prevPause = EntityManager::GetInstance().Get<ParticleEmitter>(id).pause;
+								EntityManager::GetInstance().Get<ParticleEmitter>(id).prevActive = EntityManager::GetInstance().Get<ParticleEmitter>(id).isActive;
+							}
+						}
+						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 					}
 					ImGui::SameLine();
 					ImGui::BeginDisabled();
@@ -5317,7 +5543,15 @@ namespace PE {
 							m_isRunTime = false;
 
 						m_showGameView = false;
-						GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)-> SetCurrentLevel(0);
+						GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
+						for (const auto& layer : LayerView<ParticleEmitter>(true))
+						{
+							for (const auto& id : InternalView(layer, true))
+							{
+								EntityManager::GetInstance().Get<ParticleEmitter>(id).ResetAllParticles();
+								EntityManager::GetInstance().Get<ParticleEmitter>(id).isActive = false;
+							}
+						}
 					}
 					ImGui::EndDisabled();
 				}
@@ -5339,10 +5573,10 @@ namespace PE {
 					ImGui::SameLine();
 					if (ImGui::Button(" Save "))
 					{
-						size_t tid{ Hierarchy::GetInstance().GetParentOrder().front() };
-						if (EntityManager::GetInstance().Has<EntityDescriptor>(tid))
+						auto id = Hierarchy::GetInstance().GetParentOrder().front();
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
 						{
-							nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(tid));
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(id));
 							std::ofstream outFile(prefabFP);
 							if (outFile)
 							{
@@ -5360,12 +5594,11 @@ namespace PE {
 
 						if (ImGui::Selectable("Yes"))
 						{
-							size_t tid{ Hierarchy::GetInstance().GetParentOrder().front() };
-							if (EntityManager::GetInstance().Has<EntityDescriptor>(tid))
+							if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 							{
-								nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(tid));
-								prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(tid).prefabType;
-								prefabCID = EntityManager::GetInstance().GetComponentIDs(tid);
+								nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
+								prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
+								prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 								std::ofstream outFile(prefabFP);
 								if (outFile)
 								{
@@ -5462,12 +5695,10 @@ namespace PE {
 								if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 								{
 									engine_logger.AddLog(false, "Attempting to save prefab entities to file...", __FUNCTION__);
-									
-									size_t tid{ Hierarchy::GetInstance().GetParentOrder().front() };
-									if (EntityManager::GetInstance().Has<EntityDescriptor>(tid))
+									auto id = Hierarchy::GetInstance().GetParentOrder().front();
+									if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
 									{
-										nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(tid));
-	
+										nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(id));
 
 										std::ofstream outFile(prefabFP);
 										if (outFile)
@@ -5516,7 +5747,6 @@ namespace PE {
 										// load scene from filepath
 										SceneManager::GetInstance().LoadSceneToLoad(filePath.substr(filePath.find_last_of('\\') + 1));
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-										m_gameplayPaused = false;;
 									}
 									else
 									{
@@ -6047,8 +6277,17 @@ namespace PE {
 		ImGui::BeginDisabled(toDisable);
 		if (ImGui::Button("Play"))
 		{
+			
 			m_isRunTime = true;	
 			toDisable = true;
+			for (const auto& layer : LayerView<ParticleEmitter>())
+			{
+				for (const auto& id : InternalView(layer))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = EntityManager::GetInstance().Get<ParticleEmitter>(id).prevPause;
+				}
+			}
+			
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
@@ -6058,6 +6297,13 @@ namespace PE {
 			m_isRunTime = false;
 			toDisable = false;
 			m_gameplayPaused = true;
+			for (const auto& layer : LayerView<ParticleEmitter>())
+			{
+				for (const auto& id : InternalView(layer))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = true;
+				}
+			}
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
@@ -6075,7 +6321,15 @@ namespace PE {
 
 				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 			}
-
+			for (const auto& layer : LayerView<ParticleEmitter>(true))
+			{
+				for (const auto& id : InternalView(layer, true))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).ResetAllParticles();
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).isActive = EntityManager::GetInstance().Get<ParticleEmitter>(id).prevActive;
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = EntityManager::GetInstance().Get<ParticleEmitter>(id).prevPause;
+				}
+			}
 			if (m_showEditor)
 				m_isRunTime = false;
 
@@ -6184,7 +6438,7 @@ namespace PE {
 			if (ImGui::Button("Apply"))
 			{
 				// exectue the changes!!
-				EntityID pfid = ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP, true);
+				EntityID pfid = ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP);
 				for (auto id : modify)
 				{
 					for (size_t i{}; i < prefabCID.size(); ++i)
@@ -6359,6 +6613,7 @@ namespace PE {
 		// save active scene name
 		m_savedScene = SceneManager::GetInstance().GetActiveScene();
 		serializationManager.SerializeScene("Savestate/savestate.scene");
+		UndoStack::GetInstance().ClearStack();
 	}
 
 	void Editor::StopAndLoadScene()

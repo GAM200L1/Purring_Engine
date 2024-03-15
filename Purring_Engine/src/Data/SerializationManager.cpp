@@ -42,6 +42,8 @@
 #include "Hierarchy/HierarchyManager.h"
 #include "Layers/LayerManager.h"
 
+#include "VisualEffects/ParticleSystem.h"
+
 // RTTR
 #include <rttr/variant.h>
 #include <rttr/type.h>
@@ -364,7 +366,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::AudioComponent>(entityId, "AudioComponent", j);
     SerializeComponent<PE::Canvas>(entityId, "Canvas", j);
     SerializeComponent<PE::GUISlider>(entityId, "GUISlider", j);
-
+    SerializeComponent<PE::ParticleEmitter>(entityId, "ParticleEmitter", j);
 
     return j; 
 }
@@ -567,6 +569,8 @@ size_t SerializationManager::CreationHelper(const nlohmann::json& r_j)
                     parent = DeserializeEntity(entity);
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).children.clear();
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).sceneID = parent;
+
+                    GETANIMATIONMANAGER()->SetEntityFirstFrame(parent);
                 }
                 else
                 {
@@ -584,6 +588,8 @@ size_t SerializationManager::CreationHelper(const nlohmann::json& r_j)
                     }
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).sceneID = id;
                     PE::Hierarchy::GetInstance().AttachChild(parent, id);
+
+                    GETANIMATIONMANAGER()->SetEntityFirstFrame(id);
                 }
             }
 
@@ -599,7 +605,19 @@ size_t SerializationManager::CreationHelper(const nlohmann::json& r_j)
 
 size_t SerializationManager::CreateEntityFromPrefab(std::string const& r_filePath)
 {
-    std::ifstream inFile(r_filePath);
+    std::filesystem::path filepath;
+
+    if (r_filePath.length() && r_filePath[0] != '.')
+        filepath = std::string{ "../Assets/Prefabs/" } + r_filePath;
+    else
+        filepath = r_filePath;
+
+    if (!std::filesystem::exists(filepath))
+    {
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return MAXSIZE_T;
+    }
+    std::ifstream inFile(filepath);
     if (inFile)
     {
         nlohmann::json j;
@@ -634,7 +652,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("AudioComponent", &SerializationManager::LoadAudioComponent);
     m_initializeComponent.emplace("Canvas", &SerializationManager::LoadCanvasComponent);
     m_initializeComponent.emplace("GUISlider", &SerializationManager::LoadGUISlider);
-
+    m_initializeComponent.emplace("ParticleEmitter", &SerializationManager::LoadParticleEmitter);
 }
 
 bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
@@ -1030,6 +1048,77 @@ bool SerializationManager::LoadAudioComponent(const size_t& r_id, const nlohmann
 
         // Load resource
         PE::ResourceManager::GetInstance().AddAudioKeyToLoad(audioComponent.GetAudioKey());
+        return true;
+    }
+    return false;
+}
+
+bool SerializationManager::LoadParticleEmitter(const size_t& r_id, const nlohmann::json& r_json)
+{
+    if (r_json["Entity"]["components"].contains("ParticleEmitter"))
+    {
+        PE::EntityFactory::GetInstance().Assign(r_id, { PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>() });
+        rttr::type currType = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string().c_str());
+        rttr::instance inst = PE::EntityManager::GetInstance().Get<PE::ParticleEmitter>(r_id);
+        if (inst.is_valid())
+        {
+            for (auto& prop : currType.get_properties())
+            {
+                rttr::variant var = prop.get_value(inst);
+                if (var.get_type().get_name() == "bool")
+                {
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                        prop.set_value(inst, r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()].get<bool>());
+
+                }
+                else if (var.get_type().get_name() == "unsignedint")
+                {
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                        prop.set_value(inst, r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()].get<unsigned>());
+                }
+                else if (var.get_type().get_name() == "float")
+                {
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                        prop.set_value(inst, r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()].get<float>());
+                }
+                else if (var.get_type().get_name() == "structPE::vec2")
+                {
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                    {
+                        PE::vec2 tmp{ r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()]["x"].get<float>(), r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()]["y"].get<float>() };
+                        prop.set_value(inst, tmp);
+                    }
+                }
+                else if (var.get_type().get_name() == "structPE::vec4")
+                {
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                    {
+                        PE::vec4 tmp{ r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()]["x"].get<float>(),
+                                      r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()]["y"].get<float>(),
+                                      r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()]["z"].get<float>(),
+                                      r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()]["w"].get<float>() };
+                        prop.set_value(inst, tmp);
+                    }
+                }
+                else if (var.get_type().get_name() == "enumPE::EnumParticleType")
+                {
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                        prop.set_value(inst, r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()].get<PE::EnumParticleType>());
+                }
+                else if (var.get_type().get_name() == "enumPE::EnumEmitterType")
+                {
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                        prop.set_value(inst, r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()].get<PE::EnumEmitterType>());
+                }
+                else if (var.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,bool,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,bool>> >")
+                { 
+                    if (r_json["Entity"]["components"]["ParticleEmitter"].contains(prop.get_name().to_string().c_str()))
+                        prop.set_value(inst, r_json["Entity"]["components"]["ParticleEmitter"][prop.get_name().to_string().c_str()].get<std::map<std::string, bool>>());
+                }
+            }
+        }
+        PE::EntityManager::GetInstance().Get<PE::ParticleEmitter>(r_id).SetParent(r_id);
+        PE::EntityManager::GetInstance().Get<PE::ParticleEmitter>(r_id).CreateAllParticles();
         return true;
     }
     return false;
