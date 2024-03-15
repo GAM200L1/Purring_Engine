@@ -6,9 +6,13 @@
 
  \author:              Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
+ \par      code %:     80%
+ \par	   changed:	   13-3-2024
 
  \co-author:		   LIEW Yeni
  \par	   email:	   yeni.l@digipen.edu
+ \par      code %:     20%
+ \par	   changed:	   13-3-2024
 
  \brief
 	This file contains declarations for functions used for a grey cat's movement states.
@@ -144,7 +148,8 @@ namespace PE
 				p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
 			}
 		}
-		else if (p_data->pathPositions.empty())
+		
+		if (p_data->pathPositions.empty())
 		{
 			p_data->pathPositions.emplace_back(r_position);
 		}
@@ -163,7 +168,9 @@ namespace PE
 			{
 				float distanceToMove{ distanceOfPosition > p_data->maxDistance ? p_data->maxDistance : distanceOfPosition };
 
-				if (!AddPathNode(p_data->pathPositions.back() + directionOfProposed * distanceToMove)) {
+				if (!AddPathNode(p_data->pathPositions.back() + directionOfProposed * distanceToMove)) 
+				{
+					CatScript_v2_0::PlayPathPlacementAudio();
 					break;
 				}
 			}
@@ -204,9 +211,11 @@ namespace PE
 		// Change the position of the node
 		EntityID nodeId{ p_data->pathQuads[p_data->pathPositions.size()] };
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
-		CatHelperFunctions::ToggleEntity(nodeId, true);
-		
-		CatScript_v2_0::PlayPathPlacementAudio();
+		if (!CatHelperFunctions::IsActive(nodeId)) 
+		{
+				CatScript_v2_0::PlayPathPlacementAudio();
+				CatHelperFunctions::ToggleEntity(nodeId, true);
+		}
 
 		// Add the position to the path positions list
 		p_data->pathPositions.emplace_back(r_nodePosition);
@@ -298,12 +307,8 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 	{
-		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
-		{
-			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
-			// Check if the cat is colliding with an obstacle
-			if ((OTEE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity2))
-				|| (OTEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity1)))
+		auto InvalidPath =
+			[&]()
 			{
 				// The entity is colliding with is an obstacle
 				SetPathColor(m_invalidPathColor); // Set the color of the path nodes to red
@@ -312,8 +317,33 @@ namespace PE
 				// Play audio
 				std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
 				PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+			};
 
-				
+		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
+		{
+			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
+			// Check if the cat is colliding with an obstacle
+			if (CatHelperFunctions::IsObstacle(OTEE.Entity2))
+			{
+				if (OTEE.Entity1 == p_data->catID)
+				{
+					InvalidPath();
+				}
+				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
+				{
+					InvalidPath();
+				}
+			}
+			else if (CatHelperFunctions::IsObstacle(OTEE.Entity1))
+			{
+				if (OTEE.Entity2 == p_data->catID)
+				{
+					InvalidPath();
+				}
+				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
+				{
+					InvalidPath();
+				}
 			}
 		}
 	}
@@ -325,6 +355,7 @@ namespace PE
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionStay, CatMovement_v2_0EXECUTE::OnCollisionStay, this);
+		m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionExit, CatMovement_v2_0EXECUTE::OnCollisionStay, this);
 
 		if (p_data->catType == EnumCatType::MAINCAT)
 			m_mainCatID = id;
@@ -335,7 +366,8 @@ namespace PE
 		p_data->currentPositionIndex = 0;
 		m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 
-		m_movementTimer = p_data->maxDistance / p_data->movementSpeed;
+		m_movementTimer = 0.5f;
+		m_startMovementTimer = false;
 	}
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -414,15 +446,26 @@ namespace PE
 					m_movementTimer -= deltaTime;
 					if (m_movementTimer <= 0.f)
 					{
-						// Update the position of the cat
-						CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions[p_data->currentPositionIndex]);
+						// extra in case prevent going through does not work well
+						CatHelperFunctions::PositionEntity(id, p_data->pathPositions[p_data->currentPositionIndex]);
+						// Deactivate this node
+						CatHelperFunctions::ToggleEntity(p_data->pathQuads[p_data->currentPositionIndex], false);
+
+						if (p_data->currentPositionIndex >= (p_data->pathPositions.size() - 1))
+						{
+							//	This is the last node, so stop the movement of the cat
+							StopMoving(id);
+						}
+
+						++(p_data->currentPositionIndex);
 						//EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
+						m_startMovementTimer = false;
+						m_movementTimer = 0.5f;
 					}
 				}
 				else
 				{
-					m_movementTimer = p_data->maxDistance / p_data->movementSpeed;
-					EntityManager::GetInstance().Get<RigidBody>(id).velocity.Zero();
+					m_movementTimer = 0.5f;
 				}
 			}
 		}
@@ -437,6 +480,7 @@ namespace PE
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
 	}
 
 	void CatMovement_v2_0EXECUTE::StateExit(EntityID id)
@@ -468,6 +512,8 @@ namespace PE
 			if ((CheckExitPoint(OTEE.Entity1) && OTEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
 				|| (CheckExitPoint(OTEE.Entity2) && OTEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
 			{
+				CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+				p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage(p_gsc->GetCurrentLevel() + 1); // goes to the next stage
 			}
 		}
@@ -478,7 +524,16 @@ namespace PE
 		if (r_collisionEvent.GetType() == CollisionEvents::OnCollisionStay)
 		{
 			// starts 
-			m_startMovementTimer = true; 
+			OnCollisionStayEvent OCSE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionEvent) };
+			if ((OCSE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OCSE.Entity2))
+				|| (OCSE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OCSE.Entity1)))
+			{
+				m_startMovementTimer = true;
+			}
+			else
+			{
+				m_startMovementTimer = false;
+			}
 		}
 		else
 		{

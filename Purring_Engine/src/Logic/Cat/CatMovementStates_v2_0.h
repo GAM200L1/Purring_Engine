@@ -93,6 +93,8 @@ namespace PE
 						where the path node should be.
 
 		 \param[in] r_nodePosition - Position to create the path node at.
+		 \return bool - True if the node was positioned successfully, false if the proposed 
+				position is out of bounds or the rat is out of energy.
 		*************************************************************************************/
 		bool AddPathNode(vec2 const& r_nodePosition);
 
@@ -226,20 +228,26 @@ namespace PE
 		// ----- Events ----- // 
 
 		/*!***********************************************************************************
-		 \brief Callback function for the collision enter event. Checks if the player has
-						collided with the rat.
+		 \brief Callback function for the collision enter event. Checks if the player entered
+				the exit point which will bring them to the next stage
 
 		 \param[in] r_collisionEvent - Trigger event data.
 		*************************************************************************************/
 		void OnTriggerEnter(const Event<CollisionEvents>& r_triggerEvent);
 
+		/*!***********************************************************************************
+		 \brief Callback function for the collision stay event. Checks if the player has
+						collided with an obstacle for too long.
+
+		 \param[in] r_collisionEvent - Collision event data
+		*************************************************************************************/
 		void OnCollisionStay(const Event<CollisionEvents>& r_collisionEvent);
 
 	private:
 		// ----- Private Variables ----- //
 		CatScript_v2_0Data* p_data;
 		EntityID m_mainCatID;
-		int m_triggerEventListener{}, m_collisionStayEventListener; // Stores the handler for the mouse click and release events
+		int m_triggerEventListener{}, m_collisionStayEventListener, m_collisionExitEventListener; // Stores the handler for the mouse click and release events
 		bool m_doneMoving{ false }; // Set to true when the cat has reached the end of their path
 		bool m_startMovementTimer{ false }; // Set when collision stay to start the timer counter
 		float m_movementTimer{}; // Set at initialize, ensures that cat does not get stuck at walls

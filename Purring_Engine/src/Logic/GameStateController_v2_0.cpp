@@ -488,6 +488,14 @@ namespace PE
 							m_isPotraitShowing = true;
 							m_bossRatSelected = true;
 							m_isRat = true;
+
+							int randomSelection = std::rand() % 5 + 1;  // Random number between 1 and 5
+							std::string soundPath = "AudioObject/Rat Brawler Selection SFX" + std::to_string(randomSelection) + ".prefab";
+							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
+
+							//@DEBUGHANS For PR-er to test
+							//std::cout << "Playing Boss Rat selection sound: " << soundPath << std::endl;
+
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Rat King_256px.png"));
 							ActiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
@@ -840,8 +848,6 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_exexcutePhaseBanner);
@@ -857,8 +863,6 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);
@@ -1243,6 +1247,7 @@ namespace PE
 		case 1: // 2nd level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 			
 			m_isTransitioning = true;
@@ -1257,6 +1262,7 @@ namespace PE
 		case 2: // 3rd level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;
@@ -1271,6 +1277,7 @@ namespace PE
 		case 3: // boss level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;
