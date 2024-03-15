@@ -734,7 +734,7 @@ namespace PE
 
 			PauseManager::GetInstance().SetPaused(false);
 
-			ResumeBGM();
+			//ResumeBGM();
 			PlayClickAudio();
 			PlayPageAudio();
 		}
