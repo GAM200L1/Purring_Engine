@@ -348,6 +348,7 @@ namespace PE
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionStay, CatMovement_v2_0EXECUTE::OnCollisionStay, this);
+		m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionExit, CatMovement_v2_0EXECUTE::OnCollisionStay, this);
 
 		if (p_data->catType == EnumCatType::MAINCAT)
 			m_mainCatID = id;
@@ -358,7 +359,8 @@ namespace PE
 		p_data->currentPositionIndex = 0;
 		m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 
-		m_movementTimer = p_data->maxDistance / p_data->movementSpeed;
+		m_movementTimer = 0.5f;
+		m_startMovementTimer = false;
 	}
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -439,13 +441,13 @@ namespace PE
 					{
 						// extra in case prevent going through does not work well
 						CatHelperFunctions::PositionEntity(id, p_data->pathPositions[p_data->currentPositionIndex]);
-						EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
+						//EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
+						m_startMovementTimer = false;
 					}
 				}
 				else
 				{
-					m_movementTimer = p_data->maxDistance / p_data->movementSpeed;
-					EntityManager::GetInstance().Get<RigidBody>(id).velocity.Zero();
+					m_movementTimer = 0.5f;
 				}
 			}
 		}

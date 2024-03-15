@@ -245,7 +245,7 @@ namespace PE
 		// ----- Private Variables ----- //
 		CatScript_v2_0Data* p_data;
 		EntityID m_mainCatID;
-		int m_triggerEventListener{}, m_collisionStayEventListener; // Stores the handler for the mouse click and release events
+		int m_triggerEventListener{}, m_collisionStayEventListener, m_collisionExitEventListener; // Stores the handler for the mouse click and release events
 		bool m_doneMoving{ false }; // Set to true when the cat has reached the end of their path
 		bool m_startMovementTimer{ false }; // Set when collision stay to start the timer counter
 		float m_movementTimer{}; // Set at initialize, ensures that cat does not get stuck at walls
