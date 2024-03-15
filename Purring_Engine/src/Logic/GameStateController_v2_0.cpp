@@ -37,6 +37,7 @@
 #include "AudioManager/GlobalMusicManager.h"
 #include "Boss/BossRatScript.h"
 #include "Animation/Animation.h"
+#include "Logic/MainMenuController.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -61,6 +62,9 @@ namespace PE
 		REGISTER_UI_FUNCTION(OpenAYSR, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(JournalHoverEnter, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(JournalHoverExit, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(OpenSettings, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(CloseSettings, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(ReturnToMainMenu, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -778,6 +782,8 @@ namespace PE
 
 	void GameStateController_v2_0::DeactiveObject(EntityID id)
 	{
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
 		//deactive all the children objects first
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
@@ -823,6 +829,7 @@ namespace PE
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].AreYouSureCanvas);
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].LoseCanvas);
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].WinCanvas);
+		DeactiveObject(m_scriptData[m_currentGameStateControllerID].SettingsMenu);
 	}
 
 	void GameStateController_v2_0::NextState(EntityID)
@@ -841,8 +848,6 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_exexcutePhaseBanner);
@@ -858,8 +863,6 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);
@@ -1196,6 +1199,18 @@ namespace PE
 		m_journalShowing = false;
 	}
 
+	void GameStateController_v2_0::OpenSettings(EntityID)
+	{
+		DeactiveAllMenu();
+		ActiveObject(m_scriptData[m_currentGameStateControllerID].SettingsMenu);
+	}
+
+	void GameStateController_v2_0::CloseSettings(EntityID)
+	{
+		DeactiveAllMenu();
+		ActiveObject(m_scriptData[m_currentGameStateControllerID].PauseMenuCanvas);
+	}
+
 	void GameStateController_v2_0::RetryStage(EntityID)
 	{
 		m_isTransitioning = true;
@@ -1232,6 +1247,7 @@ namespace PE
 		case 1: // 2nd level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 			
 			m_isTransitioning = true;
@@ -1246,6 +1262,7 @@ namespace PE
 		case 2: // 3rd level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;
@@ -1260,6 +1277,7 @@ namespace PE
 		case 3: // boss level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;
@@ -1273,10 +1291,36 @@ namespace PE
 		}
 		default:
 			WinGame();
-			m_leveltoLoad = "MainMenu.scene";
+			m_leveltoLoad = m_mainMenuSceneName;
 			break;
 		}
 	
+	}
+
+	void GameStateController_v2_0::GoToOutroCutscene()
+	{
+		gameEnded = true;
+		m_isTransitioning = true;
+		m_isTransitioningIn = false;
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
+		m_currentLevel = 0;
+		m_leveltoLoad = m_outroCutsceneScene;
+	}
+
+	void GameStateController_v2_0::ReturnToMainMenu(EntityID ID)
+	{
+		m_isTransitioning = true;
+		m_isTransitioningIn = false;
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		m_currentLevel = 0;
+		m_leveltoLoad = m_mainMenuSceneName;
+
+		GETSCRIPTINSTANCEPOINTER(MainMenuController)->NotFirstStart();
 	}
 
 	void GameStateController_v2_0::StartGameLoop()
@@ -1591,6 +1635,11 @@ namespace PE
 
 	void GameStateController_v2_0::CheckFinishExecution()
 	{
+		if (gameEnded)
+		{
+			return;
+		}
+
 		bool Finished = true;
 
 		RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);

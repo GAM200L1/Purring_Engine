@@ -6,12 +6,12 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     50%
- \par      changes:    Majority rat movement AI logic.
+ \par      code %:     10%
+ \par      changes:    Base structure of the class.
 
  \co-author            Krystal Yamin
  \par      email:      krystal.y\@digipen.edu
- \par      code %:     20%
+ \par      code %:     90%
  \par      changes:    06-02-2024
                        Integration of gamestates with the Rat States and Rat AI.
 
@@ -232,13 +232,11 @@ namespace PE
             }
             else
             {
-                std::cout << "RatMovement_v2_0::PickTargetPosition() couldn't pick a target position\n";
                 return RatScript_v2_0::GetEntityPosition(p_data->myID);
             }
         }        
         else
         {
-            std::cout << "RatMovement_v2_0::PickTargetPosition() couldn't pick a target position\n";
             return vec2{};
         }
     }
@@ -252,6 +250,7 @@ namespace PE
 
         // Switch to the attack state since we're close enough to the targets
         p_data->ratPlayerDistance = 0.f;
+        p_data->targetPosition = RatScript_v2_0::GetEntityPosition(p_data->myID);
         GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
     }
 

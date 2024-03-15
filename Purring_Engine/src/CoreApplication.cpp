@@ -65,6 +65,10 @@
 #include "Physics/CollisionManager.h"
 #include "Physics/PhysicsManager.h"
 
+// Visual Effects
+#include "VisualEffects/VisualEffectsManager.h"
+#include "VisualEffects/ParticleSystem.h"
+
 // Serialization
 #include "Data/SerializationManager.h"
 
@@ -98,6 +102,7 @@
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
 #include "Logic/IntroCutsceneController.h"
+#include "Logic/EndingCutsceneController.h"
 
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
@@ -137,6 +142,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
     REGISTERCOMPONENT(PE::Canvas);
+    REGISTERCOMPONENT(PE::ParticleEmitter);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -243,6 +249,7 @@ RTTR_REGISTRATION
         .property("RatKingJournal", &PE::GameStateController_v2_0Data::RatKingJournal)
         .property("JournalButton", &PE::GameStateController_v2_0Data::JournalButton)
         .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
+        .property("SettingsMenu", &PE::GameStateController_v2_0Data::SettingsMenu)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
@@ -277,6 +284,7 @@ RTTR_REGISTRATION
         .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
         .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo)
+        .property("TransitionPanel", &PE::MainMenuControllerData::TransitionPanel)
         .property("SettingsMenu", &PE::MainMenuControllerData::SettingsMenu);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
@@ -294,6 +302,15 @@ RTTR_REGISTRATION
         .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
         .property("Text", &PE::IntroCutsceneControllerData::Text)
         .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
+
+    rttr::registration::class_<PE::EndingCutsceneControllerData>("EndingCutsceneController")
+        .property("CutsceneObject", &PE::EndingCutsceneControllerData::CutsceneObject)
+        .property("FinalScene", &PE::EndingCutsceneControllerData::FinalScene)
+        .property("Text", &PE::EndingCutsceneControllerData::Text)
+        .property("AreYouSureCanvas", &PE::EndingCutsceneControllerData::AreYouSureCanvas)
+        .property("BackgroundCanvas", &PE::EndingCutsceneControllerData::BackgroundCanvas)
+        .property("WinCanvas", &PE::EndingCutsceneControllerData::WinCanvas)
+        .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
@@ -439,6 +456,28 @@ RTTR_REGISTRATION
         .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
         .property("distanceBetweenPools", &PE::BossRatScriptData::distanceBetweenPools)
         .property("animationStates", &PE::BossRatScriptData::animationStates);
+
+    rttr::registration::class_<PE::ParticleEmitter>(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string())
+        .property("Is Active", &PE::ParticleEmitter::isActive)
+        .property("Paused", &PE::ParticleEmitter::pause)
+        .property("Type", &PE::ParticleEmitter::particleType)
+        .property("Mode", &PE::ParticleEmitter::emitterType)
+        .property("Emittor Length", &PE::ParticleEmitter::emittorLength)
+        .property("Max particles", &PE::ParticleEmitter::maxParticles)
+        .property("Emission Arc", &PE::ParticleEmitter::emissionArc)
+        .property("Emission Direction", &PE::ParticleEmitter::emissionDirection)
+        //.property("Emission Duration", &PE::ParticleEmitter::emissionDuration)
+        //.property("Emission Rate", &PE::ParticleEmitter::emissionRate)
+        .property("Looping", &PE::ParticleEmitter::isLooping)
+        .property("MinMax Speed", &PE::ParticleEmitter::minMaxSpeed)
+        .property("Starting Scale", &PE::ParticleEmitter::startScale)
+        .property("End Scale", &PE::ParticleEmitter::endScale)
+        .property("Delta Scale", &PE::ParticleEmitter::scaleChangeSpeed)
+        .property("Lifetime", &PE::ParticleEmitter::startLifetime)
+        .property("Color", &PE::ParticleEmitter::startColor)
+        .property("Toggles", &PE::ParticleEmitter::toggles)
+        //.property("", &PE::ParticleEmitter::)
+        ;
 }
 
 PE::CoreApplication::CoreApplication()
@@ -493,11 +532,13 @@ void PE::CoreApplication::Run()
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
-    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0,0,0);
     SceneManager::GetInstance().SetStartScene("MainMenu.scene"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE
+
+    // Set the default background colour to black
+    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
 
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
@@ -566,11 +607,15 @@ void PE::CoreApplication::Run()
         // if the scene is being loaded, skip the rest of the frame
         if (SceneManager::GetInstance().IsLoadingScene())
         {
+            // Set the default background colour to black
+            const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
             SceneManager::GetInstance().LoadSceneToLoad();
             skipFrame = true;
         }
         else if (SceneManager::GetInstance().IsRestartingScene())
         {
+            // Set the default background colour to black
+            const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
             SceneManager::GetInstance().RestartScene(SceneManager::GetInstance().GetActiveScene());
             skipFrame = true;
         }
@@ -671,6 +716,7 @@ void PE::CoreApplication::InitializeSystems()
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
+    VisualEffectsManager* p_visualEffectsManager = new (MemoryManager::GetInstance().AllocateMemory("Visual Effects Manager", sizeof(VisualEffectsManager)))VisualEffectsManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
     AddSystem(p_inputSystem);
@@ -680,6 +726,7 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_collisionManager);
     AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
+    AddSystem(p_visualEffectsManager);
     AddSystem(p_rendererManager);
     //AddSystem(p_audioManager);
 

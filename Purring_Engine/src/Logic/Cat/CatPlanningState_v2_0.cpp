@@ -18,6 +18,7 @@
 #include "ECS/Entity.h"
 #include "Events/MouseEvent.h"
 #include "Physics/CollisionManager.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 #include "CatPlanningState_v2_0.h"
 #include "GreyCatAttackStates_v2_0.h"
@@ -118,6 +119,8 @@ namespace PE
 			if (!p_data->planningAttack) // if not currently planning attack, 
 				p_catAttack->ToggleTelegraphs(false, false);
 			p_catAttack->ResetSelection(p_data->catID);
+			// Play undo audio
+			PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
 			m_doubleClick = 0;
 		}
 		else if (MBPE.button == 1)
@@ -125,6 +128,8 @@ namespace PE
 			p_catMovement->ResetDrawnPath();
 			p_catAttack->ToggleTelegraphs(false, false);
 			p_data->planningAttack = false;
+			// Play undo audio
+			PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
 			m_doubleClick = 0;
 		}
 		else

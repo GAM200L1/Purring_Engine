@@ -96,7 +96,8 @@
                             5,
                             6,
                             7,
-                            31
+                            31,
+                            116
                         ],
                         "isActive": false,
                         "name": "PauseCanvas",
@@ -145,7 +146,7 @@
                         "TextureKey": "../Assets/Textures/GamePawsed_Text_1024x256.png"
                     },
                     "Transform": {
-                        "height": 217.0,
+                        "height": 256.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -156,7 +157,7 @@
                             "y": 418.0
                         },
                         "relorientation": 0.0,
-                        "width": 858.0
+                        "width": 1024.0
                     }
                 },
                 "name": ""
@@ -201,7 +202,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_HowToPlay_Highlighted_512x128.png",
                         "m_onClicked": "OpenHTP",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -222,18 +223,18 @@
                         "TextureKey": "../Assets/Textures/Button_HowToPlay_512x128.png"
                     },
                     "Transform": {
-                        "height": 184.0,
+                        "height": 128.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": -205.0
+                            "y": -265.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": -205.0
+                            "y": -265.0
                         },
                         "relorientation": 0.0,
-                        "width": 624.0
+                        "width": 512.0
                     }
                 },
                 "name": ""
@@ -278,7 +279,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYS",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -299,18 +300,18 @@
                         "TextureKey": "../Assets/Textures/Button_QuitGame_512x128.png"
                     },
                     "Transform": {
-                        "height": 184.0,
+                        "height": 128.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": -405.0
+                            "y": -425.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": -405.0
+                            "y": -425.0
                         },
                         "relorientation": 0.0,
-                        "width": 624.0
+                        "width": 512.0
                     }
                 },
                 "name": ""
@@ -355,7 +356,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_ResumeGame_Highlighted_512x128.png",
                         "m_onClicked": "ResumeStateV2",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -376,7 +377,7 @@
                         "TextureKey": "../Assets/Textures/Button_ResumeGame_512x128.png"
                     },
                     "Transform": {
-                        "height": 232.75999450683594,
+                        "height": 170.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -387,7 +388,7 @@
                             "y": 215.0
                         },
                         "relorientation": 0.0,
-                        "width": 789.3599853515625
+                        "width": 680.0
                     }
                 },
                 "name": ""
@@ -414,7 +415,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 15
                     },
                     "Transform": {
                         "height": 100.0,
@@ -514,7 +515,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
                         "m_onClicked": "CloseWindow",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -632,7 +633,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                         "m_onClicked": "ReturnFromAYS",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -798,6 +799,7 @@
                                 "RatKingJournal": 0,
                                 "RatKingPortrait": 0,
                                 "RatPortrait": 53,
+                                "SettingsMenu": 102,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
@@ -996,7 +998,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
                         "m_onClicked": "CloseHTP",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1073,7 +1075,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Next_Highlighted_79x77.png",
                         "m_onClicked": "HTPPage2",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1150,7 +1152,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Back_Highlighted_79x77.png",
                         "m_onClicked": "HTPPage1",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1433,7 +1435,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Highlighted_512x128.png",
                         "m_onClicked": "NextState",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1558,7 +1560,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
                         "m_onClicked": "RetryStage",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1579,18 +1581,18 @@
                         "TextureKey": "../Assets/Textures/Button_RetryLevel_512x128.png"
                     },
                     "Transform": {
-                        "height": 184.0,
+                        "height": 128.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 5.0
+                            "y": 55.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 5.0
+                            "y": 55.0
                         },
                         "relorientation": 0.0,
-                        "width": 624.0
+                        "width": 512.0
                     }
                 },
                 "name": ""
@@ -1617,7 +1619,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 16
+                        "sceneID": 17
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1758,7 +1760,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RestartGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYSR",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1835,7 +1837,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYS",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1894,7 +1896,7 @@
                         "isActive": false,
                         "name": "LoseCanvas",
                         "parent": null,
-                        "sceneID": 17
+                        "sceneID": 18
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1941,8 +1943,8 @@
                         "height": 1080.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 47.0,
-                            "y": -17.499980926513672
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -1978,7 +1980,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_defaultTexture": "../Assets/Textures/Button_RestartGame_512x128.png",
+                        "m_defaultTexture": "../Assets/Textures/Button_MainMenu_512x128.png",
                         "m_disabledColor": [
                             0.5,
                             0.5,
@@ -1992,9 +1994,9 @@
                             1.0,
                             1.0
                         ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_RestartGame_Highlighted_512x128.png",
-                        "m_onClicked": "OpenAYSR",
-                        "m_onHoverEnter": "",
+                        "m_hoveredTexture": "../Assets/Textures/Button_MainMenu_Highlighted_512x128.png",
+                        "m_onClicked": "ReturnToMainMenu",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -2003,7 +2005,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_pressedTexture": "../Assets/Textures/Button_RestartGame_Dark_512x128.png"
+                        "m_pressedTexture": "../Assets/Textures/Button_MainMenu_Dark_512x128.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2012,7 +2014,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_RestartGame_512x128.png"
+                        "TextureKey": "../Assets/Textures/Button_MainMenu_512x128.png"
                     },
                     "Transform": {
                         "height": 184.0,
@@ -2071,7 +2073,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
                         "m_onClicked": "RetryStage",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -2096,7 +2098,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -500.0,
-                            "y": -320.0
+                            "y": -310.0
                         },
                         "relativeposition": {
                             "x": -500.0,
@@ -2366,7 +2368,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Menu_Highlighted_127x107.png",
                         "m_onClicked": "SetPauseStateV2",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -2542,7 +2544,7 @@
                         "isActive": false,
                         "name": "SliderKnob",
                         "parent": 48,
-                        "sceneID": 0
+                        "sceneID": 49
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2747,7 +2749,7 @@
                         "isActive": false,
                         "name": "CatPortraitName",
                         "parent": 51,
-                        "sceneID": 0
+                        "sceneID": 52
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2873,7 +2875,7 @@
                         "isActive": false,
                         "name": "SliderKnob",
                         "parent": 55,
-                        "sceneID": 0
+                        "sceneID": 56
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2996,7 +2998,7 @@
                         "isActive": false,
                         "name": "RatPortraitName",
                         "parent": 53,
-                        "sceneID": 0
+                        "sceneID": 59
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3046,7 +3048,7 @@
                         "isActive": false,
                         "name": "AreYouSureRestartCanvas",
                         "parent": null,
-                        "sceneID": 15
+                        "sceneID": 16
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3105,7 +3107,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
                         "m_onClicked": "RestartGame",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -3264,7 +3266,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                         "m_onClicked": "ReturnFromAYS",
-                        "m_onHoverEnter": "",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -3306,12 +3308,12 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 10,
+                        "Layer": 10,
                         "Old ID": 69,
                         "Prefab Type": "Canvas Object",
                         "children": [
@@ -3320,7 +3322,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 18
+                        "sceneID": 20
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3344,15 +3346,15 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
+                        "InteractionLayer": 10,
                         "Layer": 0,
                         "Old ID": 70,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Transition Panel",
                         "parent": 69,
-                        "sceneID": 0
+                        "sceneID": 70
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3393,7 +3395,7 @@
                         "isActive": true,
                         "name": "DeploymentArea",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 21
                     },
                     "Renderer": {
                         "Color": {
@@ -3461,7 +3463,7 @@
                         "isActive": true,
                         "name": "DeployTexture",
                         "parent": null,
-                        "sceneID": 21
+                        "sceneID": 22
                     },
                     "Renderer": {
                         "Color": {
@@ -3506,7 +3508,7 @@
                         "isActive": true,
                         "name": "NoGoAreas",
                         "parent": null,
-                        "sceneID": 22
+                        "sceneID": 23
                     },
                     "Renderer": {
                         "Color": {
@@ -3542,12 +3544,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -772.6002807617188,
-                                "y": 15.199913024902344
+                                "x": -771.62646484375,
+                                "y": 23.42540740966797
                             },
                             "min": {
-                                "x": -962.6002807617188,
-                                "y": -95.80008697509766
+                                "x": -981.5738525390625,
+                                "y": -107.0254898071289
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3582,18 +3584,18 @@
                         "TextureKey": ""
                     },
                     "Transform": {
-                        "height": 111.0,
+                        "height": 130.45089721679688,
                         "orientation": 0.0,
                         "position": {
-                            "x": -867.6002807617188,
-                            "y": -40.300086975097656
+                            "x": -876.6001586914063,
+                            "y": -41.80004119873047
                         },
                         "relativeposition": {
-                            "x": -867.6002807617188,
-                            "y": -40.300086975097656
+                            "x": -876.6001586914063,
+                            "y": -41.80004119873047
                         },
                         "relorientation": 0.0,
-                        "width": 190.0
+                        "width": 209.94744873046875
                     }
                 },
                 "name": ""
@@ -3606,12 +3608,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -376.1000061035156,
-                                "y": 153.3999481201172
+                                "x": -359.2173156738281,
+                                "y": 199.01129150390625
                             },
                             "min": {
-                                "x": -505.1000061035156,
-                                "y": 39.39994812011719
+                                "x": -508.7826232910156,
+                                "y": 33.388648986816406
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3646,18 +3648,18 @@
                         "TextureKey": ""
                     },
                     "Transform": {
-                        "height": 114.0,
+                        "height": 165.6226348876953,
                         "orientation": 0.0,
                         "position": {
-                            "x": -440.6000061035156,
-                            "y": 96.39994812011719
+                            "x": -433.9999694824219,
+                            "y": 116.19996643066406
                         },
                         "relativeposition": {
-                            "x": -440.6000061035156,
-                            "y": 96.39994812011719
+                            "x": -433.9999694824219,
+                            "y": 116.19996643066406
                         },
                         "relorientation": 0.0,
-                        "width": 129.0
+                        "width": 149.56529235839844
                     }
                 },
                 "name": ""
@@ -3670,12 +3672,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -649.9003295898438,
-                                "y": -106.10005187988281
+                                "x": -643.3897094726563,
+                                "y": -102.33699035644531
                             },
                             "min": {
-                                "x": -941.9003295898438,
-                                "y": -158.1000518798828
+                                "x": -983.2105102539063,
+                                "y": -268.6630859375
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3710,18 +3712,18 @@
                         "TextureKey": ""
                     },
                     "Transform": {
-                        "height": 52.0,
+                        "height": 166.32611083984375,
                         "orientation": 0.0,
                         "position": {
-                            "x": -795.9003295898438,
-                            "y": -132.1000518798828
+                            "x": -813.3001098632813,
+                            "y": -185.5000457763672
                         },
                         "relativeposition": {
-                            "x": -795.9003295898438,
-                            "y": -132.1000518798828
+                            "x": -813.3001098632813,
+                            "y": -185.5000457763672
                         },
                         "relorientation": 0.0,
-                        "width": 292.0
+                        "width": 339.8207702636719
                     }
                 },
                 "name": ""
@@ -3734,12 +3736,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 957.0004272460938,
-                                "y": 401.9998474121094
+                                "x": 964.5004272460938,
+                                "y": 551.1531372070313
                             },
                             "min": {
-                                "x": 483.00042724609375,
-                                "y": 287.9998474121094
+                                "x": 490.50042724609375,
+                                "y": 296.84600830078125
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3779,11 +3781,11 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 114.0,
+                        "height": 254.30714416503906,
                         "orientation": 0.0,
                         "position": {
-                            "x": 720.0004272460938,
-                            "y": 344.9998474121094
+                            "x": 727.5004272460938,
+                            "y": 423.99957275390625
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -3803,12 +3805,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 137.00006103515625,
-                                "y": -359.5
+                                "x": 144.48170471191406,
+                                "y": -371.5357666015625
                             },
                             "min": {
-                                "x": -266.99993896484375,
-                                "y": -462.5
+                                "x": -274.4815673828125,
+                                "y": -555.4641723632813
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3831,7 +3833,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 24
+                        "sceneID": 33
                     },
                     "Renderer": {
                         "Color": {
@@ -3848,18 +3850,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 103.0,
+                        "height": 183.9284210205078,
                         "orientation": 0.0,
                         "position": {
                             "x": -64.99993896484375,
-                            "y": -411.0
+                            "y": -463.4999694824219
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 404.0
+                        "width": 418.9632873535156
                     }
                 },
                 "name": ""
@@ -3872,12 +3874,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": -3.4997940063476563,
-                                "y": 32.00011444091797
+                                "x": -11.9542236328125,
+                                "y": 623.5926513671875
                             },
                             "min": {
-                                "x": -251.49978637695313,
-                                "y": -91.99988555908203
+                                "x": -243.0453643798828,
+                                "y": -86.59243774414063
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3917,18 +3919,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 124.0,
+                        "height": 710.18505859375,
                         "orientation": 0.0,
                         "position": {
                             "x": -127.49979400634766,
-                            "y": -29.99988555908203
+                            "y": 268.5000915527344
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 248.0
+                        "width": 231.0911407470703
                     }
                 },
                 "name": ""
@@ -3941,12 +3943,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": -512.4996337890625,
-                                "y": 277.5001220703125
+                                "x": -470.499267578125,
+                                "y": 571.2684326171875
                             },
                             "min": {
-                                "x": -947.4996337890625,
-                                "y": 162.5001220703125
+                                "x": -980.5,
+                                "y": 171.73170471191406
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3986,18 +3988,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 115.0,
+                        "height": 399.5367126464844,
                         "orientation": 0.0,
                         "position": {
-                            "x": -729.9996337890625,
-                            "y": 220.0001220703125
+                            "x": -725.4996337890625,
+                            "y": 371.50006103515625
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 435.0
+                        "width": 510.0007019042969
                     }
                 },
                 "name": ""
@@ -4010,12 +4012,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": -229.50018310546875,
-                                "y": 152.50006103515625
+                                "x": -225.00018310546875,
+                                "y": 565.3049926757813
                             },
                             "min": {
-                                "x": -505.50018310546875,
-                                "y": 37.50006866455078
+                                "x": -501.00018310546875,
+                                "y": 44.69525146484375
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4055,11 +4057,11 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 115.0,
+                        "height": 520.6097412109375,
                         "orientation": 0.0,
                         "position": {
-                            "x": -367.50018310546875,
-                            "y": 95.00006866455078
+                            "x": -363.00018310546875,
+                            "y": 305.0001220703125
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4079,12 +4081,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": -769.9995727539063,
-                                "y": 10.00008773803711
+                                "x": -786.4995727539063,
+                                "y": 11.439666748046875
                             },
                             "min": {
-                                "x": -949.9995727539063,
-                                "y": -104.99990844726563
+                                "x": -966.4995727539063,
+                                "y": -574.4395751953125
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4124,11 +4126,11 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 115.0,
+                        "height": 585.8792724609375,
                         "orientation": 0.0,
                         "position": {
-                            "x": -859.9995727539063,
-                            "y": -47.49991226196289
+                            "x": -876.4995727539063,
+                            "y": -281.4999694824219
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4148,12 +4150,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": -649.9996337890625,
-                                "y": -112.49993896484375
+                                "x": -652.9996337890625,
+                                "y": -112.53926086425781
                             },
                             "min": {
-                                "x": -829.9996337890625,
-                                "y": -227.49993896484375
+                                "x": -832.9996337890625,
+                                "y": -563.460693359375
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4193,11 +4195,11 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 115.0,
+                        "height": 450.9214172363281,
                         "orientation": 0.0,
                         "position": {
-                            "x": -739.9996337890625,
-                            "y": -169.99993896484375
+                            "x": -742.9996337890625,
+                            "y": -337.9999694824219
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4217,12 +4219,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 1014.5003662109375,
-                                "y": 146.99993896484375
+                                "x": 1028.0003662109375,
+                                "y": 142.56158447265625
                             },
                             "min": {
-                                "x": 768.5003662109375,
-                                "y": 25.99993896484375
+                                "x": 782.0003662109375,
+                                "y": -576.5618286132813
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4262,18 +4264,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 121.0,
+                        "height": 719.1234130859375,
                         "orientation": 0.0,
                         "position": {
-                            "x": 891.5003662109375,
-                            "y": 86.49993896484375
+                            "x": 905.0003662109375,
+                            "y": -217.0001220703125
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 246.0
+                        "width": 245.99998474121094
                     }
                 },
                 "name": ""
@@ -4286,12 +4288,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": -265.000244140625,
-                                "y": -237.49996948242188
+                                "x": -271.000244140625,
+                                "y": -243.1457977294922
                             },
                             "min": {
-                                "x": -664.000244140625,
-                                "y": -352.4999694824219
+                                "x": -670.000244140625,
+                                "y": -586.8541259765625
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4331,11 +4333,11 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 115.0,
+                        "height": 343.7083435058594,
                         "orientation": 0.0,
                         "position": {
-                            "x": -464.500244140625,
-                            "y": -294.9999694824219
+                            "x": -470.500244140625,
+                            "y": -414.9999694824219
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4355,12 +4357,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 277.5002136230469,
-                                "y": -233.0
+                                "x": 283.500244140625,
+                                "y": -242.3828582763672
                             },
                             "min": {
-                                "x": 136.50021362304688,
-                                "y": -353.0
+                                "x": 142.50027465820313,
+                                "y": -568.6171875
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4400,18 +4402,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 120.0,
+                        "height": 326.2343444824219,
                         "orientation": 0.0,
                         "position": {
-                            "x": 207.00021362304688,
-                            "y": -293.0
+                            "x": 213.00025939941406,
+                            "y": -405.5000305175781
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 141.0
+                        "width": 140.99998474121094
                     }
                 },
                 "name": ""
@@ -4452,7 +4454,7 @@
                         "isActive": true,
                         "name": "Exit Point",
                         "parent": null,
-                        "sceneID": 33
+                        "sceneID": 34
                     },
                     "Renderer": {
                         "Color": {
@@ -4488,12 +4490,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 500.9997863769531,
-                                "y": 281.9998779296875
+                                "x": 500.999755859375,
+                                "y": 579.3667602539063
                             },
                             "min": {
-                                "x": 63.999786376953125,
-                                "y": 167.99986267089844
+                                "x": 63.99980163574219,
+                                "y": 168.63291931152344
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4516,7 +4518,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 34
+                        "sceneID": 40
                     },
                     "Renderer": {
                         "Color": {
@@ -4533,18 +4535,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 114.0,
+                        "height": 410.7338562011719,
                         "orientation": 0.0,
                         "position": {
                             "x": 282.4997863769531,
-                            "y": 224.99986267089844
+                            "y": 373.9998474121094
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 437.0
+                        "width": 436.9999694824219
                     }
                 },
                 "name": ""
@@ -4557,12 +4559,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 535.4996948242188,
-                                "y": -107.99998474121094
+                                "x": 539.999755859375,
+                                "y": -115.1998291015625
                             },
                             "min": {
-                                "x": 264.49969482421875,
-                                "y": -225.99998474121094
+                                "x": 268.9997253417969,
+                                "y": -551.800048828125
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4602,11 +4604,11 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 118.0,
+                        "height": 436.6002197265625,
                         "orientation": 0.0,
                         "position": {
-                            "x": 399.99969482421875,
-                            "y": -166.99998474121094
+                            "x": 404.4997253417969,
+                            "y": -333.49993896484375
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4626,12 +4628,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 764.5004272460938,
-                                "y": 19.499977111816406
+                                "x": 790.9735107421875,
+                                "y": 14.7525634765625
                             },
                             "min": {
-                                "x": 518.5004272460938,
-                                "y": -101.5000228881836
+                                "x": 525.02734375,
+                                "y": -558.752685546875
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4671,18 +4673,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 121.0,
+                        "height": 573.5052490234375,
                         "orientation": 0.0,
                         "position": {
-                            "x": 641.5004272460938,
-                            "y": -41.000022888183594
+                            "x": 658.0004272460938,
+                            "y": -272.00006103515625
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 246.0
+                        "width": 265.9461669921875
                     }
                 },
                 "name": ""
@@ -4764,12 +4766,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 121.50006103515625,
-                                "y": 160.9998321533203
+                                "x": 114.04299926757813,
+                                "y": 544.8936767578125
                             },
                             "min": {
-                                "x": -1.4999427795410156,
-                                "y": 36.99983215332031
+                                "x": -30.042789459228516,
+                                "y": 39.105987548828125
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4809,18 +4811,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 124.0,
+                        "height": 505.78765869140625,
                         "orientation": 0.0,
                         "position": {
-                            "x": 60.000057220458984,
-                            "y": 98.99983215332031
+                            "x": 42.00010299682617,
+                            "y": 291.99981689453125
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 123.0
+                        "width": 144.08578491210938
                     }
                 },
                 "name": ""
@@ -4861,7 +4863,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 40
+                        "sceneID": 41
                     },
                     "Renderer": {
                         "Color": {
@@ -4899,8 +4901,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4978,44 +4980,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 71,
-                        "Prefab Type": "Canvas Object",
-                        "children": [],
-                        "isActive": true,
-                        "name": "PhaseBannerCanvas",
-                        "parent": null,
-                        "sceneID": 19
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5028,7 +4994,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 23
+                        "sceneID": 24
                     },
                     "Transform": {
                         "height": 100.0,
@@ -5105,8 +5071,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5264,7 +5230,7 @@
                         "isActive": true,
                         "name": "SliderKnob",
                         "parent": 61,
-                        "sceneID": 0
+                        "sceneID": 97
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -5417,7 +5383,7 @@
                         "isActive": true,
                         "name": "SliderKnob",
                         "parent": 98,
-                        "sceneID": 0
+                        "sceneID": 99
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -5662,8 +5628,8 @@
                         "collisionLayerIndex": 5,
                         "data": {
                             "center": {
-                                "x": 234.00050354003906,
-                                "y": -9.000188827514648
+                                "x": 201.5005645751953,
+                                "y": 88.4998779296875
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5686,7 +5652,7 @@
                         "isActive": true,
                         "name": "OrangeCat",
                         "parent": null,
-                        "sceneID": 41
+                        "sceneID": 102
                     },
                     "Renderer": {
                         "Color": {
@@ -5741,8 +5707,8 @@
                         "height": 96.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 234.00050354003906,
-                            "y": -9.000188827514648
+                            "x": 201.5005645751953,
+                            "y": 88.4998779296875
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5782,8 +5748,8 @@
                         "height": 150.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 234.00050354003906,
-                            "y": -9.000188827514648
+                            "x": 201.5005645751953,
+                            "y": 88.4998779296875
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5813,8 +5779,8 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 123.99989318847656,
-                                "y": -107.99995422363281
+                                "x": 198.99978637695313,
+                                "y": -25.499929428100586
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5863,7 +5829,7 @@
                                 },
                                 "detectionRadius": 200.0,
                                 "maxHuntTurns": 2,
-                                "maxMovementRange": 200.0,
+                                "maxMovementRange": 225.0,
                                 "movementSpeed": 250.0,
                                 "ratMaxHealth": 2,
                                 "ratType": 1
@@ -5875,8 +5841,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 123.99989318847656,
-                            "y": -107.99995422363281
+                            "x": 198.99978637695313,
+                            "y": -25.499929428100586
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5906,8 +5872,8 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 391.000244140625,
-                                "y": 60.000221252441406
+                                "x": 454.0003662109375,
+                                "y": 87.00022888183594
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5954,7 +5920,7 @@
                                     "Idle": "../Assets/Animation/AnimationSniperRat_Idle.anim",
                                     "Walk": "../Assets/Animation/AnimationSniperRat_Walk.anim"
                                 },
-                                "detectionRadius": 320.0,
+                                "detectionRadius": 340.0,
                                 "maxHuntTurns": 2,
                                 "maxMovementRange": 128.0,
                                 "movementSpeed": 400.0,
@@ -5968,8 +5934,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 391.000244140625,
-                            "y": 60.000221252441406
+                            "x": 454.0003662109375,
+                            "y": 87.00022888183594
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5977,6 +5943,738 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 0.0,
+                        "Width": 0.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 25,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            103,
+                            108,
+                            110,
+                            111,
+                            112,
+                            113,
+                            115
+                        ],
+                        "isActive": false,
+                        "name": "Settings Canvas",
+                        "parent": null,
+                        "sceneID": 14
+                    },
+                    "ScriptComponent": {
+                        "SettingsScript": {
+                            "data": {
+                                "BGMSlider": 108,
+                                "FullScreenButton": 0,
+                                "MasterSlider": 113,
+                                "SFXSlider": 103,
+                                "WindowedButton": 0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 26,
+                        "Prefab Type": "SliderBody",
+                        "children": [
+                            107
+                        ],
+                        "isActive": false,
+                        "name": "SFXSlider",
+                        "parent": 102,
+                        "sceneID": 103
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 0.5309091210365295,
+                        "m_currentWidth": 75.0,
+                        "m_currentXpos": -107374176.0,
+                        "m_defaultColor": [
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 412.5,
+                        "m_hoveredColor": [
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": false,
+                        "m_knobID": 29,
+                        "m_maxValue": 1.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -412.5
+                    },
+                    "Transform": {
+                        "height": 75.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": -406.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": -406.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 900.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 29,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SliderKnob",
+                        "parent": 103,
+                        "sceneID": 107
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 75.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 25.500024795532227,
+                            "y": -406.0
+                        },
+                        "relativeposition": {
+                            "x": 25.500024795532227,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 75.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 30,
+                        "Prefab Type": "SliderBody",
+                        "children": [
+                            109
+                        ],
+                        "isActive": false,
+                        "name": "BGMSlider",
+                        "parent": 102,
+                        "sceneID": 108
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 0.5272725820541382,
+                        "m_currentWidth": 75.0,
+                        "m_currentXpos": -107374176.0,
+                        "m_defaultColor": [
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 412.5,
+                        "m_hoveredColor": [
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": false,
+                        "m_knobID": 31,
+                        "m_maxValue": 1.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -412.5
+                    },
+                    "Transform": {
+                        "height": 75.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": -174.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": -174.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 900.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 31,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SliderKnob",
+                        "parent": 108,
+                        "sceneID": 109
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 75.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 22.49988555908203,
+                            "y": -174.0
+                        },
+                        "relativeposition": {
+                            "x": 22.49988555908203,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 75.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 32,
+                        "Prefab Type": "Text",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SFXText",
+                        "parent": 102,
+                        "sceneID": 110
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
+                        "HOverflow": 0,
+                        "LineSpacing": 1.0,
+                        "Size": 2.0,
+                        "Text": "SFX",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 239.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -221.99990844726563,
+                            "y": -300.0
+                        },
+                        "relativeposition": {
+                            "x": -221.99990844726563,
+                            "y": -300.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 439.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 33,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "BGMText",
+                        "parent": 102,
+                        "sceneID": 111
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
+                        "HOverflow": 0,
+                        "LineSpacing": 1.0,
+                        "Size": 2.0,
+                        "Text": "BGM",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 239.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -221.99990844726563,
+                            "y": -61.50006866455078
+                        },
+                        "relativeposition": {
+                            "x": -221.99990844726563,
+                            "y": -61.50006866455078
+                        },
+                        "relorientation": 0.0,
+                        "width": 439.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 34,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "ReturnFromSettingsButton",
+                        "parent": 102,
+                        "sceneID": 112
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Return_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
+                        "m_onClicked": "CloseSettings",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Return_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Return_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 125.51280975341797,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -765.5000610351563,
+                            "y": 397.50006103515625
+                        },
+                        "relativeposition": {
+                            "x": -765.5000610351563,
+                            "y": 397.50006103515625
+                        },
+                        "relorientation": 0.0,
+                        "width": 409.8817138671875
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 35,
+                        "Prefab Type": "",
+                        "children": [
+                            114
+                        ],
+                        "isActive": false,
+                        "name": "Master Volume",
+                        "parent": 102,
+                        "sceneID": 113
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 0.0,
+                        "m_currentWidth": 75.0,
+                        "m_currentXpos": -107374176.0,
+                        "m_defaultColor": [
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 412.5,
+                        "m_hoveredColor": [
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": false,
+                        "m_knobID": 37,
+                        "m_maxValue": 1.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -412.5
+                    },
+                    "Transform": {
+                        "height": 75.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 48.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 48.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 900.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 37,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SliderKnob",
+                        "parent": 113,
+                        "sceneID": 114
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 75.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -412.5,
+                            "y": 48.0
+                        },
+                        "relativeposition": {
+                            "x": -412.5,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 75.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 38,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Master Volume Text",
+                        "parent": 102,
+                        "sceneID": 115
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "HAlignment": 0,
+                        "HOverflow": 0,
+                        "LineSpacing": 1.0,
+                        "Size": 2.0,
+                        "Text": "Master Volume",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 239.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -207.99984741210938,
+                            "y": 167.0
+                        },
+                        "relativeposition": {
+                            "x": -207.99984741210938,
+                            "y": 167.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 465.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 116,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Settings Button",
+                        "parent": 3,
+                        "sceneID": 32
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Settings_512x128.png",
+                        "m_disabledColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Settings_Highlighted_512x128.png",
+                        "m_onClicked": "OpenSettings",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Settings_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Settings_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 128.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": -105.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": -105.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 512.0
                     }
                 },
                 "name": ""

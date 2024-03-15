@@ -641,7 +641,6 @@ namespace PE
 				if (it == m_scriptData.end()) { return; }
 				else if (!(it->second.isAlive)) { return; }
 				TriggerStateChange(id, new RatReturn_v2_0, stateChangeDelay);
-				EnableDetectionTelegraphs(id, EnumRatIconAnimations::CONFUSED);
 		}
 
 
@@ -1139,7 +1138,6 @@ namespace PE
 				ClearCollisionContainers(id); // Clear collision containers
 
 				ChangeStateToDeath(it->second.myID, 0.f); 
-				// @TODO Check if this should take the current rat animation duration into account?
 		}
 
 
