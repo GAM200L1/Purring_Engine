@@ -14,7 +14,7 @@
  \par	   code %      20%
 
  \brief  This file contains the declarations of IntroCutsceneController that controls
-		 the cutscene for the introduction of the game.
+		 the cutscene for the ending of the game.
 
  All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 

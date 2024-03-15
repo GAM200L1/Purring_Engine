@@ -13,8 +13,8 @@
  \par      email:      jarranyanzhi.tan\@digipen.edu
  \par	   code %      20%
 
- \brief  This file contains the declarations of IntroCutsceneController that controls
-		 the cutscene for the introduction of the game.
+ \brief  This file contains the definition of IntroCutsceneController that controls
+		 the cutscene for the ending of the game.
 
  All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 
