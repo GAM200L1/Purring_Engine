@@ -27,6 +27,10 @@ namespace PE
 		EntityID CutsceneObject;
 		EntityID FinalScene;
 
+		EntityID BackgroundCanvas;
+		EntityID WinCanvas;
+		EntityID AreYouSureCanvas;
+
 		int windowNotFocusEventID;
 		int windowFocusEventID;
 	};
@@ -105,6 +109,11 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Function to play click audio.
 		*************************************************************************************/
+		void PlayWinAudio();
+
+		/*!***********************************************************************************
+		 \brief Function to play click audio.
+		*************************************************************************************/
 		void PlaySceneTransitionAudio();
 
 		/*!***********************************************************************************
@@ -147,9 +156,34 @@ namespace PE
 		*************************************************************************************/
 		void OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event);
 
+		void WinScreen(EntityID);
+
+		void ECReturnToMainMenu(EntityID);
+
+		void ECAreYouSure(EntityID);
+
+		void ECReturnFromAreYouSure(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Activate the given object and its childrens
+
+		 \param[in]		The objects to set active
+		*************************************************************************************/
+		void ActiveObject(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Deactivate the given object and its childrens
+
+		 \param[in]		The objects to set deactivate
+		*************************************************************************************/
+		void DeactiveObject(EntityID);
+
 	private:
 		std::map<EntityID, EndingCutsceneControllerData> m_scriptData;
 		SerializationManager m_serializationManager;
+		
+		EntityID m_currentCutsceneObject;
+
 		float m_sceneTimer{ 32.5f };
 		float m_elapsedTime{ 0 };
 		bool m_endCutscene{ false };

@@ -70,10 +70,13 @@
                     "ScriptComponent": {
                         "EndingCutsceneController": {
                             "data": {
+                                "AreYouSureCanvas": 20,
+                                "BackgroundCanvas": 18,
                                 "CutsceneObject": 1,
                                 "FinalScene": 4,
                                 "Text": 14,
-                                "TransitionScreen": 10
+                                "TransitionScreen": 10,
+                                "WinCanvas": 32
                             },
                             "state": 0
                         }
@@ -325,8 +328,8 @@
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
-                        "m_onClicked": "ContinueToLevel",
-                        "m_onHoverEnter": "",
+                        "m_onClicked": "WinScreen",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -521,7 +524,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 9
                     },
                     "Transform": {
                         "height": 100.0,
@@ -558,6 +561,639 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 0.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 881.0,
+                        "Width": 1604.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 32,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            33,
+                            34,
+                            35,
+                            36
+                        ],
+                        "isActive": false,
+                        "name": "WinCanvas",
+                        "parent": null,
+                        "sceneID": 18
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 33,
+                        "Prefab Type": "youwin",
+                        "children": [],
+                        "isActive": false,
+                        "name": "youwintextobj",
+                        "parent": 32,
+                        "sceneID": 33
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/YouWin_Text_1024x256.png"
+                    },
+                    "Transform": {
+                        "height": 217.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 418.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 418.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 858.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 34,
+                        "Prefab Type": "HappyCat",
+                        "children": [],
+                        "isActive": false,
+                        "name": "HappyCat",
+                        "parent": 32,
+                        "sceneID": 34
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/HappyCat_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 64.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 64.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 35,
+                        "Prefab Type": "restartbutton",
+                        "children": [],
+                        "isActive": false,
+                        "name": "WinMainMenuButton",
+                        "parent": 32,
+                        "sceneID": 35
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_MainMenu_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_MainMenu_Highlighted_512x128.png",
+                        "m_onClicked": "ECReturnToMainMenu",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_MainMenu_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_MainMenu_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -500.0,
+                            "y": -320.0
+                        },
+                        "relativeposition": {
+                            "x": -500.0,
+                            "y": -320.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 36,
+                        "Prefab Type": "wlquitbutton",
+                        "children": [],
+                        "isActive": false,
+                        "name": "WinQuitButton",
+                        "parent": 32,
+                        "sceneID": 36
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_QuitGame_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
+                        "m_onClicked": "ECAreYouSure",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_QuitGame_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_QuitGame_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relativeposition": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 0.0,
+                        "Width": 0.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 8,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            13,
+                            15,
+                            16,
+                            17
+                        ],
+                        "isActive": false,
+                        "name": "AreYouSureCanvas",
+                        "parent": null,
+                        "sceneID": 20
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 9,
+                        "Prefab Type": "areyousure",
+                        "children": [],
+                        "isActive": false,
+                        "name": "areyousure",
+                        "parent": 9,
+                        "sceneID": 13
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/AreYouSure_Text_1024x256.png"
+                    },
+                    "Transform": {
+                        "height": 217.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 418.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 418.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 858.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 10,
+                        "Prefab Type": "yesbutton",
+                        "children": [],
+                        "isActive": false,
+                        "name": "yesbutton",
+                        "parent": 9,
+                        "sceneID": 15
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Yes_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
+                        "m_onClicked": "CloseWindow",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Yes_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Yes_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relativeposition": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 11,
+                        "Prefab Type": "SadCat",
+                        "children": [],
+                        "isActive": false,
+                        "name": "LeaveSadCat",
+                        "parent": 9,
+                        "sceneID": 16
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/SadCat_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 47.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 47.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 12,
+                        "Prefab Type": "nobutton",
+                        "children": [],
+                        "isActive": false,
+                        "name": "nobutton",
+                        "parent": 9,
+                        "sceneID": 17
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_No_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
+                        "m_onClicked": "ECReturnFromAreYouSure",
+                        "m_onHoverEnter": "PlayButtonHoverAudio",
+                        "m_onHoverExit": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_No_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_No_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -500.0,
+                            "y": -310.0
+                        },
+                        "relativeposition": {
+                            "x": -500.0,
+                            "y": -310.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 0.0,
+                        "Width": 0.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 18,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            19
+                        ],
+                        "isActive": false,
+                        "name": "Background Canvas",
+                        "parent": null,
+                        "sceneID": 10
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 19,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "UI Object",
+                        "parent": 18,
+                        "sceneID": 11
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
                             "b": 0.0,
                             "g": 0.0,
                             "r": 0.0

@@ -3395,6 +3395,10 @@ namespace PE {
 										int TextID = static_cast<int> (it->second.Text);
 										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
 
+										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
+										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
+										int BackgroundCanvasID = static_cast<int> (it->second.BackgroundCanvas);
+
 										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ecsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
 
@@ -3406,6 +3410,15 @@ namespace PE {
 
 										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etssid", &TransitionScreenID);
 										{ it->second.TransitionScreen = TransitionScreenID; }
+
+										ImGui::Text("Are You Sure Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etayscid", &AreYouSureCanvasID);
+										{ it->second.AreYouSureCanvas = AreYouSureCanvasID; }
+
+										ImGui::Text("Win Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etwcid", &WinCanvasID);
+										{ it->second.WinCanvas = WinCanvasID; }
+
+										ImGui::Text("Background Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etbcid", &BackgroundCanvasID);
+										{ it->second.BackgroundCanvas = BackgroundCanvasID; }
 									}
 								}
 							}
