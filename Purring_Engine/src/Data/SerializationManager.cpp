@@ -601,7 +601,19 @@ size_t SerializationManager::CreationHelper(const nlohmann::json& r_j)
 
 size_t SerializationManager::CreateEntityFromPrefab(std::string const& r_filePath)
 {
-    std::ifstream inFile(r_filePath);
+    std::filesystem::path filepath;
+
+    if (r_filePath.length() && r_filePath[0] != '.')
+        filepath = std::string{ "../Assets/Prefabs/" } + r_filePath;
+    else
+        filepath = r_filePath;
+
+    if (!std::filesystem::exists(filepath))
+    {
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return MAXSIZE_T;
+    }
+    std::ifstream inFile(filepath);
     if (inFile)
     {
         nlohmann::json j;
