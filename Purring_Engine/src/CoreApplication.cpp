@@ -98,6 +98,7 @@
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
 #include "Logic/IntroCutsceneController.h"
+#include "Logic/EndingCutsceneController.h"
 
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
@@ -243,6 +244,7 @@ RTTR_REGISTRATION
         .property("RatKingJournal", &PE::GameStateController_v2_0Data::RatKingJournal)
         .property("JournalButton", &PE::GameStateController_v2_0Data::JournalButton)
         .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
+        .property("SettingsMenu", &PE::GameStateController_v2_0Data::SettingsMenu)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
@@ -277,6 +279,7 @@ RTTR_REGISTRATION
         .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
         .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo)
+        .property("TransitionPanel", &PE::MainMenuControllerData::TransitionPanel)
         .property("SettingsMenu", &PE::MainMenuControllerData::SettingsMenu);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
@@ -294,6 +297,12 @@ RTTR_REGISTRATION
         .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
         .property("Text", &PE::IntroCutsceneControllerData::Text)
         .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
+
+    rttr::registration::class_<PE::EndingCutsceneControllerData>("EndingCutsceneController")
+        .property("CutsceneObject", &PE::EndingCutsceneControllerData::CutsceneObject)
+        .property("FinalScene", &PE::EndingCutsceneControllerData::FinalScene)
+        .property("Text", &PE::EndingCutsceneControllerData::Text)
+        .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)

@@ -20,7 +20,7 @@
 #include "Script.h"
 namespace PE
 {
-	struct IntroCutsceneControllerData
+	struct EndingCutsceneControllerData
 	{
 		EntityID TransitionScreen;
 		EntityID Text;
@@ -31,7 +31,7 @@ namespace PE
 		int windowFocusEventID;
 	};
 
-	class IntroCutsceneController : public Script
+	class EndingCutsceneController : public Script
 	{
 	public:
 		/*!***********************************************************************************
@@ -80,7 +80,7 @@ namespace PE
 
 		 \return std::map<EntityID, TestScriptData>& - A map of EntityID to TestScriptData
 		*************************************************************************************/
-		std::map<EntityID, IntroCutsceneControllerData>& GetScriptData();
+		std::map<EntityID, EndingCutsceneControllerData>& GetScriptData();
 
 		/*!***********************************************************************************
 		 \brief Get the script data instance for a specific entity (RTTR)
@@ -113,7 +113,7 @@ namespace PE
 		 \param[in] id - The unique EntityID to retrieve the script data for
 		 \return rttr::instance - The script data instance for the specified entity
 		*************************************************************************************/
-		IntroCutsceneController();
+		EndingCutsceneController();
 
 		/*!***********************************************************************************
 		 \brief			Fade the Planning State HUD
@@ -148,9 +148,9 @@ namespace PE
 		void OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event);
 
 	private:
-		std::map<EntityID, IntroCutsceneControllerData> m_scriptData;
+		std::map<EntityID, EndingCutsceneControllerData> m_scriptData;
 		SerializationManager m_serializationManager;
-		float m_sceneTimer{ 0 };
+		float m_sceneTimer{ 32.5f };
 		float m_elapsedTime{ 0 };
 		bool m_endCutscene{ false };
 		bool m_startCutscene{ true };

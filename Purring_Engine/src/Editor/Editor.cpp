@@ -78,6 +78,7 @@
 #include "Logic/Rat/RatIdle_v2_0.h"
 #include "Layers/LayerManager.h"
 #include "Logic/IntroCutsceneController.h"
+#include "Logic/EndingCutsceneController.h"
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
 #include "Logic/Settings.h"
@@ -3175,6 +3176,7 @@ namespace PE {
 										int RatKingJournalID = static_cast<int> (it->second.RatKingJournal);
 										int JournalButtonID = static_cast<int> (it->second.JournalButton);
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
+										int SettingsMenuID = static_cast<int> (it->second.SettingsMenu);
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
@@ -3194,6 +3196,9 @@ namespace PE {
 
 										ImGui::Text("LoseCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ls", &LoseCanvasID);
 										if (LoseCanvasID != m_currentSelectedObject) { it->second.LoseCanvas = LoseCanvasID; }
+
+										ImGui::Text("Settings Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##gplsm", &SettingsMenuID);
+										if (SettingsMenuID != m_currentSelectedObject) { it->second.SettingsMenu = SettingsMenuID; }
 
 										ImGui::Text("HowToPlayCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htps", &HowToPlayCanvasID);
 										if (HowToPlayCanvasID != m_currentSelectedObject) { it->second.HowToPlayCanvas = HowToPlayCanvasID; }
@@ -3362,16 +3367,44 @@ namespace PE {
 										int TextID = static_cast<int> (it->second.Text);
 										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
 
-										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##csoi", &CutsceneObjectID);
+										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##icsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
 
-										ImGui::Text("Final Frame Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##fsidd", &FinalSceneID);
+										ImGui::Text("Final Frame Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ifsidd", &FinalSceneID);
 										{ it->second.FinalScene = FinalSceneID; }
 
-										ImGui::Text("Text Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tttid", &TextID);
+										ImGui::Text("Text Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itttid", &TextID);
 										{ it->second.Text = TextID; }
 
-										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tssid", &TransitionScreenID);
+										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itssid", &TransitionScreenID);
+										{ it->second.TransitionScreen = TransitionScreenID; }
+									}
+								}
+							}
+
+							if (key == "EndingCutsceneController")
+							{
+								EndingCutsceneController* p_script = dynamic_cast<EndingCutsceneController*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("EndingCutsceneController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int CutsceneObjectID = static_cast<int> (it->second.CutsceneObject);
+										int FinalSceneID = static_cast<int> (it->second.FinalScene);
+										int TextID = static_cast<int> (it->second.Text);
+										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
+
+										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ecsoi", &CutsceneObjectID);
+										it->second.CutsceneObject = CutsceneObjectID;
+
+										ImGui::Text("Final Frame Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##efsidd", &FinalSceneID);
+										{ it->second.FinalScene = FinalSceneID; }
+
+										ImGui::Text("Text Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etttid", &TextID);
+										{ it->second.Text = TextID; }
+
+										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etssid", &TransitionScreenID);
 										{ it->second.TransitionScreen = TransitionScreenID; }
 									}
 								}
@@ -3392,6 +3425,7 @@ namespace PE {
 										int HowToPlayPageOneID = static_cast<int> (it->second.HowToPlayPageOne);
 										int HowToPlayPageTwoID = static_cast<int> (it->second.HowToPlayPageTwo);
 										int SettingsMenuID = static_cast<int> (it->second.SettingsMenu);
+										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 
 										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCID", &MainMenuCanvasID);
 										if (MainMenuCanvasID != m_currentSelectedObject) { it->second.MainMenuCanvas = MainMenuCanvasID; }
@@ -3413,6 +3447,9 @@ namespace PE {
 
 										ImGui::Text("Settings Menu ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMSMID", &SettingsMenuID);
 										if (SettingsMenuID != m_currentSelectedObject) it->second.SettingsMenu = SettingsMenuID;
+
+										ImGui::Text("Transition Panel Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMTPID", &TransitionPanelID);
+										if (TransitionPanelID != m_currentSelectedObject) it->second.TransitionPanel = TransitionPanelID;
 									}
 								}
 							}

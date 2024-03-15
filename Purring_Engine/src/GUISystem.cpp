@@ -255,6 +255,15 @@ namespace PE
 #endif
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
 					{
+						//update the current SliderKnob
+						for (auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children)
+						{
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(cid).name == "SliderKnob")
+							{
+								slider.m_knobID = cid;
+							}
+						}
+
 						if (!slider.m_isHealthBar)
 						{
 							if (slider.m_disabled)

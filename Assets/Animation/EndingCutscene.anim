@@ -1,0 +1,478 @@
+{
+    "animationFrames": [
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1a_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1b_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1c_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1d_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1e_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1f_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1g_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1h_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1i_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1j_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1k_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1l_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1m_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1n_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1o_1920x1080.png"
+        },
+        {
+            "actions": [
+                {
+                    "scriptFunction": "StartCutscene",
+                    "scriptName": "EndingCutsceneController"
+                }
+            ],
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro2_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro3_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro4_1920x1080.png"
+        },
+        {
+            "duration": 0.7333333492279053,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro5_1920x1080.png"
+        },
+        {
+            "duration": 0.7333333492279053,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro6_1920x1080.png"
+        },
+        {
+            "duration": 0.7333333492279053,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro7_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro8_1920x1080.png"
+        },
+        {
+            "duration": 0.7333333492279053,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro9_1920x1080.png"
+        },
+        {
+            "duration": 0.7333333492279053,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro10_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro11_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro12_1920x1080.png"
+        },
+        {
+            "duration": 0.7333333492279053,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro13_1920x1080.png"
+        },
+        {
+            "duration": 0.7333333492279053,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro14_1920x1080.png"
+        },
+        {
+            "duration": 2.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro15_1920x1080.png"
+        },
+        {
+            "duration": 1.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro16_1920x1080.png"
+        },
+        {
+            "duration": 1.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro17_1920x1080.png"
+        },
+        {
+            "duration": 3.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro18_1920x1080.png"
+        },
+        {
+            "duration": 3.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro19_1920x1080.png"
+        },
+        {
+            "duration": 3.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro20_1920x1080.png"
+        },
+        {
+            "duration": 0.7333333492279053,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro21_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro22_1920x1080.png"
+        },
+        {
+            "actions": [
+                {
+                    "scriptFunction": "SetButtonText",
+                    "scriptName": "EndingCutsceneController"
+                }
+            ],
+            "duration": 1.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro23_1920x1080.png"
+        }
+    ],
+    "animationID": "../Assets/Animation/EndingCutscene.anim",
+    "frameRate": 30,
+    "isLooping": false,
+    "isSpriteSheet": false,
+    "spriteSheetKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1_1920x1080.png",
+    "totalSprites": 1
+}
