@@ -1184,6 +1184,13 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
+
+								id = "Reset##ResButton123";
+								if (ImGui::Selectable(id.c_str())) 
+								{
+									EntityManager::GetInstance().Get<PE::ParticleEmitter>(entityID).CreateAllParticles();
+								}
+
 								for (auto& prop : currType.get_properties())
 								{
 									if (prop.get_name().to_string() == "Toggles")
@@ -4199,6 +4206,16 @@ namespace PE {
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Canvas>() });
 								else
 									AddErrorLog("ALREADY HAS CANVAS");
+							}
+							if (ImGui::Selectable("Add Particle Emitter"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>() });
+								else
+									AddErrorLog("ALREADY HAS PARTICLE EMITTER");
 							}
 						}
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
