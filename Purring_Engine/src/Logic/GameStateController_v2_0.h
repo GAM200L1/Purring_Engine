@@ -524,6 +524,8 @@ namespace PE
 		// Audio Controls
 		bool bgmStarted = false;
 
+		//for end game
+		bool m_gameEnded{ false };
 	};
 }
 

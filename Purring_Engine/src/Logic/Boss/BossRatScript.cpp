@@ -40,6 +40,8 @@ namespace PE
 		m_scriptData[id].currentAttackInSet = 3;
 		m_scriptData[id].currenthealth = m_scriptData[id].maxHealth;
 		
+		m_deathDelayTimeBeforeOutro = m_deathDelayTimerBeforeOutro;
+
 		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(3);
 	}
 
@@ -56,12 +58,6 @@ namespace PE
 		{
 			return;
 		}		
-		
-		if (p_gsc->currentState == GameStates_v2_0::WIN || p_gsc->currentState == GameStates_v2_0::LOSE)
-		{
-			//might want to do something else from pause
-			return;
-		}
 
 		if (m_scriptData[id].currenthealth <= 0)
 		{
@@ -76,7 +72,17 @@ namespace PE
 			//m_scriptData[id].finishExecution = false;
 			if (EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(currentBoss).GetAnimationMaxIndex())
 			{
-				p_gsc->WinGame();
+				if (m_deathDelayTimeBeforeOutro > 0)
+				{
+					m_deathDelayTimeBeforeOutro -= deltaTime;
+				}
+				else
+				{
+					m_deathDelayTimeBeforeOutro = m_deathDelayTimeBeforeOutro;
+					p_gsc->GoToOutroCutscene();
+					EntityManager::GetInstance().Get<EntityDescriptor>(currentBoss).isActive = false;
+				}
+
 			}
 		}
 

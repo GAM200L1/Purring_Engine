@@ -266,6 +266,9 @@ namespace PE
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
 		std::vector<EntityID> m_obstacles;
+
+		float m_deathDelayTimerBeforeOutro{.75f};
+		float m_deathDelayTimeBeforeOutro{ m_deathDelayTimerBeforeOutro };
 		//do i want to store all the obstacles here?
 	}; // end of class 
 

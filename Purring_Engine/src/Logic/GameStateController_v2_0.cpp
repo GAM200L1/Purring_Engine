@@ -1292,11 +1292,13 @@ namespace PE
 
 	void GameStateController_v2_0::GoToOutroCutscene()
 	{
+		m_gameEnded = true;
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
 
+		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
 		m_currentLevel = 0;
 		m_leveltoLoad = m_outroCutsceneScene;
 	}
@@ -1626,6 +1628,11 @@ namespace PE
 
 	void GameStateController_v2_0::CheckFinishExecution()
 	{
+		if (m_gameEnded)
+		{
+			return;
+		}
+
 		bool Finished = true;
 
 		RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
