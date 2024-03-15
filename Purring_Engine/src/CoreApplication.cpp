@@ -65,6 +65,10 @@
 #include "Physics/CollisionManager.h"
 #include "Physics/PhysicsManager.h"
 
+// Visual Effects
+#include "VisualEffects/VisualEffectsManager.h"
+#include "VisualEffects/ParticleSystem.h"
+
 // Serialization
 #include "Data/SerializationManager.h"
 
@@ -137,6 +141,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
     REGISTERCOMPONENT(PE::Canvas);
+    REGISTERCOMPONENT(PE::ParticleEmitter);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -439,6 +444,28 @@ RTTR_REGISTRATION
         .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
         .property("distanceBetweenPools", &PE::BossRatScriptData::distanceBetweenPools)
         .property("animationStates", &PE::BossRatScriptData::animationStates);
+
+    rttr::registration::class_<PE::ParticleEmitter>(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string())
+        .property("Is Active", &PE::ParticleEmitter::isActive)
+        .property("Paused", &PE::ParticleEmitter::pause)
+        .property("Type", &PE::ParticleEmitter::particleType)
+        .property("Mode", &PE::ParticleEmitter::emitterType)
+        .property("Emittor Length", &PE::ParticleEmitter::emittorLength)
+        .property("Max particles", &PE::ParticleEmitter::maxParticles)
+        .property("Emission Arc", &PE::ParticleEmitter::emissionArc)
+        .property("Emission Direction", &PE::ParticleEmitter::emissionDirection)
+        //.property("Emission Duration", &PE::ParticleEmitter::emissionDuration)
+        //.property("Emission Rate", &PE::ParticleEmitter::emissionRate)
+        .property("Looping", &PE::ParticleEmitter::isLooping)
+        .property("MinMax Speed", &PE::ParticleEmitter::minMaxSpeed)
+        .property("Starting Scale", &PE::ParticleEmitter::startScale)
+        .property("End Scale", &PE::ParticleEmitter::endScale)
+        .property("Delta Scale", &PE::ParticleEmitter::scaleChangeSpeed)
+        .property("Lifetime", &PE::ParticleEmitter::startLifetime)
+        .property("Color", &PE::ParticleEmitter::startColor)
+        .property("Toggles", &PE::ParticleEmitter::toggles)
+        //.property("", &PE::ParticleEmitter::)
+        ;
 }
 
 PE::CoreApplication::CoreApplication()
@@ -499,6 +526,8 @@ void PE::CoreApplication::Run()
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE
 
+
+    
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
     while (!glfwWindowShouldClose(m_window))
@@ -671,6 +700,7 @@ void PE::CoreApplication::InitializeSystems()
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
+    VisualEffectsManager* p_visualEffectsManager = new (MemoryManager::GetInstance().AllocateMemory("Visual Effects Manager", sizeof(VisualEffectsManager)))VisualEffectsManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
     AddSystem(p_inputSystem);
@@ -680,6 +710,7 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_collisionManager);
     AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
+    AddSystem(p_visualEffectsManager);
     AddSystem(p_rendererManager);
     //AddSystem(p_audioManager);
 

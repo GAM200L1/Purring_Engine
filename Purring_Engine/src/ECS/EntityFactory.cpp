@@ -23,6 +23,7 @@
 #include "Hierarchy/HierarchyManager.h"
 #include "GUI/Canvas.h"
 #include "Layers/LayerManager.h"
+#include "VisualEffects/ParticleSystem.h"
 extern Logger engine_logger;
 
 
@@ -83,8 +84,8 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(),			&EntityFactory::InitializeTextComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<AudioComponent>(),		&EntityFactory::InitializeAudioComponent);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Canvas>(), &EntityFactory::InitializeCanvasComponent);
-
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Canvas>(),                &EntityFactory::InitializeCanvasComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<ParticleEmitter>(),		&EntityFactory::InitializeParticleEmitter);
 	}
 
 
@@ -329,6 +330,18 @@ namespace PE
 		return true;
 	}
 
+	bool EntityFactory::InitializeParticleEmitter(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<ParticleEmitter>(r_id) =
+			(p_data == nullptr) ?
+			ParticleEmitter()
+			:
+			*reinterpret_cast<ParticleEmitter*>(p_data);
+
+		EntityManager::GetInstance().Get<ParticleEmitter>(r_id).SetParent(r_id);
+
+		return true;
+	}
 	
 
 	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)
