@@ -30,6 +30,7 @@
 #include "ResourceManager/ResourceManager.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/LogicSystem.h"
+#include "Logic/MainMenuController.h"
 #include "GUISystem.h"
 #include <limits>
 
@@ -314,18 +315,20 @@ namespace PE
 	void EndingCutsceneController::ECReturnToMainMenu(EntityID)
 	{
 		m_isTransitioning = true;
+
+		GETSCRIPTINSTANCEPOINTER(MainMenuController)->NotFirstStart();
 		PlayClickAudio();
 	}
 
 	void EndingCutsceneController::ECAreYouSure(EntityID)
 	{
-		DeactiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
-		ActiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
+		DeactiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
+		ActiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
 	}
 
 	void EndingCutsceneController::ECReturnFromAreYouSure(EntityID)
 	{
-		DeactiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
-		ActiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
+		DeactiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
+		ActiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
 	}
 }
