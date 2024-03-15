@@ -199,11 +199,13 @@ namespace PE
     void AudioComponent::StartIndividualFadeIn(float targetVolume, float duration)
     {
         m_targetVolumeIndividual = targetVolume;
+        m_originalVolume = GetVolume(); // Capture the current volume as the original volume
         m_isFadingIndividual = true;
         m_isFadingInIndividual = true;
         m_fadeDurationIndividual = duration;
-        m_fadeProgressIndividual = 0.0f;
+        m_fadeProgressIndividual = 0.0f; // Reset fade progress
     }
+
 
     void AudioComponent::StartIndividualFadeOut(float targetVolume, float duration)
     {

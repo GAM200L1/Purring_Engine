@@ -77,6 +77,8 @@ namespace PE
 
             if (fadeInDuration > 0.0f)
             {
+                m_fadeProgress = 0.0f; // resetting global fade progress
+
                 audioComponent.StartIndividualFadeIn(m_maxVolume, fadeInDuration);
             }
             else
@@ -94,6 +96,7 @@ namespace PE
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
+
 
     void GlobalMusicManager::PlaySFX(const std::string& r_prefabPath, bool loop)
     {
