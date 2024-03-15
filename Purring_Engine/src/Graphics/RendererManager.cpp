@@ -817,16 +817,8 @@ namespace PE
 
                     renderedEntities.emplace_back(id);
 
-                    // continue from the next one after it
-                    auto ite = ++(std::find(r_rendererIdContainer.begin(), r_rendererIdContainer.end(), id));
-                    std::vector<size_t> cont;
-                    while (ite != r_rendererIdContainer.end())
-                    {
-                        cont.emplace_back(*ite);
-                        ++ite;
-                    }
-                    DrawQuadsInstanced<T>(r_worldToNdc, cont);
-                    return;
+                    continue;
+
                 }
 
                 // Skip this object if it has no renderer
@@ -916,7 +908,7 @@ namespace PE
 
             // Draw the remaining objects
             DrawInstanced(count, meshIndex, GL_TRIANGLES);
-
+            count = 0;
             // Unbind everything
             m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();

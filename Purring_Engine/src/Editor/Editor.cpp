@@ -1153,7 +1153,15 @@ namespace PE {
 									{
 										if (prop.is_readonly())
 										{
-											ImGui::SameLine(); ImGui::Text(std::to_string(vp.get_value<EntityID>()).c_str());
+											if (prop.get_name().to_string() == "Entity ID")
+											{
+												ImGui::SameLine(); ImGui::Text(std::to_string(entityID).c_str());
+											}
+											else
+											{
+												ImGui::SameLine(); ImGui::Text(std::to_string(vp.get_value<EntityID>()).c_str());
+											}
+											
 										}
 									}
 								}
@@ -1288,6 +1296,20 @@ namespace PE {
 										{
 											y = (y >= x) ? y : x;
 										}
+										if (prop.get_name().to_string() == "End Scale" || prop.get_name().to_string() == "Start Scale")
+										{
+											y = (y >= 0.f) ? y : 0.f;
+											x = (x >= 0.f) ? x : 0.f;
+										}
+										/*if (prop.get_name().to_string() == "End Scale")
+										{
+											auto& pe = EntityManager::GetInstance().Get<ParticleEmitter>(entityID);
+											if (x > pe.startScale.x)
+												x = pe.startScale.x;
+											if (y > pe.startScale.y)
+												y = pe.startScale.y;
+										}*/
+										
 										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), vec2(x, y));
 										if (tmp.x != x || tmp.y != y)
 											EntityManager::GetInstance().Get<PE::ParticleEmitter>(entityID).CreateAllParticles();
