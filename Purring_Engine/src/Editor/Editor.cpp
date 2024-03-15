@@ -5459,6 +5459,7 @@ namespace PE {
 										// load scene from filepath
 										SceneManager::GetInstance().LoadSceneToLoad(filePath.substr(filePath.find_last_of('\\') + 1));
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+										m_gameplayPaused = false;;
 									}
 									else
 									{
