@@ -6,12 +6,12 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     80%
+ \par      code %:     60%
  \par      changes:    Majority rat idle/patrol AI logic.
 
  \co-author            Krystal Yamin
  \par      email:      krystal.y\@digipen.edu
- \par      code %:     20%
+ \par      code %:     40%
  \par      changes:    06-02-2024
                        Integration of gamestates with the Rat States and Rat AI.
  \brief

@@ -3,9 +3,17 @@
  \module   CSD2401/2451-A
  \file     RatIdle_v2_0.h
  \date     17-01-2024
-
- \author               ONG You Yang
+  
+ \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     99%
+ \par      changes:    All function declarations.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     1%
+ \par      changes:    06-02-2024
+                       Addition of collision and trigger event listeners.
 
  \brief
     This file contains declarations for functions used for rats idle state.

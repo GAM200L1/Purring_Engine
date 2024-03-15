@@ -4,8 +4,16 @@
  \file     SniperRatAttack_v2_0.h
  \date     09-03-2024
 
- \author:              LIEW Yeni
+ \author:              Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     90%
+ \par      changes:    All function declarations.
+
+ \co-author            LIEW Yeni
  \par      email:      yeni.l@digipen.edu
+ \par      code %:     10%
+ \par      changes:    09-03-2024
+											 Addition of variables required for the attacks.
 
  \brief
 	This file contains declarations of the struct for the Sniper Rat's attacks.
