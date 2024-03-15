@@ -135,10 +135,15 @@ public:
     \param[in] filepath  The path to the file to save to.
     \param[in] serializedData  The data to save.
     *************************************************************************************/
-    void SaveAnimationToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
+    void SerializeAnimation(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
 
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
+
+     \param[in] filename  The path to the file to load from.
+     \param[in] fp  Whether to use the file path as the entity name.
+
+     \return ID of the entity loaded.
     *************************************************************************************/
     size_t LoadFromFile(std::string const& filename, bool fp = false);
 
@@ -148,7 +153,7 @@ public:
     \param[in] filename  The path to the file to load from.
     \return nlohmann::json  The loaded data.
     *************************************************************************************/
-    nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
+    nlohmann::json DeserializeAnimation(const std::filesystem::path& filepath);
 
     /*!***********************************************************************************
     \brief Save animation data to file
@@ -180,12 +185,15 @@ public:
     template<typename ComponentType>
     void SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json);
 
+
+    size_t CreationHelper(const nlohmann::json& r_j);
+
     /*!***********************************************************************************
     \brief Loads a prefab from file
 
     \param[in] r_json  The path to the file to save to.
     *************************************************************************************/
-    size_t LoadPrefabFromFile(nlohmann::json& r_json);
+    size_t CreateEntityFromPrefab(std::string const& r_filePath);
 
     // ----- Private Methods ----- //
 private:

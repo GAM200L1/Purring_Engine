@@ -17,6 +17,7 @@
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "SniperRatAttack_v2_0.h"
+#include "ResourceManager/ResourceManager.h"
 
 //#define DEBUG_PRINT
 
@@ -55,10 +56,8 @@ namespace PE
 #ifdef DEBUG_PRINT
 				std::cout << "SniperRatAttack_v2_0::ExecuteAttack(" << mainID << ") correct frame of anim" << std::endl;
 #endif // DEBUG_PRINT
-			// make the rat face the direction it is shooting
-			vec2 newScale{ RatScript_v2_0::GetEntityScale(mainID) };
-			newScale.x = std::abs(newScale.x) * ((m_direction.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
-			RatScript_v2_0::ScaleEntity(mainID, newScale.x, newScale.y);
+
+			RatScript_v2_0::UpdateEntityFacingdirection(mainID, m_direction);
 
 			// shoots the projectile
 			RatScript_v2_0::ToggleEntity(spikeballID, true);
@@ -82,7 +81,7 @@ namespace PE
 
 	void SniperRatAttack_v2_0::CreateAttackObjects()
 	{
-		spikeballID = SerializationManager{}.LoadFromFile("RatSpikeball.prefab");
+		spikeballID = ResourceManager::GetInstance().LoadPrefabFromFile("RatSpikeball.prefab");
 
 		RatScript_v2_0::ToggleEntity(spikeballID, false); // deactivate spikeball
 		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(mainID));

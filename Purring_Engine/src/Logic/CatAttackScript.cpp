@@ -28,6 +28,7 @@
 #include "CatAttackScript.h"
 #include "CatMovementScript.h"
 #include "RatScript.h"
+#include "ResourceManager/ResourceManager.h"
 
 namespace PE
 {
@@ -147,8 +148,7 @@ namespace PE
 				// The telegraphs have not been enabled and the cat was clicked
 				if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
 				{
-					SerializationManager serializationManager;
-					EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Selection SFX.prefab");
+					EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Cat Selection SFX.prefab");
 					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 					EntityManager::GetInstance().RemoveEntity(sound);
@@ -343,8 +343,7 @@ namespace PE
 			
 			if (!playShootOnce)
 			{
-				SerializationManager serializationManager;
-				EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Attack SFX.prefab");
+				EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Cat Attack SFX.prefab");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
 				EntityManager::GetInstance().RemoveEntity(sound);

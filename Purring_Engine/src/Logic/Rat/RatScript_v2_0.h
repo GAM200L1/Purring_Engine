@@ -133,6 +133,24 @@ namespace PE
 		*************************************************************************************/
 		static void RotateEntityRelative(EntityID const transformId, float const orientation);
 
+		/*!***********************************************************************************
+		 \brief Flips the sprite along the x axis depending on the direction it is facing.
+				(basically makes the x scale negative if facing left, makes it positive if facing right)
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] r_direction forward direction of the transform.
+		*************************************************************************************/
+		static void UpdateEntityFacingdirection(EntityID const transformId, vec2 const& r_direction);
+
+		/*!***********************************************************************************
+		 \brief Returns true if the direction is along the positive x axis.
+
+		 \param[in] r_direction direction to check if along the positive x axis.
+
+		 \return Returns true if the direction is along the positive x axis, false otherwise.
+		*************************************************************************************/
+		static bool GetIsFacingRight(vec2 const& r_direction);
+
 
 		// ----- Animation Helper Functions ----- //
 
@@ -250,16 +268,32 @@ namespace PE
 		 \brief Rotates the movement telegraph to face the target position of the rat 
 				and enable it.
 
+		 \param[in] id - EntityID of the rat.
 		 \param[in] r_targetPosition - Position that the rat aims to move towards.
 		*************************************************************************************/
-		void EnableTelegraphs(EntityID id, vec2 const& r_targetPosition);
+		void EnableMovementTelegraphs(EntityID id, vec2 const& r_targetPosition);
 
 		/*!***********************************************************************************
 		 \brief Disables the movement telegraphs.
 
 		 \param[in] id - EntityID of the rat.
 		*************************************************************************************/
-		void DisableTelegraphs(EntityID id);
+		void DisableMovementTelegraphs(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Enables the detection telegraph (a question mark).Called by an animation event.
+
+		 \param[in] id - EntityID of the rat.
+		 \param[in] ratIconType - Type of icon animation (detect or confused) to play.
+		*************************************************************************************/
+		void EnableDetectionTelegraphs(EntityID id, EnumRatIconAnimations ratIconType);
+
+		/*!***********************************************************************************
+		 \brief Disables the detection telegraph (a question mark). Called by an animation event.
+
+		 \param[in] id - EntityID of the rat.
+		*************************************************************************************/
+		void DisableDetectionTelegraphs(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Disables all entities spawned by the rat.
@@ -362,6 +396,15 @@ namespace PE
 		\return Returns true if the execution phase should time out, false otherwise.
 		*************************************************************************************/
 		bool GetExecutionPhaseTimeout(EntityID const id);
+
+		/*!***********************************************************************************
+		\brief Returns true if the rat is aggressive (i.e. in movement or attack state).
+
+		\param[in] id - EntityID of the rat.
+
+		\return Returns true if the rat is in an aggressive state, false otherwise.
+		*************************************************************************************/
+		bool GetIsAggressive(EntityID const id);
 
 
 		// --- COLLISION DETECTION --- // 
@@ -624,11 +667,25 @@ namespace PE
 		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
 
 		/*!***********************************************************************************
+		 \brief Create a prefab to child the telegraphs to.
+
+		 \param[in, out] r_data - Reference to this rat's data.
+		*************************************************************************************/
+		void CreateRatTelegraphPivot(RatScript_v2_0_Data& r_data);
+
+		/*!***********************************************************************************
 		 \brief Load the movement telegraph prefab and store it in the rat data.
 
 		 \param[in, out] r_data - Reference to this rat's data.
 		*************************************************************************************/
 		void CreateRatPathTelegraph(RatScript_v2_0_Data& r_data);
+
+		/*!***********************************************************************************
+		 \brief Load the detection telegraph prefab and store it in the rat data.
+
+		 \param[in, out] r_data - Reference to this rat's data.
+		*************************************************************************************/
+		void CreateRatDetectionTelegraph(RatScript_v2_0_Data& r_data);
 
 		/*!***********************************************************************************
 		 \brief Create an instance of the appropriate attack object for the rat according 
