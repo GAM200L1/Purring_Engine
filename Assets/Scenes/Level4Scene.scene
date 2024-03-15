@@ -2294,8 +2294,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3309,8 +3309,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 10,
@@ -3507,7 +3507,7 @@
                             78,
                             104
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "NoGoAreas",
                         "parent": null,
                         "sceneID": 24
@@ -3546,12 +3546,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -642.1004028320313,
+                                "y": -234.800048828125
                             },
                             "min": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -958.1004028320313,
+                                "y": -345.800048828125
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3571,7 +3571,7 @@
                         "Old ID": 75,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "NoGo1",
                         "parent": 74,
                         "sceneID": 75
@@ -3590,11 +3590,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -800.1004028320313,
-                            "y": -292.80010986328125
+                            "y": -290.300048828125
                         },
                         "relativeposition": {
                             "x": -800.1004028320313,
-                            "y": -292.80010986328125
+                            "y": -290.300048828125
                         },
                         "relorientation": 0.0,
                         "width": 316.0
@@ -3610,12 +3610,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -647.5999755859375,
+                                "y": 398.4000244140625
                             },
                             "min": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -953.5999755859375,
+                                "y": 284.4000244140625
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3635,7 +3635,7 @@
                         "Old ID": 76,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "NoGo2",
                         "parent": 74,
                         "sceneID": 76
@@ -3654,11 +3654,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -800.5999755859375,
-                            "y": 346.4000244140625
+                            "y": 341.4000244140625
                         },
                         "relativeposition": {
                             "x": -800.5999755859375,
-                            "y": 346.4000244140625
+                            "y": 341.4000244140625
                         },
                         "relorientation": 0.0,
                         "width": 306.0
@@ -3674,12 +3674,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -768.6846923828125,
+                                "y": -103.52996063232422
                             },
                             "min": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -953.116455078125,
+                                "y": -220.67007446289063
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3699,7 +3699,7 @@
                         "Old ID": 78,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "NoGo3",
                         "parent": 74,
                         "sceneID": 78
@@ -3717,12 +3717,12 @@
                         "height": 117.14012145996094,
                         "orientation": 0.0,
                         "position": {
-                            "x": -870.9005737304688,
-                            "y": -167.09999084472656
+                            "x": -860.9005737304688,
+                            "y": -162.1000213623047
                         },
                         "relativeposition": {
-                            "x": -870.9005737304688,
-                            "y": -167.09999084472656
+                            "x": -860.9005737304688,
+                            "y": -162.1000213623047
                         },
                         "relorientation": 0.0,
                         "width": 184.43182373046875
@@ -4356,8 +4356,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4435,8 +4435,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4526,8 +4526,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4791,12 +4791,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -772.651123046875,
+                                "y": 280.70703125
                             },
                             "min": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -944.149658203125,
+                                "y": 30.09276580810547
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4816,7 +4816,7 @@
                         "Old ID": 104,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "NoGo4",
                         "parent": 74,
                         "sceneID": 104
@@ -4834,12 +4834,12 @@
                         "height": 250.61427307128906,
                         "orientation": 0.0,
                         "position": {
-                            "x": -865.900390625,
-                            "y": 152.89987182617188
+                            "x": -858.400390625,
+                            "y": 155.39990234375
                         },
                         "relativeposition": {
-                            "x": -865.900390625,
-                            "y": 152.89987182617188
+                            "x": -858.400390625,
+                            "y": 155.39990234375
                         },
                         "relorientation": 0.0,
                         "width": 171.49851989746094
@@ -5033,8 +5033,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
