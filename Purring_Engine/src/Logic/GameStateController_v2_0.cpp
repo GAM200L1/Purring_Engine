@@ -109,9 +109,10 @@ namespace PE
 		}
 
 		//subscribe to events
-		m_scriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
+			m_scriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
 			m_scriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController_v2_0::OnWindowOutOfFocus, this)
 			m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
+			m_scriptData[id].returnFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus,GameStateController_v2_0::OnWindowReturnFocus,this)
 
 			//resetting current turn
 			currentTurn = 0;
@@ -302,6 +303,7 @@ namespace PE
 		{
 			REMOVE_KEY_EVENT_LISTENER(m_scriptData[id].keyEventHandlerId);
 			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].outOfFocusEventHandlerId);
+			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].returnFocusEventHandlerId);
 			REMOVE_MOUSE_EVENT_LISTENER(m_scriptData[id].mouseClickEventID);
 		}
 
@@ -356,6 +358,14 @@ namespace PE
 			PauseBGM();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
+		}
+	}
+
+	void GameStateController_v2_0::OnWindowReturnFocus(const PE::Event<PE::WindowEvents>& r_event)
+	{
+		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
+		{
+			ResumeBGM();
 		}
 	}
 
@@ -738,7 +748,7 @@ namespace PE
 
 			PauseManager::GetInstance().SetPaused(false);
 
-			ResumeBGM();
+			//ResumeBGM();
 			PlayClickAudio();
 			PlayPageAudio();
 		}

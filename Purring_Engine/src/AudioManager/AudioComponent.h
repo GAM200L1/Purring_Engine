@@ -144,13 +144,13 @@ namespace PE
         \brief     Begins a fade-in effect, smoothly increasing volume to its original level over the specified duration.
         \param     duration Fade-in time in seconds.
         *************************************************************************************/
-        void StartIndividualFadeIn(float duration);
+        void StartIndividualFadeIn(float targetVolume, float duration);
 
         /*!***********************************************************************************
         \brief     Begins a fade-out effect, smoothly decreasing volume to zero over the specified duration.
         \param     duration Fade-out time in seconds.
         *************************************************************************************/
-        void StartIndividualFadeOut(float duration);
+        void StartIndividualFadeOut(float targetVolume, float duration);
 
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
@@ -175,6 +175,7 @@ namespace PE
         bool m_isFadingInIndividual = false;
         float m_fadeDurationIndividual = 0.0f;
         float m_fadeProgressIndividual = 0.0f;
-        float m_originalVolume;
+        float m_originalVolume = 1.0f;
+        float m_targetVolumeIndividual;
     };
 }

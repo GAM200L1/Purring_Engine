@@ -179,25 +179,37 @@ namespace PE
         m_fadeProgressIndividual += deltaTime / m_fadeDurationIndividual;
         m_fadeProgressIndividual = std::min(m_fadeProgressIndividual, 1.0f);
 
-        float volume = m_isFadingInIndividual
-            ? m_fadeProgressIndividual
-            : (1.0f - m_fadeProgressIndividual);
+        float newVolume;
+        if (m_isFadingInIndividual)
+        {
+            // For fade in, interpolate from 0 to the target volume
+            newVolume = m_fadeProgressIndividual * m_targetVolumeIndividual;
+        }
+        else
+        {
+            // For fade out, interpolate from the current volume to the target volume
+            newVolume = (1.0f - m_fadeProgressIndividual) * m_originalVolume + m_fadeProgressIndividual * m_targetVolumeIndividual;
+        }
 
-        SetVolume(volume * m_originalVolume);
+        SetVolume(newVolume);
 
         if (m_fadeProgressIndividual >= 1.0f) m_isFadingIndividual = false;
     }
 
-    void AudioComponent::StartIndividualFadeIn(float duration)
+    void AudioComponent::StartIndividualFadeIn(float targetVolume, float duration)
     {
+        m_targetVolumeIndividual = targetVolume;
+        m_originalVolume = GetVolume(); // Capture the current volume as the original volume
         m_isFadingIndividual = true;
         m_isFadingInIndividual = true;
         m_fadeDurationIndividual = duration;
-        m_fadeProgressIndividual = 0.0f;
+        m_fadeProgressIndividual = 0.0f; // Reset fade progress
     }
 
-    void AudioComponent::StartIndividualFadeOut(float duration)
+
+    void AudioComponent::StartIndividualFadeOut(float targetVolume, float duration)
     {
+        m_targetVolumeIndividual = targetVolume;
         m_isFadingIndividual = true;
         m_isFadingInIndividual = false;
         m_fadeDurationIndividual = duration;

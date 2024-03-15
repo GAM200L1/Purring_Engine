@@ -61,7 +61,7 @@ namespace PE
 		int NumberInList{5};
 		std::vector<EntityID> clicklisttest;
 
-		int keyEventHandlerId, outOfFocusEventHandlerId, mouseClickEventID;
+		int keyEventHandlerId, outOfFocusEventHandlerId, mouseClickEventID,returnFocusEventHandlerId;
 	};
 
 	class GameStateController_v2_0 : public Script
@@ -134,6 +134,12 @@ namespace PE
 		 \param[in]     Event containing window-specific details.
 		*************************************************************************************/
 		void OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event);
+
+		/*!***********************************************************************************
+		 \brief			Handle window out of focus event.
+		 \param[in]     Event containing window-specific details.
+		*************************************************************************************/
+		void OnWindowReturnFocus(const PE::Event<PE::WindowEvents>& r_event);
 
 		/*!***********************************************************************************
 		 \brief			Handle Key Press event.

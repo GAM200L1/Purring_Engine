@@ -77,7 +77,9 @@ namespace PE
 
             if (fadeInDuration > 0.0f)
             {
-                audioComponent.StartIndividualFadeIn(fadeInDuration);
+                m_fadeProgress = 0.0f; // resetting global fade progress
+
+                audioComponent.StartIndividualFadeIn(m_maxVolume, fadeInDuration);
             }
             else
             {
@@ -95,6 +97,7 @@ namespace PE
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
 
+
     void GlobalMusicManager::PlaySFX(const std::string& r_prefabPath, bool loop)
     {
         EntityID audioEntity = ResourceManager::GetInstance().LoadPrefabFromFile(r_prefabPath);
@@ -110,21 +113,24 @@ namespace PE
 
     void GlobalMusicManager::PauseBackgroundMusic()
     {
+        m_isPaused = true;
+
+        // Fade all audio components to 20% of their original volume
         for (auto& [key, audioComponent] : m_audioComponents)
         {
-            float currentVolume = audioComponent->GetVolume();
-            m_originalVolumes[key] = currentVolume;  // Store the original volume before changing it
-            audioComponent->SetVolume(currentVolume * 0.2f);  // Reduce volume to 20%
+            // Start fading out to 20% volume over 1 second
+            audioComponent->StartIndividualFadeOut(0.2f, 1.0f);
         }
     }
 
     void GlobalMusicManager::ResumeBackgroundMusic()
     {
-        // Assuming m_originalVolumes is a std::map<std::string, float> storing original volumes
+        m_isPaused = false;
+
         for (auto& [key, audioComponent] : m_audioComponents)
         {
-            float originalVolume = m_originalVolumes[key];  // Retrieve the original volume
-            audioComponent->SetVolume(originalVolume);      // Restore the original volume
+            // Start fading in back to full volume over 1 second
+            audioComponent->StartIndividualFadeIn(1.0f, 1.0f);
         }
     }
 
