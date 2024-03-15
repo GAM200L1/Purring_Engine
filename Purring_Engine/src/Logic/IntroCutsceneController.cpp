@@ -39,6 +39,10 @@ namespace PE
 	void IntroCutsceneController::Init(EntityID id)
 	{
 		m_elapsedTime = 0;
+
+		if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			m_sceneTimer = EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetAnimationDuration();
+		
 		m_endCutscene = false;
 		m_startCutscene = true;
 
@@ -80,9 +84,6 @@ namespace PE
 
 			if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 			{
-				//if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[id].Text))
-				//	EntityManager::GetInstance().Get<TextComponent>(m_scriptData[id].Text).SetText("Continue");
-
 				m_endCutscene = true;
 			}
 

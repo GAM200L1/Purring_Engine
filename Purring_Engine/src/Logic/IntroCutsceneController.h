@@ -150,7 +150,7 @@ namespace PE
 	private:
 		std::map<EntityID, IntroCutsceneControllerData> m_scriptData;
 		SerializationManager m_serializationManager;
-		float m_sceneTimer{ 27.5f };
+		float m_sceneTimer{ 0 };
 		float m_elapsedTime{ 0 };
 		bool m_endCutscene{ false };
 		bool m_startCutscene{ true };
