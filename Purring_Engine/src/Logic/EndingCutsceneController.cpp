@@ -319,13 +319,13 @@ namespace PE
 
 	void EndingCutsceneController::ECAreYouSure(EntityID)
 	{
-		DeactiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
-		ActiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
+		DeactiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
+		ActiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
 	}
 
 	void EndingCutsceneController::ECReturnFromAreYouSure(EntityID)
 	{
-		DeactiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
-		ActiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
+		DeactiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
+		ActiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
 	}
 }
