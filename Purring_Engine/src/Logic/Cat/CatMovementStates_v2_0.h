@@ -93,6 +93,8 @@ namespace PE
 						where the path node should be.
 
 		 \param[in] r_nodePosition - Position to create the path node at.
+		 \return bool - True if the node was positioned successfully, false if the proposed 
+				position is out of bounds or the rat is out of energy.
 		*************************************************************************************/
 		bool AddPathNode(vec2 const& r_nodePosition);
 
