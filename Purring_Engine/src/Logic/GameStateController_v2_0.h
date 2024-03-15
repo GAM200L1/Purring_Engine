@@ -457,7 +457,7 @@ namespace PE
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
 		int currentTurn{1};
-
+		bool gameEnded{ false };
 	private:
 		//Script Variables
 		std::map<EntityID, GameStateController_v2_0Data> m_scriptData; // Data associated with each instance of the script
@@ -524,8 +524,7 @@ namespace PE
 		// Audio Controls
 		bool bgmStarted = false;
 
-		//for end game
-		bool m_gameEnded{ false };
+
 	};
 }
 
