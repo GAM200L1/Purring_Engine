@@ -226,7 +226,7 @@ namespace PE
 	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event)
 	{
 #ifndef GAMERELEASE
-			Editor::GetInstance().AddEventLog(r_event.ToString());
+			//Editor::GetInstance().AddEventLog(r_event.ToString());
 #else
 			if (r_event.GetType() == WindowEvents::WindowLostFocus)
 			{
@@ -247,7 +247,7 @@ namespace PE
 	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
 	{
 #ifndef GAMERELEASE
-			Editor::GetInstance().AddEventLog(r_event.ToString());
+			//Editor::GetInstance().AddEventLog(r_event.ToString());
 #endif
 	}
 
@@ -255,7 +255,7 @@ namespace PE
 	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
 	{
 #ifndef GAMERELEASE
-			Editor::GetInstance().AddEventLog(r_event.ToString());
+			//Editor::GetInstance().AddEventLog(r_event.ToString());
 #endif
 
 			//dynamic cast

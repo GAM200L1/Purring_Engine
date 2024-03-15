@@ -381,43 +381,62 @@ namespace PE
 			{
 				SetPauseStateV2();
 			}
+
+			return;
 		}
 
 		if (KTE.keycode == GLFW_KEY_F1)
 		{
 			WinGame();
+			return;
 		}
 
 		if (KTE.keycode == GLFW_KEY_F3)
 		{
 			LoseGame();
+			return;
 		}
+
+		int minNumber = (m_currentLevel < 2) ? 1 : 0;
 
 		if (KTE.keycode == GLFW_KEY_F4)
 		{
+			if (currentState == GameStates_v2_0::DEPLOYMENT)
+				return;
+
+
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > minNumber)
 			NextStage(0);
 		}		
 		
 		if (KTE.keycode == GLFW_KEY_F5)
 		{
+			if (currentState == GameStates_v2_0::DEPLOYMENT)
+				return;
+
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > minNumber)
 			NextStage(1);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F6)
 		{
+			if (currentState == GameStates_v2_0::DEPLOYMENT)
+				return;
+
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > minNumber)
 			NextStage(2);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F7)
 		{
+			if (currentState == GameStates_v2_0::DEPLOYMENT)
+				return;
+
 			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->UpdateCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
-			if(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > 1)
+			if(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance).size() > minNumber)
 			NextStage(3);
 		}
 
@@ -807,6 +826,13 @@ namespace PE
 
 	void GameStateController_v2_0::NextState(EntityID)
 	{
+		if (m_currentLevel == 3)
+		{
+			BossRatScriptData* p_brsd = GETSCRIPTDATA(BossRatScript, GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss);
+			if (p_brsd->currenthealth <= 0)
+				return;
+		}
+
 		if (currentState == GameStates_v2_0::PLANNING && !m_nextTurnOnce)
 		{
 			SetGameState(GameStates_v2_0::EXECUTE);
@@ -1339,6 +1365,23 @@ namespace PE
 
 	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, int Current, int Max, bool isRat)
 	{
+		float maxFloat{ static_cast<float>(Max) };
+		float healthPercentage = static_cast<float>(Current) / (CompareFloats(0.f, maxFloat) ? 1.f : maxFloat);
+		vec4 fillColor;
+
+		if (healthPercentage <= 0.34f)
+		{
+			fillColor = m_fillColorAlmostEmpty;
+		}
+		else if (healthPercentage <= 0.67f)
+		{
+			fillColor = m_fillColorHalf;
+		}
+		else
+		{
+			fillColor = m_fillColorFull;
+		}
+
 		if(isRat)
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].RatPortrait).children)
 		{
@@ -1358,6 +1401,13 @@ namespace PE
 					//get value from specific rat
 					EntityManager::GetInstance().Get<GUISlider>(id2).m_maxValue = static_cast<float>(Max);
 					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = static_cast<float>(Current);
+
+					EntityID fillId = EntityManager::GetInstance().Get<GUISlider>(id2).m_knobID.value();
+
+					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(fillId))
+					{
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(fillId).SetColor(fillColor.x, fillColor.y, fillColor.z, fillColor.w);
+					}
 				}
 			}
 
