@@ -695,12 +695,24 @@ namespace PE {
 		{
 			ImGui::Indent();
 			std::map<EntityID, EntityID> childOrder;
+			std::vector<EntityID> rm;
 			for (const auto& childID : EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children)
 			{
+				if (!EntityManager::GetInstance().IsEntityValid(childID))
+				{
+					rm.push_back(childID);
+					continue;
+				}
 				while (childOrder.count(EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID))
 					++EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID;
 				childOrder[EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID] = childID;
 			}
+
+			for (const auto& id : rm)
+			{
+				Hierarchy::GetInstance().DetachChild(id);
+			}
+
 			for (auto [k,v] : childOrder)
 			{
 				if (!EntityManager::GetInstance().Get<EntityDescriptor>(v).isAlive)
@@ -5437,8 +5449,16 @@ namespace PE {
 						m_isRunTime = true;
 						m_showEditor = false;
 						m_showGameView = true;
-						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-						SaveAndPlayScene();
+						if (!m_gameplayPaused)
+						{
+							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+							SaveAndPlayScene();
+							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+						}
+						else
+						{
+							m_gameplayPaused = false;
+						}
 						for (const auto& layer : LayerView<ParticleEmitter>())
 						{
 							for (const auto& id : InternalView(layer))
@@ -5455,12 +5475,18 @@ namespace PE {
 					if (ImGui::Button("Stop")) {
 						m_showEditor = true;
 
-						if (m_isRunTime)
+						if (m_isRunTime && !m_gameplayPaused)
 						{
 							StopAndLoadScene();
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
+
+						if (m_showEditor)
+							m_isRunTime = false;
+
+						m_showGameView = false;
+						GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 						for (const auto& layer : LayerView<ParticleEmitter>(true))
 						{
 							for (const auto& id : InternalView(layer, true))
@@ -5469,11 +5495,6 @@ namespace PE {
 								EntityManager::GetInstance().Get<ParticleEmitter>(id).isActive = false;
 							}
 						}
-						if (m_showEditor)
-							m_isRunTime = false;
-
-						m_showGameView = false;
-						GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)-> SetCurrentLevel(0);
 					}
 					ImGui::EndDisabled();
 				}
@@ -6217,6 +6238,7 @@ namespace PE {
 		{
 			m_isRunTime = false;
 			toDisable = false;
+			m_gameplayPaused = true;
 			for (const auto& layer : LayerView<ParticleEmitter>())
 			{
 				for (const auto& id : InternalView(layer))
