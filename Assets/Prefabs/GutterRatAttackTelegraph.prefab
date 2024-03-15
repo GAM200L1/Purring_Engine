@@ -15,8 +15,8 @@
                                     "x": 0.0,
                                     "y": 0.0
                                 },
-                                "radius": 75.0,
-                                "scaleOffset": 1.5
+                                "radius": 69.0,
+                                "scaleOffset": 1.3799999952316284
                             },
                             "isTrigger": true,
                             "type": "CircleCollider"
@@ -30,7 +30,7 @@
                             "isActive": true,
                             "name": "GutterRatAttackTelegraph",
                             "parent": null,
-                            "sceneID": 2
+                            "sceneID": 1
                         },
                         "Renderer": {
                             "Color": {

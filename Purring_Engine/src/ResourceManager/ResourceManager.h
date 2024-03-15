@@ -158,6 +158,8 @@ namespace PE
         *************************************************************************************/
         bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
+        /*size_t GetPrefab(std::string const& r_name);*/
+
         /*!***********************************************************************************
          \brief Load an entity from a prefab file, returning its ID.
 

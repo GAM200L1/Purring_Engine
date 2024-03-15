@@ -536,6 +536,34 @@ namespace PE
 		*************************************************************************************/
 		float& operator[](unsigned int index);
 
+		/*!***********************************************************************************
+		 \brief Addition operator
+
+		 \param[in] r_rhs	vec4 to add to lhs
+		*************************************************************************************/
+		vec4 operator+(vec4 const& r_rhs) const;
+
+		/*!***********************************************************************************
+		 \brief Subtraction operator
+
+		 \param[in] r_rhs	vec4 to minus from lhs
+		*************************************************************************************/
+		vec4 operator-(vec4 const& r_rhs) const;
+
+		/*!***********************************************************************************
+		 \brief Division operator
+
+		 \param[in] denominator	divisor to divide vec4 by
+		*************************************************************************************/
+		vec4 operator/(float denominator) const;
+
+		/*!***********************************************************************************
+		\brief Multiplicaton operator
+
+		\param[in] multiplier	multiply vec4 by this value
+		*************************************************************************************/
+		vec4 operator*(float multiplier) const;
+
 	};
 
 	//! Matrix 3 column 3 row struct

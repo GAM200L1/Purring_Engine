@@ -6,14 +6,14 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     50%
+ \par      code %:     80%
  \par      changes:    Majority rat movement AI logic.
 
  \co-author            Krystal Yamin
  \par      email:      krystal.y\@digipen.edu
  \par      code %:     20%
  \par      changes:    06-02-2024
-                       Integration of gamestates with the Rat States and Rat AI.
+                       Addition of collision and trigger event listeners.
 
  \brief
     This file contains declarations for functions used for rats movement state.

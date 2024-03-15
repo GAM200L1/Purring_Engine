@@ -20,6 +20,7 @@ namespace PE
 {
     LayerManager::LayerManager()
     {
+        m_storeState.flip();
         m_layerStates.flip();
         m_cachedLayers[ALL];
         for (const auto& id : EntityManager::GetInstance().GetEntitiesInPool(ALL))

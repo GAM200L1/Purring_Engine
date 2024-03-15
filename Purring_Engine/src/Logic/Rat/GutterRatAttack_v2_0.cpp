@@ -47,9 +47,6 @@ namespace PE
 		}
 		else if (attackDuration <= 0.f)
 		{
-#ifdef DEBUG_PRINT
-			std::cout << "GutterRatAttack_v2_0::ExecuteAttack(" << this->mainID << "): animation is done" << std::endl;
-#endif // DEBUG_PRINT
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(this->mainID, EnumRatAnimations::IDLE);
 			return true;
 		}

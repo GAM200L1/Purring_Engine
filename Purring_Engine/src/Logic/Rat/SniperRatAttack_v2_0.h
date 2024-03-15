@@ -4,8 +4,16 @@
  \file     SniperRatAttack_v2_0.h
  \date     09-03-2024
 
- \author:              LIEW Yeni
+ \author:              Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     90%
+ \par      changes:    All function declarations.
+
+ \co-author            LIEW Yeni
  \par      email:      yeni.l@digipen.edu
+ \par      code %:     10%
+ \par      changes:    09-03-2024
+											 Addition of variables required for the attacks.
 
  \brief
 	This file contains declarations of the struct for the Sniper Rat's attacks.
@@ -38,8 +46,8 @@ namespace PE
 		// --- Attack variables
 		EntityID spikeballID{ 0 }; // id of the projectile
 		vec2 shotTargetPosition{}; // Position to aim the bullet at. Set during the movement state.
-		float bulletForce{ 100.f };
-		float bulletRange{ 3.f };
+		float bulletForce{ 125.f };
+		float bulletRange{ 5.f };
 
 		
 		// ----- Constructors ----- //
