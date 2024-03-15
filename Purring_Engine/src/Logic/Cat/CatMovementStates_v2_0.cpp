@@ -175,7 +175,6 @@ namespace PE
 		{
 			// Add a node at the position of the mouse
 			AddPathNode(r_position);
-			CatScript_v2_0::PlayPathPlacementAudio();
 		} // Otherwise too close, don't add any new positions
 
 		return p_data->pathPositions.back();
@@ -208,7 +207,11 @@ namespace PE
 		// Change the position of the node
 		EntityID nodeId{ p_data->pathQuads[p_data->pathPositions.size()] };
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
-		CatHelperFunctions::ToggleEntity(nodeId, true);
+		if (!CatHelperFunctions::IsActive(nodeId)) 
+		{
+				CatScript_v2_0::PlayPathPlacementAudio();
+				CatHelperFunctions::ToggleEntity(nodeId, true);
+		}
 
 		// Add the position to the path positions list
 		p_data->pathPositions.emplace_back(r_nodePosition);

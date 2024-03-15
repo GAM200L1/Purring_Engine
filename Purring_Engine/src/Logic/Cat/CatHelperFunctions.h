@@ -151,6 +151,18 @@ namespace PE
 
 			\param[in] id - ID of the entity to check.
 			*************************************************************************************/
+			static bool IsActive(EntityID const id)
+			{
+				return (EntityManager::GetInstance().Has<EntityDescriptor>(id) && 
+						EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive);
+			}
+
+			/*!***********************************************************************************
+			\brief Identifies if the entity passed in is a cat. Assumes that cats have
+						the keyword "Cat" somewhere in their name in entityDescriptor.
+
+			\param[in] id - ID of the entity to check.
+			*************************************************************************************/
 			static bool IsCat(EntityID const id)
 			{
 				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos);
