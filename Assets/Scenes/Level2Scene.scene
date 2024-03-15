@@ -3308,12 +3308,12 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 10,
+                        "Layer": 10,
                         "Old ID": 69,
                         "Prefab Type": "Canvas Object",
                         "children": [
@@ -3346,12 +3346,12 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
+                        "InteractionLayer": 10,
                         "Layer": 0,
                         "Old ID": 70,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Transition Panel",
                         "parent": 69,
                         "sceneID": 70
@@ -4901,8 +4901,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4980,8 +4980,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5071,8 +5071,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,

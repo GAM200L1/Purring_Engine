@@ -208,6 +208,10 @@ namespace PE {
 
 	Editor::~Editor()
 	{
+		// Restore the layer settings 
+		if(m_showGameView)
+			LayerManager::GetInstance().RestoreLayerState();
+
 		const char* filepath = "../Assets/Settings/config.json";
 		std::ifstream configFile(filepath);
 		nlohmann::json configJson;
@@ -5278,6 +5282,8 @@ namespace PE {
 
 					if (ImGui::Button("Play"))
 					{
+						LayerManager::GetInstance().StoreLayerState();
+						LayerManager::GetInstance().ResetLayerState();
 						m_isRunTime = true;
 						m_showEditor = false;
 						m_showGameView = true;
@@ -5297,6 +5303,7 @@ namespace PE {
 					ImGui::SameLine();
 					ImGui::BeginDisabled();
 					if (ImGui::Button("Stop")) {
+						LayerManager::GetInstance().RestoreLayerState();
 						m_showEditor = true;
 
 						if (m_isRunTime && !m_gameplayPaused)
@@ -6056,6 +6063,7 @@ namespace PE {
 		ImGui::SameLine();
 		if (ImGui::Button("Stop")) 
 		{
+			LayerManager::GetInstance().RestoreLayerState();
 			GameStateManager::GetInstance().ResetDefaultState();
 			m_showEditor = true;
 			toDisable = true;
