@@ -20,6 +20,7 @@
 #include "ECS/Entity.h"
 #include "ParticleSystem.h"
 #include "Layers/LayerManager.h"
+#include "PauseManager.h"
 
 extern Logger engine_logger;
 
@@ -36,6 +37,8 @@ namespace PE
 	void VisualEffectsManager::UpdateSystem(float deltaTime)
 	{
 		// runs updates particles
+		if (PauseManager::GetInstance().IsPaused())
+			return;
 		for (const auto& layer : LayerView<ParticleEmitter>())
 		{
 			for (const auto& id : InternalView(layer))

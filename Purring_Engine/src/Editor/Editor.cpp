@@ -5417,7 +5417,15 @@ namespace PE {
 						m_showGameView = true;
 						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 						SaveAndPlayScene();
+						for (const auto& layer : LayerView<ParticleEmitter>())
+						{
+							for (const auto& id : InternalView(layer))
+							{
 
+								EntityManager::GetInstance().Get<ParticleEmitter>(id).prevPause = EntityManager::GetInstance().Get<ParticleEmitter>(id).pause;
+								EntityManager::GetInstance().Get<ParticleEmitter>(id).prevActive = EntityManager::GetInstance().Get<ParticleEmitter>(id).isActive;
+							}
+						}
 						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 					}
 					ImGui::SameLine();
@@ -5431,7 +5439,14 @@ namespace PE {
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
-
+						for (const auto& layer : LayerView<ParticleEmitter>(true))
+						{
+							for (const auto& id : InternalView(layer, true))
+							{
+								EntityManager::GetInstance().Get<ParticleEmitter>(id).ResetAllParticles();
+								EntityManager::GetInstance().Get<ParticleEmitter>(id).isActive = false;
+							}
+						}
 						if (m_showEditor)
 							m_isRunTime = false;
 
@@ -6161,8 +6176,17 @@ namespace PE {
 		ImGui::BeginDisabled(toDisable);
 		if (ImGui::Button("Play"))
 		{
+			
 			m_isRunTime = true;	
 			toDisable = true;
+			for (const auto& layer : LayerView<ParticleEmitter>())
+			{
+				for (const auto& id : InternalView(layer))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = EntityManager::GetInstance().Get<ParticleEmitter>(id).prevPause;
+				}
+			}
+			
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
@@ -6171,6 +6195,13 @@ namespace PE {
 		{
 			m_isRunTime = false;
 			toDisable = false;
+			for (const auto& layer : LayerView<ParticleEmitter>())
+			{
+				for (const auto& id : InternalView(layer))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = true;
+				}
+			}
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
@@ -6187,7 +6218,15 @@ namespace PE {
 
 				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 			}
-
+			for (const auto& layer : LayerView<ParticleEmitter>(true))
+			{
+				for (const auto& id : InternalView(layer, true))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).ResetAllParticles();
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).isActive = EntityManager::GetInstance().Get<ParticleEmitter>(id).prevActive;
+					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = EntityManager::GetInstance().Get<ParticleEmitter>(id).prevPause;
+				}
+			}
 			if (m_showEditor)
 				m_isRunTime = false;
 

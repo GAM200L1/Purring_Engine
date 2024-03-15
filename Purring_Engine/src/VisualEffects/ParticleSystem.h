@@ -107,12 +107,15 @@ namespace PE
 		*************************************************************************************/
 		nlohmann::json ToJson(size_t id) const;
 
+		
+
 	public:
 		// max number of particles
 		unsigned maxParticles;
 
 		// turn particle system on and off
 		bool isActive;
+		bool prevActive;
 
 		// toggle whether particle system loops
 		bool isLooping;
@@ -154,6 +157,7 @@ namespace PE
 		std::map<std::string, bool> toggles;
 
 		bool pause{false};
+		bool prevPause;
 	private:
 		/*!***********************************************************************************
 		 \brief Generates a position for a particle (can be random according to settings in 
