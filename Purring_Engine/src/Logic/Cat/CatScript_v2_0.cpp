@@ -101,55 +101,6 @@ namespace PE
 		}
 		
 		AnimationComponent& r_catAnimation = EntityManager::GetInstance().Get<AnimationComponent>(id);
-		
-		// cat dies
-		if (m_scriptData[id].toggleDeathAnimation)
-		{
-			// plays death animation
-			PlayAnimation(id, "Death");
-			// TODO: play death audio
-			if (m_scriptData[id].playDeathSound)
-			{
-				m_scriptData[id].playDeathSound = false;
-				for (EntityID& nodeId : m_scriptData[id].pathQuads)
-				{
-					CatHelperFunctions::ToggleEntity(nodeId, false);
-				}
-				
-				PlayDeathAudio(m_scriptData[id].catType);
-			}
-
-			if (r_catAnimation.HasAnimationEnded())
-			{
-				switch (m_scriptData[id].catType)
-				{
-					case EnumCatType::ORANGECAT:
-					{
-						OrangeCatAttackVariables const& vars = std::get<OrangeCatAttackVariables>(m_scriptData[id].attackVariables);
-						// clears entities
-						CatHelperFunctions::ToggleEntity(vars.seismicID, false);
-						CatHelperFunctions::ToggleEntity(vars.telegraphID, false);
-						break;
-					}
-					default: // main cat or grey cat
-					{
-						GreyCatAttackVariables const& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
-						// clears entities
-						for (auto const& [direction, telegraphID] : vars.telegraphIDs)
-						{
-							CatHelperFunctions::ToggleEntity(telegraphID, false);
-						}
-						CatHelperFunctions::ToggleEntity(vars.projectileID, false);
-						break;
-					}
-				}
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->RemoveCatFromCurrent(id);
-				m_scriptData[id].toggleDeathAnimation = false;
-				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
-					p_gsc->LoseGame();
-			}
-			return;
-		}
 
 		// check that state manager is still working
 		if (!m_scriptData[id].p_stateManager)
@@ -157,9 +108,59 @@ namespace PE
 			MakeStateManager(id);
 		}
 
-		// updates state // @TODO: change this
+		// cat dies
+		if (m_scriptData[id].toggleDeathAnimation)
+		{
+			// plays death animation
+			PlayAnimation(id, "Death");
+
+			if (m_scriptData[id].playDeathSound)
+			{
+				m_scriptData[id].playDeathSound = false;
+				PlayDeathAudio(m_scriptData[id].catType);
+				for (EntityID& nodeId : m_scriptData[id].pathQuads)
+				{
+					CatHelperFunctions::ToggleEntity(nodeId, false);
+				}
+			}
+
+			if (r_catAnimation.HasAnimationEnded())
+			{
+				// disable any entities used for attacking etc 
+				switch (m_scriptData[id].catType)
+				{
+				case EnumCatType::ORANGECAT:
+				{
+					OrangeCatAttackVariables const& vars = std::get<OrangeCatAttackVariables>(m_scriptData[id].attackVariables);
+					// clears entities
+					CatHelperFunctions::ToggleEntity(vars.seismicID, false);
+					CatHelperFunctions::ToggleEntity(vars.telegraphID, false);
+					break;
+				}
+				default: // main cat or grey cat
+				{
+					GreyCatAttackVariables const& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
+					// clears entities
+					for (auto const& [direction, telegraphID] : vars.telegraphIDs)
+					{
+						CatHelperFunctions::ToggleEntity(telegraphID, false);
+					}
+					CatHelperFunctions::ToggleEntity(vars.projectileID, false);
+					break;
+				}
+				}
+				// disable the cat
+				CatHelperFunctions::ToggleEntity(id, false);
+				m_scriptData[id].toggleDeathAnimation = false;
+				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
+					p_gsc->LoseGame();
+			}
+			return;
+		}
+
+		// updates state
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
-		
+
 		// changes states depending on cat type
 		switch (m_scriptData[id].catType)
 		{
@@ -500,16 +501,12 @@ namespace PE
 		}
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
-
-		
 	}
 
 	void CatScript_v2_0::PlayPathPlacementAudio()
 	{
 		std::string soundPrefabPath = "AudioObject/Movement Planning SFX.prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
-
-		
 	}
 
 	void CatScript_v2_0::PlayFootstepAudio()
@@ -519,8 +516,6 @@ namespace PE
 		soundPrefabPath += std::to_string(randNum) + ".prefab";
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
-
-		
 	}
 
 	void CatScript_v2_0::PlayCatAttackAudio(EnumCatType catType)
@@ -544,8 +539,6 @@ namespace PE
 			return;
 		}
 		
-		
-
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
 
@@ -566,8 +559,6 @@ namespace PE
 		default:
 			return;
 		}
-
-		
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}

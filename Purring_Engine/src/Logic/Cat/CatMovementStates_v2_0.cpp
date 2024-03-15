@@ -144,7 +144,8 @@ namespace PE
 				p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
 			}
 		}
-		else if (p_data->pathPositions.empty())
+		
+		if (p_data->pathPositions.empty())
 		{
 			p_data->pathPositions.emplace_back(r_position);
 		}
@@ -163,7 +164,9 @@ namespace PE
 			{
 				float distanceToMove{ distanceOfPosition > p_data->maxDistance ? p_data->maxDistance : distanceOfPosition };
 
-				if (!AddPathNode(p_data->pathPositions.back() + directionOfProposed * distanceToMove)) {
+				if (!AddPathNode(p_data->pathPositions.back() + directionOfProposed * distanceToMove)) 
+				{
+					CatScript_v2_0::PlayPathPlacementAudio();
 					break;
 				}
 			}
@@ -172,6 +175,7 @@ namespace PE
 		{
 			// Add a node at the position of the mouse
 			AddPathNode(r_position);
+			CatScript_v2_0::PlayPathPlacementAudio();
 		} // Otherwise too close, don't add any new positions
 
 		return p_data->pathPositions.back();
@@ -205,8 +209,6 @@ namespace PE
 		EntityID nodeId{ p_data->pathQuads[p_data->pathPositions.size()] };
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
 		CatHelperFunctions::ToggleEntity(nodeId, true);
-		
-		CatScript_v2_0::PlayPathPlacementAudio();
 
 		// Add the position to the path positions list
 		p_data->pathPositions.emplace_back(r_nodePosition);
@@ -436,6 +438,7 @@ namespace PE
 					if (m_movementTimer <= 0.f)
 					{
 						// extra in case prevent going through does not work well
+						CatHelperFunctions::PositionEntity(id, p_data->pathPositions[p_data->currentPositionIndex]);
 						EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
 					}
 				}
@@ -488,6 +491,8 @@ namespace PE
 			if ((CheckExitPoint(OTEE.Entity1) && OTEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
 				|| (CheckExitPoint(OTEE.Entity2) && OTEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
 			{
+				CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+				p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage(p_gsc->GetCurrentLevel() + 1); // goes to the next stage
 			}
 		}
