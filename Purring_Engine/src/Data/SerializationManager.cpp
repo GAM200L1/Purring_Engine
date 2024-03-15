@@ -569,6 +569,8 @@ size_t SerializationManager::CreationHelper(const nlohmann::json& r_j)
                     parent = DeserializeEntity(entity);
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).children.clear();
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).sceneID = parent;
+
+                    GETANIMATIONMANAGER()->SetEntityFirstFrame(parent);
                 }
                 else
                 {
@@ -586,6 +588,8 @@ size_t SerializationManager::CreationHelper(const nlohmann::json& r_j)
                     }
                     PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).sceneID = id;
                     PE::Hierarchy::GetInstance().AttachChild(parent, id);
+
+                    GETANIMATIONMANAGER()->SetEntityFirstFrame(id);
                 }
             }
 
