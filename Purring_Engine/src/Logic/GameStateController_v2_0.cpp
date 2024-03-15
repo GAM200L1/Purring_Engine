@@ -484,6 +484,14 @@ namespace PE
 							m_isPotraitShowing = true;
 							m_bossRatSelected = true;
 							m_isRat = true;
+
+							int randomSelection = std::rand() % 5 + 1;  // Random number between 1 and 5
+							std::string soundPath = "AudioObject/Rat Brawler Selection SFX" + std::to_string(randomSelection) + ".prefab";
+							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
+
+							//@DEBUGHANS For PR-er to test
+							//std::cout << "Playing Boss Rat selection sound: " << soundPath << std::endl;
+
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Rat King_256px.png"));
 							ActiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
