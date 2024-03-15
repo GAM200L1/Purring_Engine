@@ -6,9 +6,13 @@
 
  \author:              Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
+ \par      code %:     80%
+ \par	   changed:	   13-3-2024
 
  \co-author:		   LIEW Yeni
  \par	   email:	   yeni.l@digipen.edu
+ \par      code %:     20%
+ \par	   changed:	   13-3-2024
 
  \brief
 	This file contains declarations for functions used for a grey cat's movement states.
