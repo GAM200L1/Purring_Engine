@@ -283,7 +283,7 @@ namespace PE
 					++m_catPlaced;
 
 					// play deployment audio
-					PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/Cat Movement SFX 2.prefab" }, false);
+					PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/Cat Deployment SFX.prefab" }, false);
 
 					return;
 				}
