@@ -441,8 +441,19 @@ namespace PE
 					{
 						// extra in case prevent going through does not work well
 						CatHelperFunctions::PositionEntity(id, p_data->pathPositions[p_data->currentPositionIndex]);
+						// Deactivate this node
+						CatHelperFunctions::ToggleEntity(p_data->pathQuads[p_data->currentPositionIndex], false);
+
+						if (p_data->currentPositionIndex >= (p_data->pathPositions.size() - 1))
+						{
+							//	This is the last node, so stop the movement of the cat
+							StopMoving(id);
+						}
+
+						++(p_data->currentPositionIndex);
 						//EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
 						m_startMovementTimer = false;
+						m_movementTimer = 0.5f;
 					}
 				}
 				else
