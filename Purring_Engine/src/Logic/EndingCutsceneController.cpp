@@ -28,7 +28,9 @@
 #include "PauseManager.h"
 #include "AudioManager/GlobalMusicManager.h"
 #include "ResourceManager/ResourceManager.h"
-
+#include "Logic/GameStateController_v2_0.h"
+#include "Logic/LogicSystem.h"
+#include "GUISystem.h"
 #include <limits>
 
 
@@ -110,6 +112,9 @@ namespace PE
 	void EndingCutsceneController::OnAttach(EntityID id)
 	{
 		m_scriptData[id] = EndingCutsceneControllerData();
+
+		//set the current ID
+		 m_currentCutsceneObject = id;
 	}
 
 	void EndingCutsceneController::OnDetach(EntityID id)
@@ -148,6 +153,14 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
+	void EndingCutsceneController::PlayWinAudio()
+	{
+		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Game Win SFX.prefab");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound(AudioComponent::AudioType::SFX);
+		EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
 	void EndingCutsceneController::PlaySceneTransitionAudio()
 	{
 		EntityID sound = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Scene Transition SFX.prefab");
@@ -158,9 +171,13 @@ namespace PE
 
 	EndingCutsceneController::EndingCutsceneController()
 	{
-		//REGISTER_UI_FUNCTION(ContinueToLevel, PE::EndingCutsceneController);
-		REGISTERANIMATIONFUNCTION(SetButtonText, PE::IntroCutsceneController);
-		REGISTERANIMATIONFUNCTION(StartCutscene, PE::IntroCutsceneController);
+		REGISTERANIMATIONFUNCTION(SetButtonText, PE::EndingCutsceneController);
+		REGISTERANIMATIONFUNCTION(StartCutscene, PE::EndingCutsceneController);
+
+		REGISTER_UI_FUNCTION(ECReturnToMainMenu, PE::EndingCutsceneController);
+		REGISTER_UI_FUNCTION(ECAreYouSure, PE::EndingCutsceneController);
+		REGISTER_UI_FUNCTION(ECReturnFromAreYouSure, PE::EndingCutsceneController);
+		REGISTER_UI_FUNCTION(WinScreen, PE::EndingCutsceneController);
 	}
 
 	void EndingCutsceneController::TransitionPanelFade(EntityID const id, float deltaTime)
@@ -174,7 +191,7 @@ namespace PE
 		if (fadeInSpeed >= 1)
 		{
 			PlaySceneTransitionAudio();
-			SceneManager::GetInstance().LoadScene("Level1Scene.scene");
+			SceneManager::GetInstance().LoadScene("MainMenu.scene");
 		}
 	}
 
@@ -218,8 +235,97 @@ namespace PE
 		PauseManager::GetInstance().SetPaused(true);
 	}
 
+	void EndingCutsceneController::ActiveObject(EntityID id)
+	{
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
+
+		//set active the current object
+		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = true;
+
+		//set active the childrens if there are any
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+		{
+			if (EntityManager::GetInstance().Has<GUIButton>(id2))
+			{
+				EntityManager::GetInstance().Get<GUIButton>(id2).disabled = false;
+			}
+
+			//set active the children of the childrens, up to only 2nd child level
+			for (auto id3 : EntityManager::GetInstance().Get<EntityDescriptor>(id2).children)
+			{
+				if (EntityManager::GetInstance().Has<GUIButton>(id3))
+				{
+					EntityManager::GetInstance().Get<GUIButton>(id3).disabled = false;
+				}
+
+				if (!EntityManager::GetInstance().Has<EntityDescriptor>(id3))
+					break;
+
+				EntityManager::GetInstance().Get<EntityDescriptor>(id3).isActive = true;
+			}
+			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+				break;
+
+			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+		}
+	}
+
+	void EndingCutsceneController::DeactiveObject(EntityID id)
+	{
+		//deactive all the children objects first
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+			{
+				if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+					break;
+
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
+
+		//deactive current object
+		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
+	}
+
+	
 	void EndingCutsceneController::OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event)
 	{
 		PauseManager::GetInstance().SetPaused(false);
+	}
+
+	void EndingCutsceneController::WinScreen(EntityID)
+	{
+		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::WIN;
+
+		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Outro Cutscene Music.prefab");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
+		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		PlayWinAudio();
+
+		ActiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
+		ActiveObject(m_scriptData[m_currentCutsceneObject].BackgroundCanvas);
+	}
+
+	void EndingCutsceneController::ECReturnToMainMenu(EntityID)
+	{
+		m_isTransitioning = true;
+		PlayClickAudio();
+	}
+
+	void EndingCutsceneController::ECAreYouSure(EntityID)
+	{
+		DeactiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
+		ActiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
+	}
+
+	void EndingCutsceneController::ECReturnFromAreYouSure(EntityID)
+	{
+		DeactiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
+		ActiveObject(m_scriptData[m_currentCutsceneObject].AreYouSureCanvas);
 	}
 }

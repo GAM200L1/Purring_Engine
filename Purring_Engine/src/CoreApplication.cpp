@@ -302,6 +302,9 @@ RTTR_REGISTRATION
         .property("CutsceneObject", &PE::EndingCutsceneControllerData::CutsceneObject)
         .property("FinalScene", &PE::EndingCutsceneControllerData::FinalScene)
         .property("Text", &PE::EndingCutsceneControllerData::Text)
+        .property("AreYouSureCanvas", &PE::EndingCutsceneControllerData::AreYouSureCanvas)
+        .property("BackgroundCanvas", &PE::EndingCutsceneControllerData::BackgroundCanvas)
+        .property("WinCanvas", &PE::EndingCutsceneControllerData::WinCanvas)
         .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
