@@ -303,7 +303,7 @@ namespace PE
 
 	void EndingCutsceneController::WinScreen(EntityID)
 	{
-		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::WIN;
+		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState = GameStates_v2_0::WIN;
 
 		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Outro Cutscene Music.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
