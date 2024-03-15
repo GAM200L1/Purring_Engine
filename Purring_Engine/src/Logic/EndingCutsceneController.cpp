@@ -39,6 +39,10 @@ namespace PE
 	void EndingCutsceneController::Init(EntityID id)
 	{
 		m_elapsedTime = 0;
+
+		if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			m_sceneTimer = EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetAnimationDuration();
+
 		m_endCutscene = false;
 		m_startCutscene = true;
 
@@ -63,13 +67,7 @@ namespace PE
 		{
 			m_elapsedTime += deltaTime;
 
-			if (m_startCutscene)
-			{
-				PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Outro Cutscene Music.prefab", false, 5.0f);
-
-				m_startCutscene = false;
-			}
-			else
+			if (!m_startCutscene)
 			{
 				EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Outro Cutscene Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
@@ -86,9 +84,6 @@ namespace PE
 
 			if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 			{
-				if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[id].Text))
-					EntityManager::GetInstance().Get<TextComponent>(m_scriptData[id].Text).SetText("Next");
-
 				m_endCutscene = true;
 			}
 
@@ -164,7 +159,8 @@ namespace PE
 	EndingCutsceneController::EndingCutsceneController()
 	{
 		//REGISTER_UI_FUNCTION(ContinueToLevel, PE::EndingCutsceneController);
-		//REGISTERANIMATIONFUNCTION(SetButtonText, PE::EndingCutsceneController);
+		REGISTERANIMATIONFUNCTION(SetButtonText, PE::IntroCutsceneController);
+		REGISTERANIMATIONFUNCTION(StartCutscene, PE::IntroCutsceneController);
 	}
 
 	void EndingCutsceneController::TransitionPanelFade(EntityID const id, float deltaTime)
@@ -206,7 +202,15 @@ namespace PE
 
 	void EndingCutsceneController::SetButtonText(EntityID id)
 	{
-		
+		if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[id].Text))
+			EntityManager::GetInstance().Get<TextComponent>(m_scriptData[id].Text).SetText("Next");
+	}
+
+	void EndingCutsceneController::StartCutscene(EntityID id)
+	{
+		PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Outro Cutscene Music.prefab", false, 5.0f);
+
+		m_startCutscene = false;
 	}
 
 	void EndingCutsceneController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)

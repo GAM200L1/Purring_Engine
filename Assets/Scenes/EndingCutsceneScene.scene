@@ -67,6 +67,17 @@
                         },
                         "TextureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1_1920x1080.png"
                     },
+                    "ScriptComponent": {
+                        "EndingCutsceneController": {
+                            "data": {
+                                "CutsceneObject": 1,
+                                "FinalScene": 4,
+                                "Text": 14,
+                                "TransitionScreen": 10
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 1080.0,
                         "orientation": 0.0,
@@ -99,17 +110,7 @@
                         "parent": null,
                         "sceneID": 3
                     },
-                    "ScriptComponent": {
-                        "EndingCutsceneController": {
-                            "data": {
-                                "CutsceneObject": 1,
-                                "FinalScene": 4,
-                                "Text": 14,
-                                "TransitionScreen": 10
-                            },
-                            "state": 0
-                        }
-                    },
+                    "ScriptComponent": null,
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
@@ -298,7 +299,7 @@
                         "isActive": true,
                         "name": "GUIButton",
                         "parent": 6,
-                        "sceneID": 0
+                        "sceneID": 7
                     },
                     "GUI": {
                         "disabled": false,
@@ -552,7 +553,7 @@
                         "isActive": true,
                         "name": "UI Object",
                         "parent": 10,
-                        "sceneID": 0
+                        "sceneID": 11
                     },
                     "GUIRenderer": {
                         "Color": {

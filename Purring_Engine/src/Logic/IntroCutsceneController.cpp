@@ -39,6 +39,10 @@ namespace PE
 	void IntroCutsceneController::Init(EntityID id)
 	{
 		m_elapsedTime = 0;
+
+		if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			m_sceneTimer = EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimation()->GetAnimationDuration();
+		
 		m_endCutscene = false;
 		m_startCutscene = true;
 
@@ -63,13 +67,7 @@ namespace PE
 		{
 			m_elapsedTime += deltaTime;
 
-			if (m_startCutscene)
-			{
-				PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Intro Cutscene Music.prefab", false, 5.0f);
-
-				m_startCutscene = false;
-			}
-			else
+			if (!m_startCutscene)
 			{
 				EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Intro Cutscene Music.prefab");
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
@@ -86,9 +84,6 @@ namespace PE
 
 			if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 			{
-				if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[id].Text))
-					EntityManager::GetInstance().Get<TextComponent>(m_scriptData[id].Text).SetText("Continue");
-
 				m_endCutscene = true;
 			}
 
@@ -165,6 +160,7 @@ namespace PE
 	{
 		REGISTER_UI_FUNCTION(ContinueToLevel, PE::IntroCutsceneController);
 		REGISTERANIMATIONFUNCTION(SetButtonText, PE::IntroCutsceneController);
+		REGISTERANIMATIONFUNCTION(StartCutscene, PE::IntroCutsceneController);
 	}
 
 	void IntroCutsceneController::TransitionPanelFade(EntityID const id, float deltaTime)
@@ -206,7 +202,15 @@ namespace PE
 
 	void IntroCutsceneController::SetButtonText(EntityID id)
 	{
-		
+		if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[id].Text))
+			EntityManager::GetInstance().Get<TextComponent>(m_scriptData[id].Text).SetText("Continue");
+	}
+
+	void IntroCutsceneController::StartCutscene(EntityID id)
+	{
+		PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Intro Cutscene Music.prefab", false, 5.0f);
+
+		m_startCutscene = false;
 	}
 
 	void IntroCutsceneController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)

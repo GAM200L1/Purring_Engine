@@ -133,6 +133,8 @@ namespace PE
 
 		void SetButtonText(EntityID id);
 
+		void StartCutscene(EntityID id);
+
 		/*!***********************************************************************************
 		 \brief			Handle window out of focus event.
 		 \param[in]     Event containing window-specific details.
