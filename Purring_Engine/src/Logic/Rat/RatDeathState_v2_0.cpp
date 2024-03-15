@@ -25,7 +25,6 @@ namespace PE
 		
 		// Play the rat death animation
 		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(p_data->myID, EnumRatAnimations::DEATH);
-		m_animDurationLeft = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(p_data->myID);
 
 		// Play the death audio
 		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayDeathAudio(p_data->myID);
@@ -39,18 +38,21 @@ namespace PE
 				return;
 		}
 
+		// Null check
+		if (!(GETSCRIPTINSTANCEPOINTER(RatScript_v2_0))) 
+		{ 
+				RatScript_v2_0::ToggleEntity(p_data->myID, false);
+				return; 
+		}
+
 		// Disable all telegraphs
 		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableAllSpawnedEntities(id);
 
 		// Check if the animation is done
-		if (m_animDurationLeft <= 0.2f) // @TODO - To set the check to 0.f. Currently not zero bc the first frame of the animation will flash for a moment, sometimes
+		if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetHasAnimEnded(id))
 		{
 			// Disable the rat
 			RatScript_v2_0::ToggleEntity(p_data->myID, false);  // Making the rat entity inactive
-		}
-		else
-		{
-			m_animDurationLeft -= deltaTime;
 		}
 	}
 

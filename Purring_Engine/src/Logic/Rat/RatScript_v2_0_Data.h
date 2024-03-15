@@ -148,7 +148,7 @@ namespace PE
 		StateMachine* p_stateManager{ nullptr };
 		
 		// Positional offset from the center of the rat that the detection icon should be located
-		vec2 detectionIconOffset{ 45.f, 12.5f }; 
+		vec2 detectionIconOffset{ 55.f, 40.f }; 
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 		bool hasChangedToDeathState{ false }; // True if the rat has been changed to the death state

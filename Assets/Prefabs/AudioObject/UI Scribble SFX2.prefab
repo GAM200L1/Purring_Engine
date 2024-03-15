@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/sfx_UI_Scribble2.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "UI Scribble SFX",
+                "children": [],
+                "isActive": true,
+                "name": "UI Scribble SFX2",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}
