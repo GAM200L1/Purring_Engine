@@ -31,7 +31,7 @@ extern Logger engine_logger;
 namespace PE
 {
 	ParticleEmitter::ParticleEmitter() :
-		maxParticles{ DEFAULT_MAX_PARTICLES }, isActive{ false }, isLooping{ false }, particleType{ SQUARE },
+		maxParticles{ DEFAULT_MAX_PARTICLES }, isActive{ true }, isLooping{ false }, particleType{ SQUARE },
 		emissionRate{ 1 }, emissionDuration{ 5.f }, startLifetime{ 1.f }, startSpeed{ 1.f },
 		startDelay{ 0.f }, startRotation{ 0.f }, startScale{ 1.f, 1.f }, startColor{ 1.f,1.f,1.f,1.f },
 		endDelay{ 0.f }, endRotation{ 0.f }, endScale{ 1.f, 1.f }, endColor{ 1.f,1.f,1.f,1.f },
@@ -59,9 +59,10 @@ namespace PE
 		{
 			emissionVector.Normalize();
 			orientationChangeSpeed = (endRotation - startRotation) / emissionDuration;
-			scaleChangeSpeed = (endScale - startScale) / emissionDuration;
+			//scaleChangeSpeed = (endScale - startScale) / emissionDuration;
 			colorChangeSpeed = (endColor - startColor) / emissionDuration;
 			toggles = r_cpy.toggles;
+			minMaxSpeed = r_cpy.minMaxSpeed;
 		}
 
 	ParticleEmitter& ParticleEmitter::operator=(ParticleEmitter const& r_cpy)
@@ -73,6 +74,8 @@ namespace PE
 		emissionDirection = r_cpy.emissionDirection, emissionVector = vec2{ sinf(emissionDirection), cosf(emissionDirection) },
 		emissionArc = r_cpy.emissionArc , startEmissionRadius = r_cpy.startEmissionRadius , emissionElapsed = emissionDuration ,
 		randomnessFactor = r_cpy.randomnessFactor ;
+		toggles = r_cpy.toggles;
+		minMaxSpeed = r_cpy.minMaxSpeed;
 		return *this;
 	}
 

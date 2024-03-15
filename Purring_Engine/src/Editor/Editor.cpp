@@ -1289,6 +1289,8 @@ namespace PE {
 											y = (y >= x) ? y : x;
 										}
 										prop.set_value(EntityManager::GetInstance().Get<ParticleEmitter>(entityID), vec2(x, y));
+										if (tmp.x != x || tmp.y != y)
+											EntityManager::GetInstance().Get<PE::ParticleEmitter>(entityID).CreateAllParticles();
 									}
 									else if (vp.get_type().get_name() == "structPE::vec4")
 									{
@@ -4213,7 +4215,7 @@ namespace PE {
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 
 								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>()))
-									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>() });
+									EntityFactory::GetInstance().LoadComponent(entityID, { EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>() }, nullptr);
 								else
 									AddErrorLog("ALREADY HAS PARTICLE EMITTER");
 							}

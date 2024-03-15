@@ -332,11 +332,11 @@ namespace PE
 
 	bool EntityFactory::InitializeParticleEmitter(const EntityID& r_id, void* p_data)
 	{
-		EntityManager::GetInstance().Get<Canvas>(r_id) =
+		EntityManager::GetInstance().Get<ParticleEmitter>(r_id) =
 			(p_data == nullptr) ?
-			Canvas()
+			ParticleEmitter()
 			:
-			*reinterpret_cast<Canvas*>(p_data);
+			*reinterpret_cast<ParticleEmitter*>(p_data);
 
 		EntityManager::GetInstance().Get<ParticleEmitter>(r_id).SetParent(r_id);
 
