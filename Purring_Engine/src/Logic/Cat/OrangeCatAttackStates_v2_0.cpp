@@ -165,11 +165,11 @@ namespace PE
 		// set cat collider to trigger so that it is not hit by its own collider
 		EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
 
-		// reset collider scale of the seismic
-		std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->seismicID).colliderVariant).scaleOffset = 0.25f;
-
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
+
+		// reset collider scale of the seismic
+		std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->seismicID).colliderVariant).scaleOffset = 0.25f;
 
 		// set seismic to where cat is
 		CatHelperFunctions::PositionEntity(p_attackData->seismicID, CatHelperFunctions::GetEntityPosition(id));
