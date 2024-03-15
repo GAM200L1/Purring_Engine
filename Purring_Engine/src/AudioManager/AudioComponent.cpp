@@ -179,30 +179,55 @@ namespace PE
         m_fadeProgressIndividual += deltaTime / m_fadeDurationIndividual;
         m_fadeProgressIndividual = std::min(m_fadeProgressIndividual, 1.0f);
 
-        float volume = m_isFadingInIndividual
-            ? m_fadeProgressIndividual
-            : (1.0f - m_fadeProgressIndividual);
+        float newVolume;
+        if (m_isFadingInIndividual)
+        {
+            // For fade in, interpolate from 0 to the target volume (usually full volume)
+            newVolume = m_fadeProgressIndividual * m_targetVolumeIndividual;
+        }
+        else
+        {
+            // For fade out, interpolate from the current volume to the target volume (like 20%)
+            newVolume = (1.0f - m_fadeProgressIndividual) * m_originalVolume + m_fadeProgressIndividual * m_targetVolumeIndividual;
+        }
 
-        SetVolume(volume * m_originalVolume);
+        SetVolume(newVolume);
 
         if (m_fadeProgressIndividual >= 1.0f) m_isFadingIndividual = false;
     }
 
-    void AudioComponent::StartIndividualFadeIn(float duration)
+
+
+    void AudioComponent::StartIndividualFadeIn(float targetVolume, float duration)
     {
+        m_targetVolumeIndividual = targetVolume; // Assuming this is the volume you want to reach at the end of the fade
         m_isFadingIndividual = true;
         m_isFadingInIndividual = true;
         m_fadeDurationIndividual = duration;
         m_fadeProgressIndividual = 0.0f;
     }
 
-    void AudioComponent::StartIndividualFadeOut(float duration)
+    void AudioComponent::StartIndividualFadeOut(float targetVolume, float duration)
     {
+        m_targetVolumeIndividual = targetVolume; // Assuming this is the volume you want to reach at the end of the fade
         m_isFadingIndividual = true;
         m_isFadingInIndividual = false;
         m_fadeDurationIndividual = duration;
         m_fadeProgressIndividual = 0.0f;
     }
+
+
+    void AudioComponent::StartIndividualFade(float targetVolumeFactor, float duration)
+    {
+        m_targetVolumeIndividual = m_originalVolume * targetVolumeFactor;
+        std::cout << "[AudioComponent] Starting individual fade. Target Volume: " << m_targetVolumeIndividual << ", Duration: " << duration << " seconds." << std::endl;
+        m_fadeDurationIndividual = duration;
+        m_fadeProgressIndividual = 0.0f;
+        m_isFadingIndividual = true;
+        m_isFadingInIndividual = (m_targetVolumeIndividual > GetVolume());
+    }
+
+
 
     bool AudioComponent::IsFadingInIndividual() const
     {

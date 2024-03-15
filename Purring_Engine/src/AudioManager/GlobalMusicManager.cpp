@@ -77,7 +77,7 @@ namespace PE
 
             if (fadeInDuration > 0.0f)
             {
-                audioComponent.StartIndividualFadeIn(fadeInDuration);
+                audioComponent.StartIndividualFadeIn(m_maxVolume, fadeInDuration);
             }
             else
             {
@@ -110,33 +110,35 @@ namespace PE
 
     void GlobalMusicManager::PauseBackgroundMusic()
     {
+        std::cout << "[GlobalMusicManager] Pausing background music." << std::endl;
+
+        m_isPaused = true;
+
+        // Fade all audio components to 20% of their original volume
         for (auto& [key, audioComponent] : m_audioComponents)
         {
-            // Check if an individual fade-in is in progress for this audio component
-            if (audioComponent->IsFadingInIndividual())
-            {
-                // Calculate the target volume as 20% of the maximum volume instead of the current volume
-                float targetVolume = m_maxVolume * 0.2f;
-                audioComponent->SetVolume(targetVolume);
-            }
-            else // If no fade-in is in progress
-            {
-                float currentVolume = audioComponent->GetVolume();
-                m_originalVolumes[key] = currentVolume;  // Store the original volume
-                audioComponent->SetVolume(currentVolume * 0.2f);  // Reduce volume to 20%
-            }
+            std::cout << "[GlobalMusicManager] Fading audio component with key: " << key << " to 20% volume." << std::endl;
+
+            // Start fading out to 20% volume over 1 second
+            audioComponent->StartIndividualFadeOut(0.2f, 1.0f);  // Assuming this method sets m_isFadingInIndividual to false
         }
     }
 
     void GlobalMusicManager::ResumeBackgroundMusic()
     {
-        // Assuming m_originalVolumes is a std::map<std::string, float> storing original volumes
+        std::cout << "[GlobalMusicManager] Resuming background music." << std::endl;
+        m_isPaused = false;
+
         for (auto& [key, audioComponent] : m_audioComponents)
         {
-            float originalVolume = m_originalVolumes[key];  // Retrieve the original volume
-            audioComponent->SetVolume(originalVolume);      // Restore the original volume
+            std::cout << "[GlobalMusicManager] Restoring audio component with key: " << key << " to full volume." << std::endl;
+
+            // Start fading in back to full volume over 1 second
+            audioComponent->StartIndividualFadeIn(1.0f, 1.0f);  // Assuming this method sets m_isFadingInIndividual to true
         }
     }
+
+
 
     void GlobalMusicManager::StopBackgroundMusic()
     {
