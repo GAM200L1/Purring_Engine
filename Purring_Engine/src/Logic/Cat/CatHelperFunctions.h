@@ -31,12 +31,13 @@ namespace PE
 			*************************************************************************************/
 			static vec2 GetEntityPosition(EntityID const id)
 			{
-				try
+				if (EntityManager::GetInstance().Has<Transform>(id))
 				{
 					Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
 					return r_transform.position;
 				}
-				catch (...) { return vec2{}; }
+
+				return vec2{ 0.f, 0.f };
 			}
 
 			/*!***********************************************************************************
@@ -46,12 +47,13 @@ namespace PE
 			*************************************************************************************/
 			static float GetEntityOrientation(EntityID const id)
 			{
-				try
+				if (EntityManager::GetInstance().Has<Transform>(id))
 				{
 					Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
 					return r_transform.orientation;
 				}
-				catch (...) { return float{}; }
+
+				return 0.f;
 			}
 
 			/*!***********************************************************************************
@@ -61,12 +63,13 @@ namespace PE
 			*************************************************************************************/
 			static vec2 GetEntityScale(EntityID const id)
 			{
-				try
+				if (EntityManager::GetInstance().Has<Transform>(id))
 				{
 					Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
 					return vec2{ r_transform.width, r_transform.height };
 				}
-				catch (...) { return vec2{}; }
+				
+				return vec2{ 0.f, 0.f };
 			}
 
 			/*!***********************************************************************************
@@ -89,11 +92,9 @@ namespace PE
 			*************************************************************************************/
 			static void ToggleEntity(EntityID id, bool setToActive)
 			{
-				// Exit if the entity is not valid
-				if (!EntityManager::GetInstance().IsEntityValid(id)) { return; }
-
 				// Toggle the entity
-				EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
+				if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
+					EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
 			}
 
 			/*!***********************************************************************************
@@ -104,12 +105,11 @@ namespace PE
 			*************************************************************************************/
 			static void PositionEntity(EntityID const id, vec2 const& r_position)
 			{
-				try
+				if (EntityManager::GetInstance().Has<Transform>(id))
 				{
 					Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) }; // Get the transform of the player
 					r_transform.position = r_position;
 				}
-				catch (...) { return; }
 			}
 
 			/*!***********************************************************************************
@@ -121,13 +121,12 @@ namespace PE
 			*************************************************************************************/
 			static void ScaleEntity(EntityID const id, float const width, float const height)
 			{
-				try
+				if (EntityManager::GetInstance().Has<Transform>(id))
 				{
 					Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) }; // Get the transform of the player
 					r_transform.width = width;
 					r_transform.height = height;
 				}
-				catch (...) { return; }
 			}
 
 			/*!***********************************************************************************
@@ -138,11 +137,20 @@ namespace PE
 			*************************************************************************************/
 			static void SetColor(EntityID const id, vec4 const& color)
 			{
-				try
-				{
+				if(EntityManager::GetInstance().Has<Graphics::Renderer>(id))
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(color.x, color.y, color.z, color.w);
-				}
-				catch (...) { return; }
+			}
+
+			/*!***********************************************************************************
+			\brief Identifies if the entity passed in is a cat. Assumes that cats have
+						the keyword "Cat" somewhere in their name in entityDescriptor.
+
+			\param[in] id - ID of the entity to check.
+			*************************************************************************************/
+			static bool IsActive(EntityID const id)
+			{
+				return (EntityManager::GetInstance().Has<EntityDescriptor>(id) && 
+						EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive);
 			}
 
 			/*!***********************************************************************************
@@ -153,7 +161,8 @@ namespace PE
 			*************************************************************************************/
 			static bool IsCat(EntityID const id)
 			{
-				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos);
+				return (EntityManager::GetInstance().Has<EntityDescriptor>(id) && 
+						EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos);
 			}
 
 			/*!***********************************************************************************
@@ -164,7 +173,8 @@ namespace PE
 			*************************************************************************************/
 			static bool IsEnemy(EntityID const id)
 			{
-				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Rat") != std::string::npos);
+				return (EntityManager::GetInstance().Has<EntityDescriptor>(id) && 
+						EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Rat") != std::string::npos);
 			}
 
 			/*!***********************************************************************************
@@ -175,7 +185,8 @@ namespace PE
 			*************************************************************************************/
 			static bool IsObstacle(EntityID const id)
 			{
-				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
+				return (EntityManager::GetInstance().Has<EntityDescriptor>(id) && 
+						EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
 			}			
 		};
 	

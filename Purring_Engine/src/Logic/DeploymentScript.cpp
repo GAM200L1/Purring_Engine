@@ -23,6 +23,8 @@
 #include "Physics/CollisionManager.h"
 #include "GameStateController_v2_0.h"
 #include "LogicSystem.h"
+#include "AudioManager/GlobalMusicManager.h"
+
 namespace PE
 {
 
@@ -279,6 +281,10 @@ namespace PE
 
 					m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(std::make_pair(NewCatID, m_catController->GetDeployableCats(m_catController->mainInstance)[m_catPlaced]));
 					++m_catPlaced;
+
+					// play deployment audio
+					PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/Cat Deployment SFX.prefab" }, false);
+
 					return;
 				}
 			
