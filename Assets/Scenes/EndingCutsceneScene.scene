@@ -1179,7 +1179,7 @@
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
-                        "m_onClicked": "QuitGameMM",
+                        "m_onClicked": "ExitGame",
                         "m_onHoverEnter": "PlayButtonHoverAudio",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
