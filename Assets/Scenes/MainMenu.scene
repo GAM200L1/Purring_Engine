@@ -98,8 +98,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -568,8 +568,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2078,7 +2078,7 @@
                         "children": [
                             39
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Transition Canvas",
                         "parent": null,
                         "sceneID": 36
@@ -2110,7 +2110,7 @@
                         "Old ID": 39,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "UI Object",
                         "parent": 36,
                         "sceneID": 0

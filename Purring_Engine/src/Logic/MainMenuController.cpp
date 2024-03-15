@@ -47,6 +47,7 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].SplashScreen) && m_firstStart)
 		{
 			ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value());
+			DeactiveObject(m_scriptData[id].TransitionPanel);
 
 			m_timeSinceEnteredState = 0;
 			m_timeSinceExitedState = m_splashTimer;
