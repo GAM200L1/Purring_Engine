@@ -250,6 +250,7 @@ namespace PE
 
         // Switch to the attack state since we're close enough to the targets
         p_data->ratPlayerDistance = 0.f;
+        p_data->targetPosition = RatScript_v2_0::GetEntityPosition(p_data->myID);
         GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
     }
 
