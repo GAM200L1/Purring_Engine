@@ -185,6 +185,9 @@ public:
     template<typename ComponentType>
     void SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json);
 
+
+    size_t CreationHelper(const nlohmann::json& r_j);
+
     /*!***********************************************************************************
     \brief Loads a prefab from file
 
