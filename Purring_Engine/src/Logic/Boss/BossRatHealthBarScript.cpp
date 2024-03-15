@@ -2,16 +2,16 @@
 
  \project  Purring Engine 
  \module   CSD2401-A 
- \file     testScript.cpp 
- \date     03-11-2023
+ \file     BossRatHealthBarScript.cpp 
+ \date     03-11-2024
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
 
 
- \brief  This file contains the definitions of testScript
+ \brief  This file contains the definitions of BossRatHealthBarScript
 
- All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
+ All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved. 
 
 *************************************************************************************/
 

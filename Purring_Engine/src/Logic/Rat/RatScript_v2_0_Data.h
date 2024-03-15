@@ -4,8 +4,16 @@
  \file     RatScript_v2_0_Data.h
  \date     09-03-2024
 
- \author               Krystal YAMIN
- \par      email:      krystal.y@digipen.edu
+ \author               Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     90%
+ \par      changes:    All function declarations.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     10%
+ \par      changes:    09-03-2024
+											 Addition of some variables for rat movement and attack.
 
  \brief
 	This file contains declarations for structs that contain data about the rats.

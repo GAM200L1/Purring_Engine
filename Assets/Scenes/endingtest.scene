@@ -43,9 +43,9 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/IntroCutscene.anim"
+                            "../Assets/Animation/EndingCutscene.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/IntroCutscene.anim"
+                        "CurrentAnimationID": "../Assets/Animation/EndingCutscene.anim"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -65,18 +65,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1a_1920x1080.png"
-                    },
-                    "ScriptComponent": {
-                        "IntroCutsceneController": {
-                            "data": {
-                                "CutsceneObject": 1,
-                                "FinalScene": 4,
-                                "Text": 14,
-                                "TransitionScreen": 10
-                            },
-                            "state": 0
-                        }
+                        "TextureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -110,7 +99,11 @@
                         "parent": null,
                         "sceneID": 3
                     },
-                    "ScriptComponent": null,
+                    "ScriptComponent": {
+                        "EndingCutsceneController": {
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
@@ -251,8 +244,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -299,7 +292,7 @@
                         "isActive": true,
                         "name": "GUIButton",
                         "parent": 6,
-                        "sceneID": 7
+                        "sceneID": 0
                     },
                     "GUI": {
                         "disabled": false,
@@ -326,7 +319,7 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
                         "m_onClicked": "ContinueToLevel",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
+                        "m_onHoverEnter": "",
                         "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -351,11 +344,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 786.9998168945313,
-                            "y": 468.99993896484375
+                            "y": -437.4999084472656
                         },
                         "relativeposition": {
                             "x": 786.9998168945313,
-                            "y": 468.99993896484375
+                            "y": -437.4999084472656
                         },
                         "relorientation": 0.0,
                         "width": 250.0
@@ -399,7 +392,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 784.2249145507813,
-                            "y": 456.4999084472656
+                            "y": -449.99993896484375
                         },
                         "relativeposition": {
                             "x": -2.77490234375,
@@ -416,8 +409,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -507,8 +500,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -553,7 +546,7 @@
                         "isActive": true,
                         "name": "UI Object",
                         "parent": 10,
-                        "sceneID": 11
+                        "sceneID": 0
                     },
                     "GUIRenderer": {
                         "Color": {

@@ -40,6 +40,7 @@
 #include "DeploymentScript.h"
 #include "MainMenuController.h"
 #include "IntroCutsceneController.h"
+#include "EndingCutsceneController.h"
 #include "FpsScript.h"
 
 #include "Rat/RatScript_v2_0.h"
@@ -96,6 +97,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
 	//REGISTER_SCRIPT(RatIdle_v2_0);
 	REGISTER_SCRIPT(IntroCutsceneController);
+	REGISTER_SCRIPT(EndingCutsceneController);
 	REGISTER_SCRIPT(FpsScript);
 
 	REGISTER_SCRIPT(CatScript_v2_0);

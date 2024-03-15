@@ -6,6 +6,14 @@
 
  \author:              LIEW Yeni
  \par      email:      yeni.l@digipen.edu
+ \par      code %:     80%
+ \par      changes:    Definition of all the attack functions.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     20%
+ \par      changes:    06-02-2024
+											 Definition of movement functions.
 
  \brief
 	This file contains definitions for functions for the Sniper Rat's attacks.
@@ -42,9 +50,6 @@ namespace PE
 	{
 		if (!attackFeedbackOnce)
 		{
-#ifdef DEBUG_PRINT
-				std::cout << "SniperRatAttack_v2_0::ExecuteAttack(" << mainID << ") attack feedback once" << std::endl;
-#endif // DEBUG_PRINT
 			attackFeedbackOnce = true;
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAttackAudio(this->mainID);
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(mainID, EnumRatAnimations::ATTACK);
@@ -53,10 +58,6 @@ namespace PE
 		}
 		else if (attackFeedbackOnce && (timePassed >= projectileStartTime) && (timePassed < (projectileStartTime + 0.1f)))
 		{
-#ifdef DEBUG_PRINT
-				std::cout << "SniperRatAttack_v2_0::ExecuteAttack(" << mainID << ") correct frame of anim" << std::endl;
-#endif // DEBUG_PRINT
-
 			RatScript_v2_0::UpdateEntityFacingdirection(mainID, m_direction);
 
 			// shoots the projectile
@@ -65,9 +66,6 @@ namespace PE
 		}
 		else if (timePassed >= attackDuration)
 		{
-#ifdef DEBUG_PRINT
-				std::cout << "SniperRatAttack_v2_0::ExecuteAttack(" << mainID << ") attack duration is less than zero" << std::endl;
-#endif // DEBUG_PRINT
 			RatScript_v2_0::ToggleEntity(spikeballID, false);
 			EntityManager::GetInstance().Get<RigidBody>(spikeballID).velocity.Zero();
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(this->mainID, EnumRatAnimations::IDLE);

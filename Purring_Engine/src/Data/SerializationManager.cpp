@@ -633,6 +633,7 @@ size_t SerializationManager::CreateEntityFromPrefab(std::string const& r_filePat
 
     return MAXSIZE_T;
 }
+
 #pragma warning (default : 4702)
 
 void SerializationManager::LoadLoaders()

@@ -32,6 +32,8 @@ namespace PE
 
 		EntityID SettingsMenu;
 
+		EntityID TransitionPanel;
+
 		int mouseClickEventID;
 		int windowNotFocusEventID;
 		int windowFocusEventID;
@@ -116,6 +118,12 @@ namespace PE
 		*************************************************************************************/
 		void OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event);
 
+		/*!***********************************************************************************
+		 \brief			Set the main menu to not load the splash screen
+		 \param[in]     Event containing window-specific details.
+		*************************************************************************************/
+		void NotFirstStart();
+
 	private:
 		/*!***********************************************************************************
 		 \brief			Activate the given object and its childrens
@@ -138,6 +146,14 @@ namespace PE
 		 \param[in]		the time passed since the last update
 		*************************************************************************************/
 		void SplashScreenFade(EntityID const id, float deltaTime);
+
+		/*!***********************************************************************************
+		 \brief			Fade the Planning State HUD
+
+		 \param[in]		the current game state manager
+		 \param[in]		the time passed since the last update
+		*************************************************************************************/
+		void TransitionPanelFade(EntityID const id, float deltaTime, bool in);
 
 		/*!***********************************************************************************
 		 \brief			Set the alpha of all given objects
@@ -230,6 +246,12 @@ namespace PE
 		float m_timeSinceEnteredState{ 0.f };
 		float m_timeSinceExitedState { 0.f };
 		EntityID m_currentMainMenuControllerEntityID;
+
+		const float m_transitionTimer{ .75f };
+		float m_timeSinceTransitionStarted{};
+		float m_timeSinceTransitionEnded{};
+		bool m_isTransitioning{ false };
+		bool m_isTransitioningIn{ false };
 	};
 
 

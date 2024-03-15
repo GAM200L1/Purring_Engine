@@ -2,17 +2,21 @@
 
  \project  Purring Engine
  \module   CSD2401-A
- \file     IntroCutsceneController.h
- \date     7-2-2023
+ \file     EndingCutsceneController.h
+ \date     3-14-2024
 
  \author               Brandon Ho Jun Jie
  \par      email:      brandonjunjie.ho\@digipen.edu
+ \par	   code %      80%
 
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan\@digipen.edu
+ \par	   code %      20%
 
  \brief  This file contains the declarations of IntroCutsceneController that controls
-		 the cutscene for the introduction of the game.
+		 the cutscene for the ending of the game.
 
- All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+ All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 
 *************************************************************************************/
 #pragma once
@@ -20,18 +24,22 @@
 #include "Script.h"
 namespace PE
 {
-	struct IntroCutsceneControllerData
+	struct EndingCutsceneControllerData
 	{
 		EntityID TransitionScreen;
 		EntityID Text;
 		EntityID CutsceneObject;
 		EntityID FinalScene;
 
+		EntityID BackgroundCanvas;
+		EntityID WinCanvas;
+		EntityID AreYouSureCanvas;
+
 		int windowNotFocusEventID;
 		int windowFocusEventID;
 	};
 
-	class IntroCutsceneController : public Script
+	class EndingCutsceneController : public Script
 	{
 	public:
 		/*!***********************************************************************************
@@ -80,7 +88,7 @@ namespace PE
 
 		 \return std::map<EntityID, TestScriptData>& - A map of EntityID to TestScriptData
 		*************************************************************************************/
-		std::map<EntityID, IntroCutsceneControllerData>& GetScriptData();
+		std::map<EntityID, EndingCutsceneControllerData>& GetScriptData();
 
 		/*!***********************************************************************************
 		 \brief Get the script data instance for a specific entity (RTTR)
@@ -105,6 +113,11 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Function to play click audio.
 		*************************************************************************************/
+		void PlayWinAudio();
+
+		/*!***********************************************************************************
+		 \brief Function to play click audio.
+		*************************************************************************************/
 		void PlaySceneTransitionAudio();
 
 		/*!***********************************************************************************
@@ -113,7 +126,7 @@ namespace PE
 		 \param[in] id - The unique EntityID to retrieve the script data for
 		 \return rttr::instance - The script data instance for the specified entity
 		*************************************************************************************/
-		IntroCutsceneController();
+		EndingCutsceneController();
 
 		/*!***********************************************************************************
 		 \brief			Fade the Planning State HUD
@@ -139,7 +152,7 @@ namespace PE
 		void SetButtonText(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief			Start Cutscene
+		 \brief			Start Cutscecne
 
 		 \param[in]		EntityID
 		*************************************************************************************/
@@ -157,10 +170,55 @@ namespace PE
 		*************************************************************************************/
 		void OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event);
 
+		/*!***********************************************************************************
+		 \brief			Set Win Screen Active
+
+		 \param[in]		EntityID
+		*************************************************************************************/
+		void WinScreen(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Return to Main Menu
+
+		 \param[in]		EntityID
+		*************************************************************************************/
+		void ECReturnToMainMenu(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Set Are You Sure Canvas Active, Main Menu Inactive
+
+		 \param[in]		EntityID
+		*************************************************************************************/
+		void ECAreYouSure(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Set Are You Sure Canvas Inactive, Main Menu Active
+
+		 \param[in]		EntityID
+		*************************************************************************************/
+		void ECReturnFromAreYouSure(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Activate the given object and its childrens
+
+		 \param[in]		The objects to set active
+		*************************************************************************************/
+		void ActiveObject(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Deactivate the given object and its childrens
+
+		 \param[in]		The objects to set deactivate
+		*************************************************************************************/
+		void DeactiveObject(EntityID);
+
 	private:
-		std::map<EntityID, IntroCutsceneControllerData> m_scriptData;
+		std::map<EntityID, EndingCutsceneControllerData> m_scriptData;
 		SerializationManager m_serializationManager;
-		float m_sceneTimer{ 0 };
+		
+		EntityID m_currentCutsceneObject;
+
+		float m_sceneTimer{ 32.5f };
 		float m_elapsedTime{ 0 };
 		bool m_endCutscene{ false };
 		bool m_startCutscene{ true };

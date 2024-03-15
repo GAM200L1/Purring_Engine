@@ -102,6 +102,7 @@
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
 #include "Logic/IntroCutsceneController.h"
+#include "Logic/EndingCutsceneController.h"
 
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
@@ -248,6 +249,7 @@ RTTR_REGISTRATION
         .property("RatKingJournal", &PE::GameStateController_v2_0Data::RatKingJournal)
         .property("JournalButton", &PE::GameStateController_v2_0Data::JournalButton)
         .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
+        .property("SettingsMenu", &PE::GameStateController_v2_0Data::SettingsMenu)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
@@ -282,6 +284,7 @@ RTTR_REGISTRATION
         .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
         .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo)
+        .property("TransitionPanel", &PE::MainMenuControllerData::TransitionPanel)
         .property("SettingsMenu", &PE::MainMenuControllerData::SettingsMenu);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
@@ -299,6 +302,15 @@ RTTR_REGISTRATION
         .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
         .property("Text", &PE::IntroCutsceneControllerData::Text)
         .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
+
+    rttr::registration::class_<PE::EndingCutsceneControllerData>("EndingCutsceneController")
+        .property("CutsceneObject", &PE::EndingCutsceneControllerData::CutsceneObject)
+        .property("FinalScene", &PE::EndingCutsceneControllerData::FinalScene)
+        .property("Text", &PE::EndingCutsceneControllerData::Text)
+        .property("AreYouSureCanvas", &PE::EndingCutsceneControllerData::AreYouSureCanvas)
+        .property("BackgroundCanvas", &PE::EndingCutsceneControllerData::BackgroundCanvas)
+        .property("WinCanvas", &PE::EndingCutsceneControllerData::WinCanvas)
+        .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
@@ -520,14 +532,14 @@ void PE::CoreApplication::Run()
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
-    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0,0,0);
     SceneManager::GetInstance().SetStartScene("MainMenu.scene"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE
 
+    // Set the default background colour to black
+    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
 
-    
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
     while (!glfwWindowShouldClose(m_window))
@@ -595,11 +607,15 @@ void PE::CoreApplication::Run()
         // if the scene is being loaded, skip the rest of the frame
         if (SceneManager::GetInstance().IsLoadingScene())
         {
+            // Set the default background colour to black
+            const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
             SceneManager::GetInstance().LoadSceneToLoad();
             skipFrame = true;
         }
         else if (SceneManager::GetInstance().IsRestartingScene())
         {
+            // Set the default background colour to black
+            const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
             SceneManager::GetInstance().RestartScene(SceneManager::GetInstance().GetActiveScene());
             skipFrame = true;
         }
