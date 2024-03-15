@@ -204,6 +204,11 @@ namespace PE
         m_fadeProgressIndividual = 0.0f;
     }
 
+    bool AudioComponent::IsFadingInIndividual() const
+    {
+        return m_isFadingIndividual && m_isFadingInIndividual;
+    }
+
     nlohmann::json AudioComponent::ToJson() const
     {
         nlohmann::json j;

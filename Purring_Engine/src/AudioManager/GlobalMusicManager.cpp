@@ -112,9 +112,19 @@ namespace PE
     {
         for (auto& [key, audioComponent] : m_audioComponents)
         {
-            float currentVolume = audioComponent->GetVolume();
-            m_originalVolumes[key] = currentVolume;  // Store the original volume before changing it
-            audioComponent->SetVolume(currentVolume * 0.2f);  // Reduce volume to 20%
+            // Check if an individual fade-in is in progress for this audio component
+            if (audioComponent->IsFadingInIndividual())
+            {
+                // Calculate the target volume as 20% of the maximum volume instead of the current volume
+                float targetVolume = m_maxVolume * 0.2f;
+                audioComponent->SetVolume(targetVolume);
+            }
+            else // If no fade-in is in progress
+            {
+                float currentVolume = audioComponent->GetVolume();
+                m_originalVolumes[key] = currentVolume;  // Store the original volume
+                audioComponent->SetVolume(currentVolume * 0.2f);  // Reduce volume to 20%
+            }
         }
     }
 
