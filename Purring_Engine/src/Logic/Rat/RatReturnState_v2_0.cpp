@@ -153,7 +153,7 @@ namespace PE
 					(p_data->minDistanceToTarget * p_data->minDistanceToTarget))
 			{
 					// Stop moving back to our original position
-					RatScript_v2_0::PositionEntity(p_data->myID, p_data->originalPosition);
+					//RatScript_v2_0::PositionEntity(p_data->myID, p_data->originalPosition);
 
 					// a cat just passed by us, hunt it down
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToIdle(p_data->myID);
