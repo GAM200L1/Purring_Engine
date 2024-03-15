@@ -196,6 +196,13 @@ namespace PE
 		void NextStage(int nextStage);
 
 		/*!***********************************************************************************
+		 \brief			go to outro cutscene
+
+		 \param[in]		The Next Stage to load
+		*************************************************************************************/
+		void GoToOutroCutscene();
+
+		/*!***********************************************************************************
 		 \brief		Return to main menu
 		*************************************************************************************/
 		void ReturnToMainMenu(EntityID ID);
@@ -464,6 +471,7 @@ namespace PE
 		std::string m_level3SceneName{ "Level3Scene.scene" };
 		std::string m_level4SceneName{ "Level4Scene.scene" };
 		std::string m_mainMenuSceneName{ "MainMenu.scene" };
+		std::string m_outroCutsceneScene{ "EndingCutsceneScene.scene" };
 		std::string m_leveltoLoad{ "Level1Scene.scene" };
 		bool m_nextTurnOnce = false;
 

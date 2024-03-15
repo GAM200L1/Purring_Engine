@@ -1290,6 +1290,17 @@ namespace PE
 	
 	}
 
+	void GameStateController_v2_0::GoToOutroCutscene()
+	{
+		m_isTransitioning = true;
+		m_isTransitioningIn = false;
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		m_currentLevel = 0;
+		m_leveltoLoad = m_outroCutsceneScene;
+	}
+
 	void GameStateController_v2_0::ReturnToMainMenu(EntityID ID)
 	{
 		m_isTransitioning = true;

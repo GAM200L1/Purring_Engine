@@ -1194,8 +1194,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3308,8 +3308,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4142,8 +4142,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4449,7 +4449,7 @@
                                         "attacKDirection": 0,
                                         "bulletDelay": 0.0,
                                         "bulletFireAnimationIndex": 3,
-                                        "bulletForce": 750.0,
+                                        "bulletForce": 650.0,
                                         "bulletLifeTime": 0.5,
                                         "bulletRange": 3.0,
                                         "damage": 2,
@@ -4458,14 +4458,14 @@
                                     }
                                 },
                                 "catID": 0,
-                                "catMaxMovementEnergy": 7,
+                                "catMaxMovementEnergy": 8,
                                 "catType": 0,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
                                 "isCaged": false,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
-                                "movementSpeed": 300.0,
+                                "movementSpeed": 325.0,
                                 "nodeSize": 10.0,
                                 "toggleDeathAnimation": false
                             },
@@ -4497,8 +4497,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5103,7 +5103,7 @@
                                     "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                     "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
                                 },
-                                "detectionRadius": 200.0,
+                                "detectionRadius": 225.0,
                                 "maxHuntTurns": 2,
                                 "maxMovementRange": 200.0,
                                 "movementSpeed": 250.0,
@@ -5196,7 +5196,7 @@
                                     "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
                                     "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
                                 },
-                                "detectionRadius": 200.0,
+                                "detectionRadius": 225.0,
                                 "maxHuntTurns": 2,
                                 "maxMovementRange": 200.0,
                                 "movementSpeed": 250.0,
@@ -5228,8 +5228,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
