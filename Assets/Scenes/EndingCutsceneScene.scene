@@ -524,7 +524,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 16
                     },
                     "Transform": {
                         "height": 100.0,
@@ -606,7 +606,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 13
+                        "sceneID": 10
                     },
                     "Transform": {
                         "height": 100.0,
@@ -921,7 +921,7 @@
                         "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 9
                     },
                     "Transform": {
                         "height": 100.0,
@@ -986,8 +986,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1003,7 +1003,7 @@
                         "isActive": false,
                         "name": "AYSCanvas",
                         "parent": null,
-                        "sceneID": 16
+                        "sceneID": 13
                     },
                     "Transform": {
                         "height": 100.0,

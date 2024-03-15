@@ -30,6 +30,7 @@
 #include "ResourceManager/ResourceManager.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/LogicSystem.h"
+#include "Logic/MainMenuController.h"
 #include "GUISystem.h"
 #include <limits>
 
@@ -314,6 +315,8 @@ namespace PE
 	void EndingCutsceneController::ECReturnToMainMenu(EntityID)
 	{
 		m_isTransitioning = true;
+
+		GETSCRIPTINSTANCEPOINTER(MainMenuController)->NotFirstStart();
 		PlayClickAudio();
 	}
 
