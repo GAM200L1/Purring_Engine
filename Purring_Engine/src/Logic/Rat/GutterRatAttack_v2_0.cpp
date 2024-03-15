@@ -17,6 +17,7 @@
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "GutterRatAttack_v2_0.h"
+#include "ResourceManager/ResourceManager.h"
 
 //#define DEBUG_PRINT
 
@@ -60,10 +61,8 @@ namespace PE
 
 	void GutterRatAttack_v2_0::CreateAttackObjects()
 	{
-		SerializationManager serializationManager;
-
 		// create cross attack telegraph
-		this->attackTelegraphEntityID = serializationManager.LoadFromFile("GutterRatAttackTelegraph.prefab");
+		this->attackTelegraphEntityID = ResourceManager::GetInstance().LoadPrefabFromFile("GutterRatAttackTelegraph.prefab");
 
 		// Hierarchy::GetInstance().AttachChild(this->mainID, this->attackTelegraphEntityID);
 		//  The attack needs to render under the rat, and childing the attack to the rat
