@@ -513,7 +513,7 @@ namespace PE
 
 		//phase banner
 		const float m_phaseBannerTransitionTimer{ .2f };
-		const float m_phaseBannerStayTimer{ .75f };
+		const float m_phaseBannerStayTimer{ .3f };
 		float m_phaseBannerEnter{};
 		float m_phaseBannerExit{m_phaseBannerTransitionTimer};
 		float m_phaseBannerStay{};

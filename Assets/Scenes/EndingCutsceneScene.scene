@@ -65,7 +65,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cutscenes/Outro/Cutscene_Outro1a_1920x1080.png"
                     },
                     "ScriptComponent": {
                         "EndingCutsceneController": {
@@ -251,8 +251,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -351,11 +351,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 786.9998168945313,
-                            "y": -437.4999084472656
+                            "y": 469.0
                         },
                         "relativeposition": {
                             "x": 786.9998168945313,
-                            "y": -437.4999084472656
+                            "y": 469.0
                         },
                         "relorientation": 0.0,
                         "width": 250.0
@@ -399,7 +399,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 784.2249145507813,
-                            "y": -449.99993896484375
+                            "y": 456.4999694824219
                         },
                         "relativeposition": {
                             "x": -2.77490234375,
@@ -416,8 +416,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -507,8 +507,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
