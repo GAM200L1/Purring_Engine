@@ -173,8 +173,6 @@ namespace PE
 		*************************************************************************************/
 		static void PlayRescueCatAudio(EnumCatType catType);
 
-		void PlayDeathAnimation(EntityID id);
-
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
