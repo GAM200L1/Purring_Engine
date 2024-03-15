@@ -841,8 +841,6 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_exexcutePhaseBanner);
@@ -858,8 +856,6 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);
@@ -1232,6 +1228,7 @@ namespace PE
 		case 1: // 2nd level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 			
 			m_isTransitioning = true;
@@ -1246,6 +1243,7 @@ namespace PE
 		case 2: // 3rd level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;
@@ -1260,6 +1258,7 @@ namespace PE
 		case 3: // boss level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;

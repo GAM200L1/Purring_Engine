@@ -56,6 +56,5 @@ namespace PE
 	private:
 		RatScript_v2_0_Data *p_data; // pointer to script instance data
 		GameStateController_v2_0* p_gameStateController; // pointer to script instance data
-		float m_animDurationLeft{}; // Duration of the death animation left before the rat should be deactivated
 	};
 } // End of namespace PE

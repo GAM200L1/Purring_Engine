@@ -142,20 +142,12 @@ namespace PE
         // Check if there are any cats in the detection range
         if (!(p_data->catsInDetectionRadius.empty()))
         {
-#ifdef DEBUG_PRINT
-            std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): cats in detection radius\n";
-#endif // DEBUG_PRINT
-
             // there's a cat in the detection range, move to attack it again
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
         }
         // Check if any cats exited the detection range
         else if (!(p_data->catsExitedDetectionRadius.empty()))
         {
-#ifdef DEBUG_PRINT
-            std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): cats exited radius\n";
-#endif // DEBUG_PRINT
-
             // Check for the closest cat
             EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) };
 
@@ -165,10 +157,6 @@ namespace PE
         // No cats in detection range
         else
         {
-#ifdef DEBUG_PRINT
-            std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): no cats in detection radius\n";
-#endif // DEBUG_PRINT
-
             // the cat we're chasing is dead, return to the original position
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
         }
