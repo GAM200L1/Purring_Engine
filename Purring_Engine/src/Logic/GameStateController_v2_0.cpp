@@ -1299,7 +1299,7 @@ namespace PE
 
 	void GameStateController_v2_0::GoToOutroCutscene()
 	{
-		m_gameEnded = true;
+		gameEnded = true;
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
 		m_timeSinceTransitionStarted = 0;
@@ -1635,7 +1635,7 @@ namespace PE
 
 	void GameStateController_v2_0::CheckFinishExecution()
 	{
-		if (m_gameEnded)
+		if (gameEnded)
 		{
 			return;
 		}
