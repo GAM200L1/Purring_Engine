@@ -447,6 +447,9 @@ namespace PE {
 
 		// variable for scene loading
 		std::string m_savedScene;
+
+		//variable for pausing gameplay
+		bool m_gameplayPaused{false};
 	};
 }
 
