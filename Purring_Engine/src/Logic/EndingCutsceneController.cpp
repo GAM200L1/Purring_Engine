@@ -2,17 +2,21 @@
 
  \project  Purring Engine 
  \module   CSD2401-A 
- \file     IntroCutsceneController.cpp 
- \date     7-2-2023
+ \file     EndingCutsceneController.cpp
+ \date     3-14-2024
 
  \author               Brandon Ho Jun Jie
  \par      email:      brandonjunjie.ho\@digipen.edu
+ \par	   code %      80%
 
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan\@digipen.edu
+ \par	   code %      20%
 
  \brief  This file contains the declarations of IntroCutsceneController that controls
 		 the cutscene for the introduction of the game.
 
- All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
+ All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 
 *************************************************************************************/
 
