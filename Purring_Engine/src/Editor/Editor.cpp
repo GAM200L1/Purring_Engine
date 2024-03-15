@@ -4659,7 +4659,7 @@ namespace PE {
 
 									engine_logger.AddLog(false, "Enterting PreFabEditorMode...", __FUNCTION__);
 									prefabFP = (m_isPrefabMode) ? prefabFP : m_files[n].string();
-
+									auto id = Hierarchy::GetInstance().GetParentOrder().front();
 									if (!m_isPrefabMode)
 									{
 										m_isPrefabMode = true;
@@ -4668,10 +4668,10 @@ namespace PE {
 										engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 
 									}
-									else if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+									else if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
 									{
 
-										auto save = serializationManager.SerializeEntityPrefab(1);
+										auto save = serializationManager.SerializeEntityPrefab(static_cast<int>(id));
 										std::ofstream outFile(prefabFP);
 										if (outFile)
 										{
@@ -4682,7 +4682,7 @@ namespace PE {
 									}
 									ClearObjectList();
 									engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-									ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP);
+									ResourceManager::GetInstance().LoadPrefabFromFile(prefabFP, true);
 								}
 								if (ImGui::Selectable("Edit properties"))
 								{
@@ -4780,7 +4780,7 @@ namespace PE {
 							{
 								if (m_files[draggedItemIndex].extension() == ".prefab")
 								{
-									EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile(m_files[draggedItemIndex].string());
+									EntityID s_id = ResourceManager::GetInstance().LoadPrefabFromFile(m_files[draggedItemIndex].string(), true);
 									UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 									// change position of loaded prefab based on mouse cursor here
 								}
@@ -5516,9 +5516,10 @@ namespace PE {
 					ImGui::SameLine();
 					if (ImGui::Button(" Save "))
 					{
-						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+						auto id = Hierarchy::GetInstance().GetParentOrder().front();
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
 						{
-							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(id));
 							std::ofstream outFile(prefabFP);
 							if (outFile)
 							{
@@ -5637,10 +5638,10 @@ namespace PE {
 								if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 								{
 									engine_logger.AddLog(false, "Attempting to save prefab entities to file...", __FUNCTION__);
-									
-									if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+									auto id = Hierarchy::GetInstance().GetParentOrder().front();
+									if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
 									{
-										nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
+										nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(id));
 
 										std::ofstream outFile(prefabFP);
 										if (outFile)
