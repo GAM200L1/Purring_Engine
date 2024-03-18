@@ -41,6 +41,7 @@
 #include "ResourceManager.h"
 #include "Data/SerializationManager.h"
 #include "Logging/Logger.h"
+#include "Utilities/CustomCursor.h"
 
 extern Logger engine_logger;
 
@@ -587,6 +588,28 @@ namespace PE
         //    LoadAnimationFromFile(itr, itr);
         //}
     }
+
+    bool ResourceManager::LoadCursorImage(const std::string& cursorName, const std::string& filePath) {
+        // Check if the cursor image is already loaded
+        if (cursors.find(cursorName) != cursors.end()) {
+            // Cursor image is already loaded
+            return true;
+        }
+
+        // Load the cursor image from file
+        std::shared_ptr<Graphics::Texture> cursorImage = std::make_shared<Graphics::Texture>();
+        if (!cursorImage->CreateTexture(filePath)) {
+            // Failed to load the cursor image
+            engine_logger.AddLog(false, "Failed to load cursor image", __FUNCTION__);
+
+            return false;
+        }
+
+        // Store the loaded cursor image
+        cursors[cursorName] = cursorImage;
+        return true;
+    }
+
 
     void ResourceManager::LoadAllResources()
     {

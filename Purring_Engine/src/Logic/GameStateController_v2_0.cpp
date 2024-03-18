@@ -38,6 +38,7 @@
 #include "Boss/BossRatScript.h"
 #include "Animation/Animation.h"
 #include "Logic/MainMenuController.h"
+#include "Utilities/CustomCursor.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -135,6 +136,7 @@ namespace PE
 		m_planningPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png");
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
+		CustomCursor::Init();
 
 		PlayBackgroundMusicForStage();
 
@@ -145,7 +147,9 @@ namespace PE
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
 		GlobalMusicManager::GetInstance().Update(deltaTime);
-
+		if (currentState == GameStates_v2_0::PLANNING || currentState == GameStates_v2_0::DEPLOYMENT || currentState == GameStates_v2_0::EXECUTE) {
+			CustomCursor::SetCustomCursor();
+		}
 		if (!m_isRat && m_isPotraitShowing)
 		{
 			CatScript_v2_0Data* cat = GETSCRIPTDATA(CatScript_v2_0, m_lastSelectedEntity);
@@ -354,6 +358,7 @@ namespace PE
 	{
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
+			CustomCursor::RevertToDefaultCursor();
 			GETANIMATIONMANAGER()->PauseAllAnimations();
 			PauseBGM();
 			SetPauseStateV2();

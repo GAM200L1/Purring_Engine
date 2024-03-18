@@ -74,6 +74,10 @@ namespace PE
 						*************************************************************************************/
 						bool CreateTexture(std::string const& path);
 
+
+						//const unsigned char* GetImageData() const { return m_imageData; }
+						//int GetImageDataSize() const { return m_width * m_height * m_channels; }
+
 						// ----- Private variables ----- // 
 				private:
 						unsigned int m_textureID{}; // Handle of the texture object

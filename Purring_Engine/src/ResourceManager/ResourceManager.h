@@ -46,7 +46,7 @@
 #include "imgui.h"
 #include "MetaData.h"
 #include "Data/SerializationManager.h"
-
+#include "Graphics/Texture.h"
 //class Resource
 //{
 //public:
@@ -287,6 +287,9 @@ namespace PE
         *************************************************************************************/
         void LoadAllPrefabs();
 
+        static bool LoadCursorImage(const std::string& cursorName, const std::string& filePath);
+
+
         /*!***********************************************************************************
         \brief Loads all the resources.
         *************************************************************************************/
@@ -354,5 +357,7 @@ namespace PE
         std::unordered_set<std::string> m_allFontKeys;
         std::unordered_set<std::string> m_allAnimationKeys;
         std::unordered_set<std::string> m_allPrefabKeys;
+
+        static std::unordered_map<std::string, std::shared_ptr<Graphics::Texture>> cursors;
     };
 }
