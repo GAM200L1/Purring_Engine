@@ -1104,7 +1104,6 @@ namespace PE
 		{
 			m_isTransitioning = false;
 			m_isTransitioningIn = true;	
-			LogicSystem::restartingScene = true;
 			LoadSceneFunction(m_leveltoLoad);
 
 			m_timeSinceTransitionStarted = 0;

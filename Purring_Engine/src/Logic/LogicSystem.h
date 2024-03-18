@@ -33,13 +33,18 @@
 #define CHECKSCRIPTDATA(script, id) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData().count(id)
 #define GETSCRIPTINSTANCEPOINTER(script) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])
 #define GETSCRIPTNAME(script) #script
+//will return a key to get the object next frame
+#define ADDNEWENTITYTOQUEUE(prefab) PE::LogicSystem::AddNewEntityToQueue(prefab)
+#define GETCREATEDENTITY(key) PE::LogicSystem::GetCreatedEntity(key)
 
 namespace PE {
 	class LogicSystem : public System
 	{
 	public:
 		static std::map<std::string, Script*> m_scriptContainer;
-		static bool restartingScene;
+		static int m_currentQueueNumber;
+		static std::vector<std::pair<std::optional<EntityID>, std::string>> m_createScriptObjectQueue;
+		static std::vector<std::pair<std::optional<EntityID>, std::string>> m_newScriptObjectQueue;
 	public:
 		LogicSystem();
 		virtual ~LogicSystem();
@@ -72,6 +77,16 @@ namespace PE {
 		 \param [In] EntityID id	The ID to delete data from
 		*************************************************************************************/
 		static void DeleteScriptData(EntityID id);
+
+		static std::optional<EntityID> GetCreatedEntity(int key);
+		static int AddNewEntityToQueue(std::string prefab);
+
+	private:
+		void CreateQueuedObjects();
+		void ClearCreatedList();
+
+
+	private:
 	};
 
 	//holds script on an object
