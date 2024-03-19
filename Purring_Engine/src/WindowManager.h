@@ -90,10 +90,22 @@ namespace PE
         *************************************************************************************/
         virtual std::string GetName() { return "Windows Manager"; }
 
+        /*!***********************************************************************************
+         \brief     set fullscreen boolean
+         \param     boolean to set for the fullscreen
+        *************************************************************************************/
         void SetFullScreen(bool fullScreen);
 
+        /*!***********************************************************************************
+         \brief     get the fullscreen state
+         \return    return the current fullscreen state
+        *************************************************************************************/
         bool GetFullScreen();
 
+        /*!***********************************************************************************
+         \brief     set fullscreen of the window
+         \param     bool what mode to set the window to
+        *************************************************************************************/
         void SetWindowFullScreen(bool fs);
 /*                                                                                          Window Callback Functions
 --------------------------------------------------------------------------------------------------------------------- */
