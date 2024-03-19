@@ -89,6 +89,12 @@ namespace PE
          \return    std::string The name of the system.
         *************************************************************************************/
         virtual std::string GetName() { return "Windows Manager"; }
+
+        void SetFullScreen(bool fullScreen);
+
+        bool GetFullScreen();
+
+        void SetWindowFullScreen(bool fs);
 /*                                                                                          Window Callback Functions
 --------------------------------------------------------------------------------------------------------------------- */
         /*!***********************************************************************************
@@ -153,8 +159,11 @@ namespace PE
         *************************************************************************************/
         void TestFunction(EntityID);
 
+
+
     public:
         GLFWwindow* p_currWindow;
+        static bool m_fullScreen;
 
     private:
         GLFWmonitor* p_monitor;
