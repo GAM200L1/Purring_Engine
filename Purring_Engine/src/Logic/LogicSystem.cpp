@@ -213,6 +213,7 @@ std::optional<EntityID> PE::LogicSystem::GetCreatedEntity(int key)
 void PE::LogicSystem::ClearCreatedList()
 {
 	m_newScriptObjectQueue.clear();
+	m_currentQueueNumber = 0;
 }
 
 int PE::LogicSystem::AddNewEntityToQueue(std::string prefab)

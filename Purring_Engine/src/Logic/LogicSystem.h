@@ -45,6 +45,7 @@ namespace PE {
 		static int m_currentQueueNumber;
 		static std::vector<std::pair<std::optional<EntityID>, std::string>> m_createScriptObjectQueue;
 		static std::vector<std::pair<std::optional<EntityID>, std::string>> m_newScriptObjectQueue;
+		static void ClearCreatedList();
 	public:
 		LogicSystem();
 		virtual ~LogicSystem();
@@ -83,7 +84,6 @@ namespace PE {
 
 	private:
 		void CreateQueuedObjects();
-		void ClearCreatedList();
 
 
 	private:
