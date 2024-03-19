@@ -1061,16 +1061,16 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_Next_79x77.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
                         "m_hoveredColor": [
-                            0.800000011920929,
-                            0.800000011920929,
-                            0.800000011920929,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Next_Highlighted_79x77.png",
@@ -1079,9 +1079,9 @@
                         "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
-                            0.6000000238418579,
-                            0.6000000238418579,
-                            0.6000000238418579,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_pressedTexture": "../Assets/Textures/Button_Next_Dark_79x77.png"
@@ -1138,16 +1138,16 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_Back_79x77.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
                         "m_hoveredColor": [
-                            0.800000011920929,
-                            0.800000011920929,
-                            0.800000011920929,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Back_Highlighted_79x77.png",
@@ -1156,9 +1156,9 @@
                         "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
-                            0.6000000238418579,
-                            0.6000000238418579,
-                            0.6000000238418579,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_pressedTexture": "../Assets/Textures/Button_Back_Dark_79x77.png"
@@ -1457,18 +1457,18 @@
                         "TextureKey": "../Assets/Textures/Button_EndPlanning_512x128.png"
                     },
                     "Transform": {
-                        "height": 150.0,
+                        "height": 128.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 683.5001220703125,
-                            "y": -418.5
+                            "x": 701.0,
+                            "y": -429.0
                         },
                         "relativeposition": {
-                            "x": 683.5001220703125,
-                            "y": -418.5
+                            "x": 701.0,
+                            "y": -429.0
                         },
                         "relorientation": 0.0,
-                        "width": 554.0
+                        "width": 400.0
                     }
                 },
                 "name": ""
@@ -2355,16 +2355,16 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_Menu_127x107.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_disabledTexture": "../Assets/Textures/Button_Menu_127x107.png",
                         "m_hoveredColor": [
-                            0.800000011920929,
-                            0.800000011920929,
-                            0.800000011920929,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Menu_Highlighted_127x107.png",
@@ -2373,9 +2373,9 @@
                         "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
-                            0.6000000238418579,
-                            0.6000000238418579,
-                            0.6000000238418579,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_pressedTexture": "../Assets/Textures/Button_Menu_Dark_127x107.png"
@@ -6066,7 +6066,7 @@
                             0.5,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_512x128.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,
@@ -6099,12 +6099,12 @@
                         "height": 112.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 260.0,
-                            "y": -418.5
+                            "x": 367.50030517578125,
+                            "y": -425.0
                         },
                         "relativeposition": {
-                            "x": 260.0,
-                            "y": -418.5
+                            "x": 367.50030517578125,
+                            "y": -425.0
                         },
                         "relorientation": 0.0,
                         "width": 222.0
