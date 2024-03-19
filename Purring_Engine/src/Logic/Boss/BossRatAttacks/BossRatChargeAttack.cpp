@@ -44,13 +44,11 @@ namespace PE
 			BossTransform = EntityManager::GetInstance().Get<Transform>(id);
 
 		vec2 StartPosition{};
-		float scaleOffset{};
 
 		if (EntityManager::GetInstance().Has<Collider>(id))
 		{
 			CircleCollider cc = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 			StartPosition = cc.center;
-			scaleOffset = cc.scaleOffset;
 		}
 
 		//Direction of Boss to Furthest Cat
@@ -105,10 +103,19 @@ namespace PE
 				if (m_distanceTravelled >= p_data->distanceBetweenPools)
 				{
 					EntityID puddle = ResourceManager::GetInstance().LoadPrefabFromFile(m_poisonPuddlePrefab);
+
+					vec2 StartPosition{};
+
+					if (EntityManager::GetInstance().Has<Collider>(id))
+					{
+						CircleCollider cc = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+						StartPosition = cc.center;
+					}
+
 					if (EntityManager::GetInstance().Has<Transform>(puddle))
 					{
 						Transform* puddleTransform = &EntityManager::GetInstance().Get<Transform>(puddle);
-						puddleTransform->position = BossTransform->position;
+						puddleTransform->position = StartPosition;
 						p_script->PlayPoisonPuddleAudio();
 					}
 					p_script->poisonPuddles.insert(std::pair<EntityID,int>(puddle,3));
