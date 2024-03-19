@@ -75,10 +75,10 @@ std::vector<std::pair<std::optional<EntityID>, std::string>> PE::LogicSystem::m_
 
 PE::LogicSystem::LogicSystem()
 {
-	m_createScriptObjectQueue.reserve(100);
-	m_createScriptObjectQueue.resize(100);
-	m_newScriptObjectQueue.reserve(100);
-	m_newScriptObjectQueue.resize(100);
+	//m_createScriptObjectQueue.reserve(100);
+	//m_createScriptObjectQueue.resize(100);
+	//m_newScriptObjectQueue.reserve(100);
+	//m_newScriptObjectQueue.resize(100);
 }
 	
 PE::LogicSystem::~LogicSystem()
@@ -156,7 +156,7 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 			}
 		}
 
-		ClearCreatedList();
+		//ClearCreatedList();
 		CreateQueuedObjects();
 
 #ifndef GAMERELEASE
@@ -197,14 +197,11 @@ void PE::LogicSystem::DeleteScriptData(EntityID id)
 
 void PE::LogicSystem::CreateQueuedObjects()
 {
-
-	for(int i = 0; i < m_currentQueueNumber; ++i)
+	for(auto i = m_createScriptObjectQueue.begin(); i != m_createScriptObjectQueue.end(); ++i)
 	{
-		m_createScriptObjectQueue[i].first = ResourceManager::GetInstance().LoadPrefabFromFile(m_createScriptObjectQueue[i].second);
-		m_newScriptObjectQueue.emplace_back(m_createScriptObjectQueue[i]);	
+		i->first = ResourceManager::GetInstance().LoadPrefabFromFile(i->second);
+		m_newScriptObjectQueue.emplace_back(*i);	
 	}
-
-	m_currentQueueNumber = 0;
 	m_createScriptObjectQueue.clear();
 }
 
