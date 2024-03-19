@@ -43,8 +43,18 @@ namespace PE
 		if (EntityManager::GetInstance().Has<Transform>(id))
 			BossTransform = EntityManager::GetInstance().Get<Transform>(id);
 
+		vec2 StartPosition{};
+		float scaleOffset{};
+
+		if (EntityManager::GetInstance().Has<Collider>(id))
+		{
+			CircleCollider cc = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+			StartPosition = cc.center;
+			scaleOffset = cc.scaleOffset;
+		}
+
 		//Direction of Boss to Furthest Cat
-		vec2 direction = furthestCatTransform.position - BossTransform.position;
+		vec2 direction = furthestCatTransform.position - StartPosition;
 		vec2 unitDirection = m_chargeDirection = direction.GetNormalized();
 
 		m_telegraph = ResourceManager::GetInstance().LoadPrefabFromFile(m_telegraphPrefab);
@@ -52,7 +62,7 @@ namespace PE
 		if (EntityManager::GetInstance().Has<Transform>(m_telegraph))
 		{
 			Transform* TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(m_telegraph);
-			TelegraphTransform->position  = BossTransform.position + unitDirection * (furthestCatTransform.position.Distance(BossTransform.position) / 2) ;
+			TelegraphTransform->position  = StartPosition + unitDirection * (furthestCatTransform.position.Distance(StartPosition) / 2) ;
 			TelegraphTransform->orientation = atan2(unitDirection.y, unitDirection.x);
 		}	
 	}
