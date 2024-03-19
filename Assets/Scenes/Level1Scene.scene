@@ -1194,8 +1194,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3309,8 +3309,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4143,8 +4143,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4498,8 +4498,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -6099,11 +6099,11 @@
                         "height": 112.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 350.0,
+                            "x": 260.0,
                             "y": -418.5
                         },
                         "relativeposition": {
-                            "x": 350.0,
+                            "x": 260.0,
                             "y": -418.5
                         },
                         "relorientation": 0.0,

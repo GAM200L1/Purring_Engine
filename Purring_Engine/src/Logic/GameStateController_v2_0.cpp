@@ -117,6 +117,8 @@ namespace PE
 			//resetting current turn
 			currentTurn = 0;
 			m_isPotraitShowing = false;
+			m_journalStayTime = m_journalStayTimer;
+			m_startJournalTimer = false;
 			m_journalShowing = false;
 
 		//getting the texture key for the current background and adding sepia to it
@@ -183,6 +185,24 @@ namespace PE
 				ActiveObject(m_scriptData[id].PauseMenuCanvas);
 				m_pauseMenuOpenOnce = false;
 			}
+		}
+
+		if (m_startJournalTimer)
+		{
+			if (m_journalStayTime >= 0)
+			{
+				m_journalStayTime -= deltaTime;
+			}
+			else
+			{
+				m_journalStayTime = m_journalStayTimer;
+				m_startJournalTimer = false;
+				m_journalShowing = false;
+			}
+		}
+		else
+		{
+			m_journalStayTime = m_journalStayTimer;
 		}
 
 		//switch statement for the different states
@@ -480,7 +500,11 @@ namespace PE
 				CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 				BossRatScript* BossRat = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 				EntityID BossID = BossRat->currentBoss;
-			
+
+				m_journalStayTime = m_journalStayTimer;
+				m_startJournalTimer = false;
+				m_journalShowing = false;
+
 				//get mouse position
 				vec2 cursorPosition{};
 				GetMouseCurrentPosition(cursorPosition);
@@ -1205,7 +1229,7 @@ namespace PE
 
 	void GameStateController_v2_0::JournalHoverExit(EntityID)
 	{
-		m_journalShowing = false;
+		m_startJournalTimer = true;
 	}
 
 	void GameStateController_v2_0::OpenSettings(EntityID)
