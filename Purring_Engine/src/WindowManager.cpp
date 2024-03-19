@@ -38,6 +38,7 @@ namespace PE
 {
 	// Initialize static variables
 	bool WindowManager::msepress = false;
+	bool WindowManager::m_fullScreen = true;
 
 	WindowManager::WindowManager()
 	{
@@ -52,11 +53,56 @@ namespace PE
 			std::cerr << "Failed to initialize GLFW." << std::endl;
 			exit(-1);
 		}
+
+		std::ifstream settingsFile("../Assets/Settings/gamesettings.json");
+
+		if (!settingsFile.fail()) {
+			nlohmann::json settingsJson;
+			settingsFile >> settingsJson;
+
+			if (settingsJson.contains("settings"))
+			{
+				//m_firstLaunch needs to be serialized 
+				if (settingsJson["settings"].contains("fullscreen"))
+				{
+					m_fullScreen = settingsJson["settings"]["fullscreen"].get<bool>();
+				}
+			}
+			else
+			{
+				m_fullScreen = true;
+			}
+		}
+
+
+
 	}
 
 
 	WindowManager::~WindowManager()
 	{
+		const char* filepath = "../Assets/Settings/gamesettings.json";
+		std::ifstream settingsFile(filepath);
+		if (!settingsFile.fail())
+		{
+			nlohmann::json settingsJson;
+			settingsFile >> settingsJson;
+
+			settingsJson["settings"]["fullscreen"] = m_fullScreen;
+
+
+			std::ofstream outFile(filepath);
+			if (outFile)
+			{
+				outFile << settingsJson.dump(4);
+				outFile.close();
+			}
+			else
+			{
+				std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+			}
+		}
+
 		Cleanup();
 	}
 
@@ -66,13 +112,15 @@ namespace PE
 #ifndef GAMERELEASE
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
 		p_monitor = glfwGetWindowMonitor(window);
+		WindowManager::GetInstance().SetWindow(window);
 #else
 		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, p_title, glfwGetPrimaryMonitor(), nullptr);
 
 		p_monitor = glfwGetWindowMonitor(window);
-#endif
 		WindowManager::GetInstance().SetWindow(window);
+		SetWindowFullScreen(m_fullScreen);
+#endif
 
 		if (!window)
 		{
@@ -151,6 +199,37 @@ namespace PE
 	void WindowManager::Cleanup()
 	{
 		glfwTerminate();
+	}
+
+	void WindowManager::SetFullScreen(bool fullScreen)
+	{
+		m_fullScreen = fullScreen;
+	}
+
+	bool WindowManager::GetFullScreen()
+	{
+		return m_fullScreen;
+	}
+
+	void WindowManager::SetWindowFullScreen(bool fs)
+	{
+		const GLFWvidmode* mode = glfwGetVideoMode(p_monitor);
+
+		if (!fs)
+		{
+			glfwSetWindowMonitor(WindowManager::GetInstance().GetWindow(), NULL, 30, 30, 1920, 1080, 0);
+			HWND windowHandle = GetActiveWindow();
+			long Style = GetWindowLong(windowHandle, GWL_STYLE);
+			Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
+			SetWindowLong(windowHandle, GWL_STYLE, Style);
+			glfwSetWindowAttrib(WindowManager::GetInstance().GetWindow(), GLFW_RESIZABLE, false);
+			m_fullScreen = false;
+		}
+		else
+		{
+			glfwSetWindowMonitor(WindowManager::GetInstance().GetWindow(), p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+			m_fullScreen = true;
+		}
 	}
 
 
@@ -282,24 +361,7 @@ namespace PE
 					//only on game release be able to change fullscreen
 					if (ev.keycode == GLFW_KEY_F11)
 					{
-							const GLFWvidmode* mode = glfwGetVideoMode(p_monitor);
-
-							if (!fs)
-							{
-									glfwSetWindowMonitor(WindowManager::GetInstance().GetWindow(), NULL, 30, 30, 1920, 1080, 0);
-									HWND windowHandle = GetActiveWindow();
-									long Style = GetWindowLong(windowHandle, GWL_STYLE);
-									Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
-									SetWindowLong(windowHandle, GWL_STYLE, Style);
-									glfwSetWindowAttrib(WindowManager::GetInstance().GetWindow(), GLFW_RESIZABLE, false);
-									fs = !fs;
-							}
-							else
-							{
-
-									glfwSetWindowMonitor(WindowManager::GetInstance().GetWindow(), p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-									fs = !fs;
-							}
+						SetWindowFullScreen(!m_fullScreen);
 					}
 
 					if (ev.keycode == GLFW_KEY_F4)
