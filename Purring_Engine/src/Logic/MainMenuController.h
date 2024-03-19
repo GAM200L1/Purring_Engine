@@ -237,6 +237,10 @@ namespace PE
 		 \brief			Button Hover Audio Sound
 		*************************************************************************************/
 		void PlayButtonHoverAudio(EntityID);
+
+		void ButtonHoverExpand(EntityID);
+
+		void ButtonOffHoverShrink(EntityID);
 	private:
 		//Script Variables
 		std::map<EntityID, MainMenuControllerData> m_scriptData; // Data associated with each instance of the script

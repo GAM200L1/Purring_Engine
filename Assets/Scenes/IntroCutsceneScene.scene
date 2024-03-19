@@ -326,8 +326,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
                         "m_onClicked": "ContinueToLevel",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
