@@ -33,13 +33,18 @@
 #define CHECKSCRIPTDATA(script, id) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData().count(id)
 #define GETSCRIPTINSTANCEPOINTER(script) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])
 #define GETSCRIPTNAME(script) #script
+//will return a key to get the object next frame
+#define ADDNEWENTITYTOQUEUE(prefab) PE::LogicSystem::AddNewEntityToQueue(prefab)
+#define GETCREATEDENTITY(key) PE::LogicSystem::GetCreatedEntity(key)
 
 namespace PE {
 	class LogicSystem : public System
 	{
 	public:
 		static std::map<std::string, Script*> m_scriptContainer;
-		static bool restartingScene;
+		static int m_currentQueueNumber;
+		static std::vector<std::pair<std::optional<EntityID>, std::string>> m_createScriptObjectQueue;
+		static std::vector<std::pair<std::optional<EntityID>, std::string>> m_newScriptObjectQueue;
 	public:
 		LogicSystem();
 		virtual ~LogicSystem();
@@ -72,6 +77,33 @@ namespace PE {
 		 \param [In] EntityID id	The ID to delete data from
 		*************************************************************************************/
 		static void DeleteScriptData(EntityID id);
+		/*!***********************************************************************************
+		 \brief						return the entityID of the object queued previously
+		 \param [In] int key		The key given when queuing objects
+		 \return					return the entityID of the object with the key
+		*************************************************************************************/
+		static std::optional<EntityID> GetCreatedEntity(int key);
+
+		/*!***********************************************************************************
+		 \brief						add a new object to queue to create scripted objects
+		 \param [In]				the name of the prefab to create
+		 \return					return the key to the object in queue
+		*************************************************************************************/
+		static int AddNewEntityToQueue(std::string prefab);
+
+		/*!***********************************************************************************
+		 \brief						clear the list and reset the index
+		*************************************************************************************/
+		static void ClearCreatedList();
+
+	private:
+		/*!***********************************************************************************
+		 \brief						create objects that are queued
+		*************************************************************************************/
+		void CreateQueuedObjects();
+
+
+	private:
 	};
 
 	//holds script on an object

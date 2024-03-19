@@ -3308,8 +3308,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 10,
@@ -3322,7 +3322,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 19
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3395,7 +3395,7 @@
                         "isActive": true,
                         "name": "DeploymentArea",
                         "parent": null,
-                        "sceneID": 21
+                        "sceneID": 20
                     },
                     "Renderer": {
                         "Color": {
@@ -3463,7 +3463,7 @@
                         "isActive": true,
                         "name": "DeployTexture",
                         "parent": null,
-                        "sceneID": 22
+                        "sceneID": 21
                     },
                     "Renderer": {
                         "Color": {
@@ -3508,7 +3508,7 @@
                         "isActive": true,
                         "name": "NoGoAreas",
                         "parent": null,
-                        "sceneID": 23
+                        "sceneID": 22
                     },
                     "Renderer": {
                         "Color": {
@@ -3764,7 +3764,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 39
+                        "sceneID": 37
                     },
                     "Renderer": {
                         "Color": {
@@ -3833,7 +3833,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 33
+                        "sceneID": 32
                     },
                     "Renderer": {
                         "Color": {
@@ -3902,7 +3902,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 25
+                        "sceneID": 24
                     },
                     "Renderer": {
                         "Color": {
@@ -3971,7 +3971,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 26
+                        "sceneID": 25
                     },
                     "Renderer": {
                         "Color": {
@@ -4040,7 +4040,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 27
+                        "sceneID": 26
                     },
                     "Renderer": {
                         "Color": {
@@ -4109,7 +4109,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 28
+                        "sceneID": 27
                     },
                     "Renderer": {
                         "Color": {
@@ -4178,7 +4178,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 29
+                        "sceneID": 28
                     },
                     "Renderer": {
                         "Color": {
@@ -4247,7 +4247,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 30
+                        "sceneID": 29
                     },
                     "Renderer": {
                         "Color": {
@@ -4316,7 +4316,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 31
+                        "sceneID": 30
                     },
                     "Renderer": {
                         "Color": {
@@ -4385,7 +4385,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 32
+                        "sceneID": 31
                     },
                     "Renderer": {
                         "Color": {
@@ -4454,7 +4454,7 @@
                         "isActive": true,
                         "name": "Exit Point",
                         "parent": null,
-                        "sceneID": 34
+                        "sceneID": 33
                     },
                     "Renderer": {
                         "Color": {
@@ -4518,7 +4518,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 40
+                        "sceneID": 38
                     },
                     "Renderer": {
                         "Color": {
@@ -4587,7 +4587,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 35
+                        "sceneID": 34
                     },
                     "Renderer": {
                         "Color": {
@@ -4656,7 +4656,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 36
+                        "sceneID": 35
                     },
                     "Renderer": {
                         "Color": {
@@ -4725,7 +4725,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 37
+                        "sceneID": 43
                     },
                     "Renderer": {
                         "Color": {
@@ -4794,7 +4794,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 38
+                        "sceneID": 36
                     },
                     "Renderer": {
                         "Color": {
@@ -4863,7 +4863,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 41
+                        "sceneID": 39
                     },
                     "Renderer": {
                         "Color": {
@@ -4901,8 +4901,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4980,8 +4980,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4994,7 +4994,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 24
+                        "sceneID": 23
                     },
                     "Transform": {
                         "height": 100.0,
@@ -5071,8 +5071,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5330,7 +5330,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 102,
+                                "FollowObjectID": 71,
                                 "fillColorAlmostEmpty": {
                                     "w": 1.0,
                                     "x": 0.9800000190734863,
@@ -5652,7 +5652,7 @@
                         "isActive": true,
                         "name": "OrangeCat",
                         "parent": null,
-                        "sceneID": 102
+                        "sceneID": 40
                     },
                     "Renderer": {
                         "Color": {
@@ -5801,7 +5801,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 106
+                        "sceneID": 41
                     },
                     "Renderer": {
                         "Color": {
@@ -5894,7 +5894,7 @@
                         "isActive": true,
                         "name": "SniperRat",
                         "parent": null,
-                        "sceneID": 107
+                        "sceneID": 42
                     },
                     "Renderer": {
                         "Color": {
