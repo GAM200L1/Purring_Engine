@@ -1,7 +1,7 @@
 {
     "settings": {
         "bgm": 0.3957575857639313,
-        "fullscreen": false,
+        "fullscreen": true,
         "master": 0.6187878847122192,
         "sfx": 0.789696991443634
     }

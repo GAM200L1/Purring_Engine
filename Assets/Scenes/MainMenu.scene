@@ -98,8 +98,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -177,8 +177,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -316,18 +316,18 @@
                         "TextureKey": "../Assets/Textures/GameLogo_1920x1080px.png"
                     },
                     "Transform": {
-                        "height": 566.5906372070313,
+                        "height": 560.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 310.0
+                            "y": 250.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 310.0
+                            "y": 250.0
                         },
                         "relorientation": 0.0,
-                        "width": 943.112060546875
+                        "width": 940.0
                     }
                 },
                 "name": ""
@@ -568,8 +568,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
