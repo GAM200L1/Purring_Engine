@@ -202,8 +202,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_HowToPlay_Highlighted_512x128.png",
                         "m_onClicked": "OpenHTP",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -279,8 +279,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYS",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -356,8 +356,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_ResumeGame_Highlighted_512x128.png",
                         "m_onClicked": "ResumeStateV2",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -515,8 +515,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
                         "m_onClicked": "CloseWindow",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -633,8 +633,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                         "m_onClicked": "ReturnFromAYS",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -998,8 +998,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
                         "m_onClicked": "CloseHTP",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1075,8 +1075,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Next_Highlighted_79x77.png",
                         "m_onClicked": "HTPPage2",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
@@ -1152,8 +1152,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Back_Highlighted_79x77.png",
                         "m_onClicked": "HTPPage1",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
@@ -1210,7 +1210,8 @@
                             44,
                             47,
                             62,
-                            63
+                            63,
+                            132
                         ],
                         "isActive": false,
                         "name": "HUDCanvas",
@@ -1419,7 +1420,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_defaultTexture": "../Assets/Textures/Button_512x128.png",
+                        "m_defaultTexture": "../Assets/Textures/Button_EndPlanning_512x128.png",
                         "m_disabledColor": [
                             0.5,
                             0.5,
@@ -1433,10 +1434,10 @@
                             1.0,
                             1.0
                         ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_Highlighted_512x128.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_EndPlanning_Highlighted_512x128.png",
                         "m_onClicked": "NextState",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1444,7 +1445,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_pressedTexture": "../Assets/Textures/Button_Dark_512x128.png"
+                        "m_pressedTexture": "../Assets/Textures/Button_EndPlanning_Dark_512x128.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1453,7 +1454,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_512x128.png"
+                        "TextureKey": "../Assets/Textures/Button_EndPlanning_512x128.png"
                     },
                     "Transform": {
                         "height": 150.0,
@@ -1499,7 +1500,7 @@
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
                         "Size": 1.5499999523162842,
-                        "Text": "End Planning",
+                        "Text": "",
                         "VAlignment": 4,
                         "VOverflow": 2
                     },
@@ -1560,8 +1561,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
                         "m_onClicked": "RetryStage",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1760,8 +1761,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RestartGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYSR",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1837,8 +1838,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYS",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1996,8 +1997,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_MainMenu_Highlighted_512x128.png",
                         "m_onClicked": "ReturnToMainMenu",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -2073,8 +2074,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
                         "m_onClicked": "RetryStage",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -2368,8 +2369,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Menu_Highlighted_127x107.png",
                         "m_onClicked": "SetPauseStateV2",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
@@ -3107,8 +3108,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
                         "m_onClicked": "RestartGame",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -3266,8 +3267,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                         "m_onClicked": "ReturnFromAYS",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -3308,8 +3309,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 10,
@@ -4834,8 +4835,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4913,8 +4914,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5004,8 +5005,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -7442,8 +7443,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
                         "m_onClicked": "CloseSettings",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -7693,8 +7694,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Settings_Highlighted_512x128.png",
                         "m_onClicked": "OpenSettings",
-                        "m_onHoverEnter": "PlayButtonHoverAudio",
-                        "m_onHoverExit": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -7726,6 +7727,83 @@
                         },
                         "relorientation": 0.0,
                         "width": 512.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 107,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "UndoButton",
+                        "parent": 24,
+                        "sceneID": 132
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_UndoAction_222x112.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_UndoAction_Highlighted_222x112.png",
+                        "m_onClicked": "",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_UndoAction_Dark_222x112.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_UndoAction_222x112.png"
+                    },
+                    "Transform": {
+                        "height": 112.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 350.0,
+                            "y": -418.5
+                        },
+                        "relativeposition": {
+                            "x": 350.0,
+                            "y": -418.5
+                        },
+                        "relorientation": 0.0,
+                        "width": 222.0
                     }
                 },
                 "name": ""
