@@ -128,6 +128,9 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 	if (Editor::GetInstance().IsRunTime())
 	{
 #endif
+		//ClearCreatedList();
+		CreateQueuedObjects();
+
 		for (EntityID objectID : SceneView<ScriptComponent>())
 		{
 			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
@@ -156,8 +159,7 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 			}
 		}
 
-		//ClearCreatedList();
-		CreateQueuedObjects();
+
 
 #ifndef GAMERELEASE
 	}
