@@ -303,7 +303,6 @@ namespace PE
 		{
 			m_isTransitioning = false;
 			m_isTransitioningIn = true;
-			LogicSystem::restartingScene = true;
 			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->gameEnded = false;
 			SceneManager::GetInstance().LoadScene("IntroCutsceneScene.scene");

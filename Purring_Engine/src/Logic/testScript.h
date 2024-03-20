@@ -21,6 +21,9 @@ namespace PE
 	struct TestScriptData
 	{
 		float m_rotationSpeed{ 10 };
+		float m_timer{ 3 };
+		int newEntityKey{-1};
+		bool isCreated{};
 	};
 
 	class testScript : public Script

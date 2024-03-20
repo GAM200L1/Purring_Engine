@@ -82,6 +82,8 @@ namespace PE
         // unload all resources
         ResourceManager::GetInstance().UnloadResources();
 
+        GETLOGICSYSTEM()->ClearCreatedList();
+
         // load scene
         SerializationManager serializationManager;
         serializationManager.DeserializeScene(r_scenePath);
@@ -100,6 +102,8 @@ namespace PE
     {
         // delete all objects
         DeleteObjects();
+
+        GETLOGICSYSTEM()->ClearCreatedList();
 
         // restart scene should be loading current scene, but for now just given scene path for editor savestate
         std::filesystem::path filepath = m_sceneDirectory + r_scenePath;
