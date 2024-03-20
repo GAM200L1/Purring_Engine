@@ -112,6 +112,9 @@ namespace PE
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
+			// Update the audio
+			UpdateAudioVariables(deltaTime);
+
 			// Change back to the animation that the rat should have after the hurt animation
 			if (GetIsPlayingHurtAnim(id) && GetHasAnimEnded(id))
 			{
@@ -334,6 +337,7 @@ namespace PE
 
 		void RatScript_v2_0::PlayAttackAudio(EntityID id)
 		{
+			// Get the rat script data
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 
@@ -469,28 +473,47 @@ namespace PE
 
 		void RatScript_v2_0::PlayAudio(std::string const& r_soundPrefab)
 		{
+			// Check if the audio can be played 
+			if (!CheckCanPlayAudio()) { return; }
+
+			// Update cooldown timer
+			timeSinceLastSFX = 0.f;
+
 			PE::GlobalMusicManager::GetInstance().PlaySFX(r_soundPrefab, false);
+		}
+
+
+		bool RatScript_v2_0::CheckCanPlayAudio() const
+		{
+				// Ensure that enough time has passed since the last SFX has played
+				return (timeSinceLastSFX > SFXcooldown);
+		}
+
+
+		void RatScript_v2_0::UpdateAudioVariables(float const deltaTime) 
+		{
+				timeSinceLastSFX += deltaTime;
 		}
 
 
 		vec2 RatScript_v2_0::GetEntityPosition(EntityID const transformId)
 		{
-			try
+			if(EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				return r_transform.position;
 			}
-			catch (...) { return vec2{}; }
+			return vec2{};
 		}
 
 		vec2 RatScript_v2_0::GetEntityScale(EntityID const transformId)
 		{
-			try
+			if(EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				return vec2{ r_transform.width, r_transform.height };
 			}
-			catch (...) { return vec2{}; }
+			return vec2{};
 		}
 
 		std::map<EntityID, RatScript_v2_0_Data>& RatScript_v2_0::GetScriptData()
