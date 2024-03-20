@@ -3,6 +3,7 @@
 #include "Graphics/GLHeaders.h"
 #include "ResourceManager/ResourceManager.h"
 #include "stb_image.h"
+
 namespace PE
 {
     GLFWcursor* customCursor = nullptr;
@@ -26,31 +27,39 @@ namespace PE
         if (!customCursor)
         {
             std::cerr << "Failed to create custom cursor." << std::endl;
+            return;
         }
+
+        GLFWwindow* window = glfwGetCurrentContext();
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);  // Hide the system cursor
     }
 
-    void CustomCursor::Show()
+    void CustomCursor::SetVisible(bool visible)
     {
-        if (customCursor)
+        GLFWwindow* window = glfwGetCurrentContext();
+        if (!window)
         {
-            GLFWwindow* window = glfwGetCurrentContext();
-            glfwSetCursor(window, customCursor);
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);  // Hide the system cursor
-            std::cout << "[CustomCursor::Show] Custom cursor set and system cursor hidden for window: " << window << std::endl;
+            std::cerr << "[CustomCursor::SetVisible] Error: No current GLFW window." << std::endl;
+            return;
+        }
+
+        if (visible)
+        {
+            if (customCursor)
+            {
+                glfwSetCursor(window, customCursor);
+                std::cout << "[CustomCursor::SetVisible] Custom cursor set for window: " << window << std::endl;
+            }
+            else
+            {
+                std::cerr << "[CustomCursor::SetVisible] Error: Custom cursor not initialized or NULL." << std::endl;
+            }
         }
         else
         {
-            std::cerr << "[CustomCursor::Show] Error: Custom cursor not initialized or NULL." << std::endl;
+            glfwSetCursor(window, NULL);
+            std::cout << "[CustomCursor::SetVisible] Reverted to system cursor for window: " << window << std::endl;
         }
-    }
-
-
-    void CustomCursor::Hide()
-    {
-        GLFWwindow* window = glfwGetCurrentContext();
-        glfwSetCursor(window, NULL);
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);  // Show the system cursor
-        std::cout << "[CustomCursor::Hide] Reverted to system cursor for window: " << window << std::endl;
     }
 
     // Clean up the custom cursor
@@ -62,5 +71,4 @@ namespace PE
             customCursor = nullptr;             // Reset the pointer to nullptr
         }
     }
-
 }

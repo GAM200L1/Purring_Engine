@@ -2,7 +2,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     MeshData.cpp
+ \file     GLHeaders.h
  \date     13-09-2023
 
  \author               Krystal YAMIN
