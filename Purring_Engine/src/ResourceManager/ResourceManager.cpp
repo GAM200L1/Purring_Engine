@@ -39,9 +39,10 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "ResourceManager.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h" 
 #include "Data/SerializationManager.h"
 #include "Logging/Logger.h"
-#include "Utilities/CustomCursor.h"
 
 extern Logger engine_logger;
 
@@ -589,27 +590,45 @@ namespace PE
         //}
     }
 
-    bool ResourceManager::LoadCursorImage(const std::string& cursorName, const std::string& filePath) {
-        // Check if the cursor image is already loaded
-        if (cursors.find(cursorName) != cursors.end()) {
-            // Cursor image is already loaded
-            return true;
-        }
-
-        // Load the cursor image from file
-        std::shared_ptr<Graphics::Texture> cursorImage = std::make_shared<Graphics::Texture>();
-        if (!cursorImage->CreateTexture(filePath)) {
-            // Failed to load the cursor image
-            engine_logger.AddLog(false, "Failed to load cursor image", __FUNCTION__);
-
+    bool ResourceManager::LoadCursorImage(const std::string& cursorName, const std::string& filePath)
+    {
+        int width, height;
+        GLFWimage cursorImage = LoadImageFromFile(filePath, &width, &height);
+        if (!cursorImage.pixels)
+        {
+            // Handle the failure to load the image
             return false;
         }
 
-        // Store the loaded cursor image
-        cursors[cursorName] = cursorImage;
+        // Create a GLFW cursor object
+        GLFWcursor* cursor = glfwCreateCursor(&cursorImage, 0, 0);
+        if (!cursor)
+        {
+            // Handle the failure to create the cursor
+            stbi_image_free(cursorImage.pixels);  // Free image memory
+            return false;
+        }
+
+        stbi_image_free(cursorImage.pixels);  // Free image memory after creating the cursor
         return true;
     }
 
+
+    GLFWimage ResourceManager::LoadImageFromFile(const std::string& filepath, int* width, int* height)
+    {
+        GLFWimage image;
+        int channels;
+        image.pixels = stbi_load(filepath.c_str(), width, height, &channels, 0);
+        if (!image.pixels)
+        {
+            std::cerr << "Failed to load image: " << filepath << std::endl;
+            return image;
+        }
+
+        image.width = *width;
+        image.height = *height;
+        return image;
+    }
 
     void ResourceManager::LoadAllResources()
     {

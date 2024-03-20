@@ -1,15 +1,14 @@
 #pragma once
 
-class CustomCursor
+namespace PE
 {
-public:
-    static void Init();
+    class CustomCursor
+    {
+    public:
+        static void Initialize();
+        static void Show();
+        static void Hide();
+        static void Cleanup();
 
-    static void SetCustomCursor();
-
-    static void RevertToDefaultCursor();
-
-private:
-    // For GLFW, it would be GLFWcursor* I need to change later
-    static void* customCursor;
-};
+    };
+}

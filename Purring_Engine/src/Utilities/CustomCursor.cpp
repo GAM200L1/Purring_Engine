@@ -2,67 +2,65 @@
 #include "CustomCursor.h"
 #include "Graphics/GLHeaders.h"
 #include "ResourceManager/ResourceManager.h"
-
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
-// Define the static variable
-void* CustomCursor::customCursor = nullptr;
-
-void CustomCursor::Init()
+namespace PE
 {
-    int width, height;
-    unsigned char* imageData;
+    GLFWcursor* customCursor = nullptr;
 
-    auto& resourceManager = PE::ResourceManager::GetInstance();
-
-    if (resourceManager.LoadCursorImage("CustomCursor_32px", "../Assets/Cursor"))
+    void CustomCursor::Initialize()
     {
-        auto cursorTexture = resourceManager.GetTexture("CustomCursor_32px");
+        int width, height;
+        GLFWimage cursorImg = ResourceManager::LoadImageFromFile("../Assets/Cursor/CustomCursor_32px.png", &width, &height);
 
-        // Load the image for the cursor
-        GLFWimage cursorImage;
-        cursorImage.width = cursorTexture->GetWidth();
-        cursorImage.height = cursorTexture->GetHeight();
-        cursorImage.pixels = stbi_load_from_memory(static_cast<stbi_uc const*>(cursorTexture->GetRawData()), cursorTexture->GetDataSize(), &width, &height, nullptr, 4);
-
-        if (cursorImage.pixels)
+        if (!cursorImg.pixels)
         {
-            customCursor = glfwCreateCursor(&cursorImage, 0, 0);
+            std::cerr << "Failed to load cursor image." << std::endl;
+            return;
+        }
 
-            // Free the image data after creating the cursor
-            stbi_image_free(cursorImage.pixels);
+        // create the cursor
+        customCursor = glfwCreateCursor(&cursorImg, 0, 0);
+
+        stbi_image_free(cursorImg.pixels);
+
+        if (!customCursor)
+        {
+            std::cerr << "Failed to create custom cursor." << std::endl;
+        }
+    }
+
+    void CustomCursor::Show()
+    {
+        if (customCursor)
+        {
+            GLFWwindow* window = glfwGetCurrentContext();
+            glfwSetCursor(window, customCursor);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);  // Hide the system cursor
+            std::cout << "[CustomCursor::Show] Custom cursor set and system cursor hidden for window: " << window << std::endl;
         }
         else
         {
-            // Handle the errororput default fcursonr?
+            std::cerr << "[CustomCursor::Show] Error: Custom cursor not initialized or NULL." << std::endl;
         }
     }
-}
 
-void CustomCursor::SetCustomCursor()
-{
-    GLFWwindow* window = glfwGetCurrentContext();
-    glfwSetCursor(window, static_cast<GLFWcursor*>(customCursor));
-}
 
-void CustomCursor::RevertToDefaultCursor()
-{
-    GLFWwindow* window = glfwGetCurrentContext();
-    glfwSetCursor(window, nullptr);
-}
-
-unsigned char* LoadCursorImage(const char* filename, int* width, int* height)
-{
-    // Flip the image's y-axis to match OpenGL's texture coordinate system
-    stbi_set_flip_vertically_on_load(true);
-
-    // Load the image data
-    int channels;
-    unsigned char* data = stbi_load(filename, width, height, &channels, 4); // Force RGBA format
-    if (data == nullptr)
+    void CustomCursor::Hide()
     {
-        std::cerr << "Failed to load cursor image: " << filename << std::endl;
+        GLFWwindow* window = glfwGetCurrentContext();
+        glfwSetCursor(window, NULL);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);  // Show the system cursor
+        std::cout << "[CustomCursor::Hide] Reverted to system cursor for window: " << window << std::endl;
     }
-    return data;
+
+    // Clean up the custom cursor
+    void CustomCursor::Cleanup()
+    {
+        if (customCursor)
+        {
+            glfwDestroyCursor(customCursor);    // Destroy the custom cursor
+            customCursor = nullptr;             // Reset the pointer to nullptr
+        }
+    }
+
 }

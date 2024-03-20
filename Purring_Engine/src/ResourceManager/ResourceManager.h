@@ -288,6 +288,7 @@ namespace PE
         void LoadAllPrefabs();
 
         static bool LoadCursorImage(const std::string& cursorName, const std::string& filePath);
+        static GLFWimage LoadImageFromFile(const std::string& filepath, int* width, int* height);
 
 
         /*!***********************************************************************************
