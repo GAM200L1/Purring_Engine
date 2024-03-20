@@ -83,6 +83,8 @@ namespace PE
 				m_timeSinceTransitionStarted = 0;
 				m_timeSinceTransitionEnded = m_transitionTimer;
 
+				ResetPhaseBanner(true);
+
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 				{
 					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png"));
@@ -99,6 +101,9 @@ namespace PE
 				m_timeSinceTransitionEnded = m_transitionTimer;
 				prevState = GameStates_v2_0::INACTIVE;
 				currentState = GameStates_v2_0::DEPLOYMENT;
+
+				ResetPhaseBanner(true);
+				m_phaseBannerExit = m_phaseBannerTransitionTimer + m_transitionTimer + 1;
 
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner))
 				{
@@ -140,7 +145,7 @@ namespace PE
 
 		PlayBackgroundMusicForStage();
 
-		ResetPhaseBanner(true);
+
 		m_nextTurnOnce = false;
 	}
 	
