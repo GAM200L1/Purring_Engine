@@ -183,7 +183,7 @@ namespace PE
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
 		vec2 targetPosition{ 0.f, 0.f };				// stores the target position the rat is supposed to move towards
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
-		float maxObstacleCollisionTime{ 1.f };		// Max time in seconds that the rat can stay colliding with an obstacle before it is forced out of the execution phase
+		float maxObstacleCollisionTime{ 0.3f };		// Max time in seconds that the rat can stay colliding with an obstacle before it is forced out of the execution phase
 		float totalTimeCollidingIntoWall{ 0.f };	// Time since the rat first started walking into the wall 
 
 		// Attack variables
@@ -213,9 +213,7 @@ namespace PE
 		vec2 originalPosition{ 0.f, 0.f }; // Position to return to
 		
 		// Patrol Points
-		std::vector<vec2> patrolPoints{};
-		int patrolIndex{ 0 };										// Index of the current patrol point the rat is moving towards
-		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
+		std::vector<vec2> patrolPoints{ vec2{ 11.f, -134.f } };
 
 	private:
 		State* p_queuedState{ nullptr }; // State to load

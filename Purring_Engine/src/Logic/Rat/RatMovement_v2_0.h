@@ -74,13 +74,13 @@ namespace PE
         // --- COLLISION DETECTION --- // 
 
         /*!***********************************************************************************
-         \brief Called when a collision enter event has occurred. If an event has
+         \brief Called when a collision enter or stay event has occurred. If an event has
           occurred between this script's rat's collider and a cat or an obstacle, 
           the parent rat is notified.
 
          \param[in] r_event - Event data.
         *************************************************************************************/
-        void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+        void OnCollisionEnterOrStay(const Event<CollisionEvents>& r_event);
 
         /*!***********************************************************************************
          \brief Called when a collision exit event has occurred. If an event has
@@ -128,7 +128,7 @@ namespace PE
         RatScript_v2_0_Data* p_data{ nullptr };
 
         // ID of the event listener for collision events, used to register and unregister the rat for collision notifications
-        int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+        int m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
         int m_triggerEnterEventListener{}, m_triggerStayEventListener{}, m_triggerExitEventListener{};
 
         bool m_planningRunOnce{}; // True if the planning phase has been run once

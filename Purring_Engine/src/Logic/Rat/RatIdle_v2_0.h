@@ -30,21 +30,12 @@
 
 namespace PE
 {
-    /*!***********************************************************************************
-     \brief Types of rat behaviors a rat can have.
-    *************************************************************************************/
-    enum class RatType
-    {
-        IDLE,
-        PATROL
-    };
-
     // ----- RAT IDLE STATE v2.0 ----- //
     class RatIdle_v2_0 : public State
     {
         // ----- Constructors ----- //
     public:
-        RatIdle_v2_0(RatType type);
+        RatIdle_v2_0(bool willPatrol);
 
         virtual ~RatIdle_v2_0() { p_data = nullptr; }
         
@@ -86,22 +77,9 @@ namespace PE
         void PatrolLogic(EntityID id, float deltaTime);
 
         /*!***********************************************************************************
-             \brief Moves the rat entity towards a target point.
-
-             \param id - Entity ID of the rat.
-             \param target - The target position to move towards.
-             \param deltaTime - Time elapsed since the last frame, used for movement calculation.
+             \brief Update the target the rat is moving toward while patrolling.
         *************************************************************************************/
-        void MoveTowards(EntityID id, const vec2& target, float deltaTime);
-
-        /*!***********************************************************************************
-             \brief Checks if the rat has reached its destination.
-
-             \param id - Entity ID of the rat.
-             \param target - The target position the rat is moving towards.
-             \return True if the rat has reached the target position, otherwise false.
-        *************************************************************************************/
-        bool HasReachedDestination(EntityID id, const vec2& target);
+        void UpdatePatrolTarget();
 
         /*!***********************************************************************************
              \brief Initializes default patrol points for the rat.
@@ -134,12 +112,21 @@ namespace PE
 
         /*!***********************************************************************************
          \brief Called when a collision enter or stay event has occurred. If an event has
-          occurred between this script's rat's collider and a cat, the parent rat
+          occurred between this script's rat's collider and a cat or an obstacle, 
+          the parent rat is notified.
+
+         \param[in] r_event - Event data.
+        *************************************************************************************/
+        void OnCollisionEnterOrStay(const Event<CollisionEvents>& r_event);
+
+        /*!***********************************************************************************
+         \brief Called when a collision exit event has occurred. If an event has
+          occurred between this script's rat's collider and an obstacle, the parent rat
           is notified.
 
          \param[in] r_event - Event data.
         *************************************************************************************/
-        void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+        void OnCollisionExit(const Event<CollisionEvents>& r_event);
 
         /*!***********************************************************************************
          \brief Called when a trigger enter or stay event has occured. If an event has
@@ -162,26 +149,20 @@ namespace PE
     private:
         // Idle Planning specific variables
         RatScript_v2_0_Data* p_data;
-        RatType m_type;
+        bool m_willPatrol{ false };
 
-        GameStateController_v2_0* gameStateController{ nullptr };
-        GameStates_v2_0 m_previousGameState{ GameStates_v2_0::PLANNING }; // The game state in the previous frame
+        // Patrolling data
+        int m_patrolIndex{ 0 }; // Index of the current patrol point being moved toward
+        // Set to true to cycle in the positive order of the patrol points (i.e. 0 -> 1 -> 2), 
+        // false to move in the opposite order (i.e. 2 -> 1 -> 0)
+        bool m_returnToFirstPoint{ false };
+
+        GameStateController_v2_0* m_gameStateController{ nullptr };
         bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
 
         // Event listener IDs 
-        int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+        int m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
         int m_triggerEnterEventListener{}, m_triggerStayEventListener{}, m_triggerExitEventListener{};
-
-        // ----- PRIVATE METHODS ---- //
-    private:
-        /*!***********************************************************************************
-          \brief Returns true if the current game state is different from the game state
-                  in the previous frame, false otherwise.
-        *************************************************************************************/
-        inline bool StateJustChanged() const
-        {
-            return m_previousGameState != gameStateController->currentState;
-        }
     };
 
 

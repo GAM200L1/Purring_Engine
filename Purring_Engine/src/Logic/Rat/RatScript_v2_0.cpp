@@ -674,20 +674,9 @@ namespace PE
 				else if (!(it->second.isAlive)) { return; }
 
 				// Check the type of idle behaviour based on the type of rat
-				RatType idleBehaviour{ RatType::IDLE };
-				switch (it->second.ratType)
-				{
-				case EnumRatType::GUTTER:
-				case EnumRatType::BRAWLER:
-				case EnumRatType::SNIPER:
-				{
-						idleBehaviour = RatType::IDLE;
-						break;
-				}
-				default: break;
-				}
+				bool willPatrol{ (it->second.ratType == EnumRatType::BRAWLER) };
 
-				TriggerStateChange(id, new RatIdle_v2_0{ idleBehaviour }, stateChangeDelay);
+				TriggerStateChange(id, new RatIdle_v2_0{ willPatrol }, stateChangeDelay);
 		}
 
 		void RatScript_v2_0::ChangeStateToMovement(EntityID const id, float const stateChangeDelay)
@@ -1063,6 +1052,12 @@ namespace PE
 				//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): ratPlayerDistance: " << it->second.ratPlayerDistance << ", curr pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
 				static bool printOnce{false};
 #endif // DEBUG_PRINT
+
+				// Ensure the direction the rat is moving towards is still up to date
+				EntityID cachedTargetId{ it->second.targetedCat };
+				SetTarget(id, it->second.targetPosition, false);
+				it->second.targetedCat = cachedTargetId;
+
 				if (it->second.ratPlayerDistance > 0.f)
 				{
 						float amountToMove{ std::min(it->second.ratPlayerDistance, it->second.movementSpeed * deltaTime) };
