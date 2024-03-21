@@ -76,7 +76,8 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetAnimationMaxIndex())
 			JumpUp(p_script->currentBoss,dt);
-			if(m_ratSpawned)
+			
+			if(m_hasJumped)
 			p_data->finishExecution = true;
 		
 		}
@@ -149,11 +150,19 @@ namespace PE
 
 
 		Transform* bossTransform = &EntityManager::GetInstance().Get<Transform>(p_script->currentBoss);
-		if (bossTransform->position.y < m_screenHeight/2 + bossTransform->width / 2 + 10)
+		if (bossTransform->position.y < m_screenHeight / 2 + bossTransform->width / 2 + 10)
 			bossTransform->position.y += p_data->jumpSpeed * dt;
 		else
+			m_hasJumped = true;
+
+
+		if(spawnRatDelay <= 0 && !m_hasMovedRats)
 		{
 			SpawnRat(id);
+		}
+		else
+		{
+			spawnRatDelay -= dt;
 		}
 	}
 
@@ -191,7 +200,33 @@ namespace PE
 	{
 		//need to determine if we are capable of spawning rats mid stage and have them work as per normal
 		//need to determine if we want to use way point to spawn rats
-		m_ratSpawned = true;
+
+		if (!m_hasSpawnedRats)
+		{
+			m_ratSpawnedKeys.push_back(ADDNEWENTITYTOQUEUE("GutterRat.prefab"));
+			m_ratSpawnedKeys.push_back(ADDNEWENTITYTOQUEUE("GutterRat.prefab"));
+			m_ratSpawnedKeys.push_back(ADDNEWENTITYTOQUEUE("GutterRat.prefab"));
+			m_hasSpawnedRats = true;
+		}
+		else
+		{
+			for (auto& ratKey : m_ratSpawnedKeys)
+			{
+				if (GETCREATEDENTITY(ratKey).has_value())
+				{
+					EntityID rat = GETCREATEDENTITY(ratKey).value();
+
+					if (EntityManager::GetInstance().Has<Transform>(rat))
+					{
+						Transform* ratTransform = &EntityManager::GetInstance().Get<Transform>(rat);
+						ratTransform->position = EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position;
+					}
+
+					m_hasMovedRats = true;
+				}
+			}
+		}
+
 	}
 
 	void BossRatSlamAttack::HideTelegraph(EntityID)

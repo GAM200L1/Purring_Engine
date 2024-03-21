@@ -133,7 +133,13 @@ namespace PE
 		float m_slamShrinkSpeed{ 350 };
 		bool m_attackIsLeft{};
 		float m_slamAttackDelay{ 1.f };
-		bool m_ratSpawned{ false };
 		bool m_playedSlamAudio{ false };
+		bool m_hasJumped{ false };
+
+
+		bool m_hasSpawnedRats{ false };
+		bool m_hasMovedRats{ false };
+		float spawnRatDelay{ 0.f };
+		std::vector<int> m_ratSpawnedKeys;
 	};
 }
