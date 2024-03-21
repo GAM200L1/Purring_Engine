@@ -244,6 +244,15 @@ namespace PE
 					continue;
 				}
 
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "UndoButton")
+				{
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+					}
+					continue;
+				}
+
 			}
 			break;
 		}
