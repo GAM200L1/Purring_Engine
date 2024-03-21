@@ -154,7 +154,7 @@ namespace PE
             ++m_patrolIndex;
             if (m_patrolIndex >= p_data->patrolPoints.size())
             {
-                m_patrolIndex = std::min(0, static_cast<int>(p_data->patrolPoints.size()) - 2);
+                m_patrolIndex = std::max(0, static_cast<int>(p_data->patrolPoints.size()) - 2);
                 m_returnToFirstPoint = true;
             }
         }
@@ -241,6 +241,12 @@ namespace PE
                 // The rat has been touching the wall for too long
                 p_data->finishedExecution = true;
                 p_data->ratPlayerDistance = 0.f;
+
+                if (m_willPatrol)
+                {
+                    // Attempt to move to next target
+                    UpdatePatrolTarget();
+                }
             }
         }
         else if (r_event.GetType() == CollisionEvents::OnCollisionStay)
@@ -254,6 +260,12 @@ namespace PE
                 // The rat has been touching the wall for too long
                 p_data->finishedExecution = true;
                 p_data->ratPlayerDistance = 0.f;
+
+                if (m_willPatrol)
+                {
+                    // Attempt to move to next target
+                    UpdatePatrolTarget();
+                }
             }
         }
     }

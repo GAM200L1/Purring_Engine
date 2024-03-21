@@ -213,7 +213,7 @@ namespace PE
 		vec2 originalPosition{ 0.f, 0.f }; // Position to return to
 		
 		// Patrol Points
-		std::vector<vec2> patrolPoints{ vec2{ 11.f, -134.f } };
+		std::vector<vec2> patrolPoints{ /*vec2{ 11.f, -134.f }*/ };
 
 	private:
 		State* p_queuedState{ nullptr }; // State to load

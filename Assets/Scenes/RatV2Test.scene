@@ -5107,6 +5107,20 @@
                                 "maxHuntTurns": 2,
                                 "maxMovementRange": 200.0,
                                 "movementSpeed": 150.0,
+                                "patrolPoints": {
+                                    "0": {
+                                        "x": 11.0,
+                                        "y": -134.0
+                                    },
+                                    "1": {
+                                        "x": -200.0,
+                                        "y": -134.0
+                                    },
+                                    "2": {
+                                        "x": -400.0,
+                                        "y": -134.0
+                                    }
+                                },
                                 "ratMaxHealth": 3,
                                 "ratType": 2
                             },
@@ -5518,12 +5532,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 180.49969482421875,
-                                "y": -79.00003814697266
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "min": {
-                                "x": 116.49969482421875,
-                                "y": -143.00003051757813
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5543,7 +5557,7 @@
                         "Old ID": 97,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Obstacle",
                         "parent": null,
                         "sceneID": 31
