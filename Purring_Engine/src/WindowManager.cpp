@@ -54,55 +54,11 @@ namespace PE
 			exit(-1);
 		}
 
-		std::ifstream settingsFile("../Assets/Settings/gamesettings.json");
-
-		if (!settingsFile.fail()) {
-			nlohmann::json settingsJson;
-			settingsFile >> settingsJson;
-
-			if (settingsJson.contains("settings"))
-			{
-				//m_firstLaunch needs to be serialized 
-				if (settingsJson["settings"].contains("fullscreen"))
-				{
-					m_fullScreen = settingsJson["settings"]["fullscreen"].get<bool>();
-				}
-			}
-			else
-			{
-				m_fullScreen = true;
-			}
-		}
-
-
-
 	}
 
 
 	WindowManager::~WindowManager()
 	{
-		const char* filepath = "../Assets/Settings/gamesettings.json";
-		std::ifstream settingsFile(filepath);
-		if (!settingsFile.fail())
-		{
-			nlohmann::json settingsJson;
-			settingsFile >> settingsJson;
-
-			settingsJson["settings"]["fullscreen"] = m_fullScreen;
-
-
-			std::ofstream outFile(filepath);
-			if (outFile)
-			{
-				outFile << settingsJson.dump(4);
-				outFile.close();
-			}
-			else
-			{
-				std::cerr << "Could not open the file for writing: " << filepath << std::endl;
-			}
-		}
-
 		Cleanup();
 	}
 
