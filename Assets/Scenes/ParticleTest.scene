@@ -86,6 +86,7 @@
                             "y": 100.0
                         },
                         "Mode": 1,
+                        "Paused": false,
                         "Starting Scale": {
                             "x": 50.0,
                             "y": 50.0
@@ -103,6 +104,47 @@
                             "r": 1.0
                         },
                         "TextureKey": "../Assets/Textures/Animations/Rat_Detect.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 3,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "LeafAnimationTest",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
                     },
                     "Transform": {
                         "height": 100.0,
