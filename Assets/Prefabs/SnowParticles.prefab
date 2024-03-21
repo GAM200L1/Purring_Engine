@@ -1,0 +1,84 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 13,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "SnowParticles",
+                            "parent": null,
+                            "sceneID": 9
+                        },
+                        "ParticleEmitter": {
+                            "Color": {
+                                "w": 1.0,
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "Delta Scale": {
+                                "x": -10.0,
+                                "y": -10.0
+                            },
+                            "Emission Arc": 0.0,
+                            "Emission Direction": 2.9670588970184326,
+                            "Emittor Length": 1900.0,
+                            "End Scale": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "Is Active": true,
+                            "Lifetime": 1000.0,
+                            "Looping": true,
+                            "Max particles": 5,
+                            "MinMax Speed": {
+                                "x": 100.0,
+                                "y": 100.0
+                            },
+                            "Mode": 1,
+                            "Paused": false,
+                            "Starting Scale": {
+                                "x": 40.0,
+                                "y": 40.0
+                            },
+                            "Toggles": {
+                                "Emission Arc": false
+                            },
+                            "Type": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Particle_Snow_512px.png"
+                        },
+                        "Transform": {
+                            "height": 100.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": -105.0001220703125,
+                                "y": 625.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

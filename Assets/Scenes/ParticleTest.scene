@@ -262,7 +262,7 @@
                         "isActive": true,
                         "name": "HairballParticles",
                         "parent": null,
-                        "sceneID": 18
+                        "sceneID": 16
                     },
                     "ParticleEmitter": {
                         "Color": {
@@ -340,7 +340,7 @@
                         "isActive": true,
                         "name": "SpikeballParticles",
                         "parent": null,
-                        "sceneID": 19
+                        "sceneID": 17
                     },
                     "ParticleEmitter": {
                         "Color": {
@@ -619,7 +619,7 @@
                         "isActive": true,
                         "name": "CitrusShockwaveParticles",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 18
                     },
                     "ParticleEmitter": {
                         "Color": {
@@ -862,7 +862,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Particle_Dirt2_512px.png"
+                        "TextureKey": "../Assets/Textures/Particle_DirtSmoke_512px.png"
                     },
                     "Transform": {
                         "height": 100.0,
@@ -940,7 +940,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Particle_Dirt3_512px.png"
+                        "TextureKey": "../Assets/Textures/Particle_SnowSmoke_512px.png"
                     },
                     "Transform": {
                         "height": 100.0,
@@ -972,7 +972,7 @@
                         "isActive": true,
                         "name": "RatKingShockwaveParticles",
                         "parent": null,
-                        "sceneID": 21
+                        "sceneID": 19
                     },
                     "ParticleEmitter": {
                         "Color": {
@@ -1024,8 +1024,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 429.00048828125,
-                            "y": -134.99961853027344
+                            "x": 431.00042724609375,
+                            "y": -159.89964294433594
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -1174,7 +1174,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Particle_Dirt2_512px.png"
+                        "TextureKey": "../Assets/Textures/Particle_DirtSmoke_512px.png"
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1252,7 +1252,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Particle_Dirt3_512px.png"
+                        "TextureKey": "../Assets/Textures/Particle_SnowSmoke_512px.png"
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1275,22 +1275,16 @@
         {
             "Entity": {
                 "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/RatKingBubbles.anim"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/RatKingBubbles.anim"
-                    },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 22,
+                        "Old ID": 21,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
                         "name": "RatKingBubbleParticles",
                         "parent": null,
-                        "sceneID": 22
+                        "sceneID": 21
                     },
                     "ParticleEmitter": {
                         "Color": {
@@ -1305,29 +1299,29 @@
                         },
                         "Emission Arc": 0.0,
                         "Emission Direction": 0.0,
-                        "Emittor Length": 100.0,
+                        "Emittor Length": 200.0,
                         "End Scale": {
-                            "x": 1.0,
-                            "y": 1.0
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
                         },
                         "Is Active": true,
                         "Lifetime": 1.0,
                         "Looping": true,
                         "Max particles": 1,
                         "MinMax Speed": {
-                            "x": 10.0,
-                            "y": 100.0
+                            "x": 50.0,
+                            "y": 50.0
                         },
                         "Mode": 1,
                         "Paused": false,
                         "Starting Scale": {
-                            "x": 100.0,
-                            "y": 100.0
+                            "x": 30.0,
+                            "y": 30.0
                         },
                         "Toggles": {
                             "Emission Arc": false
                         },
-                        "Type": 2
+                        "Type": 1
                     },
                     "Renderer": {
                         "Color": {
@@ -1336,14 +1330,14 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/RatKing_Bubbles.png"
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
                     },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": 432.3003845214844,
+                            "y": -200.1995391845703
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -1351,6 +1345,364 @@
                         },
                         "relorientation": 0.0,
                         "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 24,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GameObject24",
+                        "parent": 22,
+                        "sceneID": 24
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 2.0071287155151367,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 0.25,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 500.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 25.0,
+                            "y": 25.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 248.699951171875,
+                            "y": -109.4998779296875
+                        },
+                        "relativeposition": {
+                            "x": -185.0,
+                            "y": 66.40011596679688
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 25,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GameObject25",
+                        "parent": 22,
+                        "sceneID": 25
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 4.27605676651001,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 0.25,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 500.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 25.0,
+                            "y": 25.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 618.699951171875,
+                            "y": -108.89999389648438
+                        },
+                        "relativeposition": {
+                            "x": 185.0,
+                            "y": 67.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 26,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GameObject26",
+                        "parent": 22,
+                        "sceneID": 26
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 1.1344640254974365,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 0.25,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 500.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 25.0,
+                            "y": 25.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 248.699951171875,
+                            "y": -242.89999389648438
+                        },
+                        "relativeposition": {
+                            "x": -185.0,
+                            "y": -67.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 27,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GameObject27",
+                        "parent": 22,
+                        "sceneID": 27
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 5.148721218109131,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 0.25,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 500.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 25.0,
+                            "y": 25.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 618.699951171875,
+                            "y": -242.89999389648438
+                        },
+                        "relativeposition": {
+                            "x": 185.0,
+                            "y": -67.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 22,
+                        "Prefab Type": "",
+                        "children": [
+                            24,
+                            25,
+                            26,
+                            27
+                        ],
+                        "isActive": true,
+                        "name": "RatKingChargingParticles",
+                        "parent": null,
+                        "sceneID": 22
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 0.10000000149011612,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 433.699951171875,
+                            "y": -175.89999389648438
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 0.10000000149011612
                     }
                 },
                 "name": ""

@@ -1,0 +1,84 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 9,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "CatWalkLeafParticles",
+                            "parent": null,
+                            "sceneID": 10
+                        },
+                        "ParticleEmitter": {
+                            "Color": {
+                                "w": 1.0,
+                                "x": 1.0,
+                                "y": 1.0,
+                                "z": 1.0
+                            },
+                            "Delta Scale": {
+                                "x": -10.0,
+                                "y": -10.0
+                            },
+                            "Emission Arc": 1.3089969158172607,
+                            "Emission Direction": 4.71238899230957,
+                            "Emittor Length": 0.0,
+                            "End Scale": {
+                                "x": 0.10000000149011612,
+                                "y": 0.10000000149011612
+                            },
+                            "Is Active": true,
+                            "Lifetime": 1.5,
+                            "Looping": true,
+                            "Max particles": 1,
+                            "MinMax Speed": {
+                                "x": 15.0,
+                                "y": 25.0
+                            },
+                            "Mode": 0,
+                            "Paused": false,
+                            "Starting Scale": {
+                                "x": 30.0,
+                                "y": 30.0
+                            },
+                            "Toggles": {
+                                "Emission Arc": true
+                            },
+                            "Type": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Particle_Leaf_Green_512px.png"
+                        },
+                        "Transform": {
+                            "height": 100.0000228881836,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": -200.19970703125,
+                                "y": 59.700382232666016
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0000228881836
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}
