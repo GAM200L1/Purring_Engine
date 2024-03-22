@@ -39,7 +39,7 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "ResourceManager.h"
-#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h" 
 #include "Data/SerializationManager.h"
 #include "Logging/Logger.h"

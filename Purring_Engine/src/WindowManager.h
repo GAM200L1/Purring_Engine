@@ -61,6 +61,9 @@ namespace PE
         *************************************************************************************/
         GLFWwindow* GetWindow();
 
+        const char* GetWindowTitle();
+
+
         /*!***********************************************************************************
          \brief     set current window.
          \param    GLFWwindow* the window

@@ -72,6 +72,9 @@ namespace PE
 
 		p_monitor = glfwGetWindowMonitor(window);
 #endif
+
+		m_windowTitle = p_title;
+
 		WindowManager::GetInstance().SetWindow(window);
 
 		if (!window)
@@ -110,6 +113,11 @@ namespace PE
 	GLFWwindow* WindowManager::GetWindow()
 	{
 		return p_currWindow;
+	}
+
+	const char* WindowManager::GetWindowTitle() 
+	{
+		return m_windowTitle.c_str();
 	}
 
 	void WindowManager::SetWindow(GLFWwindow* p_win)

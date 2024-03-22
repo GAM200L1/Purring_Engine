@@ -70,9 +70,6 @@ namespace PE
 
 	void GameStateController_v2_0::Init(EntityID id)
 	{
-		PE::CustomCursor::Initialize();
-		PE::CustomCursor::SetVisible(true);
-
 		if (m_scriptData[id].GameStateManagerActive)
 		{
 			if (m_currentLevel == 0)
@@ -139,6 +136,7 @@ namespace PE
 		m_planningPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png");
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
+		PE::CustomCursor::Initialize();
 
 		PlayBackgroundMusicForStage();
 
@@ -149,7 +147,6 @@ namespace PE
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
 		GlobalMusicManager::GetInstance().Update(deltaTime);
-		PE::CustomCursor::SetVisible(true);
 
 		if (!m_isRat && m_isPotraitShowing)
 		{
@@ -196,8 +193,6 @@ namespace PE
 		{
 		case GameStates_v2_0::DEPLOYMENT: // deploying cats, need to disable end turn button, but otherwise normal HUD stays
 		{
-			//PE::CustomCursor::SetVisible(true);
-
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
@@ -237,8 +232,6 @@ namespace PE
 		}
 		case GameStates_v2_0::PLANNING: // normal planning state, fade in HUD and fade out foliage
 		{
-			//PE::CustomCursor::SetVisible(true);
-
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 			DeactiveAllMenu();
 			PlanningStateHUD(id, deltaTime);
@@ -253,8 +246,6 @@ namespace PE
 		}
 		case GameStates_v2_0::EXECUTE: // execute state, fade out HUD and fade in foliage
 		{
-			//PE::CustomCursor::SetVisible(true);
-
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelBackground);
 
@@ -285,8 +276,6 @@ namespace PE
 				ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
 				ActiveObject(m_scriptData[id].WinCanvas);
 				m_winOnce = false;
-				//PE::CustomCursor::SetVisible(true);
-
 			}
 			break;
 		case GameStates_v2_0::LOSE: //lose state, show lose canvas				
@@ -302,8 +291,6 @@ namespace PE
 				ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
 				ActiveObject(m_scriptData[id].LoseCanvas);
 				m_loseOnce = false;
-				//PE::CustomCursor::SetVisible(true);
-
 			}
 			break;
 
@@ -375,8 +362,6 @@ namespace PE
 			PauseBGM();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
-			PE::CustomCursor::SetVisible(true);
-
 		}
 	}
 
@@ -385,8 +370,6 @@ namespace PE
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
 			ResumeBGM();
-			PE::CustomCursor::SetVisible(true);
-
 		}
 	}
 
@@ -732,7 +715,6 @@ namespace PE
 
 			
 			GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
-			PE::CustomCursor::SetVisible(true);
 
 			//PauseBGM();
 			PlayPageAudio();

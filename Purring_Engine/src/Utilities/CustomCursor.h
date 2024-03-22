@@ -1,5 +1,4 @@
 #pragma once
-#include "Graphics/GLHeaders.h"
 
 namespace PE
 {
@@ -7,12 +6,8 @@ namespace PE
     {
     public:
         static void Initialize();
-        static void Show();
-        static void SetVisible(bool visible);
-
-        static void Hide();
         static void Cleanup();
-
-        //static GLFWimage cursorImg;
     };
 }
+
+  //static void Initialize(const std::string& cursorImagePath = "../Assets/Cursor/CustomCursor_32px.png");
