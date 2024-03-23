@@ -2163,7 +2163,7 @@
                         "Old ID": 42,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "TurnCounter",
                         "parent": 43,
                         "sceneID": 42
@@ -2204,7 +2204,7 @@
                         "Old ID": 45,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "CurrentTurnPhase",
                         "parent": 43,
                         "sceneID": 45
@@ -2252,7 +2252,7 @@
                         "Old ID": 46,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "TurnNumberText",
                         "parent": 43,
                         "sceneID": 46
@@ -2295,8 +2295,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2308,7 +2308,7 @@
                             45,
                             46
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "TurnCounterCanvas",
                         "parent": null,
                         "sceneID": 11
@@ -5722,7 +5722,8 @@
                             112,
                             113,
                             114,
-                            116
+                            116,
+                            119
                         ],
                         "isActive": false,
                         "name": "Settings Canvas",
@@ -5773,7 +5774,7 @@
                         "isActive": false,
                         "name": "SFXSlider",
                         "parent": 106,
-                        "sceneID": 107
+                        "sceneID": 109
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -5782,19 +5783,19 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Settings_Bar2_874x92px.png"
                     },
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
-                        "m_currentValue": 0.5309091210365295,
-                        "m_currentWidth": 75.0,
+                        "m_currentValue": 0.5326923727989197,
+                        "m_currentWidth": 120.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
                         ],
                         "m_defaultTexture": "",
                         "m_disabled": false,
@@ -5805,29 +5806,29 @@
                             1.0
                         ],
                         "m_disabledTexture": "",
-                        "m_endPoint": 412.5,
+                        "m_endPoint": 390.0,
                         "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
+                            0.7069767713546753,
+                            0.7069767713546753,
+                            0.7069767713546753,
                             1.0
                         ],
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
-                        "m_knobID": 29,
+                        "m_knobID": 108,
                         "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
+                            0.5116279125213623,
+                            0.5116279125213623,
+                            0.5116279125213623,
                             1.0
                         ],
                         "m_pressedTexture": "",
-                        "m_startPoint": -412.5
+                        "m_startPoint": -390.0
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -5835,7 +5836,7 @@
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": -406.0
+                            "y": -380.0
                         },
                         "relorientation": 0.0,
                         "width": 900.0
@@ -5861,14 +5862,14 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Cat_Citrus_512px.png"
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 25.500024795532227,
@@ -5879,7 +5880,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 75.0
+                        "width": 120.0
                     }
                 },
                 "name": ""
@@ -5899,7 +5900,7 @@
                         "isActive": false,
                         "name": "BGMSlider",
                         "parent": 106,
-                        "sceneID": 109
+                        "sceneID": 111
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -5908,19 +5909,19 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Settings_Bar2_874x92px.png"
                     },
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
-                        "m_currentValue": 0.5272725820541382,
-                        "m_currentWidth": 75.0,
+                        "m_currentValue": 0.528846025466919,
+                        "m_currentWidth": 120.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
                         ],
                         "m_defaultTexture": "",
                         "m_disabled": false,
@@ -5931,29 +5932,29 @@
                             1.0
                         ],
                         "m_disabledTexture": "",
-                        "m_endPoint": 412.5,
+                        "m_endPoint": 390.0,
                         "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
+                            0.7069767713546753,
+                            0.7069767713546753,
+                            0.7069767713546753,
                             1.0
                         ],
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
-                        "m_knobID": 31,
+                        "m_knobID": 110,
                         "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
+                            0.5116279125213623,
+                            0.5116279125213623,
+                            0.5116279125213623,
                             1.0
                         ],
                         "m_pressedTexture": "",
-                        "m_startPoint": -412.5
+                        "m_startPoint": -390.0
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -5961,7 +5962,7 @@
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": -174.0
+                            "y": -110.0
                         },
                         "relorientation": 0.0,
                         "width": 900.0
@@ -5987,14 +5988,14 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Cat_Smokey_512px.png"
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 22.49988555908203,
@@ -6005,7 +6006,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 75.0
+                        "width": 120.0
                     }
                 },
                 "name": ""
@@ -6023,20 +6024,20 @@
                         "isActive": false,
                         "name": "SFXText",
                         "parent": 106,
-                        "sceneID": 111
+                        "sceneID": 112
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 1.0,
-                        "Size": 2.0,
+                        "Size": 1.7999999523162842,
                         "Text": "SFX",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -6050,7 +6051,7 @@
                         },
                         "relativeposition": {
                             "x": -221.99990844726563,
-                            "y": -300.0
+                            "y": -280.0
                         },
                         "relorientation": 0.0,
                         "width": 439.0
@@ -6071,20 +6072,20 @@
                         "isActive": false,
                         "name": "BGMText",
                         "parent": 106,
-                        "sceneID": 112
+                        "sceneID": 113
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
                         "HOverflow": 0,
                         "LineSpacing": 1.0,
-                        "Size": 2.0,
+                        "Size": 1.7999999523162842,
                         "Text": "BGM",
                         "VAlignment": 4,
                         "VOverflow": 2
@@ -6098,7 +6099,7 @@
                         },
                         "relativeposition": {
                             "x": -221.99990844726563,
-                            "y": -61.50006866455078
+                            "y": -10.0
                         },
                         "relorientation": 0.0,
                         "width": 439.0
@@ -6119,7 +6120,7 @@
                         "isActive": false,
                         "name": "ReturnFromSettingsButton",
                         "parent": 106,
-                        "sceneID": 113
+                        "sceneID": 114
                     },
                     "GUI": {
                         "disabled": false,
@@ -6170,12 +6171,12 @@
                         "height": 125.51280975341797,
                         "orientation": 0.0,
                         "position": {
-                            "x": -765.5000610351563,
-                            "y": 397.50006103515625
+                            "x": -747.5,
+                            "y": 457.5
                         },
                         "relativeposition": {
-                            "x": -765.5000610351563,
-                            "y": 397.50006103515625
+                            "x": -747.5,
+                            "y": 457.5
                         },
                         "relorientation": 0.0,
                         "width": 409.8817138671875
@@ -6198,7 +6199,7 @@
                         "isActive": false,
                         "name": "Master Volume",
                         "parent": 106,
-                        "sceneID": 114
+                        "sceneID": 116
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -6207,19 +6208,19 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Settings_Flower_Bar2_874x92px.png"
                     },
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
                         "m_currentValue": 0.0,
-                        "m_currentWidth": 75.0,
+                        "m_currentWidth": 120.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
                         ],
                         "m_defaultTexture": "",
                         "m_disabled": false,
@@ -6230,29 +6231,29 @@
                             1.0
                         ],
                         "m_disabledTexture": "",
-                        "m_endPoint": 412.5,
+                        "m_endPoint": 390.0,
                         "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
+                            0.7069767713546753,
+                            0.7069767713546753,
+                            0.7069767713546753,
                             1.0
                         ],
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
-                        "m_knobID": 37,
+                        "m_knobID": 115,
                         "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
+                            0.5116279125213623,
+                            0.5116279125213623,
+                            0.5116279125213623,
                             1.0
                         ],
                         "m_pressedTexture": "",
-                        "m_startPoint": -412.5
+                        "m_startPoint": -390.0
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -6260,7 +6261,7 @@
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 48.0
+                            "y": 160.0
                         },
                         "relorientation": 0.0,
                         "width": 900.0
@@ -6286,25 +6287,25 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -412.5,
+                            "x": -390.0,
                             "y": 48.0
                         },
                         "relativeposition": {
-                            "x": -412.5,
+                            "x": -390.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 75.0
+                        "width": 120.0
                     }
                 },
                 "name": ""
@@ -6322,14 +6323,14 @@
                         "isActive": false,
                         "name": "Master Volume Text",
                         "parent": 106,
-                        "sceneID": 116
+                        "sceneID": 117
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
@@ -6349,7 +6350,7 @@
                         },
                         "relativeposition": {
                             "x": -207.99984741210938,
-                            "y": 167.0
+                            "y": 260.0
                         },
                         "relorientation": 0.0,
                         "width": 465.0
@@ -6507,6 +6508,47 @@
                         },
                         "relorientation": 0.0,
                         "width": 222.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 119,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "UI Object",
+                        "parent": 106,
+                        "sceneID": 107
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Settings_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
                     }
                 },
                 "name": ""
