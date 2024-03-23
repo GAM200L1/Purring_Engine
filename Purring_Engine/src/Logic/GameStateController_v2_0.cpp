@@ -1248,12 +1248,14 @@ namespace PE
 
 	void GameStateController_v2_0::OpenSettings(EntityID)
 	{
+		PlayClickAudio();
 		DeactiveAllMenu();
 		ActiveObject(m_scriptData[m_currentGameStateControllerID].SettingsMenu);
 	}
 
 	void GameStateController_v2_0::CloseSettings(EntityID)
 	{
+		PlayClickAudio();
 		DeactiveAllMenu();
 		ActiveObject(m_scriptData[m_currentGameStateControllerID].PauseMenuCanvas);
 	}
