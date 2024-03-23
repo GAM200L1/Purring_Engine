@@ -1194,8 +1194,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 0.0,
-                        "Width": 0.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1214,7 +1214,7 @@
                             103,
                             118
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 5
@@ -1461,8 +1461,8 @@
                         "height": 128.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 683.5001220703125,
-                            "y": -418.5
+                            "x": 701.0,
+                            "y": -429.0
                         },
                         "relativeposition": {
                             "x": 701.0,
@@ -2416,7 +2416,9 @@
                         "Layer": 0,
                         "Old ID": 47,
                         "Prefab Type": "",
-                        "children": [],
+                        "children": [
+                            120
+                        ],
                         "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
@@ -5672,7 +5674,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
-                        "name": "UI Object",
+                        "name": "RatKingPortraitName",
                         "parent": 101,
                         "sceneID": 0
                     },
@@ -6499,8 +6501,8 @@
                         "height": 112.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 350.0,
-                            "y": -418.5
+                            "x": 367.5,
+                            "y": -425.0
                         },
                         "relativeposition": {
                             "x": 367.5,
@@ -6523,7 +6525,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
-                        "name": "UI Object",
+                        "name": "Settings Background",
                         "parent": 106,
                         "sceneID": 107
                     },
@@ -6549,6 +6551,47 @@
                         },
                         "relorientation": 0.0,
                         "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 120,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Journal Icon",
+                        "parent": 47,
+                        "sceneID": 119
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Journal_Icon_59x48.png"
+                    },
+                    "Transform": {
+                        "height": 48.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -727.0,
+                            "y": -287.0
+                        },
+                        "relativeposition": {
+                            "x": 78.2999267578125,
+                            "y": 64.2999267578125
+                        },
+                        "relorientation": 0.0,
+                        "width": 59.0
                     }
                 },
                 "name": ""

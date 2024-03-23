@@ -1412,8 +1412,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2153,7 +2153,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
-                        "name": "UI Object",
+                        "name": "Settings Background",
                         "parent": 25,
                         "sceneID": 1
                     },
