@@ -675,8 +675,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -686,7 +686,7 @@
                         "children": [
                             15
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
                         "sceneID": 11
@@ -718,7 +718,7 @@
                         "Old ID": 15,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Transparent Background",
                         "parent": 13,
                         "sceneID": 8
@@ -5308,8 +5308,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5323,9 +5323,10 @@
                             101,
                             102,
                             103,
-                            105
+                            105,
+                            108
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Settings Canvas",
                         "parent": null,
                         "sceneID": 14
@@ -5371,10 +5372,10 @@
                         "children": [
                             97
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SFXSlider",
                         "parent": 95,
-                        "sceneID": 96
+                        "sceneID": 98
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -5454,7 +5455,7 @@
                         "Old ID": 29,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SliderKnob",
                         "parent": 96,
                         "sceneID": 97
@@ -5497,10 +5498,10 @@
                         "children": [
                             99
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "BGMSlider",
                         "parent": 95,
-                        "sceneID": 98
+                        "sceneID": 100
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -5580,7 +5581,7 @@
                         "Old ID": 31,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SliderKnob",
                         "parent": 98,
                         "sceneID": 99
@@ -5621,17 +5622,17 @@
                         "Old ID": 32,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SFXText",
                         "parent": 95,
-                        "sceneID": 100
+                        "sceneID": 101
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
@@ -5669,17 +5670,17 @@
                         "Old ID": 33,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "BGMText",
                         "parent": 95,
-                        "sceneID": 101
+                        "sceneID": 102
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
@@ -5717,10 +5718,10 @@
                         "Old ID": 34,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "ReturnFromSettingsButton",
                         "parent": 95,
-                        "sceneID": 102
+                        "sceneID": 103
                     },
                     "GUI": {
                         "disabled": false,
@@ -5771,12 +5772,12 @@
                         "height": 125.51280975341797,
                         "orientation": 0.0,
                         "position": {
-                            "x": -765.5000610351563,
-                            "y": 397.50006103515625
+                            "x": -747.0,
+                            "y": 457.5
                         },
                         "relativeposition": {
-                            "x": -765.5000610351563,
-                            "y": 397.50006103515625
+                            "x": -747.0,
+                            "y": 457.5
                         },
                         "relorientation": 0.0,
                         "width": 409.8817138671875
@@ -5796,10 +5797,10 @@
                         "children": [
                             104
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Master Volume",
                         "parent": 95,
-                        "sceneID": 103
+                        "sceneID": 105
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -5879,7 +5880,7 @@
                         "Old ID": 37,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SliderKnob",
                         "parent": 103,
                         "sceneID": 104
@@ -5920,17 +5921,17 @@
                         "Old ID": 38,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Master Volume Text",
                         "parent": 95,
-                        "sceneID": 105
+                        "sceneID": 106
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
@@ -6108,6 +6109,47 @@
                         },
                         "relorientation": 0.0,
                         "width": 222.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 108,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "UI Object",
+                        "parent": 95,
+                        "sceneID": 96
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Settings_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
                     }
                 },
                 "name": ""

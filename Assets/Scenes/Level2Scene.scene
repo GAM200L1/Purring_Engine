@@ -5968,9 +5968,10 @@
                             111,
                             112,
                             113,
-                            115
+                            115,
+                            118
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Settings Canvas",
                         "parent": null,
                         "sceneID": 14
@@ -6016,10 +6017,10 @@
                         "children": [
                             107
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SFXSlider",
                         "parent": 102,
-                        "sceneID": 103
+                        "sceneID": 108
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -6037,9 +6038,9 @@
                         "m_currentWidth": 120.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_defaultTexture": "",
@@ -6099,7 +6100,7 @@
                         "Old ID": 29,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SliderKnob",
                         "parent": 103,
                         "sceneID": 107
@@ -6142,10 +6143,10 @@
                         "children": [
                             109
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "BGMSlider",
                         "parent": 102,
-                        "sceneID": 108
+                        "sceneID": 110
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -6225,7 +6226,7 @@
                         "Old ID": 31,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SliderKnob",
                         "parent": 108,
                         "sceneID": 109
@@ -6266,17 +6267,17 @@
                         "Old ID": 32,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SFXText",
                         "parent": 102,
-                        "sceneID": 110
+                        "sceneID": 111
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
@@ -6314,17 +6315,17 @@
                         "Old ID": 33,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "BGMText",
                         "parent": 102,
-                        "sceneID": 111
+                        "sceneID": 112
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
@@ -6362,10 +6363,10 @@
                         "Old ID": 34,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "ReturnFromSettingsButton",
                         "parent": 102,
-                        "sceneID": 112
+                        "sceneID": 113
                     },
                     "GUI": {
                         "disabled": false,
@@ -6416,12 +6417,12 @@
                         "height": 125.51280975341797,
                         "orientation": 0.0,
                         "position": {
-                            "x": -765.5000610351563,
-                            "y": 397.50006103515625
+                            "x": -747.5,
+                            "y": 457.5
                         },
                         "relativeposition": {
-                            "x": -765.5000610351563,
-                            "y": 397.50006103515625
+                            "x": -747.5,
+                            "y": 457.5
                         },
                         "relorientation": 0.0,
                         "width": 409.8817138671875
@@ -6441,10 +6442,10 @@
                         "children": [
                             114
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Master Volume",
                         "parent": 102,
-                        "sceneID": 113
+                        "sceneID": 115
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -6524,7 +6525,7 @@
                         "Old ID": 37,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SliderKnob",
                         "parent": 113,
                         "sceneID": 114
@@ -6565,17 +6566,17 @@
                         "Old ID": 38,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Master Volume Text",
                         "parent": 102,
-                        "sceneID": 115
+                        "sceneID": 116
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "HAlignment": 0,
@@ -6753,6 +6754,47 @@
                         },
                         "relorientation": 0.0,
                         "width": 222.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 118,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "UI Object",
+                        "parent": 102,
+                        "sceneID": 103
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Settings_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
                     }
                 },
                 "name": ""
