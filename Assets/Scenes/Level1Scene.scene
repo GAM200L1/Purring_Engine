@@ -675,8 +675,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 0.0,
-                        "Width": 0.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -686,7 +686,7 @@
                         "children": [
                             15
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Background Canvas",
                         "parent": null,
                         "sceneID": 11
@@ -718,7 +718,7 @@
                         "Old ID": 15,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Transparent Background",
                         "parent": 13,
                         "sceneID": 8
@@ -5308,8 +5308,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 0.0,
-                        "Width": 0.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5325,7 +5325,7 @@
                             103,
                             105
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Settings Canvas",
                         "parent": null,
                         "sceneID": 14
@@ -5371,7 +5371,7 @@
                         "children": [
                             97
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "SFXSlider",
                         "parent": 95,
                         "sceneID": 96
@@ -5383,19 +5383,19 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Settings_Bar2_874x92px.png"
                     },
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
-                        "m_currentValue": 0.5309091210365295,
-                        "m_currentWidth": 75.0,
+                        "m_currentValue": 0.5326923727989197,
+                        "m_currentWidth": 120.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
                         ],
                         "m_defaultTexture": "",
                         "m_disabled": false,
@@ -5406,29 +5406,29 @@
                             1.0
                         ],
                         "m_disabledTexture": "",
-                        "m_endPoint": 412.5,
+                        "m_endPoint": 390.0,
                         "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
+                            0.7069767713546753,
+                            0.7069767713546753,
+                            0.7069767713546753,
                             1.0
                         ],
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
-                        "m_knobID": 29,
+                        "m_knobID": 97,
                         "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
+                            0.5116279125213623,
+                            0.5116279125213623,
+                            0.5116279125213623,
                             1.0
                         ],
                         "m_pressedTexture": "",
-                        "m_startPoint": -412.5
+                        "m_startPoint": -390.0
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -5454,7 +5454,7 @@
                         "Old ID": 29,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "SliderKnob",
                         "parent": 96,
                         "sceneID": 97
@@ -5462,14 +5462,14 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Cat_Citrus_512px.png"
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 25.500024795532227,
@@ -5480,7 +5480,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 75.0
+                        "width": 120.0
                     }
                 },
                 "name": ""
@@ -5497,7 +5497,7 @@
                         "children": [
                             99
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "BGMSlider",
                         "parent": 95,
                         "sceneID": 98
@@ -5509,19 +5509,19 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Settings_Bar2_874x92px.png"
                     },
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
-                        "m_currentValue": 0.5272725820541382,
-                        "m_currentWidth": 75.0,
+                        "m_currentValue": 0.528846025466919,
+                        "m_currentWidth": 120.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
                         ],
                         "m_defaultTexture": "",
                         "m_disabled": false,
@@ -5532,29 +5532,29 @@
                             1.0
                         ],
                         "m_disabledTexture": "",
-                        "m_endPoint": 412.5,
+                        "m_endPoint": 390.0,
                         "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
+                            0.7069767713546753,
+                            0.7069767713546753,
+                            0.7069767713546753,
                             1.0
                         ],
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
-                        "m_knobID": 31,
+                        "m_knobID": 99,
                         "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
+                            0.7069767713546753,
+                            0.7069767713546753,
+                            0.7069767713546753,
                             1.0
                         ],
                         "m_pressedTexture": "",
-                        "m_startPoint": -412.5
+                        "m_startPoint": -390.0
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -5580,7 +5580,7 @@
                         "Old ID": 31,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "SliderKnob",
                         "parent": 98,
                         "sceneID": 99
@@ -5588,14 +5588,14 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Cat_Smokey_512px.png"
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 22.49988555908203,
@@ -5606,7 +5606,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 75.0
+                        "width": 120.0
                     }
                 },
                 "name": ""
@@ -5621,7 +5621,7 @@
                         "Old ID": 32,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "SFXText",
                         "parent": 95,
                         "sceneID": 100
@@ -5669,7 +5669,7 @@
                         "Old ID": 33,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "BGMText",
                         "parent": 95,
                         "sceneID": 101
@@ -5717,7 +5717,7 @@
                         "Old ID": 34,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "ReturnFromSettingsButton",
                         "parent": 95,
                         "sceneID": 102
@@ -5796,7 +5796,7 @@
                         "children": [
                             104
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Master Volume",
                         "parent": 95,
                         "sceneID": 103
@@ -5808,19 +5808,19 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Settings_Flower_Bar2_874x92px.png"
                     },
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
                         "m_currentValue": 0.0,
-                        "m_currentWidth": 75.0,
+                        "m_currentWidth": 120.0,
                         "m_currentXpos": -107374176.0,
                         "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
                         ],
                         "m_defaultTexture": "",
                         "m_disabled": false,
@@ -5831,29 +5831,29 @@
                             1.0
                         ],
                         "m_disabledTexture": "",
-                        "m_endPoint": 412.5,
+                        "m_endPoint": 390.0,
                         "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
+                            0.7069767713546753,
+                            0.7069767713546753,
+                            0.7069767713546753,
                             1.0
                         ],
                         "m_hoveredTexture": "",
                         "m_isHealthBar": false,
-                        "m_knobID": 37,
+                        "m_knobID": 104,
                         "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
+                            0.5116279125213623,
+                            0.5116279125213623,
+                            0.5116279125213623,
                             1.0
                         ],
                         "m_pressedTexture": "",
-                        "m_startPoint": -412.5
+                        "m_startPoint": -390.0
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -5879,7 +5879,7 @@
                         "Old ID": 37,
                         "Prefab Type": "SliderKnob",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "SliderKnob",
                         "parent": 103,
                         "sceneID": 104
@@ -5887,25 +5887,25 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 120.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -412.5,
+                            "x": -390.0,
                             "y": 48.0
                         },
                         "relativeposition": {
-                            "x": -412.5,
+                            "x": -390.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 75.0
+                        "width": 120.0
                     }
                 },
                 "name": ""
@@ -5920,7 +5920,7 @@
                         "Old ID": 38,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Master Volume Text",
                         "parent": 95,
                         "sceneID": 105
