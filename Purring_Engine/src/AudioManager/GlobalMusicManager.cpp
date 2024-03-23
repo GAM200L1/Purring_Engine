@@ -67,13 +67,14 @@ namespace PE
 
     }
 
-    void GlobalMusicManager::PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration)
+    void GlobalMusicManager::PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration, float frequency)
     {
         EntityID audioEntity = ResourceManager::GetInstance().LoadPrefabFromFile(r_prefabPath);
         if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
         {
             auto& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
             audioComponent.SetLoop(loop);
+            audioComponent.SetPlaybackFrequency(frequency);
 
             if (fadeInDuration > 0.0f)
             {
@@ -205,6 +206,63 @@ namespace PE
         m_isFadingIn = false;
         m_fadeProgress = 0.0f;
         m_fadeDuration = duration;
+    }
+
+    void GlobalMusicManager::SetGlobalPitch(float pitch)
+    {
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            audioComponent->SetPitch(pitch);
+        }
+    }
+
+    void GlobalMusicManager::SetTrackPitch(const std::string& trackKey, float pitch)
+    {
+        auto it = m_audioComponents.find(trackKey);
+        if (it != m_audioComponents.end())
+        {
+            //std::cout << "[GlobalMusicManager] Setting pitch for track: " << trackKey << " to " << pitch << std::endl;
+            it->second->SetPitch(pitch);
+        }
+        else
+        {
+            //std::cout << "[GlobalMusicManager] Track key not found: " << trackKey << std::endl;
+        }
+    }
+    void GlobalMusicManager::SetGlobalPlaybackFrequency(float frequency)
+    {
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            audioComponent->SetPlaybackFrequency(frequency);
+        }
+    }
+
+    void GlobalMusicManager::SetTrackPlaybackFrequency(const std::string& trackKey, float frequency)
+    {
+        auto it = m_audioComponents.find(trackKey);
+        if (it != m_audioComponents.end())
+        {
+            it->second->SetPlaybackFrequency(frequency);
+            //std::cout << "Setting playback frequency for track: " << trackKey << " to " << frequency << std::endl;
+        }
+        else
+        {
+            std::cout << "Track key not found: " << trackKey << std::endl;
+        }
+    }
+
+
+    void GlobalMusicManager::AdjustBackgroundMusicFrequency(float newFrequency)
+    {
+        auto it = m_audioComponents.find(m_currentTrackKey);
+        if (it != m_audioComponents.end())
+        {
+            it->second->SetPlaybackFrequency(newFrequency);
+        }
+        else
+        {
+            //std::cout << "Track key not found: " << m_currentTrackKey << std::endl;
+        }
     }
 
     void GlobalMusicManager::StopAllAudio()

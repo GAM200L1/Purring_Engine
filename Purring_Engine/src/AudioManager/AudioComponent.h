@@ -152,6 +152,11 @@ namespace PE
         *************************************************************************************/
         void StartIndividualFadeOut(float targetVolume, float duration);
 
+        void SetPitch(float pitch);
+        float GetPitch() const;
+        void SetPlaybackFrequency(float frequency);
+        float GetPlaybackFrequency() const;
+
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
         \return    JSON representation of the AudioComponent state.
@@ -177,5 +182,7 @@ namespace PE
         float m_fadeProgressIndividual = 0.0f;
         float m_originalVolume = 1.0f;
         float m_targetVolumeIndividual;
+
+        float m_playbackFrequency = 1.0f;  // Default frequency is 1.0
     };
 }
