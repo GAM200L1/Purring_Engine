@@ -3572,6 +3572,8 @@ namespace PE {
 										int FinalSceneID = static_cast<int> (it->second.FinalScene);
 										int TextID = static_cast<int> (it->second.Text);
 										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
+										int SkipButtonID = static_cast<int> (it->second.SkipButton);
+										int ContinueButtonID = static_cast<int> (it->second.ContinueButton);
 
 										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##icsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
@@ -3584,6 +3586,12 @@ namespace PE {
 
 										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itssid", &TransitionScreenID);
 										{ it->second.TransitionScreen = TransitionScreenID; }
+
+										ImGui::Text("Continue Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itcscbid", &ContinueButtonID);
+										{ it->second.ContinueButton = ContinueButtonID; }
+
+										ImGui::Text("Skip Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itcssbid", &SkipButtonID);
+										{ it->second.SkipButton = SkipButtonID; }
 									}
 								}
 							}

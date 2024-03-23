@@ -301,6 +301,8 @@ RTTR_REGISTRATION
         .property("CutsceneObject", &PE::IntroCutsceneControllerData::CutsceneObject)
         .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
         .property("Text", &PE::IntroCutsceneControllerData::Text)
+        .property("SkipButton", &PE::IntroCutsceneControllerData::SkipButton)
+        .property("ContinueButton", &PE::IntroCutsceneControllerData::ContinueButton)
         .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::EndingCutsceneControllerData>("EndingCutsceneController")

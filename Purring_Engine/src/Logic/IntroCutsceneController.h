@@ -27,6 +27,10 @@ namespace PE
 		EntityID CutsceneObject;
 		EntityID FinalScene;
 
+		EntityID ContinueButton;
+		EntityID SkipButton;
+
+
 		int windowNotFocusEventID;
 		int windowFocusEventID;
 	};
