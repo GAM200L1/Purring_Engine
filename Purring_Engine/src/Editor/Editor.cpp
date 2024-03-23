@@ -3613,6 +3613,9 @@ namespace PE {
 										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
 										int BackgroundCanvasID = static_cast<int> (it->second.BackgroundCanvas);
 
+										int SkipButtonID = static_cast<int> (it->second.SkipButton);
+										int ContinueButtonID = static_cast<int> (it->second.ContinueButton);
+
 										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ecsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
 
@@ -3633,6 +3636,12 @@ namespace PE {
 
 										ImGui::Text("Background Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etbcid", &BackgroundCanvasID);
 										{ it->second.BackgroundCanvas = BackgroundCanvasID; }
+
+										ImGui::Text("Continue Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcscbid", &ContinueButtonID);
+										{ it->second.ContinueButton = ContinueButtonID; }
+
+										ImGui::Text("Skip Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcssbid", &SkipButtonID);
+										{ it->second.SkipButton = SkipButtonID; }
 									}
 								}
 							}

@@ -254,8 +254,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -263,7 +263,9 @@
                         "Old ID": 6,
                         "Prefab Type": "Canvas Object",
                         "children": [
-                            12
+                            12,
+                            21,
+                            22
                         ],
                         "isActive": true,
                         "name": "Canvas Object",
@@ -299,7 +301,7 @@
                         "children": [
                             14
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "GUIButton",
                         "parent": 6,
                         "sceneID": 7
@@ -376,7 +378,7 @@
                         "Old ID": 14,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Text",
                         "parent": 12,
                         "sceneID": 1
@@ -419,8 +421,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -510,8 +512,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1254,6 +1256,160 @@
                         },
                         "relorientation": 0.0,
                         "width": 858.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 21,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Skip Button",
+                        "parent": 6,
+                        "sceneID": 12
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_SkipCutscene_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_SkipCutscene_Highlighted_512x128.png",
+                        "m_onClicked": "WinScreen",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_SkipCutscene_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_SkipCutscene_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 128.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 732.0,
+                            "y": 469.0
+                        },
+                        "relativeposition": {
+                            "x": 732.0,
+                            "y": 469.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 512.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 22,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Continue Button",
+                        "parent": 6,
+                        "sceneID": 13
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Continue_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Continue_Highlighted_512x128.png",
+                        "m_onClicked": "WinScreen",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Continue_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Continue_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 128.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 732.0,
+                            "y": 469.0
+                        },
+                        "relativeposition": {
+                            "x": 732.0,
+                            "y": 469.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 512.0
                     }
                 },
                 "name": ""
