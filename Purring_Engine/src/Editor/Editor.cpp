@@ -3992,50 +3992,49 @@ namespace PE {
 
 
 										// --- Rat Patrolling Settings
-										//ImGui::Text("Rat Patrolling Settings");
-										//ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
-										//ImGui::Separator();
+										 
+										if (it->second.ratType == EnumRatType::BRAWLER)
+										{
+											ImGui::Text("Rat Patrolling Settings");
+											ImGui::Separator();
 
-										// Dynamic list for adding patrol point positions
-										//if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-										//{
-										//	if (it->second.patrolPoints.empty())
-										//	{
-										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
-										//		it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
-										//	}
+											// Dynamic list for adding patrol point positions
+											if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+											{
+												// Display all the existing patrol points
+												for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
+												{
+													ImGui::PushID(static_cast<int>(i)); // Use i as the ID
+													ImGui::Text("Point %zu:", i + 1); // Display point number
+													ImGui::SameLine();
+													float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
+													ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
+													it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
+													ImGui::PopID();
+												}
 
-										//	for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
-										//	{
-										//		ImGui::PushID(static_cast<int>(i)); // Use i as the ID
-										//		ImGui::Text("Point %zu:", i + 1); // Display point number
-										//		ImGui::SameLine();
-										//		float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
-										//		ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
-										//		it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
-										//		ImGui::PopID();
-										//	}
+												ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+												// Button for adding patrol points
+												ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
+												if (ImGui::Button("Add Patrol Point"))
+												{
+													it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
+												}
+												ImGui::PopStyleColor(1); // Pop button color style
 
-										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
-										//	if (ImGui::Button("Add Patrol Point"))
-										//	{
-										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
-										//	}
-										//	ImGui::PopStyleColor(1); // Pop button color style
+												ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
-
-										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
-										//	if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
-										//	{
-										//		it->second.patrolPoints.pop_back();
-										//	}
-										//	ImGui::PopStyleColor(1); // Pop button color style
-										//}
-										//ImGui::Separator();
-
+												// Button for deleting patrol points
+												ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
+												if (ImGui::Button("Delete Last Patrol Point") && !(it->second.patrolPoints.empty()))
+												{
+													it->second.patrolPoints.pop_back();
+												}
+												ImGui::PopStyleColor(1); // Pop button color style
+											}
+											ImGui::Separator();
+										} // end of if(ratType == BRAWLER)
 									}
 
 								} // end of if (ImGui::CollapsingHeader("RatScript_v2_0...

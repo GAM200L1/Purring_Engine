@@ -451,7 +451,8 @@ RTTR_REGISTRATION
         .property("movementSpeed", &PE::RatScript_v2_0_Data::movementSpeed)
         .property("maxMovementRange", &PE::RatScript_v2_0_Data::maxMovementRange)
         .property("maxHuntTurns", &PE::RatScript_v2_0_Data::maxHuntTurns)
-        .property("animationStates", &PE::RatScript_v2_0_Data::animationStates);
+        .property("animationStates", &PE::RatScript_v2_0_Data::animationStates)
+        .property("patrolPoints", &PE::RatScript_v2_0_Data::patrolPoints);
 
     rttr::registration::class_<PE::BossRatScriptData>("BossRatScript")
         .property("maxHealth", &PE::BossRatScriptData::maxHealth)
