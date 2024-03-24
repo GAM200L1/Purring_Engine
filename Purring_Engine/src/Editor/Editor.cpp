@@ -82,6 +82,7 @@
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
 #include "Logic/Settings.h"
+#include "Logic/TutorialController.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -3572,6 +3573,8 @@ namespace PE {
 										int FinalSceneID = static_cast<int> (it->second.FinalScene);
 										int TextID = static_cast<int> (it->second.Text);
 										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
+										int SkipButtonID = static_cast<int> (it->second.SkipButton);
+										int ContinueButtonID = static_cast<int> (it->second.ContinueButton);
 
 										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##icsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
@@ -3584,6 +3587,12 @@ namespace PE {
 
 										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itssid", &TransitionScreenID);
 										{ it->second.TransitionScreen = TransitionScreenID; }
+
+										ImGui::Text("Continue Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itcscbid", &ContinueButtonID);
+										{ it->second.ContinueButton = ContinueButtonID; }
+
+										ImGui::Text("Skip Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itcssbid", &SkipButtonID);
+										{ it->second.SkipButton = SkipButtonID; }
 									}
 								}
 							}
@@ -3605,6 +3614,9 @@ namespace PE {
 										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
 										int BackgroundCanvasID = static_cast<int> (it->second.BackgroundCanvas);
 
+										int SkipButtonID = static_cast<int> (it->second.SkipButton);
+										int ContinueButtonID = static_cast<int> (it->second.ContinueButton);
+
 										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ecsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
 
@@ -3625,6 +3637,12 @@ namespace PE {
 
 										ImGui::Text("Background Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etbcid", &BackgroundCanvasID);
 										{ it->second.BackgroundCanvas = BackgroundCanvasID; }
+
+										ImGui::Text("Continue Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcscbid", &ContinueButtonID);
+										{ it->second.ContinueButton = ContinueButtonID; }
+
+										ImGui::Text("Skip Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcssbid", &SkipButtonID);
+										{ it->second.SkipButton = SkipButtonID; }
 									}
 								}
 							}
@@ -4224,7 +4242,33 @@ namespace PE {
 									}
 								}
 							}
-						}
+						
+							if (key == "TutorialController")
+							{
+								TutorialController* p_script = dynamic_cast<TutorialController*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("Tutorial Controller", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int TutorialPanel1ID = static_cast<int> (it->second.TutorialPanel1);
+										int TutorialPanel2ID = static_cast<int> (it->second.TutorialPanel2);
+										int TutorialPanel3ID = static_cast<int> (it->second.TutorialPanel3);
+
+										ImGui::Text("Tutorial Panel 1 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##TCTP1", &TutorialPanel1ID);
+										if (TutorialPanel1ID != m_currentSelectedObject) { it->second.TutorialPanel1 = TutorialPanel1ID; }
+
+										ImGui::Text("Tutorial Panel 2 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##TCTP2", &TutorialPanel2ID);
+										if (TutorialPanel2ID != m_currentSelectedObject) { it->second.TutorialPanel2 = TutorialPanel2ID; }
+
+										ImGui::Text("Tutorial Panel 3 "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##TCTP3", &TutorialPanel3ID);
+										if (TutorialPanel3ID != m_currentSelectedObject) it->second.TutorialPanel3 = TutorialPanel3ID;
+									}
+								}
+							}
+
+
+}
 					}
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space

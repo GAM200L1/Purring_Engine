@@ -41,9 +41,18 @@ namespace PE
 
 		if (EntityManager::GetInstance().Has<Transform>(id))
 			BossTransform = EntityManager::GetInstance().Get<Transform>(id);
+		
+		vec2 StartPosition{};
+		float scaleOffset{};
+		if (EntityManager::GetInstance().Has<Collider>(id))
+		{
+			CircleCollider cc = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+			StartPosition = cc.center;
+			scaleOffset = cc.scaleOffset;
+		}
 
 		//Direction of Boss to Closest Cat
-		vec2 direction = closestCatTransform.position - BossTransform.position;
+		vec2 direction = closestCatTransform.position - StartPosition;
 		vec2 unitDirection = direction.GetNormalized();
 
 		//atleast 1
@@ -56,7 +65,7 @@ namespace PE
 		if (EntityManager::GetInstance().Has<Transform>(telegraph))
 		{
 			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
-			TelegraphTransform->position = NextPosition = BossTransform.position + unitDirection * (BossTransform.width/2 + TelegraphTransform->width /2);
+			TelegraphTransform->position = NextPosition = StartPosition + unitDirection * (((BossTransform.width / 2) * scaleOffset + TelegraphTransform->width /2));
 			m_noOfAttack++;
 			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
 			{
