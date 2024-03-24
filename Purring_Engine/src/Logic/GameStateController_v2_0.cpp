@@ -725,8 +725,8 @@ namespace PE
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
 
-			GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
-			//GlobalMusicManager::GetInstance().SetTrackPitch("AudioObject/Background Music1.prefab", 0.2f); // for pitch
+			//GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
+			GlobalMusicManager::GetInstance().SetTrackPitch("AudioObject/Background Music1.prefab", 0.2f); // for pitch
 
 			//PauseBGM();
 			PlayPageAudio();
@@ -749,7 +749,8 @@ namespace PE
 	{
 		if (currentState == GameStates_v2_0::PAUSE)
 		{
-			GlobalMusicManager::GetInstance().ResumeBackgroundMusic();  // Restore volume after resuming
+			//GlobalMusicManager::GetInstance().ResumeBackgroundMusic();  // Restore volume after resuming
+			GlobalMusicManager::GetInstance().SetTrackPitch("AudioObject/Background Music1.prefab", 1.0f); // for pitch
 
 			for (auto id : SceneView<GUIButton>())
 			{
