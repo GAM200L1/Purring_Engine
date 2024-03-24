@@ -561,6 +561,20 @@ namespace PE
 							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
 						}
 					}
+					else if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id))
+					{
+						// spritesheet animation
+						if (p_animation->IsSpriteSheet())
+						{
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+						}
+						else // texture key animation
+						{
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
+						}
+					}
 				}
 			}
 		}
@@ -688,6 +702,23 @@ namespace PE
 				else // texture key animation
 				{
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_firstFrame.m_textureKey);
+				}
+			}
+			else if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id))
+			{
+				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
+				AnimationFrame p_firstFrame = p_animation->GetCurrentAnimationFrame(0);
+				// spritesheet animation
+				if (p_animation->IsSpriteSheet())
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetUVCoordinatesMin(p_firstFrame.m_minUV);
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetUVCoordinatesMax(p_firstFrame.m_maxUV);
+				}
+				else // texture key animation
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetTextureKey(p_firstFrame.m_textureKey);
 				}
 			}
 		}

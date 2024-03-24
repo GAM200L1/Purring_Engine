@@ -4325,6 +4325,13 @@ namespace PE {
 									else
 											AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 							}
+							if (ImGui::Selectable("Add Animation"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+								else
+									AddErrorLog("ALREADY HAS ANIMATION");
+							}
 						}
 
 						ImGui::EndPopup();
