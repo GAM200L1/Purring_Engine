@@ -529,10 +529,10 @@ namespace PE
 		float m_phaseBannerStay{};
 		bool m_isPhaseBannerTransition{true};
 
-		float prevVolume;
+		float m_prevVolume;
 
 		// Audio Controls
-		bool bgmStarted = false;
+		bool m_bgmStarted = false;
 
 
 	};

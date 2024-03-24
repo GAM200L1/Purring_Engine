@@ -352,7 +352,7 @@ namespace PE
 		GlobalMusicManager::GetInstance().StopAllAudio();
 
 		// reset bgm flag
-		bgmStarted = false;
+		m_bgmStarted = false;
 	}
 
 	void GameStateController_v2_0::OnAttach(EntityID id)
@@ -1270,7 +1270,7 @@ namespace PE
 		PlaySceneTransition();
 		GETANIMATIONMANAGER()->PlayAllAnimations();
 
-		bgmStarted = false;
+		m_bgmStarted = false;
 
 		m_leveltoLoad = SceneManager::GetInstance().GetActiveScene();
 	}
@@ -1628,7 +1628,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayBackgroundMusicForStage()
 	{
-		if (bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
+		if (m_bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
 		{
 			return;
 		}
@@ -1649,7 +1649,7 @@ namespace PE
 			{
 				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f);
 			}
-			bgmStarted = true; // Flag the background music as started
+			m_bgmStarted = true; // Flag the background music as started
 		}
 		else
 		{
