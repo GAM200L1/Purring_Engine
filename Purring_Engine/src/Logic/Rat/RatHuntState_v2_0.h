@@ -23,9 +23,16 @@ namespace PE
 	{
 		// ----- Constructors ----- //
 	public:
+		/*!***********************************************************************************
+			\brief Constructor for RatHunt_v2_0
 
+			\param[in] _targetID - id of the target cat
+		*************************************************************************************/
 		RatHunt_v2_0(EntityID const _targetId) : targetId{ _targetId } { /* Empty by design */ }
 
+		/*!***********************************************************************************
+			\brief Destructor for RatHunt_v2_0
+		*************************************************************************************/
 		virtual ~RatHunt_v2_0() override { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
@@ -147,6 +154,14 @@ namespace PE
 			*************************************************************************************/
 			vec2 PickTargetPosition();
 
-			vec2 RotatePoint(vec2 PointA, vec2 PointB, float angle);
+			/*!***********************************************************************************
+				\brief Rotates a point about a center
+
+				\param[in] center - center to rotate about
+				\param[in] point - point to rotate about center
+				\param[in] angle - angle to rotate
+				\return Returns where the point ends up
+			*************************************************************************************/
+			vec2 RotatePoint(vec2 center, vec2 point, float angle);
 	};
 } // End of namespace PE
