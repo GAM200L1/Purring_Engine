@@ -32,6 +32,7 @@
 #include "CatHelperFunctions.h"
 #include "CatController_v2_0.h"
 #include "FollowScript_v2_0.h"
+#include "Logic/Rat/RatController_v2_0.h"
 
 #include "ECS/EntityFactory.h"
 #include "ResourceManager/ResourceManager.h"
@@ -278,16 +279,34 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(nodeId).width = m_scriptData[id].nodeSize;
 		EntityManager::GetInstance().Get<Transform>(nodeId).height = m_scriptData[id].nodeSize;
 
+
+
 		CircleCollider circleCollider;
 		circleCollider.scaleOffset = CatHelperFunctions::GetEntityScale(id).x / m_scriptData[id].nodeSize;
 
 		EntityManager::GetInstance().Get<Collider>(nodeId).colliderVariant = circleCollider;
 		EntityManager::GetInstance().Get<Collider>(nodeId).isTrigger = true;
-
+		EntityManager::GetInstance().Get<Collider>(nodeId).collisionLayerIndex = 9;
 		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).toSave = false;
 
 		m_scriptData[id].pathQuads.emplace_back(nodeId);
+	}
+
+	void CatScript_v2_0::FillPathNodes(EntityID id, int newEnergy)
+	{
+		for (const auto& id2 : m_scriptData[id].pathQuads)
+		{
+			EntityManager::GetInstance().RemoveEntity(id2);
+		}
+		m_scriptData[id].pathQuads.clear();
+		m_scriptData[id].catMaxMovementEnergy = newEnergy;
+		m_scriptData[id].pathPositions.reserve(m_scriptData[id].catMaxMovementEnergy);
+		m_scriptData[id].pathQuads.reserve(m_scriptData[id].catMaxMovementEnergy);
+		for (size_t i{ 0 }; i < m_scriptData[id].catMaxMovementEnergy; ++i)
+		{
+			CreatePathNode(id);
+		}
 	}
 
 	template<typename AttackPLAN>
@@ -450,6 +469,10 @@ namespace PE
 
 	void CatScript_v2_0::ChangeToPlanningState(EntityID id)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->GetRats(GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->mainInstance).empty() && m_scriptData[id].catMaxMovementEnergy != 1000 && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 3)
+		{
+			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->FillPathNodes(id, 1000);
+		}
 		switch (m_scriptData[id].catType)
 		{
 		case EnumCatType::ORANGECAT:

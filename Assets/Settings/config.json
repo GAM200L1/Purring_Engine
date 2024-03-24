@@ -3,7 +3,7 @@
         "firstLaunch": false,
         "isPrefabMode": false,
         "layerSettings": 1023,
-        "renderDebug": true,
+        "renderDebug": false,
         "showAnimationWindow": false,
         "showComponentWindow": true,
         "showConsole": false,
@@ -12,7 +12,7 @@
         "showLogs": true,
         "showObjectList": true,
         "showPerformanceWindow": false,
-        "showPhysicsWindow": false,
+        "showPhysicsWindow": true,
         "showResourceWindow": true,
         "showSceneView": true,
         "showTestWindows": false
