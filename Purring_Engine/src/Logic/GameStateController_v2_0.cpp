@@ -624,6 +624,8 @@ namespace PE
 							m_isPotraitShowing = true;
 							m_lastSelectedEntity = CatID;
 							
+							ShowSelectionIndicator(CatID);
+
 							//debug
 							//std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
 							//add a switch statement here
@@ -1653,7 +1655,8 @@ namespace PE
 		int randomSelection = std::rand() % 5 + 1;  // Random number between 1 and 5
 
 		std::string catTypeName;
-		switch (catType) {
+		switch (catType)
+		{
 		case 1:  // '1' for Main cat
 			catTypeName = "Meowsalot";
 			break;
@@ -1739,5 +1742,54 @@ namespace PE
 		if (Finished)
 			NextState();
 	}
+
+	void GameStateController_v2_0::ShowSelectionIndicator(EntityID catID)
+	{
+		if (m_lastSelectedEntity == 0)  // Assuming 0 is an invalid entity ID
+		{
+			// Create the selection indicator entity if it doesn't exist
+			m_lastSelectedEntity = EntityManager::GetInstance().NewEntity();
+
+			// Add necessary components, such as Transform and Renderer
+			Transform* transform = EntityManager::GetInstance().Assign<Transform>(m_lastSelectedEntity);
+			Graphics::Renderer* renderer = EntityManager::GetInstance().Assign<Graphics::Renderer>(m_lastSelectedEntity);
+
+			// Check if both transform and renderer are not null
+			if (transform && renderer)
+			{
+				// Set the texture of the renderer to "indicator selection.png"
+				renderer->SetTextureKey(ResourceManager::GetInstance().LoadTexture("indicator selection.png"));
+			}
+		}
+
+		// Check if the lastSelectedEntity is valid
+		if (m_lastSelectedEntity != 0)
+		{
+			// Update the position of the selection indicator to match the cat's position
+			Transform* catTransform = EntityManager::GetInstance().Get<Transform>(catID);
+			Transform* indicatorTransform = EntityManager::GetInstance().Get<Transform>(m_lastSelectedEntity);
+
+			// Check if both catTransform and indicatorTransform are not null
+			if (catTransform && indicatorTransform)
+			{
+				indicatorTransform->position = catTransform->position;
+			}
+
+			// Make the selection indicator visible
+			// You might need to add a method or logic to enable the entity if your engine supports enabling/disabling entities
+		}
+	}
+
+	void GameStateController_v2_0::HideSelectionIndicator()
+	{
+		// Logic to hide or disable the selection indicator
+		// You might need to add a method or logic to disable the entity if your engine supports enabling/disabling entities
+	}
+
+
+
+
+
+
 
 }

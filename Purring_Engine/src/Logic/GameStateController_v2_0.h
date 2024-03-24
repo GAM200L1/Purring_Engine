@@ -238,13 +238,16 @@ namespace PE
 		*************************************************************************************/
 		void SetCurrentLevel(int lvl);
 
-
 		/*!***********************************************************************************
 		 \brief		Is Cat Selected
 
 		 \return	true or false if cat selected
 		*************************************************************************************/
 		bool GetSelectedCat(EntityID catID);
+
+		void ShowSelectionIndicator(EntityID catID);
+
+		void HideSelectionIndicator();
 
 		// ----- Object Helper Functions ----- //
 	private:
