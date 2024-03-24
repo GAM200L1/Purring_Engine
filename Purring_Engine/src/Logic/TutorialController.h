@@ -88,12 +88,17 @@ namespace PE
 		rttr::instance GetScriptData(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief Destructor for the test script
+		 \brief Destructor for the tutorial script
 
 		 \return void
 		*************************************************************************************/
 		~TutorialController();
 
+		/*!***********************************************************************************
+		 \brief Constructor for the tutorial script
+
+		 \return void
+		*************************************************************************************/
 		TutorialController();
 
 	private:
