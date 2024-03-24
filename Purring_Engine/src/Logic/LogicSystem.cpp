@@ -63,6 +63,8 @@
 #include "Boss/BossRatHealthBarScript.h"
 #include "ObjectAttachScript.h"
 
+
+#include "TutorialController.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
@@ -117,6 +119,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(BossRatHealthBarScript);
 
 	REGISTER_SCRIPT(SettingsScript);
+	REGISTER_SCRIPT(TutorialController);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

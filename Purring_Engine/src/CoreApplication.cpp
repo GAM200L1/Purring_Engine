@@ -110,6 +110,8 @@
 
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Logic/Cat/CatScript_v2_0.h"
+
+#include "Logic/TutorialController.h"
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
@@ -214,6 +216,12 @@ RTTR_REGISTRATION
         .property("HP", &PE::PlayerControllerScriptData::HP)
         .property("speed", &PE::PlayerControllerScriptData::speed);
 
+    rttr::registration::class_<PE::TutorialControllerData>("TutorialController")
+        .property("TutorialPanel1", &PE::TutorialControllerData::TutorialPanel1)
+        .property("TutorialPanel2", &PE::TutorialControllerData::TutorialPanel2)
+        .property("TutorialPanel3", &PE::TutorialControllerData::TutorialPanel3);
+
+
     rttr::registration::class_<PE::EnemyTestScriptData>("EnemyTestScript")
         .property("PlayerID", &PE::EnemyTestScriptData::playerID)
         .property("speed", &PE::EnemyTestScriptData::speed)
@@ -301,6 +309,8 @@ RTTR_REGISTRATION
         .property("CutsceneObject", &PE::IntroCutsceneControllerData::CutsceneObject)
         .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
         .property("Text", &PE::IntroCutsceneControllerData::Text)
+        .property("SkipButton", &PE::IntroCutsceneControllerData::SkipButton)
+        .property("ContinueButton", &PE::IntroCutsceneControllerData::ContinueButton)
         .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::EndingCutsceneControllerData>("EndingCutsceneController")
@@ -310,6 +320,8 @@ RTTR_REGISTRATION
         .property("AreYouSureCanvas", &PE::EndingCutsceneControllerData::AreYouSureCanvas)
         .property("BackgroundCanvas", &PE::EndingCutsceneControllerData::BackgroundCanvas)
         .property("WinCanvas", &PE::EndingCutsceneControllerData::WinCanvas)
+        .property("SkipButton", &PE::EndingCutsceneControllerData::SkipButton)
+        .property("ContinueButton", &PE::EndingCutsceneControllerData::ContinueButton)
         .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
@@ -439,7 +451,8 @@ RTTR_REGISTRATION
         .property("movementSpeed", &PE::RatScript_v2_0_Data::movementSpeed)
         .property("maxMovementRange", &PE::RatScript_v2_0_Data::maxMovementRange)
         .property("maxHuntTurns", &PE::RatScript_v2_0_Data::maxHuntTurns)
-        .property("animationStates", &PE::RatScript_v2_0_Data::animationStates);
+        .property("animationStates", &PE::RatScript_v2_0_Data::animationStates)
+        .property("patrolPoints", &PE::RatScript_v2_0_Data::patrolPoints);
 
     rttr::registration::class_<PE::BossRatScriptData>("BossRatScript")
         .property("maxHealth", &PE::BossRatScriptData::maxHealth)
