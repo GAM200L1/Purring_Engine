@@ -1296,7 +1296,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Overlay_Foliage_V2_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/Overlay_Foliage_V3_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
