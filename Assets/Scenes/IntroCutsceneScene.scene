@@ -73,7 +73,7 @@
                                 "ContinueButton": 13,
                                 "CutsceneObject": 1,
                                 "FinalScene": 4,
-                                "SkipButton": 11,
+                                "SkipButton": 9,
                                 "Text": 14,
                                 "TransitionScreen": 10
                             },
@@ -700,7 +700,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_SkipCutscene_Highlighted_512x128.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_Onwards_Highlighted_512x128.png",
                         "m_onClicked": "ContinueToLevel",
                         "m_onHoverEnter": "ButtonHoverExpand",
                         "m_onHoverExit": "ButtonOffHoverShrink",
@@ -711,7 +711,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_pressedTexture": "../Assets/Textures/Button_SkipCutscene_Dark_512x128.png"
+                        "m_pressedTexture": "../Assets/Textures/Button_Onwards_Dark_512x128.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -720,7 +720,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_Onwards_512x128.png"
+                        "TextureKey": "../Assets/Textures/Button_Onwards_Highlighted_512x128.png"
                     },
                     "Transform": {
                         "height": 128.0,

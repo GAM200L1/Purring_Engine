@@ -320,8 +320,8 @@ RTTR_REGISTRATION
         .property("AreYouSureCanvas", &PE::EndingCutsceneControllerData::AreYouSureCanvas)
         .property("BackgroundCanvas", &PE::EndingCutsceneControllerData::BackgroundCanvas)
         .property("WinCanvas", &PE::EndingCutsceneControllerData::WinCanvas)
-        .property("SkipButton", &PE::IntroCutsceneControllerData::SkipButton)
-        .property("ContinueButton", &PE::IntroCutsceneControllerData::ContinueButton)
+        .property("SkipButton", &PE::EndingCutsceneControllerData::SkipButton)
+        .property("ContinueButton", &PE::EndingCutsceneControllerData::ContinueButton)
         .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())

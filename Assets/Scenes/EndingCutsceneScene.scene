@@ -72,8 +72,10 @@
                             "data": {
                                 "AreYouSureCanvas": 13,
                                 "BackgroundCanvas": 18,
+                                "ContinueButton": 22,
                                 "CutsceneObject": 1,
                                 "FinalScene": 4,
+                                "SkipButton": 21,
                                 "Text": 14,
                                 "TransitionScreen": 10,
                                 "WinCanvas": 32
