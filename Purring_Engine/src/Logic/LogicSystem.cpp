@@ -22,6 +22,7 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "LogicSystem.h"
+#include "ResourceManager/ResourceManager.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
@@ -62,15 +63,24 @@
 #include "Boss/BossRatHealthBarScript.h"
 #include "ObjectAttachScript.h"
 
+
+#include "TutorialController.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
 
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
-bool PE::LogicSystem::restartingScene = false;
+int PE::LogicSystem::m_currentQueueNumber = 0;
+std::vector<std::pair<std::optional<EntityID>, std::string>> PE::LogicSystem::m_createScriptObjectQueue;
+std::vector<std::pair<std::optional<EntityID>, std::string>> PE::LogicSystem::m_newScriptObjectQueue;
+
 
 PE::LogicSystem::LogicSystem()
 {
+	//m_createScriptObjectQueue.reserve(100);
+	//m_createScriptObjectQueue.resize(100);
+	//m_newScriptObjectQueue.reserve(100);
+	//m_newScriptObjectQueue.resize(100);
 }
 	
 PE::LogicSystem::~LogicSystem()
@@ -109,6 +119,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(BossRatHealthBarScript);
 
 	REGISTER_SCRIPT(SettingsScript);
+	REGISTER_SCRIPT(TutorialController);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
@@ -117,35 +128,45 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 	//get only "script" objects
 
 #ifndef GAMERELEASE
-	if(Editor::GetInstance().IsRunTime())
-#endif
-	for (EntityID objectID : SceneView<ScriptComponent>())
+	if (Editor::GetInstance().IsRunTime())
 	{
-		if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
-			continue;
+#endif
+		//ClearCreatedList();
+		CreateQueuedObjects();
 
-		ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
-		for (auto& [key, state] : sc.m_scriptKeys)
+		for (EntityID objectID : SceneView<ScriptComponent>())
 		{
-			if (m_scriptContainer.find(key) != m_scriptContainer.end())
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+				continue;
+
+			ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
+			for (auto& [key, state] : sc.m_scriptKeys)
 			{
-				switch (state)
+				if (m_scriptContainer.find(key) != m_scriptContainer.end())
 				{
-				case ScriptState::INIT:
-					m_scriptContainer.find(key)->second->Init(objectID);
-					state = ScriptState::UPDATE;
-					break;
-				case ScriptState::UPDATE:
-					m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
-					break;
-				case ScriptState::EXIT:
-					m_scriptContainer.find(key)->second->Destroy(objectID);
-					state = ScriptState::DEAD;
-					break;
+					switch (state)
+					{
+					case ScriptState::INIT:
+						m_scriptContainer.find(key)->second->Init(objectID);
+						state = ScriptState::UPDATE;
+						break;
+					case ScriptState::UPDATE:
+						m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
+						break;
+					case ScriptState::EXIT:
+						m_scriptContainer.find(key)->second->Destroy(objectID);
+						state = ScriptState::DEAD;
+						break;
+					}
 				}
 			}
 		}
+
+
+
+#ifndef GAMERELEASE
 	}
+#endif
 }
 
 void PE::LogicSystem::DestroySystem()
@@ -178,6 +199,34 @@ void PE::LogicSystem::DeleteScriptData(EntityID id)
 	}
 
 }
+
+void PE::LogicSystem::CreateQueuedObjects()
+{
+	for(auto i = m_createScriptObjectQueue.begin(); i != m_createScriptObjectQueue.end(); ++i)
+	{
+		i->first = ResourceManager::GetInstance().LoadPrefabFromFile(i->second);
+		m_newScriptObjectQueue.emplace_back(*i);	
+	}
+	m_createScriptObjectQueue.clear();
+}
+
+std::optional<EntityID> PE::LogicSystem::GetCreatedEntity(int key)
+{
+	return m_newScriptObjectQueue.at(key).first;
+}
+
+void PE::LogicSystem::ClearCreatedList()
+{
+	m_newScriptObjectQueue.clear();
+	m_currentQueueNumber = 0;
+}
+
+int PE::LogicSystem::AddNewEntityToQueue(std::string prefab)
+{
+	m_createScriptObjectQueue.push_back(std::make_pair(std::nullopt, prefab));
+	return m_currentQueueNumber++;
+}
+
 
 nlohmann::json PE::ScriptComponent::ToJson(EntityID id) const
 {

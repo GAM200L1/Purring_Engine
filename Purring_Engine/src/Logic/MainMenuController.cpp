@@ -40,6 +40,8 @@ namespace PE
 		REGISTER_UI_FUNCTION(MMOpenSettings, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(MMCloseSettings, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(PlayButtonHoverAudio, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(ButtonHoverExpand, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(ButtonOffHoverShrink, PE::MainMenuController);
 	}
 
 	void MainMenuController::Init(EntityID id)
@@ -303,7 +305,6 @@ namespace PE
 		{
 			m_isTransitioning = false;
 			m_isTransitioningIn = true;
-			LogicSystem::restartingScene = true;
 			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->gameEnded = false;
 			SceneManager::GetInstance().LoadScene("IntroCutsceneScene.scene");
@@ -468,5 +469,28 @@ namespace PE
 	void MainMenuController::PlayButtonHoverAudio(EntityID)
 	{
 		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/UIButtonHoverSFX.prefab",false);
+	}
+
+	void MainMenuController::ButtonHoverExpand(EntityID id)
+	{
+		PlayButtonHoverAudio(id);
+
+		if (EntityManager::GetInstance().Has<Transform>(id))
+		{
+			Transform* buttonTransform = &EntityManager::GetInstance().Get<Transform>(id);
+			buttonTransform->width *= 1.1f;
+			buttonTransform->height *= 1.1f;
+		}
+	}
+
+	void MainMenuController::ButtonOffHoverShrink(EntityID id)
+	{
+		if (EntityManager::GetInstance().Has<Transform>(id))
+		{
+			Transform* buttonTransform = &EntityManager::GetInstance().Get<Transform>(id);
+			buttonTransform->width = buttonTransform->width/11.f * 10.f;
+			buttonTransform->height = buttonTransform->height/11.f * 10.f;
+		}
+
 	}
 }
