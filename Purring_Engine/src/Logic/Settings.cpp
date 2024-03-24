@@ -21,6 +21,7 @@
 
 #include "GUISystem.h"
 #include "AudioManager/AudioManager.h"
+
 namespace PE 
 {
 	SettingsScript::SettingsScript()
@@ -119,7 +120,6 @@ namespace PE
 			settingsJson["settings"]["master"] = m_masterVol;
 			settingsJson["settings"]["bgm"] = m_bgm;
 			settingsJson["settings"]["sfx"] = m_sfx;
-
 
 			std::ofstream outFile(filepath);
 			if (outFile)
