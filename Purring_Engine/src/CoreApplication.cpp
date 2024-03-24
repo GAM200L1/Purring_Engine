@@ -110,6 +110,8 @@
 
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Logic/Cat/CatScript_v2_0.h"
+
+#include "Logic/TutorialController.h"
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
@@ -213,6 +215,12 @@ RTTR_REGISTRATION
         .property("PlayerState", &PE::PlayerControllerScriptData::currentPlayerState)
         .property("HP", &PE::PlayerControllerScriptData::HP)
         .property("speed", &PE::PlayerControllerScriptData::speed);
+
+    rttr::registration::class_<PE::TutorialControllerData>("TutorialController")
+        .property("TutorialPanel1", &PE::TutorialControllerData::TutorialPanel1)
+        .property("TutorialPanel2", &PE::TutorialControllerData::TutorialPanel2)
+        .property("TutorialPanel3", &PE::TutorialControllerData::TutorialPanel3);
+
 
     rttr::registration::class_<PE::EnemyTestScriptData>("EnemyTestScript")
         .property("PlayerID", &PE::EnemyTestScriptData::playerID)

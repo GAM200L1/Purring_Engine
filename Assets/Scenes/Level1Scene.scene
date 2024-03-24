@@ -815,6 +815,14 @@
                         },
                         "RatController_v2_0": {
                             "state": 0
+                        },
+                        "TutorialController": {
+                            "data": {
+                                "TutorialPanel1": 110,
+                                "TutorialPanel2": 111,
+                                "TutorialPanel3": 112
+                            },
+                            "state": 0
                         }
                     },
                     "Transform": {
@@ -3421,7 +3429,7 @@
                         "isActive": true,
                         "name": "Exit Point",
                         "parent": null,
-                        "sceneID": 75
+                        "sceneID": 78
                     },
                     "Transform": {
                         "height": 113.0,
@@ -3683,7 +3691,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 76
+                        "sceneID": 94
                     },
                     "Renderer": {
                         "Color": {
@@ -3752,7 +3760,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 77
+                        "sceneID": 110
                     },
                     "Renderer": {
                         "Color": {
@@ -3821,7 +3829,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 78
+                        "sceneID": 95
                     },
                     "Renderer": {
                         "Color": {
@@ -4272,7 +4280,7 @@
                         "isActive": true,
                         "name": "Grey Cat",
                         "parent": null,
-                        "sceneID": 64
+                        "sceneID": 75
                     },
                     "Renderer": {
                         "Color": {
@@ -4400,7 +4408,7 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -478.00079345703125,
+                                "x": -503.5008239746094,
                                 "y": 77.00000762939453
                             },
                             "positionOffset": {
@@ -4422,7 +4430,7 @@
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 74
+                        "sceneID": 77
                     },
                     "Renderer": {
                         "Color": {
@@ -4482,7 +4490,7 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -478.00079345703125,
+                            "x": -503.5008239746094,
                             "y": 77.00000762939453
                         },
                         "relativeposition": {
@@ -5080,7 +5088,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 94
+                        "sceneID": 111
                     },
                     "Renderer": {
                         "Color": {
@@ -5173,7 +5181,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 95
+                        "sceneID": 112
                     },
                     "Renderer": {
                         "Color": {
@@ -5245,7 +5253,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 73
+                        "sceneID": 76
                     },
                     "Transform": {
                         "height": 100.0,
@@ -6193,6 +6201,129 @@
                         },
                         "relorientation": 0.0,
                         "width": 59.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 110,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "TutorialPanel1",
+                        "parent": null,
+                        "sceneID": 64
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Tutorial_Overlay1_741x466.png"
+                    },
+                    "Transform": {
+                        "height": 384.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -325.4998474121094,
+                            "y": 16.50002670288086
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 585.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 111,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "TutorialPanel2",
+                        "parent": null,
+                        "sceneID": 73
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Tutorial_Overlay2_723x319.png"
+                    },
+                    "Transform": {
+                        "height": 265.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 22.49972152709961,
+                            "y": -49.50007247924805
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 602.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 112,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "TutorialPanel3",
+                        "parent": null,
+                        "sceneID": 74
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Tutorial_Overlay3_928x163.png"
+                    },
+                    "Transform": {
+                        "height": 130.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 516.0000610351563,
+                            "y": 94.99995422363281
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 722.0
                     }
                 },
                 "name": ""
