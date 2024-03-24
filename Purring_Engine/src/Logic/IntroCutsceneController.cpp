@@ -202,8 +202,16 @@ namespace PE
 
 	void IntroCutsceneController::SetButtonText(EntityID id)
 	{
-		if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[id].Text))
-			EntityManager::GetInstance().Get<TextComponent>(m_scriptData[id].Text).SetText("Continue");
+		//if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[id].Text))
+		//	EntityManager::GetInstance().Get<TextComponent>(m_scriptData[id].Text).SetText("Continue");
+
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].ContinueButton))
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].ContinueButton).isActive = true;
+				
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].SkipButton))
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SkipButton).isActive = false;
+
+
 	}
 
 	void IntroCutsceneController::StartCutscene(EntityID id)
