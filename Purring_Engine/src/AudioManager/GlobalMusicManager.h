@@ -97,7 +97,7 @@ namespace PE
 
          \param[in] duration - The duration of the fade-in effect in seconds.
         *************************************************************************************/
-        void StartFadeIn(float duration = 1.0f);                        // Default fade duration is 1 second
+        void StartFadeIn(float duration = 1.0f); // Default fade duration is 1 second
 
         /*!***********************************************************************************
          \brief Starts a fade-out effect for the background music over a specified duration.
@@ -145,16 +145,7 @@ namespace PE
          \param[in] newFrequency - A frequency value of 1.0 means normal playback speed. Values greater than
                                 1.0 increase the playback speed, and values less than 1.0 decrease the playback speed.
         *************************************************************************************/
-        void AdjustBackgroundMusicFrequency(float newFrequency);                                /// testing
-
-        /*!***********************************************************************************
-         \brief Gradually changes the volume of the background music to a target volume over
-                a specified duration.
-
-         \param[in] targetVolume - The target volume level.
-         \param[in] duration     - The duration of the volume change in seconds.
-        *************************************************************************************/
-        void StartFadeToVolume(float targetVolume, float duration);
+        void AdjustBackgroundMusicFrequency(float newFrequency);
 
         /*!***********************************************************************************
          \brief Stores the current state of the audio, including track key and position.
@@ -167,13 +158,6 @@ namespace PE
          \param[in] state - The audio state to resume from.
         *************************************************************************************/
         void ResumeFromState(const AudioState& r_state);
-
-        /*!***********************************************************************************
-         \brief Returns the current audio state, including track key and position.
-
-         \return The current audio state.
-        *************************************************************************************/
-        const AudioState& GetCurrentState() const;
 
         /*!***********************************************************************************
          \brief Stops all audio

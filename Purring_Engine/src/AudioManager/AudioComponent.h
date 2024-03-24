@@ -7,13 +7,11 @@
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
 
- \brief    The AudioComponent class is a part of the Purring Engine, designed to manage
-           audio playback functionalities for game entities. It handles audio operations
-           such as playing, pausing, resuming, and stopping sounds. Additionally, this class
-           provides capabilities to adjust volume, set looping, and maintain audio keys for
-           individual entities. It also includes serialization support for converting audio
-           component states to and from JSON format, facilitating easy data management and
-           integration with the engine's audio systems.
+ \brief    AudioComponent class for managing audio playback in the Purring Engine.
+           Handles play, pause, resume, and stop operations. Also adjusts volume,
+           sets looping, and manages audio keys for individual entities. Supports
+           serialization for easy data management and integration with the engine's
+           audio systems.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -21,7 +19,6 @@
 #include <string>
 #include "Data/json.hpp"
 #include "AudioManager.h"
-
 
 namespace PE
 {

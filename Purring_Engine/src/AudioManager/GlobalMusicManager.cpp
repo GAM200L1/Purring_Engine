@@ -98,7 +98,6 @@ namespace PE
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
 
-
     void GlobalMusicManager::PlaySFX(const std::string& r_prefabPath, bool loop)
     {
         EntityID audioEntity = ResourceManager::GetInstance().LoadPrefabFromFile(r_prefabPath);
@@ -181,13 +180,13 @@ namespace PE
         }
     }
 
-
     void GlobalMusicManager::ResumeFromState(const AudioState& state)
     {
         //PlayBackgroundMusic(state.trackKey, true);  //loop awlays
 
         auto it = m_audioComponents.find(state.trackKey);
-        if (it != m_audioComponents.end()) {
+        if (it != m_audioComponents.end())
+        {
             it->second->GetChannel()->setPosition(state.position, FMOD_TIMEUNIT_MS);
         }
     }
@@ -229,6 +228,7 @@ namespace PE
             //std::cout << "[GlobalMusicManager] Track key not found: " << trackKey << std::endl;
         }
     }
+
     void GlobalMusicManager::SetGlobalPlaybackFrequency(float frequency)
     {
         for (auto& [key, audioComponent] : m_audioComponents)
@@ -250,7 +250,6 @@ namespace PE
             std::cout << "Track key not found: " << trackKey << std::endl;
         }
     }
-
 
     void GlobalMusicManager::AdjustBackgroundMusicFrequency(float newFrequency)
     {
