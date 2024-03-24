@@ -82,6 +82,7 @@
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/ObjectAttachScript.h"
 #include "Logic/Settings.h"
+#include "Logic/TutorialController.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -3572,6 +3573,8 @@ namespace PE {
 										int FinalSceneID = static_cast<int> (it->second.FinalScene);
 										int TextID = static_cast<int> (it->second.Text);
 										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
+										int SkipButtonID = static_cast<int> (it->second.SkipButton);
+										int ContinueButtonID = static_cast<int> (it->second.ContinueButton);
 
 										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##icsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
@@ -3584,6 +3587,12 @@ namespace PE {
 
 										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itssid", &TransitionScreenID);
 										{ it->second.TransitionScreen = TransitionScreenID; }
+
+										ImGui::Text("Continue Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itcscbid", &ContinueButtonID);
+										{ it->second.ContinueButton = ContinueButtonID; }
+
+										ImGui::Text("Skip Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##itcssbid", &SkipButtonID);
+										{ it->second.SkipButton = SkipButtonID; }
 									}
 								}
 							}
@@ -3605,6 +3614,9 @@ namespace PE {
 										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
 										int BackgroundCanvasID = static_cast<int> (it->second.BackgroundCanvas);
 
+										int SkipButtonID = static_cast<int> (it->second.SkipButton);
+										int ContinueButtonID = static_cast<int> (it->second.ContinueButton);
+
 										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ecsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
 
@@ -3625,6 +3637,12 @@ namespace PE {
 
 										ImGui::Text("Background Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etbcid", &BackgroundCanvasID);
 										{ it->second.BackgroundCanvas = BackgroundCanvasID; }
+
+										ImGui::Text("Continue Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcscbid", &ContinueButtonID);
+										{ it->second.ContinueButton = ContinueButtonID; }
+
+										ImGui::Text("Skip Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcssbid", &SkipButtonID);
+										{ it->second.SkipButton = SkipButtonID; }
 									}
 								}
 							}
@@ -3974,50 +3992,49 @@ namespace PE {
 
 
 										// --- Rat Patrolling Settings
-										//ImGui::Text("Rat Patrolling Settings");
-										//ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
-										//ImGui::Separator();
+										 
+										if (it->second.ratType == EnumRatType::BRAWLER)
+										{
+											ImGui::Text("Rat Patrolling Settings");
+											ImGui::Separator();
 
-										// Dynamic list for adding patrol point positions
-										//if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-										//{
-										//	if (it->second.patrolPoints.empty())
-										//	{
-										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
-										//		it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
-										//	}
+											// Dynamic list for adding patrol point positions
+											if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+											{
+												// Display all the existing patrol points
+												for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
+												{
+													ImGui::PushID(static_cast<int>(i)); // Use i as the ID
+													ImGui::Text("Point %zu:", i + 1); // Display point number
+													ImGui::SameLine();
+													float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
+													ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
+													it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
+													ImGui::PopID();
+												}
 
-										//	for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
-										//	{
-										//		ImGui::PushID(static_cast<int>(i)); // Use i as the ID
-										//		ImGui::Text("Point %zu:", i + 1); // Display point number
-										//		ImGui::SameLine();
-										//		float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
-										//		ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
-										//		it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
-										//		ImGui::PopID();
-										//	}
+												ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
+												// Button for adding patrol points
+												ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
+												if (ImGui::Button("Add Patrol Point"))
+												{
+													it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
+												}
+												ImGui::PopStyleColor(1); // Pop button color style
 
-										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
-										//	if (ImGui::Button("Add Patrol Point"))
-										//	{
-										//		it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
-										//	}
-										//	ImGui::PopStyleColor(1); // Pop button color style
+												ImGui::Dummy(ImVec2(0.0f, 5.0f));
 
-										//	ImGui::Dummy(ImVec2(0.0f, 5.0f));
-
-										//	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
-										//	if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
-										//	{
-										//		it->second.patrolPoints.pop_back();
-										//	}
-										//	ImGui::PopStyleColor(1); // Pop button color style
-										//}
-										//ImGui::Separator();
-
+												// Button for deleting patrol points
+												ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
+												if (ImGui::Button("Delete Last Patrol Point") && !(it->second.patrolPoints.empty()))
+												{
+													it->second.patrolPoints.pop_back();
+												}
+												ImGui::PopStyleColor(1); // Pop button color style
+											}
+											ImGui::Separator();
+										} // end of if(ratType == BRAWLER)
 									}
 
 								} // end of if (ImGui::CollapsingHeader("RatScript_v2_0...
@@ -4224,7 +4241,33 @@ namespace PE {
 									}
 								}
 							}
-						}
+						
+							if (key == "TutorialController")
+							{
+								TutorialController* p_script = dynamic_cast<TutorialController*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("Tutorial Controller", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int TutorialPanel1ID = static_cast<int> (it->second.TutorialPanel1);
+										int TutorialPanel2ID = static_cast<int> (it->second.TutorialPanel2);
+										int TutorialPanel3ID = static_cast<int> (it->second.TutorialPanel3);
+
+										ImGui::Text("Tutorial Panel 1 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##TCTP1", &TutorialPanel1ID);
+										if (TutorialPanel1ID != m_currentSelectedObject) { it->second.TutorialPanel1 = TutorialPanel1ID; }
+
+										ImGui::Text("Tutorial Panel 2 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##TCTP2", &TutorialPanel2ID);
+										if (TutorialPanel2ID != m_currentSelectedObject) { it->second.TutorialPanel2 = TutorialPanel2ID; }
+
+										ImGui::Text("Tutorial Panel 3 "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##TCTP3", &TutorialPanel3ID);
+										if (TutorialPanel3ID != m_currentSelectedObject) it->second.TutorialPanel3 = TutorialPanel3ID;
+									}
+								}
+							}
+
+
+}
 					}
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
@@ -4324,6 +4367,13 @@ namespace PE {
 											EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
 									else
 											AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
+							}
+							if (ImGui::Selectable("Add Animation"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+								else
+									AddErrorLog("ALREADY HAS ANIMATION");
 							}
 						}
 

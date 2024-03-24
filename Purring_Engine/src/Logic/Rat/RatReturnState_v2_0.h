@@ -66,7 +66,7 @@ namespace PE
 		bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
 
 		// Event listener IDs 
-		int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+		int m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 		int m_triggerEnterEventListener{}, m_triggerStayEventListener{}, m_triggerExitEventListener{};
 
 	private:
@@ -96,7 +96,7 @@ namespace PE
 
 		 \param[in] r_event - Event data.
 		*************************************************************************************/
-		void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+		void OnCollisionEnterOrStay(const Event<CollisionEvents>& r_event);
 
 		/*!***********************************************************************************
 		 \brief Called when a collision exit event has occurred. If an event has

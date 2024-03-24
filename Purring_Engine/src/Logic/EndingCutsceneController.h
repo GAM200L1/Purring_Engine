@@ -35,6 +35,9 @@ namespace PE
 		EntityID WinCanvas;
 		EntityID AreYouSureCanvas;
 
+		EntityID SkipButton;
+		EntityID ContinueButton;
+
 		int windowNotFocusEventID;
 		int windowFocusEventID;
 	};

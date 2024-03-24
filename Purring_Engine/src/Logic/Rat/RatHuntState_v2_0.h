@@ -23,9 +23,16 @@ namespace PE
 	{
 		// ----- Constructors ----- //
 	public:
+		/*!***********************************************************************************
+			\brief Constructor for RatHunt_v2_0
 
+			\param[in] _targetID - id of the target cat
+		*************************************************************************************/
 		RatHunt_v2_0(EntityID const _targetId) : targetId{ _targetId } { /* Empty by design */ }
 
+		/*!***********************************************************************************
+			\brief Destructor for RatHunt_v2_0
+		*************************************************************************************/
 		virtual ~RatHunt_v2_0() override { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
@@ -80,13 +87,13 @@ namespace PE
 		// --- COLLISION DETECTION --- // 
 
 		/*!***********************************************************************************
-		 \brief Called when a collision enter event has occurred. If an event has
+		 \brief Called when a collision enter or stay event has occurred. If an event has
 			occurred between this script's rat's collider and a cat or an obstacle,
 			the parent rat is notified.
 
 		 \param[in] r_event - Event data.
 				*************************************************************************************/
-		void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+		void OnCollisionEnterOrStay(const Event<CollisionEvents>& r_event);
 
 		/*!***********************************************************************************
 		 \brief Called when a collision exit event has occurred. If an event has
@@ -126,7 +133,7 @@ namespace PE
 		int huntingTurnsLeft{}; // Number of turns left for the rat to spend hunting
 
 		// Event listener IDs 
-		int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+		int m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 		int m_triggerEnterEventListener{},  m_triggerStayEventListener{}, m_triggerExitEventListener{};
 
 	private:
@@ -147,6 +154,14 @@ namespace PE
 			*************************************************************************************/
 			vec2 PickTargetPosition();
 
-			vec2 RotatePoint(vec2 PointA, vec2 PointB, float angle);
+			/*!***********************************************************************************
+				\brief Rotates a point about a center
+
+				\param[in] center - center to rotate about
+				\param[in] point - point to rotate about center
+				\param[in] angle - angle to rotate
+				\return Returns where the point ends up
+			*************************************************************************************/
+			vec2 RotatePoint(vec2 center, vec2 point, float angle);
 	};
 } // End of namespace PE

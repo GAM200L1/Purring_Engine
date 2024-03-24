@@ -35,8 +35,10 @@ namespace PE
 		m_planningRunOnce = false;
 
 		// Subscribe to events
-		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatHunt_v2_0::OnCollisionEnter, this);
+		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatHunt_v2_0::OnCollisionEnterOrStay, this);
+		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionStay, RatHunt_v2_0::OnCollisionEnterOrStay, this);
 		m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionExit, RatHunt_v2_0::OnCollisionExit, this);
+
 		m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatHunt_v2_0::OnTriggerEnterAndStay, this);
 		m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatHunt_v2_0::OnTriggerEnterAndStay, this);
 		m_triggerExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatHunt_v2_0::OnTriggerExit, this);
@@ -156,7 +158,9 @@ namespace PE
 
 			// Unsubscribe from events
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
+			REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+
 			REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_triggerExitEventListener);
@@ -285,7 +289,7 @@ namespace PE
 			}
 	}
 
-	void RatHunt_v2_0::OnCollisionEnter(const Event<CollisionEvents>& r_event)
+	void RatHunt_v2_0::OnCollisionEnterOrStay(const Event<CollisionEvents>& r_event)
 	{
 			if (!p_data) { return; }
 			else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
@@ -299,6 +303,19 @@ namespace PE
 					// Check if the rat has been colliding with a wall
 					if (!ratCollidedWithCat &&
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingWall(p_data->myID, OCEE.Entity1, OCEE.Entity2) &&
+							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetExecutionPhaseTimeout(p_data->myID))
+					{
+							// The rat has been touching the wall for too long
+							p_data->finishedExecution = true;
+							p_data->ratPlayerDistance = 0.f;
+					}
+			} 
+			else if (r_event.GetType() == CollisionEvents::OnCollisionStay)
+			{
+					OnCollisionStayEvent OCSE = dynamic_cast<OnCollisionStayEvent const&>(r_event);
+
+					// Check if the rat has been colliding with a wall
+					if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingWall(p_data->myID, OCSE.Entity1, OCSE.Entity2) &&
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetExecutionPhaseTimeout(p_data->myID))
 					{
 							// The rat has been touching the wall for too long
