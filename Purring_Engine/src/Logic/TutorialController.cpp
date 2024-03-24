@@ -40,6 +40,7 @@ namespace PE
 	void TutorialController::Init(EntityID)
 	{
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		p_rc = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
 	}
 
 	void TutorialController::Update(EntityID id, float)
@@ -68,7 +69,7 @@ namespace PE
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).TutorialPanel3))
 					EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).TutorialPanel3).isActive = false;
 			}
-			else if (p_gsc->currentTurn == 5)
+			else if (p_gsc->currentTurn >= 5)
 			{
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).TutorialPanel3))
 					EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).TutorialPanel3).isActive = true;
@@ -79,6 +80,13 @@ namespace PE
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).TutorialPanel2))
 					EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).TutorialPanel2).isActive = false;
 			}
+
+			if (p_rc->GetRats(p_rc->mainInstance).empty())
+			{
+				if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).TutorialPanel3))
+					EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).TutorialPanel3).isActive = true;
+			}
+
 		}
 		else
 		{
@@ -87,7 +95,12 @@ namespace PE
 
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).TutorialPanel2))
 				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).TutorialPanel2).isActive = false;
+
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).TutorialPanel3))
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).TutorialPanel3).isActive = false;
 		}
+
+
 	}
 
 	void TutorialController::Destroy(EntityID)

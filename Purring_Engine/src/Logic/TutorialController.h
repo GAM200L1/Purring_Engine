@@ -17,6 +17,7 @@
 #pragma once
 #include "Script.h"
 #include "GameStateController_v2_0.h"
+#include "Rat/RatController_v2_0.h"
 
 namespace PE
 {
@@ -98,6 +99,7 @@ namespace PE
 	private:
 		std::map<EntityID, TutorialControllerData> m_scriptData;
 		GameStateController_v2_0 * p_gsc;
+		RatController_v2_0 * p_rc;
 	};
 
 
