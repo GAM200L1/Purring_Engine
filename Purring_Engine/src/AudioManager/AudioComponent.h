@@ -152,9 +152,28 @@ namespace PE
         *************************************************************************************/
         void StartIndividualFadeOut(float targetVolume, float duration);
 
+        /*!***********************************************************************************
+        \brief     Sets the pitch of the audio sound.
+        \param     pitch The pitch to set.
+        *************************************************************************************/
         void SetPitch(float pitch);
+
+        /*!***********************************************************************************
+        \brief     Gets the pitch of the audio sound.
+        \return    The pitch of the audio sound.
+        *************************************************************************************/
         float GetPitch() const;
+
+        /*!***********************************************************************************
+        \brief     Sets the playback frequency of the audio sound.
+        \param     frequency The playback frequency to set.
+        *************************************************************************************/
         void SetPlaybackFrequency(float frequency);
+
+        /*!***********************************************************************************
+        \brief     Gets the playback frequency of the audio sound.
+        \return    The playback frequency of the audio sound.
+        *************************************************************************************/
         float GetPlaybackFrequency() const;
 
         /*!***********************************************************************************
