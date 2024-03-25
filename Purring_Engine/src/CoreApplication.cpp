@@ -258,6 +258,7 @@ RTTR_REGISTRATION
         .property("JournalButton", &PE::GameStateController_v2_0Data::JournalButton)
         .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
         .property("SettingsMenu", &PE::GameStateController_v2_0Data::SettingsMenu)
+        .property("JournalIcon", &PE::GameStateController_v2_0Data::JournalIcon)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
