@@ -316,7 +316,7 @@
                         "TextureKey": "../Assets/Textures/GameLogo_1920x1080px.png"
                     },
                     "Transform": {
-                        "height": 560.0,
+                        "height": 532.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -327,7 +327,7 @@
                             "y": 250.0
                         },
                         "relorientation": 0.0,
-                        "width": 940.0
+                        "width": 1011.0
                     }
                 },
                 "name": ""
@@ -419,7 +419,7 @@
                         "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "HowToPlay Button",
                         "parent": 12,
                         "sceneID": 27

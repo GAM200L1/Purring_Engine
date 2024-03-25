@@ -4,7 +4,7 @@
         "isPrefabMode": false,
         "layerSettings": 1023,
         "renderDebug": false,
-        "showAnimationWindow": true,
+        "showAnimationWindow": false,
         "showComponentWindow": true,
         "showConsole": false,
         "showEditor": true,
