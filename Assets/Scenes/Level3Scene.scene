@@ -791,6 +791,7 @@
                                 "HowToPlayPageTwo": 20,
                                 "Journal": 62,
                                 "JournalButton": 63,
+                                "JournalIcon": 134,
                                 "LoseCanvas": 37,
                                 "PauseBackGroundCanvas": 13,
                                 "PauseMenuCanvas": 3,
@@ -1194,8 +1195,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1211,7 +1212,8 @@
                             47,
                             62,
                             63,
-                            132
+                            132,
+                            134
                         ],
                         "isActive": true,
                         "name": "HUDCanvas",
@@ -1327,7 +1329,7 @@
                         "isActive": false,
                         "name": "PawOverlay",
                         "parent": 24,
-                        "sceneID": 44
+                        "sceneID": 47
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1486,7 +1488,7 @@
                         "isActive": false,
                         "name": "EndPlanningText",
                         "parent": 24,
-                        "sceneID": 62
+                        "sceneID": 117
                     },
                     "TextComponent": {
                         "Color": {
@@ -2342,7 +2344,7 @@
                         "isActive": false,
                         "name": "PauseButton",
                         "parent": 24,
-                        "sceneID": 47
+                        "sceneID": 62
                     },
                     "GUI": {
                         "disabled": false,
@@ -2415,9 +2417,7 @@
                         "Layer": 0,
                         "Old ID": 47,
                         "Prefab Type": "",
-                        "children": [
-                            134
-                        ],
+                        "children": [],
                         "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
@@ -4837,8 +4837,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4916,8 +4916,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5007,8 +5007,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -7856,6 +7856,12 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/Animation_Journal.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/Animation_Journal.anim"
+                    },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
@@ -7864,8 +7870,8 @@
                         "children": [],
                         "isActive": false,
                         "name": "Journal Icon",
-                        "parent": 47,
-                        "sceneID": 117
+                        "parent": 24,
+                        "sceneID": 44
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -7884,8 +7890,8 @@
                             "y": -287.0
                         },
                         "relativeposition": {
-                            "x": 78.2999267578125,
-                            "y": 64.2999267578125
+                            "x": -727.0,
+                            "y": -287.0
                         },
                         "relorientation": 0.0,
                         "width": 59.0

@@ -45,6 +45,7 @@ namespace PE
 		EntityID Journal;
 		EntityID RatKingJournal;
 		EntityID JournalButton;
+		EntityID JournalIcon;
 
 		EntityID PhaseBanner;
 
