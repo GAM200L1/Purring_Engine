@@ -187,7 +187,7 @@
                     "scriptName": "IntroCutsceneController"
                 }
             ],
-            "duration": 2.5,
+            "duration": 2.0,
             "maxUV": [
                 1.0,
                 1.0
@@ -223,7 +223,7 @@
             "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro3_1920x1080.png"
         },
         {
-            "duration": 1.5,
+            "duration": 1.46,
             "maxUV": [
                 1.0,
                 1.0
@@ -385,7 +385,7 @@
                     "scriptName": "IntroCutsceneController"
                 }
             ],
-            "duration": 1.0,
+            "duration": 1.5,
             "maxUV": [
                 1.0,
                 1.0

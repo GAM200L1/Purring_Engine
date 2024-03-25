@@ -798,6 +798,7 @@
                                 "RatKingJournal": 0,
                                 "RatKingPortrait": 0,
                                 "RatPortrait": 53,
+                                "SettingsMenu": 0,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
@@ -3352,7 +3353,7 @@
                         "isActive": false,
                         "name": "Transition Panel",
                         "parent": 69,
-                        "sceneID": 0
+                        "sceneID": 98
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -4276,7 +4277,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Smokey_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4395,7 +4396,7 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -280.0007629394531,
+                                "x": -520.0008544921875,
                                 "y": 106.99996185302734
                             },
                             "positionOffset": {
@@ -4477,7 +4478,7 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -280.0007629394531,
+                            "x": -520.0008544921875,
                             "y": 106.99996185302734
                         },
                         "relativeposition": {
@@ -4655,7 +4656,7 @@
                         "isActive": true,
                         "name": "SliderKnob",
                         "parent": 85,
-                        "sceneID": 0
+                        "sceneID": 86
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -4808,7 +4809,7 @@
                         "isActive": true,
                         "name": "SliderKnob",
                         "parent": 87,
-                        "sceneID": 0
+                        "sceneID": 88
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -4858,7 +4859,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
@@ -5042,20 +5043,20 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationGutterRat_Attack.anim",
-                            "../Assets/Animation/AnimationGutterRat_Death.anim",
-                            "../Assets/Animation/AnimationGutterRat_Hurt.anim",
-                            "../Assets/Animation/AnimationGutterRat_Idle.anim",
-                            "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                            "../Assets/Animation/AnimationBrawlerRat_Attack.anim",
+                            "../Assets/Animation/AnimationBrawlerRat_Death.anim",
+                            "../Assets/Animation/AnimationBrawlerRat_Hurt.anim",
+                            "../Assets/Animation/AnimationBrawlerRat_Idle.anim",
+                            "../Assets/Animation/AnimationBrawlerRat_Walk.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationBrawlerRat_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 247.0,
-                                "y": -105.99995422363281
+                                "x": 264.9994812011719,
+                                "y": -129.00038146972656
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5074,7 +5075,7 @@
                         "Prefab Type": "GutterRat",
                         "children": [],
                         "isActive": true,
-                        "name": "GutterRat",
+                        "name": "BrawlerRat",
                         "parent": null,
                         "sceneID": 61
                     },
@@ -5085,7 +5086,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Brawler_Idle.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -5096,18 +5097,32 @@
                         "RatScript_v2_0": {
                             "data": {
                                 "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationGutterRat_Attack.anim",
-                                    "Death": "../Assets/Animation/AnimationGutterRat_Death.anim",
-                                    "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
-                                    "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
-                                    "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                                    "Attack": "../Assets/Animation/AnimationBrawlerRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationBrawlerRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationBrawlerRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationBrawlerRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationBrawlerRat_Walk.anim"
                                 },
                                 "detectionRadius": 200.0,
                                 "maxHuntTurns": 2,
                                 "maxMovementRange": 200.0,
-                                "movementSpeed": 250.0,
-                                "ratMaxHealth": 2,
-                                "ratType": 1
+                                "movementSpeed": 150.0,
+                                "patrolPoints": {
+                                    "0": {
+                                        "x": 11.0,
+                                        "y": -134.0
+                                    },
+                                    "1": {
+                                        "x": -200.0,
+                                        "y": -134.0
+                                    },
+                                    "2": {
+                                        "x": -400.0,
+                                        "y": -134.0
+                                    }
+                                },
+                                "ratMaxHealth": 3,
+                                "ratType": 2
                             },
                             "state": 0
                         }
@@ -5116,8 +5131,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 247.0,
-                            "y": -105.99995422363281
+                            "x": 264.9994812011719,
+                            "y": -129.00038146972656
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5240,8 +5255,8 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 26.99993896484375,
-                                "y": -116.49991607666016
+                                "x": 359.00042724609375,
+                                "y": -42.49943923950195
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5302,8 +5317,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 26.99993896484375,
-                            "y": -116.49991607666016
+                            "x": 359.00042724609375,
+                            "y": -42.49943923950195
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5517,19 +5532,19 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": -26.500324249267578,
-                                "y": 490.5
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "min": {
-                                "x": -56.50032424926758,
-                                "y": -490.5
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 2.0,
+                                "x": 1.0,
                                 "y": 1.0
                             }
                         },
@@ -5542,7 +5557,7 @@
                         "Old ID": 97,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Obstacle",
                         "parent": null,
                         "sceneID": 31
@@ -5562,18 +5577,59 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 981.0,
+                        "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -41.50032424926758,
-                            "y": 0.0
+                            "x": 148.49969482421875,
+                            "y": -111.00003814697266
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 15.0
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 98,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "PatrolPoint",
+                        "parent": null,
+                        "sceneID": 98
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.7450980544090271,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 11.000040054321289,
+                            "y": -134.00006103515625
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""

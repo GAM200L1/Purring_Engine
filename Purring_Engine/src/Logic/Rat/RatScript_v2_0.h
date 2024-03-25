@@ -217,7 +217,21 @@ namespace PE
 
 		 \param[in] soundPrefab - Filepath of the audio object prefab to load.
 		*************************************************************************************/
-		static void PlayAudio(std::string const& soundPrefab);
+		void PlayAudio(std::string const& soundPrefab);
+
+		/*!***********************************************************************************
+		 \brief Returns true if the conditions are right for the rat audio to play.
+
+		 \return Returns true if the conditions are right for the rat audio to play, false otherwise.
+		*************************************************************************************/
+		bool CheckCanPlayAudio() const;
+
+		/*!***********************************************************************************
+		 \brief Helper function to update the variables required to play the audio.
+
+		 \param[in] deltaTime - Time in seconds since the last frame.
+		*************************************************************************************/
+		void UpdateAudioVariables(float const deltaTime);
 
 
 		// ----- Rat stuff ----- //
@@ -627,6 +641,8 @@ namespace PE
 			// Event listener IDs 
 			GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
 			GameStates_v2_0 previousGameState; // The game state in the previous frame
+			float timeSinceLastSFX{ 0.f }; // Time in seconds since the last rat SFX was played
+			float SFXcooldown{ 0.25f }; // Time in seconds before the next SFX can be played
 
 		// ----- Private Methods ----- // 
 	private:

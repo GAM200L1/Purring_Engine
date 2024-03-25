@@ -532,6 +532,10 @@ namespace PE
 
 		//journal object testing
 		bool m_journalShowing{};
+		bool m_startJournalTimer{};
+		float m_journalStayTimer{2.f};
+		float m_journalStayTime{ m_journalStayTimer };
+
 
 		//phase banner
 		const float m_phaseBannerTransitionTimer{ .2f };
@@ -541,10 +545,10 @@ namespace PE
 		float m_phaseBannerStay{};
 		bool m_isPhaseBannerTransition{true};
 
-		float prevVolume;
+		float m_prevVolume;
 
 		// Audio Controls
-		bool bgmStarted = false;
+		bool m_bgmStarted = false;
 
 
 	};

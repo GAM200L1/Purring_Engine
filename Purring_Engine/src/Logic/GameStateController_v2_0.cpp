@@ -83,6 +83,8 @@ namespace PE
 				m_timeSinceTransitionStarted = 0;
 				m_timeSinceTransitionEnded = m_transitionTimer;
 
+				ResetPhaseBanner(true);
+
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 				{
 					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png"));
@@ -99,6 +101,9 @@ namespace PE
 				m_timeSinceTransitionEnded = m_transitionTimer;
 				prevState = GameStates_v2_0::INACTIVE;
 				currentState = GameStates_v2_0::DEPLOYMENT;
+
+				ResetPhaseBanner(true);
+				m_phaseBannerExit = m_phaseBannerTransitionTimer + m_transitionTimer + 1;
 
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner))
 				{
@@ -117,6 +122,8 @@ namespace PE
 			//resetting current turn
 			currentTurn = 0;
 			m_isPotraitShowing = false;
+			m_journalStayTime = m_journalStayTimer;
+			m_startJournalTimer = false;
 			m_journalShowing = false;
 
 		//getting the texture key for the current background and adding sepia to it
@@ -138,7 +145,7 @@ namespace PE
 
 		PlayBackgroundMusicForStage();
 
-		ResetPhaseBanner(true);
+
 		m_nextTurnOnce = false;
 	}
 	
@@ -185,6 +192,24 @@ namespace PE
 			}
 		}
 
+		if (m_startJournalTimer)
+		{
+			if (m_journalStayTime >= 0)
+			{
+				m_journalStayTime -= deltaTime;
+			}
+			else
+			{
+				m_journalStayTime = m_journalStayTimer;
+				m_startJournalTimer = false;
+				m_journalShowing = false;
+			}
+		}
+		else
+		{
+			m_journalStayTime = m_journalStayTimer;
+		}
+
 		//switch statement for the different states
 		switch (currentState)
 		{
@@ -216,6 +241,15 @@ namespace PE
 				}
 
 				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndPlanningText")
+				{
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+					}
+					continue;
+				}
+
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "UndoButton")
 				{
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
 					{
@@ -318,7 +352,7 @@ namespace PE
 		GlobalMusicManager::GetInstance().StopAllAudio();
 
 		// reset bgm flag
-		bgmStarted = false;
+		m_bgmStarted = false;
 	}
 
 	void GameStateController_v2_0::OnAttach(EntityID id)
@@ -480,7 +514,11 @@ namespace PE
 				CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 				BossRatScript* BossRat = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 				EntityID BossID = BossRat->currentBoss;
-			
+
+				m_journalStayTime = m_journalStayTimer;
+				m_startJournalTimer = false;
+				m_journalShowing = false;
+
 				//get mouse position
 				vec2 cursorPosition{};
 				GetMouseCurrentPosition(cursorPosition);
@@ -1198,17 +1236,19 @@ namespace PE
 
 	void GameStateController_v2_0::JournalHoverExit(EntityID)
 	{
-		m_journalShowing = false;
+		m_startJournalTimer = true;
 	}
 
 	void GameStateController_v2_0::OpenSettings(EntityID)
 	{
+		PlayClickAudio();
 		DeactiveAllMenu();
 		ActiveObject(m_scriptData[m_currentGameStateControllerID].SettingsMenu);
 	}
 
 	void GameStateController_v2_0::CloseSettings(EntityID)
 	{
+		PlayClickAudio();
 		DeactiveAllMenu();
 		ActiveObject(m_scriptData[m_currentGameStateControllerID].PauseMenuCanvas);
 	}
@@ -1223,7 +1263,7 @@ namespace PE
 		PlaySceneTransition();
 		GETANIMATIONMANAGER()->PlayAllAnimations();
 
-		bgmStarted = false;
+		m_bgmStarted = false;
 
 		m_leveltoLoad = SceneManager::GetInstance().GetActiveScene();
 	}
@@ -1581,7 +1621,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayBackgroundMusicForStage()
 	{
-		if (bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
+		if (m_bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
 		{
 			return;
 		}
@@ -1602,7 +1642,7 @@ namespace PE
 			{
 				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f);
 			}
-			bgmStarted = true; // Flag the background music as started
+			m_bgmStarted = true; // Flag the background music as started
 		}
 		else
 		{
