@@ -3385,6 +3385,7 @@ namespace PE {
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 										int SettingsMenuID = static_cast<int> (it->second.SettingsMenu);
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
+										int JournalIconID = static_cast<int> (it->second.JournalIcon);
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
 										if (PauseBackGroundCanvasID != m_currentSelectedObject) { it->second.PauseBackGroundCanvas = PauseBackGroundCanvasID; }
@@ -3454,6 +3455,9 @@ namespace PE {
 
 										ImGui::Text("Rat King Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rkjid", &RatKingJournalID);
 										if (RatKingJournalID != m_currentSelectedObject) { it->second.RatKingJournal = RatKingJournalID; }
+
+										ImGui::Text("Journal Icon ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##gscjiid", &JournalIconID);
+										if (JournalIconID != m_currentSelectedObject) { it->second.JournalIcon = JournalIconID; }
 
 										for (int i = 0; i < 5; i++)
 										{

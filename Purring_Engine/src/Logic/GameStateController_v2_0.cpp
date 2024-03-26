@@ -84,6 +84,7 @@ namespace PE
 				m_timeSinceTransitionEnded = m_transitionTimer;
 
 				ResetPhaseBanner(true);
+				m_phaseBannerExit = m_phaseBannerTransitionTimer + m_transitionTimer + 1;
 
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 				{
@@ -145,7 +146,10 @@ namespace PE
 
 		PlayBackgroundMusicForStage();
 
-
+		if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
+		{
+			EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon).StopAnimation();
+		}
 		m_nextTurnOnce = false;
 	}
 	
@@ -223,6 +227,7 @@ namespace PE
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			DeactiveObject(m_scriptData.at(id).JournalIcon);
 			FadeAllObject(m_scriptData[id].RatKingJournal, 0);
 			FadeAllObject(m_scriptData[id].Journal, 0);
 
@@ -518,6 +523,11 @@ namespace PE
 				m_journalStayTime = m_journalStayTimer;
 				m_startJournalTimer = false;
 				m_journalShowing = false;
+
+				if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon).StopAnimation();
+				}
 
 				//get mouse position
 				vec2 cursorPosition{};
@@ -1005,6 +1015,7 @@ namespace PE
 		if (!m_isPotraitShowing)
 		{
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			DeactiveObject(m_scriptData.at(id).JournalIcon);
 		}
 
 		if (prevState == GameStates_v2_0::EXECUTE)
@@ -1230,8 +1241,17 @@ namespace PE
 
 	void GameStateController_v2_0::JournalHoverEnter(EntityID)
 	{
-		if(m_isPotraitShowing)
-		m_journalShowing = true;
+		if (m_isPotraitShowing)
+		{
+			m_journalShowing = true;
+
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon).ResetAnimation();
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon).PlayAnimation();
+			}
+
+		}
 	}
 
 	void GameStateController_v2_0::JournalHoverExit(EntityID)
