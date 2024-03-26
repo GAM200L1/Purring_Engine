@@ -471,7 +471,7 @@ namespace PE
 	{
 		if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->GetRats(GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->mainInstance).empty() && m_scriptData[id].catMaxMovementEnergy != 1000 && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 3)
 		{
-			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->FillPathNodes(id, 1000);
+			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->FillPathNodes(id, 100);
 		}
 		switch (m_scriptData[id].catType)
 		{
