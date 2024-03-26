@@ -235,6 +235,9 @@ namespace PE
 		// Position the cat at the end of the path
 		if (!p_data->pathPositions.empty())
 			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.back());
+
+		// push into undo stack
+		GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_MOVEMENT);
 	}
 
 

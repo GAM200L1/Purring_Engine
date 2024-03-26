@@ -98,6 +98,7 @@ namespace PE
 			{
 				(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_selectColor);
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
 			}
 		}
 		else

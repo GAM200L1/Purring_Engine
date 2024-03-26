@@ -82,6 +82,13 @@ namespace PE
 		*************************************************************************************/
 		virtual std::string_view GetName() { return "PLANNING"; }
 
+		// ----- Non-virtual functions ----- //
+
+		void ResetMovement(EntityID id);
+		void ResetAttack(EntityID id);
+		CatAttackBase_v2_0*& GetAttackPointer() { return p_catAttack; }
+		CatMovement_v2_0PLAN*& GetMovementPointer() { return p_catMovement; }
+
 	private:
 		CatAttackBase_v2_0* p_catAttack{ nullptr }; 
 		CatMovement_v2_0PLAN* p_catMovement{ nullptr }; 
@@ -96,7 +103,7 @@ namespace PE
 		bool m_collidedPreviously{ false };
 
 		int m_doubleClick{ 0 };
-		float m_timer{ 0.f };
+		float m_doubleClickTimer{ 0.f };
 		bool m_moving{ false };
 
 		vec2 m_prevCursorPosition{ 0.f, 0.f };

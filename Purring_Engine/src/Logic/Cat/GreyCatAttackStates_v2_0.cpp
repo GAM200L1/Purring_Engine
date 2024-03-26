@@ -110,7 +110,6 @@ namespace PE
 	void GreyCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
 		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE) { return; }
-
 		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
 		bool collidingWithAnyTelegraph{ false };
@@ -135,6 +134,9 @@ namespace PE
 						p_attackData->attackDirection = r_telegraph.first;
 						(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
 						CatHelperFunctions::SetColor(r_telegraph.second, m_selectColor);
+
+						// add action to undo stack
+						GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
 					}
 				}
 				else // if not hovering any telegraphs, set to default color

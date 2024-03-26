@@ -19,6 +19,11 @@
 
 namespace PE
 {
+	enum EnumUndoType
+	{
+		UNDO_MOVEMENT,
+		UNDO_ATTACK
+	};
 
 	struct CatController_v2_0Data{};
 
@@ -151,6 +156,14 @@ namespace PE
 			return (IsCat(catID) && !IsCatCaged(catID));
 		}
 		
+		void AddToUndoStack(EntityID catID, EnumUndoType undoType);
+
+		void UndoCatPlanButtonCall(EntityID id);
+
+		void UndoCatPlan();
+
+		void ClearCatUndoStack();
+
 		// getters
 		/*!***********************************************************************************
 		 \brief Gets current movement energy of cat
@@ -221,5 +234,12 @@ namespace PE
 		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
 		std::vector<std::pair<EntityID, EnumCatType>> m_cachedCats;
 		std::vector<EnumCatType> m_deployableCats;
+		std::stack<std::pair<EntityID, EnumUndoType>> m_catUndoStack;
+		int m_mouseEventListener{}, m_mouseReleaseEventListener{};
+		bool m_mouseClick{ false }, m_mouseClickPrev{ false };
+
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
+		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 	};
 }
