@@ -109,7 +109,6 @@ namespace PE
 
 	void GreyCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE) { return; }
 		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
 		bool collidingWithAnyTelegraph{ false };

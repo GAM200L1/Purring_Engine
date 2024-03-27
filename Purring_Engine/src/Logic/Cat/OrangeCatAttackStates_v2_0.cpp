@@ -81,8 +81,6 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE) { return; }
-
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		

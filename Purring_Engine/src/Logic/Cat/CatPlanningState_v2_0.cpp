@@ -48,7 +48,11 @@ namespace PE
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
 	{	
 		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
-
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE)
+		{
+			p_catMovement->EndPathDrawing(id);
+			return;
+		}
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 		bool const collidedCurrent = PointCollision(r_catCollider, r_cursorPosition);
@@ -58,7 +62,7 @@ namespace PE
 		{
 			// if in previous frame and current frame the mouse has always been there allow double click
 			// if previous frame not clicked and this frame clicked increment double click
-			if (m_doubleClickTimer >= 0.5f) // resets double click when 1 second has passed
+			if (m_doubleClickTimer >= 0.25f) // resets double click when 1 second has passed
 			{
 				m_startDoubleClickTimer = false;
 				m_doubleClickTimer = 0.f;

@@ -66,14 +66,6 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		
-		// Check if pause state
-		if (gsc->currentState == GameStates_v2_0::PAUSE)
-		{
-			EndPathDrawing(id);
-			return;
-		}
 		// Get the position of the cat
 		vec2 const& r_cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
@@ -96,7 +88,7 @@ namespace PE
 					m_resetPositions.push(std::make_pair(-1, CatHelperFunctions::GetEntityPosition(id)));
 				else
 					m_resetPositions.push(std::make_pair(static_cast<int>(p_data->pathPositions.size() - 1), p_data->pathPositions.back()));
-
+				
 				// save the positions of the follow cats
 				if (p_data->catType == EnumCatType::MAINCAT)
 				{
@@ -172,7 +164,6 @@ namespace PE
 		// Get the distance of the proposed position from the last node in the path
 		float distanceOfPosition = p_data->pathPositions.back().Distance(r_position);
 		
-
 		if (distanceOfPosition > p_data->maxDistance)
 		{
 			// Compute the direction of the proposed position from the last node in the path
@@ -279,7 +270,6 @@ namespace PE
 
 		// reset this cat's position
 		CatHelperFunctions::PositionEntity(p_data->catID, r_resetPosition.second);
-		m_resetPositions.pop();
 	
 		// reset to previous energy
 		if (r_resetPosition.first != -1)
@@ -290,8 +280,6 @@ namespace PE
 		{
 			p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
 		}
-		
-		*p_mouseClickPrevious = false;
 		
 		if (r_resetPosition.first != -1)
 		{
@@ -307,9 +295,16 @@ namespace PE
 		{
 			CatHelperFunctions::ToggleEntity(p_data->pathQuads[i], false);
 		}
+		
+		// reset the last node's position to where the cat is
+		CatHelperFunctions::PositionEntity(p_data->pathQuads[r_resetPosition.first], r_resetPosition.second);
 
 		SetPathColor(m_defaultPathColor);
 
+		*p_mouseClickPrevious = false;
+		m_pathBeingDrawn = false;
+
+		m_resetPositions.pop();
 		// Add the player's starting position as a node
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
 	}
@@ -318,25 +313,6 @@ namespace PE
 	{
 		return m_invalidPath;
 	}
-
-	//void CatMovement_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
-	//{
-	//	if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
-	//	{
-	//		// Reset the path on pressing right click
-	//		MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
-	//		if (MBPE.button != 1)
-	//			m_mouseClick = true; // Flag that the mouse has been clicked
-	//	}
-	//}
-
-
-	/*void CatMovement_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
-	{
-		if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
-			m_mouseClick = false;
-	}*/
-
 
 	void CatMovement_v2_0PLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 	{
