@@ -186,7 +186,8 @@ namespace PE
         //PlayBackgroundMusic(state.trackKey, true);  //loop awlays
 
         auto it = m_audioComponents.find(state.trackKey);
-        if (it != m_audioComponents.end()) {
+        if (it != m_audioComponents.end())
+        {
             it->second->GetChannel()->setPosition(state.position, FMOD_TIMEUNIT_MS);
         }
     }
@@ -199,12 +200,13 @@ namespace PE
         m_fadeDuration = duration;
     }
 
-    void GlobalMusicManager::StartFadeOut(float duration)
+    void GlobalMusicManager::StartFadeOut(const std::string& r_trackKey, float duration)
     {
-        m_isFading = true;
-        m_isFadingIn = false;
-        m_fadeProgress = 0.0f;
-        m_fadeDuration = duration;
+        auto it = m_audioComponents.find(r_trackKey);
+        if (it != m_audioComponents.end())
+        {
+            it->second->StartIndividualFadeOut(0.0f, duration);
+        }
     }
 
     void GlobalMusicManager::StopAllAudio()

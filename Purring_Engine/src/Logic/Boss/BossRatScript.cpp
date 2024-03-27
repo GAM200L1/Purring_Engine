@@ -343,7 +343,9 @@ namespace PE
 	}
 	void BossRatScript::PlayDeathAudio()
 	{
-		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatDeath1SFX.prefab", false);
+		//GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatDeath1SFX.prefab", false);
+		GlobalMusicManager::GetInstance().StartFadeOut("AudioObject/BossAudioPrefab/BossRatDeath1SFX.prefab", 3.0f);
+
 	}
 	void BossRatScript::PlayPoisonPuddleAudio()
 	{

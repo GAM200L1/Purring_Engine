@@ -103,7 +103,7 @@ namespace PE
 
          \param[in] duration - The duration of the fade-out effect in seconds.
         *************************************************************************************/
-        void StartFadeOut(float duration = 1.0f);
+        void StartFadeOut(const std::string& r_trackKey, float duration);
 
         /*!***********************************************************************************
          \brief Gradually changes the volume of the background music to a target volume over

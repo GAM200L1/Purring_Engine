@@ -931,7 +931,7 @@ namespace PE
 	void GameStateController_v2_0::WinGame()
 	{
 		//PauseBGM();
-		GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
+		//GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayWinAudio();
@@ -943,7 +943,7 @@ namespace PE
 	void GameStateController_v2_0::LoseGame()
 	{
 		//PauseBGM();
-		GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
+		//GlobalMusicManager::GetInstance().StartFadeOut(0.25f);
 
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayLoseAudio();
@@ -1297,7 +1297,7 @@ namespace PE
 
 	void GameStateController_v2_0::NextStage(int nextStage)
 	{
-		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
+		//GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
 
 		PlaySceneTransition();
 
@@ -1374,7 +1374,7 @@ namespace PE
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
 
-		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
+		//GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
 		m_currentLevel = 0;
 		m_leveltoLoad = m_outroCutsceneScene;
 	}
@@ -1658,8 +1658,8 @@ namespace PE
 		{
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab"}, // Stage 1
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab"}, // Stage 2
-			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"},
-			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"} // Stage 3 & Boss (boss temp for now till m6-hans)
+			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"}, // Stage 3
+			{"AudioObject/Background FinalBoss Music.prefab"}	// Boss fight audio
 		};
 
 		if (m_currentLevel >= 0 && m_currentLevel < stageAudio.size())
