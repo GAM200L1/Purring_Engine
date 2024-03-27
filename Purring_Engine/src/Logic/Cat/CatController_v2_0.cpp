@@ -181,7 +181,7 @@ namespace PE
 		m_catUndoStack.pop();
 
 		// get the planning state and call reset functions based on the undo type
-		Cat_v2_0PLAN* const& planState = dynamic_cast<Cat_v2_0PLAN*>((GETSCRIPTDATA(CatScript_v2_0, toUndo.first))->p_stateManager->GetCurrentState());
+		Cat_v2_0PLAN* planState = dynamic_cast<Cat_v2_0PLAN*>((GETSCRIPTDATA(CatScript_v2_0, toUndo.first))->p_stateManager->GetCurrentState());
 		if (toUndo.second == EnumUndoType::UNDO_MOVEMENT)
 		{ planState->ResetMovement(toUndo.first);}
 		else if (toUndo.second == EnumUndoType::UNDO_ATTACK)

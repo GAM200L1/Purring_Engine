@@ -60,6 +60,8 @@ namespace PE
 		virtual ~OrangeCatAttack_v2_0PLAN() 
 		{ 
 			p_attackData = nullptr;
+			p_mouseClick = nullptr;
+			p_mouseClickedPrevious = nullptr;
 		}
 
 		/*!***********************************************************************************
