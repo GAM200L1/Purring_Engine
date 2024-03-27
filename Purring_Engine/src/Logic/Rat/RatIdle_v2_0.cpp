@@ -319,8 +319,10 @@ namespace PE
     void RatIdle_v2_0::InitializePatrolPoints()
     {   
         // Check if the rat only has one patrol point
-        if (p_data->patrolPoints.size() == 1)
+        if (p_data->firstTimeIdle)
         {
+            p_data->firstTimeIdle = false; 
+
             // Add the rat's current position to the start of the patrol points
             p_data->patrolPoints.emplace(p_data->patrolPoints.begin(),
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetEntityPosition(p_data->myID));
