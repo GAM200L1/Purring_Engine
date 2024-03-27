@@ -201,15 +201,21 @@ namespace PE
 
 	void CatController_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
-		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		if (MBPE.button == 1)
-			m_mouseClick = true;
+		if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
+		{
+			MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+			if (MBPE.button != 0 && MBPE.button == 1)
+				m_mouseClick = true;
+		}
 	}
 
 	void CatController_v2_0::OnMouseRelease(const Event<MouseEvents>& r_ME)
 	{
-		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
-		if (MBRE.button == 1)
-			m_mouseClick = false;
+		if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
+		{
+			MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
+			if (MBRE.button != 0 && MBRE.button == 1)
+				m_mouseClick = false;
+		}
 	}
 }

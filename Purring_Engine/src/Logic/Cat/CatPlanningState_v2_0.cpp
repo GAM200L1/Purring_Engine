@@ -36,10 +36,10 @@ namespace PE
 		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
 
 		// initializes the cat movement planning sub state
-		p_catMovement->Enter(id);
+		p_catMovement->Enter(id, &m_mouseClicked, &m_mouseClickPrevious);
 
 		// initializes the cat attack planning sub state
-		p_catAttack->Enter(id);
+		p_catAttack->Enter(id, &m_mouseClicked, &m_mouseClickPrevious);
 
 		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, Cat_v2_0PLAN::OnMouseClick, this);
 		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, Cat_v2_0PLAN::OnMouseRelease, this);
@@ -53,13 +53,13 @@ namespace PE
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 		bool const collidedCurrent = PointCollision(r_catCollider, r_cursorPosition);
 
-
+		// if planning attack
 		if (p_data->planningAttack)
 		{
 			m_doubleClick = 0;
 			p_catAttack->Update(id, deltatime);
 		}
-		else // check whether to set planning or moving
+		else
 		{
 			// if in previous frame and current frame the mouse has always been there allow double click
 			// if previous frame not clicked and this frame clicked increment double click
@@ -71,7 +71,6 @@ namespace PE
 				m_doubleClick = 0;
 				m_doubleClickTimer = 0.f;
 				p_catAttack->ToggleTelegraphs(true, false);
-				p_catAttack->ForceZeroMouse();
 			}
 
 			if (m_doubleClickTimer >= 0.5f) // resets double click when 1 second has passed
@@ -80,16 +79,7 @@ namespace PE
 				m_doubleClickTimer = 0.f;
 			}
 			
-			// if the cursor is clicking cat and has different before and after positions, move cat
-			if (collidedCurrent)
-			{
-				if (r_cursorPosition != m_prevCursorPosition && m_mouseClicked && !p_data->attackSelected) // if current and prev cursor position are not the same, update movement
-				{
-					m_moving = true;
-				}
-			}
-
-			if (m_moving || p_catMovement->CheckInvalid())
+			if (!p_data->attackSelected)
 				p_catMovement->Update(id, deltatime);
 
 			m_doubleClickTimer += deltatime;
@@ -122,17 +112,23 @@ namespace PE
 
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
-		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		if (MBPE.button == 0)
-			m_mouseClicked = true;
+		if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
+		{
+			MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+			if (MBPE.button == 0)
+				m_mouseClicked = true;
+		}
 	}
 	
 	void Cat_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
 	{
-		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
-		//if (m_collidedPreviously && PointCollision(std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_data->catID).colliderVariant), CatHelperFunctions::GetCursorPositionInWorld()))
-		m_mouseClicked = false;
-		m_moving = false;
+		if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
+		{
+			MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
+			//if (m_collidedPreviously && PointCollision(std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_data->catID).colliderVariant), CatHelperFunctions::GetCursorPositionInWorld()))
+			if (MBRE.button == 0)
+				m_mouseClicked = false;
+		}
 	}
 
 	void Cat_v2_0PLAN::ResetMovement(EntityID id)
