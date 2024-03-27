@@ -254,9 +254,17 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Getter for the pointer to the state the rat should be set to.
 		*************************************************************************************/
-		State* GetQueuedState()
+		std::unique_ptr<State> const& GetQueuedState() const
 		{
-			return p_queuedState.get();
+			return p_queuedState;
+		}		
+
+		/*!***********************************************************************************
+		 \brief Getter for the pointer to the state the rat should be set to.
+		*************************************************************************************/
+		State* ReleaseQueuedState()
+		{
+			return p_queuedState.release();
 		}
 
 		/*!***********************************************************************************

@@ -1183,7 +1183,7 @@ namespace PE
 #ifdef DEBUG_PRINT
 						std::cout << "RatScript_v2_0::ChangeRatState(" << id << ", " << it->second.GetQueuedState()->GetName() << ")\n";
 #endif // DEBUG_PRINT
-						it->second.p_stateManager->ChangeState(it->second.GetQueuedState(), id);
+						it->second.p_stateManager->ChangeState(it->second.ReleaseQueuedState(), id);
 				}
 
 				// Reset all the values
