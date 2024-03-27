@@ -13,7 +13,7 @@
                             "isActive": true,
                             "name": "RatKingShockwaveParticles",
                             "parent": null,
-                            "sceneID": 19
+                            "sceneID": 20
                         },
                         "ParticleEmitter": {
                             "Color": {
@@ -59,7 +59,7 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Particle_Dirt3_512px.png"
+                            "TextureKey": "../Assets/Textures/Particle_SnowSmoke_512px.png"
                         },
                         "Transform": {
                             "height": 100.0,

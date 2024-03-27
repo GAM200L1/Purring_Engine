@@ -13,7 +13,7 @@
                             "isActive": true,
                             "name": "CitrusShockwaveParticles",
                             "parent": null,
-                            "sceneID": 18
+                            "sceneID": 19
                         },
                         "ParticleEmitter": {
                             "Color": {
@@ -59,13 +59,13 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Particle_Dirt3_512px.png"
+                            "TextureKey": "../Assets/Textures/Particle_SnowSmoke_512px.png"
                         },
                         "Transform": {
                             "height": 100.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 11.100086212158203,
+                                "x": 13.49969482421875,
                                 "y": 125.90000915527344
                             },
                             "relativeposition": {
