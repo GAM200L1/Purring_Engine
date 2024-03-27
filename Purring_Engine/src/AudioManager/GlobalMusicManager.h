@@ -106,13 +106,11 @@ namespace PE
         void StartFadeOut(const std::string& r_trackKey, float duration);
 
         /*!***********************************************************************************
-         \brief Gradually changes the volume of the background music to a target volume over
-                a specified duration.
+         \brief Fades out all audio over a specified duration.
 
-         \param[in] targetVolume - The target volume level.
-         \param[in] duration     - The duration of the volume change in seconds.
+         \param[in] duration - Time in seconds for audio to fade to silence.
         *************************************************************************************/
-        void StartFadeToVolume(float targetVolume, float duration);
+        void StartFadeOutAllAudio(float duration);
 
         /*!***********************************************************************************
          \brief Stores the current state of the audio, including track key and position.

@@ -209,6 +209,17 @@ namespace PE
         }
     }
 
+    void GlobalMusicManager::StartFadeOutAllAudio(float duration)
+    {
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            if (audioComponent)
+            {
+                audioComponent->StartIndividualFadeOut(0.0f, duration);        // Start an individual fade out for each active audio component
+            }
+        }
+    }
+
     void GlobalMusicManager::StopAllAudio()
     {
         for (auto& [key, audioComponent] : m_audioComponents)

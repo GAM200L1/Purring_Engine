@@ -32,6 +32,8 @@ namespace PE
 
 	void BossRatScript::Init(EntityID id)
 	{
+		m_hasInitiatedAudioFadeOut = false; // Reset the flag for audio fade out
+
 		FindAllObstacles();
 
 		m_scriptData[id].collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
@@ -66,6 +68,12 @@ namespace PE
 			{
 				PlayAnimation(BossRatAnimationsEnum::DEATH);
 				PlayDeathAudio();
+
+				if (!m_hasInitiatedAudioFadeOut)
+				{
+					GlobalMusicManager::GetInstance().StartFadeOutAllAudio(3.0f);
+					m_hasInitiatedAudioFadeOut = true;									// Ensure all audio fade-out only once
+				}
 			}
 
 			//keep in execution phase
