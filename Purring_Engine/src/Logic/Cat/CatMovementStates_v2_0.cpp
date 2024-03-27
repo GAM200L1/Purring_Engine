@@ -74,6 +74,8 @@ namespace PE
 			EndPathDrawing(id);
 			return;
 		}
+		// Get the position of the cat
+		vec2 const& r_cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
 		// If the player has released their mouse and the path is invalid
 		if (m_invalidPath && !(*p_mouseClick) && *p_mouseClickPrevious)
@@ -86,12 +88,9 @@ namespace PE
 		// Check if the mouse has just been clicked
 		if (*p_mouseClick && !m_pathBeingDrawn && p_data->catCurrentEnergy)
 		{
-			// Get the position of the cat
-			vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
-
 			// Check if the cat has been clicked
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
-			if (PointCollision(catCollider, cursorPosition))
+			if (PointCollision(catCollider, r_cursorPosition) && r_cursorPosition != m_previousCursorPosition)
 			{
 				if (p_data->pathPositions.empty())
 					m_resetPositions.push(std::make_pair(-1, CatHelperFunctions::GetEntityPosition(id)));
@@ -128,8 +127,8 @@ namespace PE
 			// The mouse has been released, so end the path
 			EndPathDrawing(id);
 		}
-		
 
+		m_previousCursorPosition = r_cursorPosition;
 	}
 
 	void CatMovement_v2_0PLAN::CleanUp()

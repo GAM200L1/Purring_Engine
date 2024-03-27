@@ -117,24 +117,7 @@ namespace PE
 		*************************************************************************************/
 		void SetPathColor(vec4 const& r_color = {1.f, 1.f, 1.f, 1.f});
 
-
-		// ----- Events ----- // 
-
-		/*!***********************************************************************************
-		 \brief Callback function for the mouse click event.
-
-		 \param[in] r_mouseEvent - Mouse event data.
-		*************************************************************************************/
-		//void OnMouseClick(const Event<MouseEvents>& r_mouseEvent);
-
-
-		/*!***********************************************************************************
-		 \brief Callback function for the mouse release event.
-
-		 \param[in] r_mouseEvent - Mouse event data.
-		*************************************************************************************/
-		//void OnMouseRelease(const Event<MouseEvents>& r_mouseEvent);
-
+		// ----- EVENTS ----- //
 
 		/*!***********************************************************************************
 		 \brief Callback function for collision events.
@@ -162,10 +145,10 @@ namespace PE
 		vec4 m_defaultPathColor{ 0.506f, 0.490f, 0.490f, 1.f };
 		
 		std::stack<std::pair<int, vec2>> m_resetPositions{};
-		//int m_clickEventListener{}, m_releaseEventListener{};
 		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
 		bool m_invalidPath{ false };
+		vec2 m_previousCursorPosition{};
 
 		// taken from planning state
 		bool* p_mouseClick{ nullptr }; // Set to true when the mouse is pressed, false otherwise

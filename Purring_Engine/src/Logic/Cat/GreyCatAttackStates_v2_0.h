@@ -127,6 +127,7 @@ namespace PE
 		GreyCatAttackVariables* p_attackData = nullptr; // attack data for the cat
 
 		bool m_showTelegraphs{ false }; // True if telegraphs are to be displayed
+		bool m_firstUpdate{ true };
 
 		// Telegraph colors
 		vec4 const m_defaultColor{ 0.545f, 1.f, 0.576f, 1.f };

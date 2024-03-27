@@ -118,6 +118,7 @@ namespace PE
 		vec4 const m_selectColor{ 1.f, 0.784f, 0.f, 1.f };
 
 		// checks
+		bool m_firstUpdate{ true };
 		bool* p_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
 		bool* p_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 	};

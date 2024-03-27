@@ -53,40 +53,51 @@ namespace PE
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 		bool const collidedCurrent = PointCollision(r_catCollider, r_cursorPosition);
 
+		// check for double click
+		if (!p_data->planningAttack)
+		{
+			// if in previous frame and current frame the mouse has always been there allow double click
+			// if previous frame not clicked and this frame clicked increment double click
+			if (m_doubleClickTimer >= 0.5f) // resets double click when 1 second has passed
+			{
+				m_startDoubleClickTimer = false;
+				m_doubleClickTimer = 0.f;
+			}
+			else
+			{
+				// if mouse triggered
+				if (m_mouseClicked && !m_mouseClickPrevious)
+				{	
+					// second time triggered
+					if (m_startDoubleClickTimer && collidedCurrent && m_collidedPreviously)
+					{
+						p_data->planningAttack = true;
+						m_startDoubleClickTimer = false;
+						m_doubleClickTimer = 0.f;
+						p_catAttack->ToggleTelegraphs(true, false);
+					}
+					else if (collidedCurrent) // first time clicking
+					{ m_startDoubleClickTimer = true; }
+				}
+
+				// if mouse triggered once
+				if (m_startDoubleClickTimer)
+					m_doubleClickTimer += deltatime;
+			}
+		}
+
 		// if planning attack
 		if (p_data->planningAttack)
 		{
-			m_doubleClick = 0;
 			p_catAttack->Update(id, deltatime);
 		}
 		else
 		{
-			// if in previous frame and current frame the mouse has always been there allow double click
-			// if previous frame not clicked and this frame clicked increment double click
-			if (collidedCurrent && m_collidedPreviously && m_mouseClicked && !m_mouseClickPrevious) { ++m_doubleClick; }
-
-			if (m_doubleClick >= 2)
-			{
-				p_data->planningAttack = true;
-				m_doubleClick = 0;
-				m_doubleClickTimer = 0.f;
-				p_catAttack->ToggleTelegraphs(true, false);
-			}
-
-			if (m_doubleClickTimer >= 0.5f) // resets double click when 1 second has passed
-			{
-				m_doubleClick = 0;
-				m_doubleClickTimer = 0.f;
-			}
-			
 			if (!p_data->attackSelected)
 				p_catMovement->Update(id, deltatime);
-
-			m_doubleClickTimer += deltatime;
 		}	
 
-		// save previous variables
-		m_prevCursorPosition = r_cursorPosition;
+		// save previous frame data
 		m_mouseClickPrevious = m_mouseClicked;
 		m_collidedPreviously = collidedCurrent;
 	}

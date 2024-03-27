@@ -147,10 +147,15 @@ namespace PE
 			}
 
 			// disables telegraphs if anywhere but the telegraphs are clicked
-			if (*p_mouseClick && !(*p_mouseClickedPrevious) && !collidingWithAnyTelegraph)
+			if (*p_mouseClick && !(*p_mouseClickedPrevious) && !collidingWithAnyTelegraph && !m_firstUpdate)
 			{
 				(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 				ToggleTelegraphs(false, true);
+				m_firstUpdate = true;
+			}
+			else if (m_firstUpdate)
+			{
+				m_firstUpdate = false;
 			}
 		}
 		catch (...) {} // colliders are not correct

@@ -107,12 +107,18 @@ namespace PE
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		}
 
-		if (*p_mouseClick && !(*p_mouseClickedPrevious) && !collidingWithTelegraph)
+		if (*p_mouseClick && !(*p_mouseClickedPrevious) && !collidingWithTelegraph && !m_firstUpdate)
 		{
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 
 			if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
 				ToggleTelegraphs(false, false);
+
+			m_firstUpdate = true;
+		}
+		else if (m_firstUpdate) // check if its the first update so that it does not overlap with double click
+		{
+			m_firstUpdate = false;
 		}
 	}
 

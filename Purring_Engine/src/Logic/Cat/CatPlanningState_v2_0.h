@@ -97,16 +97,12 @@ namespace PE
 		int m_mouseClickEventListener{};
 		int m_mouseReleaseEventListener{};
 
-		bool m_mouseRelease{ false };
 		bool m_mouseClicked{ false };
 		bool m_mouseClickPrevious{ false };
 		bool m_collidedPreviously{ false };
 
-		int m_doubleClick{ 0 };
+		bool m_startDoubleClickTimer{ false };
 		float m_doubleClickTimer{ 0.f };
-		//bool m_moving{ false };
-
-		vec2 m_prevCursorPosition{ 0.f, 0.f };
 
 		/*!***********************************************************************************
 		 \brief Function to handle mouse click events for GreyCatPLAN
