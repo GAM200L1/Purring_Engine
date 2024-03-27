@@ -99,6 +99,12 @@ namespace PE
 		*************************************************************************************/
 		void ResolveCollision();
 
+		/*!***********************************************************************************
+		 \brief Sets up the private grid in the manager
+
+		*************************************************************************************/
+		void SetUpGrid() { m_grid.SetupGrid(gridSize.x, gridSize.y); }
+
 	private:
 
 		Grid m_grid;
