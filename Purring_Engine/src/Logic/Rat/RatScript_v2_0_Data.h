@@ -137,16 +137,6 @@ namespace PE
 	*************************************************************************************/
 	struct RatScript_v2_0_Data
 	{
-		/*!***********************************************************************************
-		 \brief Destructor.
-		*************************************************************************************/
-		~RatScript_v2_0_Data()
-		{
-			DeleteAttackData();
-			DeleteQueuedState();
-			delete p_stateManager;
-		}
-
 		// reference entities
 		EntityID myID{ 0 };						// id of the rat with this data
 		EntityID detectionRadiusId{};
@@ -161,7 +151,7 @@ namespace PE
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 		bool hasChangedToDeathState{ false }; // True if the rat has been changed to the death state
 		EnumRatType ratType{ EnumRatType::GUTTER };
-		AttackDataBase_v2_0* p_attackData{ nullptr };
+		std::unique_ptr<AttackDataBase_v2_0> p_attackData{};
 
 		// animation
 		AnimationComponent* p_ratAnimationComponent{ nullptr };
@@ -216,9 +206,18 @@ namespace PE
 		std::vector<vec2> patrolPoints{ /*vec2{ 11.f, -134.f }*/ };
 
 	private:
-		State* p_queuedState{ nullptr }; // State to load
+		std::unique_ptr<State> p_queuedState{}; // State to load
 
 	public:
+		/*!***********************************************************************************
+		\brief Delete the data.
+		*************************************************************************************/
+		void DeleteData()
+		{
+			DeleteAttackData();
+			DeleteQueuedState();
+			delete p_stateManager;
+		}
 
 		/*!***********************************************************************************
 		\brief Helper function to get the name of the rat based on its type.
@@ -242,14 +241,14 @@ namespace PE
 		\param bypassDeletion - Set to true to not delete the existing data being pointed at,
 								false to delete any data being pointed at if setting a new state.
 		*************************************************************************************/
-		void SetQueuedState(State* p_newState, bool bypassDeletion)
+		void SetQueuedState(std::unique_ptr<State>&& p_newState, bool bypassDeletion)
 		{
 			if (!bypassDeletion && p_queuedState)
 			{
 				DeleteQueuedState();
 			}
 
-			p_queuedState = p_newState;
+			p_queuedState = std::move(p_newState);
 		}
 
 		/*!***********************************************************************************
@@ -257,7 +256,7 @@ namespace PE
 		*************************************************************************************/
 		State* GetQueuedState()
 		{
-			return p_queuedState;
+			return p_queuedState.get();
 		}
 
 		/*!***********************************************************************************
@@ -265,11 +264,7 @@ namespace PE
 		*************************************************************************************/
 		void DeleteAttackData()
 		{
-			if (p_attackData) 
-			{
-				delete p_attackData;
-				p_attackData = nullptr;
-			}
+			p_attackData.reset();
 		}
 
 		/*!***********************************************************************************
@@ -279,8 +274,7 @@ namespace PE
 		{
 			if (p_queuedState)
 			{
-				delete p_queuedState;
-				p_queuedState = nullptr;
+				p_queuedState.reset();
 			}
 		}
 

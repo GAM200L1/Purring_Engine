@@ -190,8 +190,8 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
-					it->second.DeleteAttackData();
-					m_scriptData.erase(id);
+				it->second.DeleteData();
+				m_scriptData.erase(id);
 			}
 		}
 
@@ -601,7 +601,7 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
+		void RatScript_v2_0::TriggerStateChange(EntityID id, std::unique_ptr<State>&& p_nextState, float const stateChangeDelay)
 		{
 
 			auto it = m_scriptData.find(id);
@@ -617,7 +617,7 @@ namespace PE
 			it->second.delaySet = true;
 
 			// Set the state that is queued up
-			it->second.SetQueuedState(p_nextState, false);
+			it->second.SetQueuedState(std::move(p_nextState), false);
 #ifdef DEBUG_PRINT
 			//std::cout << "State change requested for Rat ID: " << id << " to state " << p_nextState->GetName() << " with delay: " << stateChangeDelay << " seconds." << std::endl;
 #endif // DEBUG_PRINT
@@ -654,7 +654,7 @@ namespace PE
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 				else if (!(it->second.isAlive)) { return; }
-				TriggerStateChange(id, new RatHunt_v2_0{ targetId }, stateChangeDelay);
+				TriggerStateChange(id, std::make_unique<RatHunt_v2_0>(targetId), stateChangeDelay);
 		}
 
 
@@ -663,7 +663,7 @@ namespace PE
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 				else if (!(it->second.isAlive)) { return; }
-				TriggerStateChange(id, new RatReturn_v2_0, stateChangeDelay);
+				TriggerStateChange(id, std::make_unique<RatReturn_v2_0>(), stateChangeDelay);
 		}
 
 
@@ -676,7 +676,7 @@ namespace PE
 				// Check the type of idle behaviour based on the type of rat
 				bool willPatrol{ (it->second.ratType == EnumRatType::BRAWLER) };
 
-				TriggerStateChange(id, new RatIdle_v2_0{ willPatrol }, stateChangeDelay);
+				TriggerStateChange(id, std::make_unique<RatIdle_v2_0>(willPatrol), stateChangeDelay);
 		}
 
 		void RatScript_v2_0::ChangeStateToMovement(EntityID const id, float const stateChangeDelay)
@@ -684,7 +684,7 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 			else if (!(it->second.isAlive)) { return; }
-			TriggerStateChange(id, new RatMovement_v2_0, stateChangeDelay);
+			TriggerStateChange(id, std::make_unique<RatMovement_v2_0>(), stateChangeDelay);
 		}
 
 
@@ -693,13 +693,13 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 			else if (!(it->second.isAlive)) { return; }
-			TriggerStateChange(id, new RatAttack_v2_0, stateChangeDelay);
+			TriggerStateChange(id, std::make_unique<RatAttack_v2_0>(), stateChangeDelay);
 		}
 
 
 		void RatScript_v2_0::ChangeStateToDeath(EntityID const id, float const stateChangeDelay) 
 		{
-			TriggerStateChange(id, new RatDeathState_v2_0, stateChangeDelay);
+			TriggerStateChange(id, std::make_unique<RatDeathState_v2_0>(), stateChangeDelay);
 		}
 
 
@@ -1288,12 +1288,12 @@ namespace PE
 				{
 				case EnumRatType::SNIPER:
 				{
-						r_data.p_attackData = dynamic_cast<AttackDataBase_v2_0*>(new SniperRatAttack_v2_0{ r_data.myID });
+						r_data.p_attackData = std::make_unique<SniperRatAttack_v2_0>(r_data.myID);
 						break;
 				}
 				default:
 				{
-						r_data.p_attackData = dynamic_cast<AttackDataBase_v2_0*>(new GutterRatAttack_v2_0{ r_data.myID });
+					r_data.p_attackData = std::make_unique<GutterRatAttack_v2_0>(r_data.myID);
 						break;
 				}
 				}

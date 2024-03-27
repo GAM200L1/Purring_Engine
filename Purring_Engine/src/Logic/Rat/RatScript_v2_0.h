@@ -328,7 +328,7 @@ namespace PE
 		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
 										Set to zero by default.
 		*************************************************************************************/
-		void TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay = 0.f);
+		void TriggerStateChange(EntityID id, std::unique_ptr<State>&& p_nextState, float const stateChangeDelay = 0.f);
 
 		/*!***********************************************************************************
 		 \brief Changes the state if the flag has been set and the delay is zero and below.
