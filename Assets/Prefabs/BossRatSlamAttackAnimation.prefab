@@ -11,8 +11,8 @@
                             "CurrentAnimationID": "../Assets/Animation/RatKingSlamAttack.anim"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 0,
-                            "Layer": 0,
+                            "InteractionLayer": 1,
+                            "Layer": 1,
                             "Old ID": 93,
                             "Prefab Type": "",
                             "children": [],
