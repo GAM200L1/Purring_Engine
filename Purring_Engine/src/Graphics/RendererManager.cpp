@@ -288,7 +288,7 @@ namespace PE
 #ifndef GAMERELEASE
             if (Editor::GetInstance().IsRenderingDebug())
             {
-                DrawDebug(worldToNdcMatrix); // Draw debug gizmos in the scene
+                DrawDebug(worldToNdcMatrix, r_cameraManager.GetUiViewToNdcMatrix()); // Draw debug gizmos in the scene
             }
 #endif // !GAMERELEASE
 
@@ -926,7 +926,7 @@ namespace PE
         }
 
 
-        void RendererManager::DrawDebug(glm::mat4 const& r_worldToNdc)
+        void RendererManager::DrawDebug(glm::mat4 const& r_worldToNdc, glm::mat4 const& r_viewToNdc)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
@@ -1034,15 +1034,16 @@ namespace PE
                 for (auto const& id : InternalView(layer))
                 {
                     // Don't draw anything if the entity is inactive
-                    if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id)) { continue; }
+                    if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
 
                     Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
 
                     // Draw a rect to represent the text bounds
+                    glm::mat4 const& r_toNdc{ (Editor::GetInstance().IsEditorActive() ? r_worldToNdc : r_viewToNdc) };
                     DrawDebugRectangle(transformComponent.width, transformComponent.height,
                         transformComponent.orientation,
                         transformComponent.position.x, transformComponent.position.y,
-                        r_worldToNdc, *(shaderProgramIterator->second),
+                        r_toNdc, *(shaderProgramIterator->second),
                         glm::vec4{ 0.3f, 0.3f, 1.f, 1.f });
                 }
             }            
