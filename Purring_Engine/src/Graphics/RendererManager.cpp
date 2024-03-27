@@ -68,6 +68,10 @@
 // Particle effects
 #include "VisualEffects/ParticleSystem.h"
 
+// Logic system to render debug objects
+#include "Logic/LogicSystem.h"
+#include "Logic/Rat/RatScript_v2_0.h"
+
 extern Logger engine_logger;
 
 namespace PE
@@ -1018,7 +1022,7 @@ namespace PE
                     position.y = transformComponent.position.y;
                 }
 
-                // Draw a cross to represent the orientation and position of the canvas
+                // Draw a rect to represent the bounds of the canvas
                 DrawDebugRectangle(canvasComponent.GetWidth(), canvasComponent.GetHeight(),
                     0.f, position.x, position.y, r_worldToNdc, *(shaderProgramIterator->second),
                     glm::vec4{ 1.f, 1.f, 1.f, 1.f });
@@ -1034,12 +1038,34 @@ namespace PE
 
                     Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
 
-                    // Draw a cross to represent the orientation and position of the text bounds
+                    // Draw a rect to represent the text bounds
                     DrawDebugRectangle(transformComponent.width, transformComponent.height,
                         transformComponent.orientation,
                         transformComponent.position.x, transformComponent.position.y,
                         r_worldToNdc, *(shaderProgramIterator->second),
                         glm::vec4{ 0.3f, 0.3f, 1.f, 1.f });
+                }
+            }            
+
+            // Draw an 'x' for every patrol point of the brawler rat
+            if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0))
+            {
+                auto ratMap{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->m_scriptData };
+                for (const auto& rat : ratMap)
+                {
+                    // Check if it's an active brawler rat
+                    if ((EntityManager::GetInstance().Has<EntityDescriptor>(rat.second.myID) &&
+                        EntityManager::GetInstance().Get<EntityDescriptor>(rat.second.myID).isActive) &&
+                        rat.second.ratType == EnumRatType::BRAWLER && !rat.second.patrolPoints.empty())
+                    {
+                        // Draw one x per patrol point
+                        for (const auto& patrolPoint : rat.second.patrolPoints)
+                        {
+                            DrawDebugCross(glm::vec2{ patrolPoint.x, patrolPoint.y }, glm::vec2{ 1.f, 1.f } *20.f,
+                                glm::vec2{ 1.f, -1.f } *20.f, r_worldToNdc, *(shaderProgramIterator->second),
+                                glm::vec4{ 0.7, 0.f, 0.f, 1.f });
+                        }
+                    }
                 }
             }
 
