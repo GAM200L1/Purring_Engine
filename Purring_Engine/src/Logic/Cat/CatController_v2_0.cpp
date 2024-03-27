@@ -45,6 +45,8 @@ namespace PE
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState != GameStates_v2_0::PLANNING)
+		{ ClearCatUndoStack(); }
 		// undo if right mouse button triggered
 		if (m_mouseClick && !m_mouseClickPrev)
 			UndoCatPlan();

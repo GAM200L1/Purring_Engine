@@ -51,13 +51,8 @@ namespace PE
 		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
 
-		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
+		//p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
 
-		if (p_data->catType == EnumCatType::MAINCAT)
-		{
-			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
-		}
-		
 		ResetDrawnPath();
 	}
 
@@ -90,6 +85,17 @@ namespace PE
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 			if (PointCollision(catCollider, cursorPosition))
 			{
+				if (p_data->pathPositions.empty())
+					m_resetPositions.push(std::make_pair(-1, CatHelperFunctions::GetEntityPosition(id)));
+				else
+					m_resetPositions.push(std::make_pair(p_data->pathPositions.size() - 1, p_data->pathPositions.back()));
+				
+
+				// save the positions of the cats
+				if (p_data->catType == EnumCatType::MAINCAT)
+				{
+					GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
+				}
 				// Start drawing a path
 				m_pathBeingDrawn = true;
 			}
@@ -129,8 +135,11 @@ namespace PE
 	void CatMovement_v2_0PLAN::Exit(EntityID id)
 	{
 		EndPathDrawing(id);
-		// set follow cats to their previous positions
-		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+		
+		if (p_data->catType == EnumCatType::MAINCAT) {
+			// set follow cats to their previous positions
+			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+		}
 
 		p_data = nullptr;
 	}
@@ -236,6 +245,8 @@ namespace PE
 		if (!p_data->pathPositions.empty())
 			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.back());
 
+		// 
+
 		// push into undo stack
 		GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_MOVEMENT);
 	}
@@ -258,8 +269,12 @@ namespace PE
 			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
 		}
 
-		// reset main cat position
-		CatHelperFunctions::PositionEntity(p_data->catID, p_data->resetPosition);
+		//if (!m_resetPositions.empty())
+		//{
+		//	// reset this cat's position
+		//	CatHelperFunctions::PositionEntity(p_data->catID, m_resetPositions.top());
+		//	m_resetPositions.pop();
+		//}
 	
 		// reset to max energy
 		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;

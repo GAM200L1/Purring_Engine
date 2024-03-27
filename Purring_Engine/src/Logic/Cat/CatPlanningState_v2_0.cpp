@@ -53,7 +53,13 @@ namespace PE
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 		bool const collidedCurrent = PointCollision(r_catCollider, r_cursorPosition);
 
-		// check whether to set planning or moving
+
+		if (p_data->planningAttack)
+		{
+			m_doubleClick = 0;
+			p_catAttack->Update(id, deltatime);
+		}
+		else // check whether to set planning or moving
 		{
 			// if in previous frame and current frame the mouse has always been there allow double click
 			// if previous frame not clicked and this frame clicked increment double click
@@ -83,16 +89,11 @@ namespace PE
 				}
 			}
 
-			m_doubleClickTimer += deltatime;
-		}
+			if (m_moving || p_catMovement->CheckInvalid())
+				p_catMovement->Update(id, deltatime);
 
-		if (p_data->planningAttack)
-		{
-			p_catAttack->Update(id, deltatime);
-			m_doubleClick = 0;
-		}
-		else if (m_moving || p_catMovement->CheckInvalid())
-			p_catMovement->Update(id, deltatime);			
+			m_doubleClickTimer += deltatime;
+		}	
 
 		// save previous variables
 		m_prevCursorPosition = r_cursorPosition;

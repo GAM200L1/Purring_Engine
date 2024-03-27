@@ -35,7 +35,7 @@ namespace PE
 		// new followers stack
 		std::vector<EntityID> followers;
 		// saves the follower position for undoing etc.
-		std::vector<vec2> cacheFollowerPosition;
+		std::stack<std::vector<vec2>> cacheFollowerPosition;
 	};
 
 

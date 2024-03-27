@@ -70,7 +70,7 @@ namespace PE
 		// movement variables
 		std::vector<vec2> pathPositions{}; // Positions of the nodes of the player drawn path
 		std::vector<EntityID> pathQuads{}; // IDs of entities to visualise the path nodes
-		vec2 resetPosition{ 0.f,0.f };
+		//vec2 resetPosition{ 0.f,0.f };
 
 		// state manager
 		StateMachine* p_stateManager{ nullptr }; // Cat state manager. Deleted in destructor.
