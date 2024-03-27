@@ -173,6 +173,13 @@ namespace PE
 		*************************************************************************************/
 		static void PlayRescueCatAudio(EnumCatType catType);
 
+		/*!***********************************************************************************
+		 \brief Regeneraates path nodes to visualise the path drawn by the player.
+
+		 \param[in] id EntityID of the entity that this script is attached to.
+		*************************************************************************************/
+		void FillPathNodes(EntityID id, int newEnergy);
+
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
@@ -197,6 +204,8 @@ namespace PE
 		 \param[in] id EntityID of the entity that this script is attached to.
 		*************************************************************************************/
 		void CreatePathNode(EntityID id);
+
+
 		
 		/*!***********************************************************************************
 		 \brief Creates a statemanager and sets the starting state. If the statemanager exists,
