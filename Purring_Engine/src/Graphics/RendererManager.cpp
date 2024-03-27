@@ -1049,9 +1049,9 @@ namespace PE
             }            
 
             // Draw an 'x' for every patrol point of the brawler rat
-            if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0))
+            if (CHECKSCRIPTINSTANCEPOINTER(RatScript_v2_0) && !(GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->m_scriptData.empty()))
             {
-                auto ratMap{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->m_scriptData };
+                auto const& ratMap{ GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->m_scriptData };
                 for (const auto& rat : ratMap)
                 {
                     // Check if it's an active brawler rat
