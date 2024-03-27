@@ -23,6 +23,7 @@
 #include "Logic/LogicSystem.h"
 #include "Graphics/CameraManager.h"
 #include "Layers/LayerManager.h"
+#include "Physics/CollisionManager.h"
 
 extern Logger engine_logger;
 
@@ -65,6 +66,10 @@ namespace PE
 
 		// load scene from path
 		LoadSceneFromPath(m_sceneDirectory + m_sceneToLoad);
+
+        // update collider grids
+        const_cast<CollisionManager*>(GETCOLLISIONMANAGER())->SetUpGrid();
+
         m_loadingScene = false;
 	}
 

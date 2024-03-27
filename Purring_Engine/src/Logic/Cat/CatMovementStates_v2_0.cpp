@@ -197,7 +197,8 @@ namespace PE
 	bool CatMovement_v2_0PLAN::AddPathNode(vec2 const& r_nodePosition)
 	{
 		// Check if the player has sufficient energy left
-		if (p_data->pathPositions.size() == p_data->pathQuads.size()) {
+		if (p_data->pathPositions.size() == p_data->pathQuads.size()) 
+		{
 			p_data->catCurrentEnergy = 0;
 			return false;
 		}
