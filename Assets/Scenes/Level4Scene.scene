@@ -4595,8 +4595,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 2,
+                        "InteractionLayer": 3,
+                        "Layer": 3,
                         "Old ID": 102,
                         "Prefab Type": "Rat",
                         "children": [

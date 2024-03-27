@@ -6305,8 +6305,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 3,
+                        "Layer": 3,
                         "Old ID": 1,
                         "Prefab Type": "GutterRat",
                         "children": [],
@@ -6398,8 +6398,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 3,
+                        "Layer": 3,
                         "Old ID": 1,
                         "Prefab Type": "GutterRat",
                         "children": [],
@@ -6491,8 +6491,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 3,
+                        "Layer": 3,
                         "Old ID": 1,
                         "Prefab Type": "GutterRat",
                         "children": [],
@@ -6584,8 +6584,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 3,
+                        "Layer": 3,
                         "Old ID": 1,
                         "Prefab Type": "GutterRat",
                         "children": [],
@@ -6677,8 +6677,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 3,
+                        "Layer": 3,
                         "Old ID": 109,
                         "Prefab Type": "",
                         "children": [],

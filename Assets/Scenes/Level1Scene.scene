@@ -4270,8 +4270,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 2,
+                        "InteractionLayer": 4,
+                        "Layer": 4,
                         "Old ID": 60,
                         "Prefab Type": "Grey Cat",
                         "children": [
@@ -4422,8 +4422,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 2,
+                        "InteractionLayer": 4,
+                        "Layer": 4,
                         "Old ID": 61,
                         "Prefab Type": "Meowsalot",
                         "children": [],
@@ -5080,8 +5080,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 3,
+                        "Layer": 3,
                         "Old ID": 93,
                         "Prefab Type": "GutterRat",
                         "children": [],
@@ -5173,8 +5173,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 3,
+                        "Layer": 3,
                         "Old ID": 94,
                         "Prefab Type": "GutterRat",
                         "children": [],
