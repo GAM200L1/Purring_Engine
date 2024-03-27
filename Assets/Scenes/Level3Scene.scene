@@ -5269,7 +5269,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 102,
+                                "FollowObjectID": 135,
                                 "fillColorAlmostEmpty": {
                                     "w": 1.0,
                                     "x": 0.9800000190734863,
@@ -5413,7 +5413,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
@@ -6110,7 +6110,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 103,
+                                "FollowObjectID": 136,
                                 "fillColorAlmostEmpty": {
                                     "w": 1.0,
                                     "x": 0.9800000190734863,
@@ -6254,7 +6254,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
@@ -6384,14 +6384,14 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 64.00003051757813,
-                                "y": 218.0000457763672
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 0.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -6477,14 +6477,14 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": -81.99999237060547,
-                                "y": -30.799968719482422
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 0.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -6570,14 +6570,14 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": -224.0,
-                                "y": -189.99998474121094
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 0.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,

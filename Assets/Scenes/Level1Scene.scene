@@ -4870,7 +4870,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
                     },
                     "Transform": {
                         "height": 19.0,
