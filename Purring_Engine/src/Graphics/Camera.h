@@ -268,6 +268,23 @@ namespace PE
             void UpdateCamera(Transform const& r_transform, bool const isMainCamera);
 
             /*!***********************************************************************************
+            \brief  Sets the background color of the camera viewport.
+
+            \param[in] r Red component of the color to set the background of the camera viewport to.
+            \param[in] g Green component of the color to set the background of the camera viewport to.
+            \param[in] b Blue component of the color to set the background of the camera viewport to.
+            \param[in] a Alpha component of the color to set the background of the camera viewport to.
+            *************************************************************************************/
+            void SetBackgroundColor(float const r, float const g, float const b, float const a);
+
+            /*!***********************************************************************************
+            \brief  Gets the background color of the camera viewport.
+
+            \return glm::vec4 - RGBA values of the background color of the camera viewport.
+            *************************************************************************************/
+            inline glm::vec4 GetBackgroundColor() const { return m_backgroundColor; }
+
+            /*!***********************************************************************************
              \brief Serializes the data attached to this Camera.
             *************************************************************************************/
             nlohmann::json ToJson(size_t id) const;
@@ -286,6 +303,7 @@ namespace PE
             bool m_isMainCamera{ false };     // Set to true to use this as the main camera to render the gameobjects through. 
             float m_magnification{ 1.f };     // Zoom to apply to the camera
             float m_viewportWidth{ 1.f }, m_viewportHeight{ 1.f };  // Height and width of the camera viewport
+            glm::vec4 m_backgroundColor{ 0.f, 0.f, 0.f, 1.f }; // Background color of the camera viewport
 
             // ----- Cached Variables ----- //
             bool m_cachedIsMainCamera{ false };     // Whether this camera was the main camera in the previous frame

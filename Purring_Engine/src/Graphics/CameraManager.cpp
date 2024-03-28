@@ -18,6 +18,7 @@
 #include "CameraManager.h"
 #include "ECS/SceneView.h"
 #include "Layers/LayerManager.h"
+#include "RendererManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -370,6 +371,12 @@ namespace PE
                         {
                             m_viewportHeight = r_camera.GetViewportHeight();
                         }
+
+                        // set the background color of the renderer manager to the main camera's background color
+                        const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(r_camera.GetBackgroundColor().r,
+                                                                                                         r_camera.GetBackgroundColor().g,
+                                                                                                         r_camera.GetBackgroundColor().b,
+                                                                                                         r_camera.GetBackgroundColor().a);
                     }
                 }
             }
