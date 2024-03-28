@@ -1039,7 +1039,13 @@ namespace PE
                     Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
 
                     // Draw a rect to represent the text bounds
+#ifndef GAMERELEASE
                     glm::mat4 const& r_toNdc{ (Editor::GetInstance().IsEditorActive() ? r_worldToNdc : r_viewToNdc) };
+#else
+                    glm::mat4 const& r_toNdc{ r_viewToNdc };
+#endif // GAMERELEASE
+
+                  
                     DrawDebugRectangle(transformComponent.width, transformComponent.height,
                         transformComponent.orientation,
                         transformComponent.position.x, transformComponent.position.y,
