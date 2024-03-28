@@ -59,7 +59,8 @@ namespace PE
          \param[in] prefabPath - The path to the audio prefab.
          \param[in] loop       - Whether the audio should loop.
         *************************************************************************************/
-        void PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration = 0.0f);
+        //void PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration = 0.0f);
+        void PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration = 0.0f, float frequency = 1.0f);
 
         /*!***********************************************************************************
          \brief Plays SFX prefab with the option to loop it.
@@ -96,7 +97,7 @@ namespace PE
 
          \param[in] duration - The duration of the fade-in effect in seconds.
         *************************************************************************************/
-        void StartFadeIn(float duration = 1.0f);                        // Default fade duration is 1 second
+        void StartFadeIn(float duration = 1.0f); // Default fade duration is 1 second
 
         /*!***********************************************************************************
          \brief Starts a fade-out effect for the background music over a specified duration.
@@ -106,13 +107,45 @@ namespace PE
         void StartFadeOut(float duration = 1.0f);
 
         /*!***********************************************************************************
-         \brief Gradually changes the volume of the background music to a target volume over
-                a specified duration.
+         \brief Sets the global pitch for all audio tracks.
 
-         \param[in] targetVolume - The target volume level.
-         \param[in] duration     - The duration of the volume change in seconds.
+         \param[in] pitch - A pitch value of 1.0 means no change, values greater than 1.0 increase
+                            the pitch, and values less than 1.0 decrease the pitch.
         *************************************************************************************/
-        void StartFadeToVolume(float targetVolume, float duration);
+        void SetGlobalPitch(float pitch);
+
+        /*!***********************************************************************************
+         \brief Sets the pitch for a specific audio track identified by its track key.
+
+         \param[in] trackKey - The unique identifier for the audio track.
+         \param[in] pitch    - A value of 1.0 means no change, values greater than 1.0 increase the
+                               pitch, and values less than 1.0 decrease the pitch.
+        *************************************************************************************/
+        void SetTrackPitch(const std::string& trackKey, float pitch);
+
+        /*!***********************************************************************************
+         \brief Sets the global playback frequency for all audio tracks.
+
+         \param[in] frequency - A frequency value of 1.0 means normal playback speed. Values greater than
+                                1.0 increase the playback speed, and values less than 1.0 decrease the playback speed.
+        *************************************************************************************/
+        void SetGlobalPlaybackFrequency(float frequency);
+
+        /*!***********************************************************************************
+         \brief Sets the playback frequency for a specific audio track identified by its track key.
+
+         \param[in] trackKey  - The unique identifier for the audio track.
+         \param[in] frequency - 1.0 is normal speed, values above 1.0 increase speed, and
+                                values below 1.0 decrease speed.
+        *************************************************************************************/
+        void SetTrackPlaybackFrequency(const std::string& trackKey, float frequency);
+
+        /*!***********************************************************************************
+         \brief Adjusts the playback frequency of the currently playing background music.
+         \param[in] newFrequency - A frequency value of 1.0 means normal playback speed. Values greater than
+                                1.0 increase the playback speed, and values less than 1.0 decrease the playback speed.
+        *************************************************************************************/
+        void AdjustBackgroundMusicFrequency(float newFrequency);
 
         /*!***********************************************************************************
          \brief Stores the current state of the audio, including track key and position.
@@ -125,13 +158,6 @@ namespace PE
          \param[in] state - The audio state to resume from.
         *************************************************************************************/
         void ResumeFromState(const AudioState& r_state);
-
-        /*!***********************************************************************************
-         \brief Returns the current audio state, including track key and position.
-
-         \return The current audio state.
-        *************************************************************************************/
-        const AudioState& GetCurrentState() const;
 
         /*!***********************************************************************************
          \brief Stops all audio
