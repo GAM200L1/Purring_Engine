@@ -41,7 +41,13 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Does nothing.
 		*************************************************************************************/
-		virtual ~RatScript_v2_0() {};
+		virtual ~RatScript_v2_0() 
+		{
+			for (auto& [id, data] : m_scriptData)
+			{
+				data.DeleteData();
+			}
+		};
 
 
 		// ----- Public Functions ----- //

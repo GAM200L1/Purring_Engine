@@ -12,7 +12,7 @@
                 "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
             },
             "Collider": {
-                "collisionLayerIndex": 0,
+                "collisionLayerIndex": 1,
                 "data": {
                     "center": {
                         "x": 63.99998474121094,
@@ -29,8 +29,8 @@
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {
-                "InteractionLayer": 0,
-                "Layer": 0,
+                "InteractionLayer": 1,
+                "Layer": 1,
                 "Old ID": 18446744073709551615,
                 "Prefab Type": "Rat",
                 "children": [],

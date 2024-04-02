@@ -5,8 +5,8 @@
                 "Entity": {
                     "components": {
                         "EntityDescriptor": {
-                            "InteractionLayer": 0,
-                            "Layer": 0,
+                            "InteractionLayer": 1,
+                            "Layer": 1,
                             "Old ID": 99,
                             "Prefab Type": "",
                             "children": [],
