@@ -743,6 +743,14 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
     );
     if (r_json["Entity"]["components"]["Camera"].contains("ismaincamera"))
         cam.SetMainCamera(r_json["Entity"]["components"]["Camera"]["ismaincamera"].get<bool>());
+    if (r_json["Entity"]["components"]["Camera"].contains("backgroundColor"))
+        cam.SetBackgroundColor
+        (
+			r_json["Entity"]["components"]["Camera"]["backgroundColor"]["r"].get<float>(),
+			r_json["Entity"]["components"]["Camera"]["backgroundColor"]["g"].get<float>(),
+			r_json["Entity"]["components"]["Camera"]["backgroundColor"]["b"].get<float>(),
+			r_json["Entity"]["components"]["Camera"]["backgroundColor"]["a"].get<float>()
+		);
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Camera>(), static_cast<void*>(&cam));
     return true;
 }

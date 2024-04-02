@@ -205,7 +205,9 @@ RTTR_REGISTRATION
         .method("GetViewportHeight", &PE::Graphics::Camera::GetViewportHeight)
         .method("SetViewDimensions", &PE::Graphics::Camera::SetViewDimensions)
         .method("SetMagnification", &PE::Graphics::Camera::SetMagnification)
-        .method("AdjustMagnification", &PE::Graphics::Camera::AdjustMagnification);
+        .method("AdjustMagnification", &PE::Graphics::Camera::AdjustMagnification)
+        .method("SetBackgroundColor", &PE::Graphics::Camera::SetBackgroundColor)
+        .method("GetBackgroundColor", &PE::Graphics::Camera::GetBackgroundColor);
 
     // is that all i need to register? @jarran
     rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str())
