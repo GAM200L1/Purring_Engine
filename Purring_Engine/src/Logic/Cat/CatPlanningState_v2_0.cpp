@@ -76,9 +76,9 @@ namespace PE
 					if (m_startDoubleClickTimer && collidedCurrent && m_collidedPreviously)
 					{
 						p_data->planningAttack = true;
+						p_catAttack->ToggleTelegraphs(true, false);
 						m_startDoubleClickTimer = false;
 						m_doubleClickTimer = 0.f;
-						p_catAttack->ToggleTelegraphs(true, false);
 					}
 					else if (collidedCurrent) // first time clicking
 					{ m_startDoubleClickTimer = true; }
@@ -95,15 +95,15 @@ namespace PE
 		{
 			p_catAttack->Update(id, deltatime);
 		}
-		else
+		else if(!p_data->attackSelected && r_cursorPosition != m_mousePositionPrevious)
 		{
-			if (!p_data->attackSelected)
-				p_catMovement->Update(id, deltatime);
-		}	
+			p_catMovement->Update(id, deltatime);
+		}
 
 		// save previous frame data
 		m_mouseClickPrevious = m_mouseClicked;
 		m_collidedPreviously = collidedCurrent;
+		m_mousePositionPrevious = r_cursorPosition;
 	}
 
 	void Cat_v2_0PLAN::StateCleanUp()
@@ -148,6 +148,7 @@ namespace PE
 
 	void Cat_v2_0PLAN::ResetMovement(EntityID id)
 	{
+		p_catAttack->ToggleTelegraphs(false, false);
 		p_catMovement->ResetDrawnPath();
 		PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
 	}

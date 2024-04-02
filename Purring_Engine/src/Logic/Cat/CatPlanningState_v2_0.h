@@ -94,6 +94,8 @@ namespace PE
 		CatMovement_v2_0PLAN* p_catMovement{ nullptr }; 
 		CatScript_v2_0Data* p_data{ nullptr };
 
+		vec2 m_mousePositionPrevious{ 0.f, 0.f };
+
 		int m_mouseClickEventListener{};
 		int m_mouseReleaseEventListener{};
 

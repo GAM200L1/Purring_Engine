@@ -119,15 +119,17 @@ namespace PE
 			{
 				AABBCollider const& r_telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(r_telegraph.second).colliderVariant);
 
-				bool collidedWithTelegraph = PointCollision(r_telegraphCollider, cursorPosition);
-
 				// check if the mouse is hovering any of the boxes, if yes, boxes should change color
-				if (collidedWithTelegraph)
+				if (PointCollision(r_telegraphCollider, cursorPosition))
 				{
 					collidingWithAnyTelegraph = true;
 					if (r_telegraph.first == p_attackData->attackDirection) { continue; }
+
+					// telegraph is being hovered
 					CatHelperFunctions::SetColor(r_telegraph.second, m_hoverColor);
-					if (*p_mouseClick) // selects an attack direction
+
+					// if hovering and mouse triggered
+					if (*p_mouseClick && !(*p_mouseClickedPrevious))
 					{
 						// @TODO: Add select direction sfx
 						p_attackData->attackDirection = r_telegraph.first;
