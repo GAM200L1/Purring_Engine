@@ -4,6 +4,12 @@
             "Entity": {
                 "components": {
                     "Camera": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
                         "ismaincamera": true,
                         "magnification": 1.0,
                         "viewportHeight": 1080.0,
@@ -256,8 +262,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -423,8 +429,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -514,8 +520,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -698,7 +704,7 @@
                         "height": 1080.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 64.0,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -772,18 +778,18 @@
                         "TextureKey": "../Assets/Textures/Button_MainMenu_512x128.png"
                     },
                     "Transform": {
-                        "height": 184.0,
+                        "height": 128.0,
                         "orientation": 0.0,
                         "position": {
                             "x": -500.0,
-                            "y": -320.0
+                            "y": -425.0
                         },
                         "relativeposition": {
-                            "x": -500.0,
-                            "y": -320.0
+                            "x": -391.0,
+                            "y": -410.0
                         },
                         "relorientation": 0.0,
-                        "width": 624.0
+                        "width": 512.0
                     }
                 },
                 "name": ""
@@ -849,18 +855,18 @@
                         "TextureKey": "../Assets/Textures/Button_QuitGame_512x128.png"
                     },
                     "Transform": {
-                        "height": 184.0,
+                        "height": 128.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 500.0,
-                            "y": -310.0
+                            "y": -427.0
                         },
                         "relativeposition": {
-                            "x": 500.0,
-                            "y": -310.0
+                            "x": 391.0,
+                            "y": -410.0
                         },
                         "relorientation": 0.0,
-                        "width": 624.0
+                        "width": 512.0
                     }
                 },
                 "name": ""
@@ -1326,12 +1332,12 @@
                         "height": 128.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 732.0,
-                            "y": 469.0
+                            "x": 710.0,
+                            "y": 465.0
                         },
                         "relativeposition": {
-                            "x": 732.0,
-                            "y": 469.0
+                            "x": 710.0,
+                            "y": 465.0
                         },
                         "relorientation": 0.0,
                         "width": 512.0

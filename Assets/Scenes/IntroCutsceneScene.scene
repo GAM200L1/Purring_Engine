@@ -4,6 +4,12 @@
             "Entity": {
                 "components": {
                     "Camera": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
                         "ismaincamera": true,
                         "magnification": 1.0,
                         "viewportHeight": 1080.0,
@@ -253,8 +259,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -420,8 +426,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -511,8 +517,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -649,12 +655,12 @@
                         "height": 128.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 732.0001220703125,
-                            "y": 469.0
+                            "x": 710.0,
+                            "y": 465.0
                         },
                         "relativeposition": {
-                            "x": 732.0001220703125,
-                            "y": 469.0
+                            "x": 710.0,
+                            "y": 465.0
                         },
                         "relorientation": 0.0,
                         "width": 512.0
