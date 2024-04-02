@@ -1048,7 +1048,7 @@ namespace PE {
 	void Editor::ShowComponentWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-			if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs) || (m_isPrefabMode && !EntityManager::GetInstance().Has<EntityDescriptor>(1)))
+			if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
 			{
 				ImGui::End();
 			}
@@ -4781,7 +4781,7 @@ namespace PE {
 
 									engine_logger.AddLog(false, "Enterting PreFabEditorMode...", __FUNCTION__);
 									prefabFP = (m_isPrefabMode) ? prefabFP : m_files[n].string();
-									auto id = Hierarchy::GetInstance().GetParentOrder().front();
+									auto id = Hierarchy::GetInstance().GetHierarchyOrder().front();
 									if (!m_isPrefabMode)
 									{
 										m_isPrefabMode = true;
@@ -5641,7 +5641,7 @@ namespace PE {
 					ImGui::SameLine();
 					if (ImGui::Button(" Save "))
 					{
-						auto id = Hierarchy::GetInstance().GetParentOrder().front();
+						auto id = Hierarchy::GetInstance().GetHierarchyOrder().front();
 						if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
 						{
 							nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(id));
@@ -5763,7 +5763,7 @@ namespace PE {
 								if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 								{
 									engine_logger.AddLog(false, "Attempting to save prefab entities to file...", __FUNCTION__);
-									auto id = Hierarchy::GetInstance().GetParentOrder().front();
+									auto id = Hierarchy::GetInstance().GetHierarchyOrder().front();
 									if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
 									{
 										nlohmann::json save = serializationManager.SerializeEntityPrefab(static_cast<int>(id));
