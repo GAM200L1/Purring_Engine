@@ -911,7 +911,6 @@ namespace PE
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
 			PlayClickAudio();
-			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
