@@ -57,6 +57,7 @@ namespace PE
 		// movement variables
 		int catMaxMovementEnergy{ 21 };
 		int catCurrentEnergy{ 0 };
+		int catPrevMaxMovementEnergy{ 0 };
 
 		float minDistance{ 10.f }; float maxDistance{ 50.f }; // Min and max distance enforced between each path node
 		float nodeSize{ 10.f }; // Size (in pixels) of each node
@@ -83,6 +84,8 @@ namespace PE
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
 		bool executionAnimationFinished{ false };
 		bool playDeathSound{ true };
+
+
 	};
 
 	class CatScript_v2_0 : public Script
