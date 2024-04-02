@@ -78,6 +78,26 @@ namespace PE
         m_defaultAudio.reset();
         m_defaultFont.reset();
         m_defaultAnimation.reset();
+
+#ifdef RESOURCE_LOG
+
+        const char* filepath = "../Assets/Settings/resourcelog.txt";
+
+        std::ofstream outfile(filepath);
+        if (outfile.is_open())
+        {
+            for (auto const& str : m_allResourcesUsed)
+            {
+                outfile << str << std::endl;
+            }
+
+            outfile.close();
+        }
+        else
+        {
+            std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+        }
+#endif // RESOURCE_LOG
     }
 
     void ResourceManager::LoadDefaultAssets()
@@ -124,6 +144,9 @@ namespace PE
         {
             return false;
         }
+#ifdef RESOURCE_LOG
+        m_allResourcesUsed.insert(r_name);
+#endif
 
         // check if texture is already loaded
         if (Textures.find(r_name) == Textures.end())
@@ -179,6 +202,10 @@ namespace PE
         {
             return false;
         }
+
+#ifdef RESOURCE_LOG
+        m_allResourcesUsed.insert(r_key);
+#endif
 
         // check if audio is already loaded
         if (Sounds.find(r_key) == Sounds.end())
@@ -238,6 +265,10 @@ namespace PE
             return false;
         }
 
+#ifdef RESOURCE_LOG
+        m_allResourcesUsed.insert(r_key);
+#endif
+
         // check if font is already loaded
         if (Fonts.find(r_key) == Fonts.end())
         {
@@ -265,6 +296,10 @@ namespace PE
         {
             return false;
         }
+
+#ifdef RESOURCE_LOG
+        m_allResourcesUsed.insert(r_key);
+#endif
 
         // check if animation is already loaded
         if (Animations.find(r_key) == Animations.end())
@@ -305,7 +340,11 @@ namespace PE
         {
             std::cerr << "File does not exist: " << filepath << std::endl;
             return serializationManager.CreateEntityFromPrefab(m_defaultPrefabKey);
-        }        
+        }     
+
+#ifdef RESOURCE_LOG
+        m_allResourcesUsed.insert(filepath.string());
+#endif
 
         size_t id = serializationManager.CreateEntityFromPrefab(filepath.string());
 
