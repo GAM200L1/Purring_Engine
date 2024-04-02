@@ -5572,6 +5572,7 @@ namespace PE {
 						m_isRunTime = true;
 						m_showEditor = false;
 						m_showGameView = true;
+						UndoStack::GetInstance().ClearStack();
 						if (!m_gameplayPaused)
 						{
 							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
@@ -5814,6 +5815,7 @@ namespace PE {
 										// load scene from filepath
 										SceneManager::GetInstance().LoadSceneToLoad(filePath.substr(filePath.find_last_of('\\') + 1));
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+										m_gameplayPaused = false;;
 									}
 									else
 									{
@@ -6680,7 +6682,6 @@ namespace PE {
 		// save active scene name
 		m_savedScene = SceneManager::GetInstance().GetActiveScene();
 		serializationManager.SerializeScene("Savestate/savestate.scene");
-		UndoStack::GetInstance().ClearStack();
 	}
 
 	void Editor::StopAndLoadScene()
