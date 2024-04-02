@@ -1048,7 +1048,6 @@ namespace PE {
 	void Editor::ShowComponentWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs) || (m_isPrefabMode && !EntityManager::GetInstance().Has<EntityDescriptor>(1)))
 		{
 			ImGui::End();
 		}
@@ -4781,7 +4780,7 @@ namespace PE {
 
 									engine_logger.AddLog(false, "Enterting PreFabEditorMode...", __FUNCTION__);
 									prefabFP = (m_isPrefabMode) ? prefabFP : m_files[n].string();
-									auto id = Hierarchy::GetInstance().GetParentOrder().front();
+									auto id = Hierarchy::GetInstance().GetHierarchyOrder().front();
 									if (!m_isPrefabMode)
 									{
 										m_isPrefabMode = true;
