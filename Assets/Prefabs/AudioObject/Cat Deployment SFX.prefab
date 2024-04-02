@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/sfx_CatDeployment.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Cat Deployment SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Cat Deployment SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

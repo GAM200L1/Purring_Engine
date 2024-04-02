@@ -27,6 +27,10 @@ namespace PE
 		EntityID CutsceneObject;
 		EntityID FinalScene;
 
+		EntityID ContinueButton;
+		EntityID SkipButton;
+
+
 		int windowNotFocusEventID;
 		int windowFocusEventID;
 	};
@@ -132,6 +136,20 @@ namespace PE
 		void FadeAllObject(EntityID id, float const alpha);
 
 		/*!***********************************************************************************
+		 \brief			Set Button Text
+
+		 \param[in]		EntityID
+		*************************************************************************************/
+		void SetButtonText(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief			Start Cutscene
+
+		 \param[in]		EntityID
+		*************************************************************************************/
+		void StartCutscene(EntityID id);
+
+		/*!***********************************************************************************
 		 \brief			Handle window out of focus event.
 		 \param[in]     Event containing window-specific details.
 		*************************************************************************************/
@@ -146,7 +164,7 @@ namespace PE
 	private:
 		std::map<EntityID, IntroCutsceneControllerData> m_scriptData;
 		SerializationManager m_serializationManager;
-		float m_sceneTimer{ 22.3f };
+		float m_sceneTimer{ 0 };
 		float m_elapsedTime{ 0 };
 		bool m_endCutscene{ false };
 		bool m_startCutscene{ true };

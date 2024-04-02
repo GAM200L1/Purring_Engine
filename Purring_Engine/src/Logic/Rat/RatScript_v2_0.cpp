@@ -112,6 +112,9 @@ namespace PE
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
+			// Update the audio
+			UpdateAudioVariables(deltaTime);
+
 			// Change back to the animation that the rat should have after the hurt animation
 			if (GetIsPlayingHurtAnim(id) && GetHasAnimEnded(id))
 			{
@@ -187,8 +190,8 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it != m_scriptData.end())
 			{
-					it->second.DeleteAttackData();
-					m_scriptData.erase(id);
+				it->second.DeleteData();
+				m_scriptData.erase(id);
 			}
 		}
 
@@ -334,6 +337,7 @@ namespace PE
 
 		void RatScript_v2_0::PlayAttackAudio(EntityID id)
 		{
+			// Get the rat script data
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 
@@ -469,28 +473,47 @@ namespace PE
 
 		void RatScript_v2_0::PlayAudio(std::string const& r_soundPrefab)
 		{
+			// Check if the audio can be played 
+			if (!CheckCanPlayAudio()) { return; }
+
+			// Update cooldown timer
+			timeSinceLastSFX = 0.f;
+
 			PE::GlobalMusicManager::GetInstance().PlaySFX(r_soundPrefab, false);
+		}
+
+
+		bool RatScript_v2_0::CheckCanPlayAudio() const
+		{
+				// Ensure that enough time has passed since the last SFX has played
+				return (timeSinceLastSFX > SFXcooldown);
+		}
+
+
+		void RatScript_v2_0::UpdateAudioVariables(float const deltaTime) 
+		{
+				timeSinceLastSFX += deltaTime;
 		}
 
 
 		vec2 RatScript_v2_0::GetEntityPosition(EntityID const transformId)
 		{
-			try
+			if(EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				return r_transform.position;
 			}
-			catch (...) { return vec2{}; }
+			return vec2{};
 		}
 
 		vec2 RatScript_v2_0::GetEntityScale(EntityID const transformId)
 		{
-			try
+			if(EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				return vec2{ r_transform.width, r_transform.height };
 			}
-			catch (...) { return vec2{}; }
+			return vec2{};
 		}
 
 		std::map<EntityID, RatScript_v2_0_Data>& RatScript_v2_0::GetScriptData()
@@ -578,7 +601,7 @@ namespace PE
 		}
 
 
-		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
+		void RatScript_v2_0::TriggerStateChange(EntityID id, std::unique_ptr<State>&& p_nextState, float const stateChangeDelay)
 		{
 
 			auto it = m_scriptData.find(id);
@@ -594,7 +617,7 @@ namespace PE
 			it->second.delaySet = true;
 
 			// Set the state that is queued up
-			it->second.SetQueuedState(p_nextState, false);
+			it->second.SetQueuedState(std::move(p_nextState), false);
 #ifdef DEBUG_PRINT
 			//std::cout << "State change requested for Rat ID: " << id << " to state " << p_nextState->GetName() << " with delay: " << stateChangeDelay << " seconds." << std::endl;
 #endif // DEBUG_PRINT
@@ -631,7 +654,7 @@ namespace PE
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 				else if (!(it->second.isAlive)) { return; }
-				TriggerStateChange(id, new RatHunt_v2_0{ targetId }, stateChangeDelay);
+				TriggerStateChange(id, std::make_unique<RatHunt_v2_0>(targetId), stateChangeDelay);
 		}
 
 
@@ -640,8 +663,7 @@ namespace PE
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 				else if (!(it->second.isAlive)) { return; }
-				TriggerStateChange(id, new RatReturn_v2_0, stateChangeDelay);
-				EnableDetectionTelegraphs(id, EnumRatIconAnimations::CONFUSED);
+				TriggerStateChange(id, std::make_unique<RatReturn_v2_0>(), stateChangeDelay);
 		}
 
 
@@ -652,20 +674,9 @@ namespace PE
 				else if (!(it->second.isAlive)) { return; }
 
 				// Check the type of idle behaviour based on the type of rat
-				RatType idleBehaviour{ RatType::IDLE };
-				switch (it->second.ratType)
-				{
-				case EnumRatType::GUTTER:
-				case EnumRatType::BRAWLER:
-				case EnumRatType::SNIPER:
-				{
-						idleBehaviour = RatType::IDLE;
-						break;
-				}
-				default: break;
-				}
+				bool willPatrol{ (it->second.ratType == EnumRatType::BRAWLER) };
 
-				TriggerStateChange(id, new RatIdle_v2_0{ idleBehaviour }, stateChangeDelay);
+				TriggerStateChange(id, std::make_unique<RatIdle_v2_0>(willPatrol), stateChangeDelay);
 		}
 
 		void RatScript_v2_0::ChangeStateToMovement(EntityID const id, float const stateChangeDelay)
@@ -673,7 +684,7 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 			else if (!(it->second.isAlive)) { return; }
-			TriggerStateChange(id, new RatMovement_v2_0, stateChangeDelay);
+			TriggerStateChange(id, std::make_unique<RatMovement_v2_0>(), stateChangeDelay);
 		}
 
 
@@ -682,13 +693,13 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 			else if (!(it->second.isAlive)) { return; }
-			TriggerStateChange(id, new RatAttack_v2_0, stateChangeDelay);
+			TriggerStateChange(id, std::make_unique<RatAttack_v2_0>(), stateChangeDelay);
 		}
 
 
 		void RatScript_v2_0::ChangeStateToDeath(EntityID const id, float const stateChangeDelay) 
 		{
-			TriggerStateChange(id, new RatDeathState_v2_0, stateChangeDelay);
+			TriggerStateChange(id, std::make_unique<RatDeathState_v2_0>(), stateChangeDelay);
 		}
 
 
@@ -1041,6 +1052,12 @@ namespace PE
 				//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): ratPlayerDistance: " << it->second.ratPlayerDistance << ", curr pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
 				static bool printOnce{false};
 #endif // DEBUG_PRINT
+
+				// Ensure the direction the rat is moving towards is still up to date
+				EntityID cachedTargetId{ it->second.targetedCat };
+				SetTarget(id, it->second.targetPosition, false);
+				it->second.targetedCat = cachedTargetId;
+
 				if (it->second.ratPlayerDistance > 0.f)
 				{
 						float amountToMove{ std::min(it->second.ratPlayerDistance, it->second.movementSpeed * deltaTime) };
@@ -1139,7 +1156,6 @@ namespace PE
 				ClearCollisionContainers(id); // Clear collision containers
 
 				ChangeStateToDeath(it->second.myID, 0.f); 
-				// @TODO Check if this should take the current rat animation duration into account?
 		}
 
 
@@ -1167,7 +1183,7 @@ namespace PE
 #ifdef DEBUG_PRINT
 						std::cout << "RatScript_v2_0::ChangeRatState(" << id << ", " << it->second.GetQueuedState()->GetName() << ")\n";
 #endif // DEBUG_PRINT
-						it->second.p_stateManager->ChangeState(it->second.GetQueuedState(), id);
+						it->second.p_stateManager->ChangeState(it->second.ReleaseQueuedState(), id);
 				}
 
 				// Reset all the values
@@ -1272,12 +1288,12 @@ namespace PE
 				{
 				case EnumRatType::SNIPER:
 				{
-						r_data.p_attackData = dynamic_cast<AttackDataBase_v2_0*>(new SniperRatAttack_v2_0{ r_data.myID });
+						r_data.p_attackData = std::make_unique<SniperRatAttack_v2_0>(r_data.myID);
 						break;
 				}
 				default:
 				{
-						r_data.p_attackData = dynamic_cast<AttackDataBase_v2_0*>(new GutterRatAttack_v2_0{ r_data.myID });
+					r_data.p_attackData = std::make_unique<GutterRatAttack_v2_0>(r_data.myID);
 						break;
 				}
 				}

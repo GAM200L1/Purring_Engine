@@ -37,6 +37,14 @@ namespace PE
             m_cachedIsMainCamera = m_isMainCamera;
         }
 
+        void Camera::SetBackgroundColor(float const r, float const g, float const b, float const a)
+        {
+            m_backgroundColor.r = glm::clamp(r, 0.f, 1.f);
+            m_backgroundColor.g = glm::clamp(g, 0.f, 1.f);
+            m_backgroundColor.b = glm::clamp(b, 0.f, 1.f);
+            m_backgroundColor.a = glm::clamp(a, 0.f, 1.f);
+        }
+
 
         void Camera::ComputeNDCMatrix()
         {
@@ -173,6 +181,10 @@ namespace PE
             j["viewportWidth"] = m_viewportWidth;
             j["viewportHeight"] = m_viewportHeight;
             j["ismaincamera"] = m_isMainCamera;
+            j["backgroundColor"]["r"] = m_backgroundColor.r;
+            j["backgroundColor"]["g"] = m_backgroundColor.g;
+            j["backgroundColor"]["b"] = m_backgroundColor.b;
+            j["backgroundColor"]["a"] = m_backgroundColor.a;
             return j;
         }
 
@@ -184,6 +196,13 @@ namespace PE
             cam.m_viewportHeight = j["viewportHeight"];
             if (j.contains("ismaincamera"))
                 cam.m_isMainCamera = j["ismaincamera"];
+            if (j.contains("backgroundColor"))
+            {
+				cam.m_backgroundColor.r = j["backgroundColor"]["r"];
+				cam.m_backgroundColor.g = j["backgroundColor"]["g"];
+				cam.m_backgroundColor.b = j["backgroundColor"]["b"];
+				cam.m_backgroundColor.a = j["backgroundColor"]["a"];
+			}
             return cam;
         }
 

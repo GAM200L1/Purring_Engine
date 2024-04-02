@@ -6,9 +6,13 @@
 
  \author:              Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
+ \par      code %:     80%
+ \par	   changed:	   13-3-2024
 
  \co-author:		   LIEW Yeni
  \par	   email:	   yeni.l@digipen.edu
+ \par      code %:     20%
+ \par	   changed:	   13-3-2024
 
  \brief
 	This file contains declarations for functions used for a grey cat's movement states.
@@ -96,12 +100,9 @@ namespace PE
 		{
 			if (p_data->catCurrentEnergy) // Check if the player has sufficient energy
 			{
-				// Get the mouse position
-				vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
-
 				// Attempt to create a node at the position of the cursor
 				// and position the cat where the node is
-				CatHelperFunctions::PositionEntity(id, AttemptToDrawPath(cursorPosition));
+				CatHelperFunctions::PositionEntity(id, AttemptToDrawPath(CatHelperFunctions::GetCursorPositionInWorld()));
 			}
 			else // Path is being drawn but the player has run out of energy
 			{
@@ -147,9 +148,11 @@ namespace PE
 				p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
 			}
 		}
-
+		
 		if (p_data->pathPositions.empty())
+		{
 			p_data->pathPositions.emplace_back(r_position);
+		}
 
 		// Get the distance of the proposed position from the last node in the path
 		float distanceOfPosition = p_data->pathPositions.back().Distance(r_position);
@@ -165,7 +168,9 @@ namespace PE
 			{
 				float distanceToMove{ distanceOfPosition > p_data->maxDistance ? p_data->maxDistance : distanceOfPosition };
 
-				if (!AddPathNode(p_data->pathPositions.back() + directionOfProposed * distanceToMove)) {
+				if (!AddPathNode(p_data->pathPositions.back() + directionOfProposed * distanceToMove)) 
+				{
+					CatScript_v2_0::PlayPathPlacementAudio();
 					break;
 				}
 			}
@@ -183,7 +188,8 @@ namespace PE
 	bool CatMovement_v2_0PLAN::AddPathNode(vec2 const& r_nodePosition)
 	{
 		// Check if the player has sufficient energy left
-		if (p_data->pathPositions.size() == p_data->pathQuads.size()) {
+		if (p_data->pathPositions.size() == p_data->pathQuads.size()) 
+		{
 			p_data->catCurrentEnergy = 0;
 			return false;
 		}
@@ -206,9 +212,11 @@ namespace PE
 		// Change the position of the node
 		EntityID nodeId{ p_data->pathQuads[p_data->pathPositions.size()] };
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
-		CatHelperFunctions::ToggleEntity(nodeId, true);
-		
-		CatScript_v2_0::PlayPathPlacementAudio();
+		if (!CatHelperFunctions::IsActive(nodeId)) 
+		{
+				CatScript_v2_0::PlayPathPlacementAudio();
+				CatHelperFunctions::ToggleEntity(nodeId, true);
+		}
 
 		// Add the position to the path positions list
 		p_data->pathPositions.emplace_back(r_nodePosition);
@@ -300,12 +308,8 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 	{
-		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
-		{
-			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
-			// Check if the cat is colliding with an obstacle
-			if ((OTEE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity2))
-				|| (OTEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OTEE.Entity1)))
+		auto InvalidPath =
+			[&]()
 			{
 				// The entity is colliding with is an obstacle
 				SetPathColor(m_invalidPathColor); // Set the color of the path nodes to red
@@ -314,8 +318,33 @@ namespace PE
 				// Play audio
 				std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
 				PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+			};
 
-				
+		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
+		{
+			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
+			// Check if the cat is colliding with an obstacle
+			if (CatHelperFunctions::IsObstacle(OTEE.Entity2))
+			{
+				if (OTEE.Entity1 == p_data->catID)
+				{
+					InvalidPath();
+				}
+				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
+				{
+					InvalidPath();
+				}
+			}
+			else if (CatHelperFunctions::IsObstacle(OTEE.Entity1))
+			{
+				if (OTEE.Entity2 == p_data->catID)
+				{
+					InvalidPath();
+				}
+				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
+				{
+					InvalidPath();
+				}
 			}
 		}
 	}
@@ -326,6 +355,8 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
+		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionStay, CatMovement_v2_0EXECUTE::OnCollisionStay, this);
+		m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionExit, CatMovement_v2_0EXECUTE::OnCollisionStay, this);
 
 		if (p_data->catType == EnumCatType::MAINCAT)
 			m_mainCatID = id;
@@ -335,6 +366,9 @@ namespace PE
 		
 		p_data->currentPositionIndex = 0;
 		m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
+
+		m_movementTimer = 0.5f;
+		m_startMovementTimer = false;
 	}
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -396,7 +430,7 @@ namespace PE
 
 				footstepTimer -= deltaTime;
 
-				if(footstepTimer <= 0)
+				if (footstepTimer <= 0)
 				{
 					CatScript_v2_0::PlayFootstepAudio();
 					footstepTimer = footstepDelay;
@@ -406,6 +440,34 @@ namespace PE
 				vec2 newScale{ CatHelperFunctions::GetEntityScale(id) };
 				newScale.x = std::abs(newScale.x) * ((directionToMove.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the cat is facing left
 				CatHelperFunctions::ScaleEntity(id, newScale.x, newScale.y);
+
+				// ensure the cat does not stay stuck in the wall
+				if (m_startMovementTimer)
+				{
+					m_movementTimer -= deltaTime;
+					if (m_movementTimer <= 0.f)
+					{
+						// extra in case prevent going through does not work well
+						CatHelperFunctions::PositionEntity(id, p_data->pathPositions[p_data->currentPositionIndex]);
+						// Deactivate this node
+						CatHelperFunctions::ToggleEntity(p_data->pathQuads[p_data->currentPositionIndex], false);
+
+						if (p_data->currentPositionIndex >= (p_data->pathPositions.size() - 1))
+						{
+							//	This is the last node, so stop the movement of the cat
+							StopMoving(id);
+						}
+
+						++(p_data->currentPositionIndex);
+						//EntityManager::GetInstance().Get<RigidBody>(id).velocity = directionToMove * 2.f;
+						m_startMovementTimer = false;
+						m_movementTimer = 0.5f;
+					}
+				}
+				else
+				{
+					m_movementTimer = 0.5f;
+				}
 			}
 		}
 		else
@@ -418,6 +480,8 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::StateCleanUp()
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
 	}
 
 	void CatMovement_v2_0EXECUTE::StateExit(EntityID id)
@@ -441,13 +505,40 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::OnTriggerEnter(const Event<CollisionEvents>& r_TriggerEvent)
 	{
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		OnTriggerEnterEvent OCEE{ dynamic_cast<const OnTriggerEnterEvent&>(r_TriggerEvent) };
-
-		auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
-		if ((CheckExitPoint(OCEE.Entity1) && OCEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
-			|| (CheckExitPoint(OCEE.Entity2) && OCEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
+		if (r_TriggerEvent.GetType() == CollisionEvents::OnTriggerEnter)
 		{
-			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage(p_gsc->GetCurrentLevel() + 1); // goes to the next stage
+			OnTriggerEnterEvent OTEE{ dynamic_cast<const OnTriggerEnterEvent&>(r_TriggerEvent) };
+
+			auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
+			if ((CheckExitPoint(OTEE.Entity1) && OTEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
+				|| (CheckExitPoint(OTEE.Entity2) && OTEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
+			{
+				CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+				p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
+				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage(p_gsc->GetCurrentLevel() + 1); // goes to the next stage
+			}
+		}
+	}
+
+	void CatMovement_v2_0EXECUTE::OnCollisionStay(const Event<CollisionEvents>& r_collisionEvent)
+	{
+		if (r_collisionEvent.GetType() == CollisionEvents::OnCollisionStay)
+		{
+			// starts 
+			OnCollisionStayEvent OCSE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionEvent) };
+			if ((OCSE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OCSE.Entity2))
+				|| (OCSE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OCSE.Entity1)))
+			{
+				m_startMovementTimer = true;
+			}
+			else
+			{
+				m_startMovementTimer = false;
+			}
+		}
+		else
+		{
+			m_startMovementTimer = false;
 		}
 	}
 }

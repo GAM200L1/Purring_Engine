@@ -7,52 +7,52 @@
         {
             "collisionLayerIndex": 0,
             "collisionLayerName": "Layer 0",
-            "collisionLayerSignature": "1111111110"
+            "collisionLayerSignature": "0111111110"
         },
         {
             "collisionLayerIndex": 1,
             "collisionLayerName": "Layer 1",
-            "collisionLayerSignature": "1111110111"
+            "collisionLayerSignature": "0111110111"
         },
         {
             "collisionLayerIndex": 2,
             "collisionLayerName": "Layer 2",
-            "collisionLayerSignature": "1111111111"
+            "collisionLayerSignature": "0111111111"
         },
         {
             "collisionLayerIndex": 3,
             "collisionLayerName": "Layer 3",
-            "collisionLayerSignature": "1111111101"
+            "collisionLayerSignature": "0111111101"
         },
         {
             "collisionLayerIndex": 4,
             "collisionLayerName": "Layer 4",
-            "collisionLayerSignature": "1111111111"
+            "collisionLayerSignature": "1111101111"
         },
         {
             "collisionLayerIndex": 5,
             "collisionLayerName": "Layer 5",
-            "collisionLayerSignature": "1111111111"
+            "collisionLayerSignature": "0111111111"
         },
         {
             "collisionLayerIndex": 6,
             "collisionLayerName": "Layer 6",
-            "collisionLayerSignature": "1111111111"
+            "collisionLayerSignature": "0111111111"
         },
         {
             "collisionLayerIndex": 7,
             "collisionLayerName": "Layer 7",
-            "collisionLayerSignature": "1111111111"
+            "collisionLayerSignature": "0111111111"
         },
         {
             "collisionLayerIndex": 8,
             "collisionLayerName": "Layer 8",
-            "collisionLayerSignature": "1111111111"
+            "collisionLayerSignature": "0111111111"
         },
         {
             "collisionLayerIndex": 9,
             "collisionLayerName": "Layer 9",
-            "collisionLayerSignature": "1111111111"
+            "collisionLayerSignature": "0000010000"
         }
     ]
 }

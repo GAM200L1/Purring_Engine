@@ -1,0 +1,406 @@
+{
+    "animationFrames": [
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1a_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1b_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1c_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1d_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1e_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1f_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1g_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1h_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1i_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1j_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1k_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1l_1920x1080.png"
+        },                
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1m_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1n_1920x1080.png"
+        },
+        {
+            "duration": 0.0333,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1o_1920x1080.png"
+        },
+        {
+            "actions": [
+                {
+                    "scriptFunction": "StartCutscene",
+                    "scriptName": "IntroCutsceneController"
+                }
+            ],
+            "duration": 2.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1_1920x1080.png"
+        },
+        {
+            "duration": 1.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro2_1920x1080.png"
+        },
+        {
+            "duration": 1.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro3_1920x1080.png"
+        },
+        {
+            "duration": 1.46,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro4_1920x1080.png"
+        },
+        {
+            "duration": 2.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro5_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro6_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro7_1920x1080.png"
+        },
+        {
+            "duration": 2.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro8_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro9_1920x1080.png"
+        },
+        {
+            "duration": 1.0,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro10_1920x1080.png"
+        },
+        {
+            "duration": 2.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro11_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro12_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro13_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro14_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro15_1920x1080.png"
+        },
+        {
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro16_1920x1080.png"
+        },
+        {
+            "actions": [
+                {
+                    "scriptFunction": "SetButtonText",
+                    "scriptName": "IntroCutsceneController"
+                }
+            ],
+            "duration": 1.5,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ],
+            "textureKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro17_1920x1080.png"
+        }
+    ],
+    "animationID": "../Assets/Animation/IntroCutscene.anim",
+    "frameRate": 30,
+    "isLooping": false,
+    "isSpriteSheet": false,
+    "spriteSheetKey": "../Assets/Textures/Animations/Cutscenes/Intro/Cutscene_Intro1_1920x1080.png",
+    "totalSprites": 1
+}

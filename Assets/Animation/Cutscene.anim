@@ -240,10 +240,10 @@
             ],
             "textureKey": "../Assets/Textures/Cutscenes/Cutscene_Intro20_1920x1080.png"
         }
-        
     ],
     "animationID": "../Assets/Animation/Cutscene.anim",
     "frameRate": 30,
+    "isLooping": true,
     "isSpriteSheet": false,
     "spriteSheetKey": "../Assets/Textures/Cutscenes/Cutscene_Intro1_1920x1080.png",
     "totalSprites": 1

@@ -35,8 +35,10 @@ namespace PE
 		m_planningRunOnce = false;
 
 		// Subscribe to events
-		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatHunt_v2_0::OnCollisionEnter, this);
+		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatHunt_v2_0::OnCollisionEnterOrStay, this);
+		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionStay, RatHunt_v2_0::OnCollisionEnterOrStay, this);
 		m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionExit, RatHunt_v2_0::OnCollisionExit, this);
+
 		m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatHunt_v2_0::OnTriggerEnterAndStay, this);
 		m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatHunt_v2_0::OnTriggerEnterAndStay, this);
 		m_triggerExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatHunt_v2_0::OnTriggerExit, this);
@@ -156,7 +158,9 @@ namespace PE
 
 			// Unsubscribe from events
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
+			REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+
 			REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_triggerExitEventListener);
@@ -249,10 +253,6 @@ namespace PE
 
 	void RatHunt_v2_0::CheckIfShouldChangeStates()
 	{
-#ifdef DEBUG_PRINT
-			std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft = " << huntingTurnsLeft << "\n";
-#endif // DEBUG_PRINT
-
       // Clear dead cats from the collision sets
 			RatScript_v2_0::ClearDeadCats(p_data->catsInDetectionRadius);
 			RatScript_v2_0::ClearDeadCats(p_data->catsExitedDetectionRadius);
@@ -261,53 +261,35 @@ namespace PE
 			// Check if there are any cats in the detection range
 			if (!(p_data->catsInDetectionRadius.empty()))
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats in range\n";
-#endif // DEBUG_PRINT
 					// there's a cat in the detection range, move to attack it
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
 			}
 			// Check if any cats exited the detection range in the last turn
 			else if (!(p_data->catsExitedDetectionRadius.empty()))
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats exited range\n";
-#endif // DEBUG_PRINT
 					// cats just passed by us, hunt the closest one down
 					SetHuntTarget( RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) );
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 			}
-			// Check if the current cat is alive // @TODO to replace when we have a method for checking cat's alive status
-			else if (!EntityManager::GetInstance().IsEntityValid(p_data->myID))
+			// Check if the current cat is alive 
+			else if (!RatScript_v2_0::GetIsNonCagedCat(targetId))
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat is dead\n";
-#endif // DEBUG_PRINT
 					// the cat we're chasing is dead, return to the original position
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
 			}
 			// Check if we should switch to the returning state
 			else if (huntingTurnsLeft == 0)
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft == 0\n";
-#endif // DEBUG_PRINT
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableDetectionTelegraphs(p_data->myID, EnumRatIconAnimations::CONFUSED);
 			}
 			else 
 			{
-#ifdef DEBUG_PRINT
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): don't change states, just clear collision\n";
-#endif // DEBUG_PRINT
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 			}
-
-#ifdef DEBUG_PRINT
-			std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): --- end huntingTurnsLeft = " << huntingTurnsLeft << "\n";
-#endif // DEBUG_PRINT
 	}
 
-	void RatHunt_v2_0::OnCollisionEnter(const Event<CollisionEvents>& r_event)
+	void RatHunt_v2_0::OnCollisionEnterOrStay(const Event<CollisionEvents>& r_event)
 	{
 			if (!p_data) { return; }
 			else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
@@ -321,6 +303,19 @@ namespace PE
 					// Check if the rat has been colliding with a wall
 					if (!ratCollidedWithCat &&
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingWall(p_data->myID, OCEE.Entity1, OCEE.Entity2) &&
+							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetExecutionPhaseTimeout(p_data->myID))
+					{
+							// The rat has been touching the wall for too long
+							p_data->finishedExecution = true;
+							p_data->ratPlayerDistance = 0.f;
+					}
+			} 
+			else if (r_event.GetType() == CollisionEvents::OnCollisionStay)
+			{
+					OnCollisionStayEvent OCSE = dynamic_cast<OnCollisionStayEvent const&>(r_event);
+
+					// Check if the rat has been colliding with a wall
+					if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingWall(p_data->myID, OCSE.Entity1, OCSE.Entity2) &&
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetExecutionPhaseTimeout(p_data->myID))
 					{
 							// The rat has been touching the wall for too long

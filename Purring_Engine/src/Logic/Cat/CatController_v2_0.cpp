@@ -128,6 +128,7 @@ namespace PE
 
 			// toggle death animation for cat that has been hit
 			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
+			RemoveCatFromCurrent(catToRemove);
 		}
 	}
 
@@ -135,7 +136,6 @@ namespace PE
 	{
 		EnumCatType const& r_catType = (GETSCRIPTDATA(CatScript_v2_0, id))->catType;
 		m_currentCats.erase(std::find(m_currentCats.begin(), m_currentCats.end(), std::pair{id, r_catType}));
-		CatHelperFunctions::ToggleEntity(id, false);
 	}
 
 	int CatController_v2_0::GetCurrentMovementEnergy(EntityID catID)

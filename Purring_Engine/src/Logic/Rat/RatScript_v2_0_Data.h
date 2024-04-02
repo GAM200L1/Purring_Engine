@@ -4,8 +4,16 @@
  \file     RatScript_v2_0_Data.h
  \date     09-03-2024
 
- \author               Krystal YAMIN
- \par      email:      krystal.y@digipen.edu
+ \author               Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     90%
+ \par      changes:    All function declarations.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     10%
+ \par      changes:    09-03-2024
+											 Addition of some variables for rat movement and attack.
 
  \brief
 	This file contains declarations for structs that contain data about the rats.
@@ -129,16 +137,6 @@ namespace PE
 	*************************************************************************************/
 	struct RatScript_v2_0_Data
 	{
-		/*!***********************************************************************************
-		 \brief Destructor.
-		*************************************************************************************/
-		~RatScript_v2_0_Data()
-		{
-			DeleteAttackData();
-			DeleteQueuedState();
-			delete p_stateManager;
-		}
-
 		// reference entities
 		EntityID myID{ 0 };						// id of the rat with this data
 		EntityID detectionRadiusId{};
@@ -148,12 +146,12 @@ namespace PE
 		StateMachine* p_stateManager{ nullptr };
 		
 		// Positional offset from the center of the rat that the detection icon should be located
-		vec2 detectionIconOffset{ 45.f, 12.5f }; 
+		vec2 detectionIconOffset{ 55.f, 40.f }; 
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 		bool hasChangedToDeathState{ false }; // True if the rat has been changed to the death state
 		EnumRatType ratType{ EnumRatType::GUTTER };
-		AttackDataBase_v2_0* p_attackData{ nullptr };
+		std::unique_ptr<AttackDataBase_v2_0> p_attackData{};
 
 		// animation
 		AnimationComponent* p_ratAnimationComponent{ nullptr };
@@ -175,7 +173,7 @@ namespace PE
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
 		vec2 targetPosition{ 0.f, 0.f };				// stores the target position the rat is supposed to move towards
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
-		float maxObstacleCollisionTime{ 1.f };		// Max time in seconds that the rat can stay colliding with an obstacle before it is forced out of the execution phase
+		float maxObstacleCollisionTime{ 0.3f };		// Max time in seconds that the rat can stay colliding with an obstacle before it is forced out of the execution phase
 		float totalTimeCollidingIntoWall{ 0.f };	// Time since the rat first started walking into the wall 
 
 		// Attack variables
@@ -205,14 +203,21 @@ namespace PE
 		vec2 originalPosition{ 0.f, 0.f }; // Position to return to
 		
 		// Patrol Points
-		std::vector<vec2> patrolPoints{};
-		int patrolIndex{ 0 };										// Index of the current patrol point the rat is moving towards
-		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
+		std::vector<vec2> patrolPoints{ /*vec2{ 11.f, -134.f }*/ };
 
 	private:
-		State* p_queuedState{ nullptr }; // State to load
+		std::unique_ptr<State> p_queuedState{}; // State to load
 
 	public:
+		/*!***********************************************************************************
+		\brief Delete the data.
+		*************************************************************************************/
+		void DeleteData()
+		{
+			DeleteAttackData();
+			DeleteQueuedState();
+			delete p_stateManager;
+		}
 
 		/*!***********************************************************************************
 		\brief Helper function to get the name of the rat based on its type.
@@ -236,22 +241,30 @@ namespace PE
 		\param bypassDeletion - Set to true to not delete the existing data being pointed at,
 								false to delete any data being pointed at if setting a new state.
 		*************************************************************************************/
-		void SetQueuedState(State* p_newState, bool bypassDeletion)
+		void SetQueuedState(std::unique_ptr<State>&& p_newState, bool bypassDeletion)
 		{
 			if (!bypassDeletion && p_queuedState)
 			{
 				DeleteQueuedState();
 			}
 
-			p_queuedState = p_newState;
+			p_queuedState = std::move(p_newState);
 		}
 
 		/*!***********************************************************************************
 		 \brief Getter for the pointer to the state the rat should be set to.
 		*************************************************************************************/
-		State* GetQueuedState()
+		std::unique_ptr<State> const& GetQueuedState() const
 		{
 			return p_queuedState;
+		}		
+
+		/*!***********************************************************************************
+		 \brief Getter for the pointer to the state the rat should be set to.
+		*************************************************************************************/
+		State* ReleaseQueuedState()
+		{
+			return p_queuedState.release();
 		}
 
 		/*!***********************************************************************************
@@ -259,11 +272,7 @@ namespace PE
 		*************************************************************************************/
 		void DeleteAttackData()
 		{
-			if (p_attackData) 
-			{
-				delete p_attackData;
-				p_attackData = nullptr;
-			}
+			p_attackData.reset();
 		}
 
 		/*!***********************************************************************************
@@ -273,8 +282,7 @@ namespace PE
 		{
 			if (p_queuedState)
 			{
-				delete p_queuedState;
-				p_queuedState = nullptr;
+				p_queuedState.reset();
 			}
 		}
 

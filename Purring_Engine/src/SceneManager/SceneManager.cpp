@@ -23,6 +23,7 @@
 #include "Logic/LogicSystem.h"
 #include "Graphics/CameraManager.h"
 #include "Layers/LayerManager.h"
+#include "Physics/CollisionManager.h"
 
 extern Logger engine_logger;
 
@@ -65,6 +66,10 @@ namespace PE
 
 		// load scene from path
 		LoadSceneFromPath(m_sceneDirectory + m_sceneToLoad);
+
+        // update collider grids
+        const_cast<CollisionManager*>(GETCOLLISIONMANAGER())->SetUpGrid();
+
         m_loadingScene = false;
 	}
 
@@ -81,6 +86,8 @@ namespace PE
 
         // unload all resources
         ResourceManager::GetInstance().UnloadResources();
+
+        GETLOGICSYSTEM()->ClearCreatedList();
 
         // load scene
         SerializationManager serializationManager;
@@ -100,6 +107,8 @@ namespace PE
     {
         // delete all objects
         DeleteObjects();
+
+        GETLOGICSYSTEM()->ClearCreatedList();
 
         // restart scene should be loading current scene, but for now just given scene path for editor savestate
         std::filesystem::path filepath = m_sceneDirectory + r_scenePath;

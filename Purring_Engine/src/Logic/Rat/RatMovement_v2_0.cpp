@@ -6,12 +6,12 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     50%
- \par      changes:    Majority rat movement AI logic.
+ \par      code %:     10%
+ \par      changes:    Base structure of the class.
 
  \co-author            Krystal Yamin
  \par      email:      krystal.y\@digipen.edu
- \par      code %:     20%
+ \par      code %:     90%
  \par      changes:    06-02-2024
                        Integration of gamestates with the Rat States and Rat AI.
 
@@ -48,8 +48,10 @@ namespace PE
         m_planningRunOnce = false;
 
         // Subscribe to the collision trigger events
-        m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatMovement_v2_0::OnCollisionEnter, this);
+        m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, RatMovement_v2_0::OnCollisionEnterOrStay, this);
+        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionStay, RatMovement_v2_0::OnCollisionEnterOrStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionExit, RatMovement_v2_0::OnCollisionExit, this);
+        
         m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovement_v2_0::OnTriggerEnterAndStay, this);
         m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovement_v2_0::OnTriggerEnterAndStay, this);
         m_triggerExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatMovement_v2_0::OnTriggerExit, this);
@@ -142,7 +144,9 @@ namespace PE
 
         // Unsubscribe events
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+
         REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_triggerExitEventListener);
@@ -156,7 +160,7 @@ namespace PE
 #endif // DEBUG_PRINT
     }
 
-    void RatMovement_v2_0::OnCollisionEnter(const Event<CollisionEvents>& r_event)
+    void RatMovement_v2_0::OnCollisionEnterOrStay(const Event<CollisionEvents>& r_event)
     {
         if (!p_data) { return; }
         else if (gameStateController && gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
@@ -170,6 +174,18 @@ namespace PE
             // Check if the rat has been colliding with a wall
             if (!ratCollidedWithCat &&
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingWall(p_data->myID, OCEE.Entity1, OCEE.Entity2) &&
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetExecutionPhaseTimeout(p_data->myID))
+            {
+                // The rat has been touching the wall for too long
+                OnMovementDone();
+            }
+        }
+        else if (r_event.GetType() == CollisionEvents::OnCollisionStay)
+        {
+            OnCollisionStayEvent OCSE = dynamic_cast<OnCollisionStayEvent const&>(r_event);
+
+            // Check if the rat has been colliding with a wall
+            if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CheckRatTouchingWall(p_data->myID, OCSE.Entity1, OCSE.Entity2) &&
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetExecutionPhaseTimeout(p_data->myID))
             {
                 // The rat has been touching the wall for too long
@@ -232,13 +248,11 @@ namespace PE
             }
             else
             {
-                std::cout << "RatMovement_v2_0::PickTargetPosition() couldn't pick a target position\n";
                 return RatScript_v2_0::GetEntityPosition(p_data->myID);
             }
         }        
         else
         {
-            std::cout << "RatMovement_v2_0::PickTargetPosition() couldn't pick a target position\n";
             return vec2{};
         }
     }
@@ -252,6 +266,7 @@ namespace PE
 
         // Switch to the attack state since we're close enough to the targets
         p_data->ratPlayerDistance = 0.f;
+        p_data->targetPosition = RatScript_v2_0::GetEntityPosition(p_data->myID);
         GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
     }
 

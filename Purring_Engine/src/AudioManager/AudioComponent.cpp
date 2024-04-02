@@ -179,29 +179,108 @@ namespace PE
         m_fadeProgressIndividual += deltaTime / m_fadeDurationIndividual;
         m_fadeProgressIndividual = std::min(m_fadeProgressIndividual, 1.0f);
 
-        float volume = m_isFadingInIndividual
-            ? m_fadeProgressIndividual
-            : (1.0f - m_fadeProgressIndividual);
+        float newVolume;
+        if (m_isFadingInIndividual)
+        {
+            // For fade in, interpolate from 0 to the target volume
+            newVolume = m_fadeProgressIndividual * m_targetVolumeIndividual;
+        }
+        else
+        {
+            // For fade out, interpolate from the current volume to the target volume
+            newVolume = (1.0f - m_fadeProgressIndividual) * m_originalVolume + m_fadeProgressIndividual * m_targetVolumeIndividual;
+        }
 
-        SetVolume(volume * m_originalVolume);
+        SetVolume(newVolume);
 
         if (m_fadeProgressIndividual >= 1.0f) m_isFadingIndividual = false;
+
+        // Debug log for checking pitch
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            if (auto p_channel = audio->GetChannel())
+            {
+                float currentPitch;
+                p_channel->getPitch(&currentPitch);
+                //std::cout << "[AudioComponent] Current pitch for audio key: " << m_audioKey << " is " << currentPitch << std::endl;
+            }
+        }
     }
 
-    void AudioComponent::StartIndividualFadeIn(float duration)
+    void AudioComponent::StartIndividualFadeIn(float targetVolume, float duration)
     {
+        m_targetVolumeIndividual = targetVolume;
+        m_originalVolume = GetVolume(); // Capture the current volume as the original volume
         m_isFadingIndividual = true;
         m_isFadingInIndividual = true;
         m_fadeDurationIndividual = duration;
-        m_fadeProgressIndividual = 0.0f;
+        m_fadeProgressIndividual = 0.0f; // Reset fade progress
     }
 
-    void AudioComponent::StartIndividualFadeOut(float duration)
+
+    void AudioComponent::StartIndividualFadeOut(float targetVolume, float duration)
     {
+        m_targetVolumeIndividual = targetVolume;
         m_isFadingIndividual = true;
         m_isFadingInIndividual = false;
         m_fadeDurationIndividual = duration;
         m_fadeProgressIndividual = 0.0f;
+    }
+
+    void AudioComponent::SetPitch(float pitch)
+    {
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            if (auto p_channel = audio->GetChannel())
+            {
+                FMOD_RESULT result = p_channel->setPitch(pitch);
+                if (result == FMOD_OK)
+                {
+                    //std::cout << "[AudioComponent] Pitch set successfully for audio key: " << m_audioKey << std::endl;
+                }
+                else
+                {
+                    //std::cout << "[AudioComponent] Failed to set pitch for audio key: " << m_audioKey << " Error: " << FMOD_ErrorString(result) << std::endl;
+                }
+            }
+            else
+            {
+                //std::cout << "[AudioComponent] Channel not found for audio key: " << m_audioKey << std::endl;
+            }
+        }
+        else
+        {
+            //std::cout << "[AudioComponent] Audio not found for audio key: " << m_audioKey << std::endl;
+        }
+    }
+
+    float AudioComponent::GetPitch() const
+    {
+        float pitch = 1.0f; // Default pitch value
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            if (auto p_channel = audio->GetChannel())
+            {
+                p_channel->getPitch(&pitch);
+            }
+        }
+        return pitch;
+    }
+
+    void AudioComponent::SetPlaybackFrequency(float frequency)
+    {
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            if (auto p_channel = audio->GetChannel())
+            {
+                p_channel->setFrequency(frequency);                 // Directly set the desired frequency value
+            }
+        }
+    }
+
+    float AudioComponent::GetPlaybackFrequency() const
+    {
+        return m_playbackFrequency;
     }
 
     nlohmann::json AudioComponent::ToJson() const

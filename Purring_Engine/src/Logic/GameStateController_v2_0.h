@@ -45,6 +45,7 @@ namespace PE
 		EntityID Journal;
 		EntityID RatKingJournal;
 		EntityID JournalButton;
+		EntityID JournalIcon;
 
 		EntityID PhaseBanner;
 
@@ -56,10 +57,12 @@ namespace PE
 		EntityID Background;
 		EntityID TransitionPanel;
 
+		EntityID SettingsMenu;
+
 		int NumberInList{5};
 		std::vector<EntityID> clicklisttest;
 
-		int keyEventHandlerId, outOfFocusEventHandlerId, mouseClickEventID;
+		int keyEventHandlerId, outOfFocusEventHandlerId, mouseClickEventID,returnFocusEventHandlerId;
 	};
 
 	class GameStateController_v2_0 : public Script
@@ -134,6 +137,12 @@ namespace PE
 		void OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event);
 
 		/*!***********************************************************************************
+		 \brief			Handle window out of focus event.
+		 \param[in]     Event containing window-specific details.
+		*************************************************************************************/
+		void OnWindowReturnFocus(const PE::Event<PE::WindowEvents>& r_event);
+
+		/*!***********************************************************************************
 		 \brief			Handle Key Press event.
 		 \param[in]     Event containing window-specific details.
 		*************************************************************************************/
@@ -192,6 +201,19 @@ namespace PE
 		 \param[in]		The Next Stage to load
 		*************************************************************************************/
 		void NextStage(int nextStage);
+
+		/*!***********************************************************************************
+		 \brief			go to outro cutscene
+
+		 \param[in]		The Next Stage to load
+		*************************************************************************************/
+		void GoToOutroCutscene();
+
+		/*!***********************************************************************************
+		 \brief		Return to main menu
+		*************************************************************************************/
+		void ReturnToMainMenu(EntityID ID);
+
 		/*!***********************************************************************************
 		 \brief			Move from Deployment to Planning
 		*************************************************************************************/
@@ -380,6 +402,20 @@ namespace PE
 		*************************************************************************************/
 		void JournalHoverExit(EntityID);
 
+		/*!***********************************************************************************
+		 \brief			Open Settings in Main Menu
+
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
+		void OpenSettings(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Close Settings in Main Menu
+
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
+		void CloseSettings(EntityID);
+
 		// ----- Audio Helper Functions ----- //
 	private:
 		/*!***********************************************************************************
@@ -428,7 +464,7 @@ namespace PE
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
 		int currentTurn{1};
-
+		bool gameEnded{ false };
 	private:
 		//Script Variables
 		std::map<EntityID, GameStateController_v2_0Data> m_scriptData; // Data associated with each instance of the script
@@ -441,6 +477,8 @@ namespace PE
 		std::string m_level2SceneName{ "Level2Scene.scene" };
 		std::string m_level3SceneName{ "Level3Scene.scene" };
 		std::string m_level4SceneName{ "Level4Scene.scene" };
+		std::string m_mainMenuSceneName{ "MainMenu.scene" };
+		std::string m_outroCutsceneScene{ "EndingCutsceneScene.scene" };
 		std::string m_leveltoLoad{ "Level1Scene.scene" };
 		bool m_nextTurnOnce = false;
 
@@ -479,19 +517,24 @@ namespace PE
 
 		//journal object testing
 		bool m_journalShowing{};
+		bool m_startJournalTimer{};
+		float m_journalStayTimer{2.f};
+		float m_journalStayTime{ m_journalStayTimer };
+
 
 		//phase banner
 		const float m_phaseBannerTransitionTimer{ .2f };
-		const float m_phaseBannerStayTimer{ .75f };
+		const float m_phaseBannerStayTimer{ .3f };
 		float m_phaseBannerEnter{};
 		float m_phaseBannerExit{m_phaseBannerTransitionTimer};
 		float m_phaseBannerStay{};
 		bool m_isPhaseBannerTransition{true};
 
-		float prevVolume;
+		float m_prevVolume;
 
 		// Audio Controls
-		bool bgmStarted = false;
+		bool m_bgmStarted = false;
+
 
 	};
 }

@@ -7,13 +7,11 @@
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
 
- \brief    The AudioComponent class is a part of the Purring Engine, designed to manage
-           audio playback functionalities for game entities. It handles audio operations
-           such as playing, pausing, resuming, and stopping sounds. Additionally, this class
-           provides capabilities to adjust volume, set looping, and maintain audio keys for
-           individual entities. It also includes serialization support for converting audio
-           component states to and from JSON format, facilitating easy data management and
-           integration with the engine's audio systems.
+ \brief    AudioComponent class for managing audio playback in the Purring Engine.
+           Handles play, pause, resume, and stop operations. Also adjusts volume,
+           sets looping, and manages audio keys for individual entities. Supports
+           serialization for easy data management and integration with the engine's
+           audio systems.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -21,7 +19,6 @@
 #include <string>
 #include "Data/json.hpp"
 #include "AudioManager.h"
-
 
 namespace PE
 {
@@ -144,13 +141,37 @@ namespace PE
         \brief     Begins a fade-in effect, smoothly increasing volume to its original level over the specified duration.
         \param     duration Fade-in time in seconds.
         *************************************************************************************/
-        void StartIndividualFadeIn(float duration);
+        void StartIndividualFadeIn(float targetVolume, float duration);
 
         /*!***********************************************************************************
         \brief     Begins a fade-out effect, smoothly decreasing volume to zero over the specified duration.
         \param     duration Fade-out time in seconds.
         *************************************************************************************/
-        void StartIndividualFadeOut(float duration);
+        void StartIndividualFadeOut(float targetVolume, float duration);
+
+        /*!***********************************************************************************
+        \brief     Sets the pitch of the audio sound.
+        \param     pitch The pitch to set.
+        *************************************************************************************/
+        void SetPitch(float pitch);
+
+        /*!***********************************************************************************
+        \brief     Gets the pitch of the audio sound.
+        \return    The pitch of the audio sound.
+        *************************************************************************************/
+        float GetPitch() const;
+
+        /*!***********************************************************************************
+        \brief     Sets the playback frequency of the audio sound.
+        \param     frequency The playback frequency to set.
+        *************************************************************************************/
+        void SetPlaybackFrequency(float frequency);
+
+        /*!***********************************************************************************
+        \brief     Gets the playback frequency of the audio sound.
+        \return    The playback frequency of the audio sound.
+        *************************************************************************************/
+        float GetPlaybackFrequency() const;
 
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
@@ -175,6 +196,9 @@ namespace PE
         bool m_isFadingInIndividual = false;
         float m_fadeDurationIndividual = 0.0f;
         float m_fadeProgressIndividual = 0.0f;
-        float m_originalVolume;
+        float m_originalVolume = 1.0f;
+        float m_targetVolumeIndividual;
+
+        float m_playbackFrequency = 1.0f;  // Default frequency is 1.0
     };
 }

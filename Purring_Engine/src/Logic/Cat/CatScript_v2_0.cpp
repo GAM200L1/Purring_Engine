@@ -32,6 +32,7 @@
 #include "CatHelperFunctions.h"
 #include "CatController_v2_0.h"
 #include "FollowScript_v2_0.h"
+#include "Logic/Rat/RatController_v2_0.h"
 
 #include "ECS/EntityFactory.h"
 #include "ResourceManager/ResourceManager.h"
@@ -101,55 +102,6 @@ namespace PE
 		}
 		
 		AnimationComponent& r_catAnimation = EntityManager::GetInstance().Get<AnimationComponent>(id);
-		
-		// cat dies
-		if (m_scriptData[id].toggleDeathAnimation)
-		{
-			// plays death animation
-			PlayAnimation(id, "Death");
-			// TODO: play death audio
-			if (m_scriptData[id].playDeathSound)
-			{
-				m_scriptData[id].playDeathSound = false;
-				for (EntityID& nodeId : m_scriptData[id].pathQuads)
-				{
-					CatHelperFunctions::ToggleEntity(nodeId, false);
-				}
-				
-				PlayDeathAudio(m_scriptData[id].catType);
-			}
-
-			if (r_catAnimation.HasAnimationEnded())
-			{
-				switch (m_scriptData[id].catType)
-				{
-					case EnumCatType::ORANGECAT:
-					{
-						OrangeCatAttackVariables const& vars = std::get<OrangeCatAttackVariables>(m_scriptData[id].attackVariables);
-						// clears entities
-						CatHelperFunctions::ToggleEntity(vars.seismicID, false);
-						CatHelperFunctions::ToggleEntity(vars.telegraphID, false);
-						break;
-					}
-					default: // main cat or grey cat
-					{
-						GreyCatAttackVariables const& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
-						// clears entities
-						for (auto const& [direction, telegraphID] : vars.telegraphIDs)
-						{
-							CatHelperFunctions::ToggleEntity(telegraphID, false);
-						}
-						CatHelperFunctions::ToggleEntity(vars.projectileID, false);
-						break;
-					}
-				}
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->RemoveCatFromCurrent(id);
-				m_scriptData[id].toggleDeathAnimation = false;
-				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
-					p_gsc->LoseGame();
-			}
-			return;
-		}
 
 		// check that state manager is still working
 		if (!m_scriptData[id].p_stateManager)
@@ -157,9 +109,59 @@ namespace PE
 			MakeStateManager(id);
 		}
 
-		// updates state // @TODO: change this
+		// cat dies
+		if (m_scriptData[id].toggleDeathAnimation)
+		{
+			// plays death animation
+			PlayAnimation(id, "Death");
+
+			if (m_scriptData[id].playDeathSound)
+			{
+				m_scriptData[id].playDeathSound = false;
+				PlayDeathAudio(m_scriptData[id].catType);
+				for (EntityID& nodeId : m_scriptData[id].pathQuads)
+				{
+					CatHelperFunctions::ToggleEntity(nodeId, false);
+				}
+			}
+
+			if (r_catAnimation.HasAnimationEnded())
+			{
+				// disable any entities used for attacking etc 
+				switch (m_scriptData[id].catType)
+				{
+				case EnumCatType::ORANGECAT:
+				{
+					OrangeCatAttackVariables const& vars = std::get<OrangeCatAttackVariables>(m_scriptData[id].attackVariables);
+					// clears entities
+					CatHelperFunctions::ToggleEntity(vars.seismicID, false);
+					CatHelperFunctions::ToggleEntity(vars.telegraphID, false);
+					break;
+				}
+				default: // main cat or grey cat
+				{
+					GreyCatAttackVariables const& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
+					// clears entities
+					for (auto const& [direction, telegraphID] : vars.telegraphIDs)
+					{
+						CatHelperFunctions::ToggleEntity(telegraphID, false);
+					}
+					CatHelperFunctions::ToggleEntity(vars.projectileID, false);
+					break;
+				}
+				}
+				// disable the cat
+				CatHelperFunctions::ToggleEntity(id, false);
+				m_scriptData[id].toggleDeathAnimation = false;
+				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
+					p_gsc->LoseGame();
+			}
+			return;
+		}
+
+		// updates state
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
-		
+
 		// changes states depending on cat type
 		switch (m_scriptData[id].catType)
 		{
@@ -270,17 +272,41 @@ namespace PE
 	void CatScript_v2_0::CreatePathNode(EntityID id)
 	{
 		// create the entity
-		EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Graphics::Renderer>() };
+		EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>() };
 
 		EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(0.506f, 0.490f, 0.490f, 1.f); // sets the color of the node to white
 
 		EntityManager::GetInstance().Get<Transform>(nodeId).width = m_scriptData[id].nodeSize;
 		EntityManager::GetInstance().Get<Transform>(nodeId).height = m_scriptData[id].nodeSize;
 
+
+
+		CircleCollider circleCollider;
+		circleCollider.scaleOffset = CatHelperFunctions::GetEntityScale(id).x / m_scriptData[id].nodeSize;
+
+		EntityManager::GetInstance().Get<Collider>(nodeId).colliderVariant = circleCollider;
+		EntityManager::GetInstance().Get<Collider>(nodeId).isTrigger = true;
+		EntityManager::GetInstance().Get<Collider>(nodeId).collisionLayerIndex = 9;
 		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).toSave = false;
 
 		m_scriptData[id].pathQuads.emplace_back(nodeId);
+	}
+
+	void CatScript_v2_0::FillPathNodes(EntityID id, int newEnergy)
+	{
+		for (const auto& id2 : m_scriptData[id].pathQuads)
+		{
+			EntityManager::GetInstance().RemoveEntity(id2);
+		}
+		m_scriptData[id].pathQuads.clear();
+		m_scriptData[id].catMaxMovementEnergy = newEnergy;
+		m_scriptData[id].pathPositions.reserve(m_scriptData[id].catMaxMovementEnergy);
+		m_scriptData[id].pathQuads.reserve(m_scriptData[id].catMaxMovementEnergy);
+		for (size_t i{ 0 }; i < m_scriptData[id].catMaxMovementEnergy; ++i)
+		{
+			CreatePathNode(id);
+		}
 	}
 
 	template<typename AttackPLAN>
@@ -443,6 +469,10 @@ namespace PE
 
 	void CatScript_v2_0::ChangeToPlanningState(EntityID id)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->GetRats(GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->mainInstance).empty() && m_scriptData[id].catMaxMovementEnergy != 1000 && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 3)
+		{
+			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->FillPathNodes(id, 50);
+		}
 		switch (m_scriptData[id].catType)
 		{
 		case EnumCatType::ORANGECAT:
@@ -494,16 +524,12 @@ namespace PE
 		}
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
-
-		
 	}
 
 	void CatScript_v2_0::PlayPathPlacementAudio()
 	{
 		std::string soundPrefabPath = "AudioObject/Movement Planning SFX.prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
-
-		
 	}
 
 	void CatScript_v2_0::PlayFootstepAudio()
@@ -513,8 +539,6 @@ namespace PE
 		soundPrefabPath += std::to_string(randNum) + ".prefab";
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
-
-		
 	}
 
 	void CatScript_v2_0::PlayCatAttackAudio(EnumCatType catType)
@@ -538,8 +562,6 @@ namespace PE
 			return;
 		}
 		
-		
-
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}
 
@@ -560,8 +582,6 @@ namespace PE
 		default:
 			return;
 		}
-
-		
 
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 	}

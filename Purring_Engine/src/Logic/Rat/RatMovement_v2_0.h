@@ -6,14 +6,14 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     50%
+ \par      code %:     80%
  \par      changes:    Majority rat movement AI logic.
 
  \co-author            Krystal Yamin
  \par      email:      krystal.y\@digipen.edu
  \par      code %:     20%
  \par      changes:    06-02-2024
-                       Integration of gamestates with the Rat States and Rat AI.
+                       Addition of collision and trigger event listeners.
 
  \brief
     This file contains declarations for functions used for rats movement state.
@@ -35,8 +35,14 @@ namespace PE
     {
         // ----- Constructors ----- //
     public:
+        /*!***********************************************************************************
+            \brief Constructor for RatMovement_v2_0
+        *************************************************************************************/
         RatMovement_v2_0();
 
+        /*!***********************************************************************************
+            \brief Destructor for RatMovement_v2_0
+        *************************************************************************************/
         virtual ~RatMovement_v2_0() { p_data = nullptr; };
 
         // ----- Public Functions ----- //
@@ -74,13 +80,13 @@ namespace PE
         // --- COLLISION DETECTION --- // 
 
         /*!***********************************************************************************
-         \brief Called when a collision enter event has occurred. If an event has
+         \brief Called when a collision enter or stay event has occurred. If an event has
           occurred between this script's rat's collider and a cat or an obstacle, 
           the parent rat is notified.
 
          \param[in] r_event - Event data.
         *************************************************************************************/
-        void OnCollisionEnter(const Event<CollisionEvents>& r_event);
+        void OnCollisionEnterOrStay(const Event<CollisionEvents>& r_event);
 
         /*!***********************************************************************************
          \brief Called when a collision exit event has occurred. If an event has
@@ -128,7 +134,7 @@ namespace PE
         RatScript_v2_0_Data* p_data{ nullptr };
 
         // ID of the event listener for collision events, used to register and unregister the rat for collision notifications
-        int m_collisionEnterEventListener{}, m_collisionExitEventListener{};
+        int m_collisionEnterEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
         int m_triggerEnterEventListener{}, m_triggerStayEventListener{}, m_triggerExitEventListener{};
 
         bool m_planningRunOnce{}; // True if the planning phase has been run once

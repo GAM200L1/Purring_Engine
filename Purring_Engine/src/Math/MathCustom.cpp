@@ -323,7 +323,44 @@ namespace PE
 	{
 		return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
 	}
+	
+	// addition
+	vec4 vec4::operator+(vec4 const& r_rhs) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] + r_rhs[i];
 
+		return ret;
+	}
+
+	// subtraction
+	vec4 vec4::operator-(vec4 const& r_rhs) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] - r_rhs[i];
+
+		return ret;
+	}
+
+	vec4 vec4::operator/(float denominator) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] / denominator;
+
+		return ret;
+	}
+
+	vec4 vec4::operator*(float multiplier) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] * multiplier;
+
+		return ret;
+	}
 
 	/*                                                                               mat3x3 struct member implementations
 	--------------------------------------------------------------------------------------------------------------------- */
@@ -727,7 +764,7 @@ namespace PE
 
 	float ConvertDegToRad(float degAngle)
 	{
-		return degAngle * static_cast<float>(PE_PI) / 180.f;
+		return degAngle * (static_cast<float>(PE_PI) / 180.f);
 	}
 
 	void Clamp(float& r_varToClamp, float min, float max)

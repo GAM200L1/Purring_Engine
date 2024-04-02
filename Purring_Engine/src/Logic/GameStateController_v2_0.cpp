@@ -37,6 +37,7 @@
 #include "AudioManager/GlobalMusicManager.h"
 #include "Boss/BossRatScript.h"
 #include "Animation/Animation.h"
+#include "Logic/MainMenuController.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -61,6 +62,9 @@ namespace PE
 		REGISTER_UI_FUNCTION(OpenAYSR, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(JournalHoverEnter, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(JournalHoverExit, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(OpenSettings, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(CloseSettings, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(ReturnToMainMenu, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -79,6 +83,9 @@ namespace PE
 				m_timeSinceTransitionStarted = 0;
 				m_timeSinceTransitionEnded = m_transitionTimer;
 
+				ResetPhaseBanner(true);
+				m_phaseBannerExit = m_phaseBannerTransitionTimer + m_transitionTimer + 1;
+
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 				{
 					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Planning_933x302.png"));
@@ -96,6 +103,9 @@ namespace PE
 				prevState = GameStates_v2_0::INACTIVE;
 				currentState = GameStates_v2_0::DEPLOYMENT;
 
+				ResetPhaseBanner(true);
+				m_phaseBannerExit = m_phaseBannerTransitionTimer + m_transitionTimer + 1;
+
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner))
 				{
 					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].PhaseBanner).SetTextureKey(ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png"));
@@ -105,13 +115,16 @@ namespace PE
 		}
 
 		//subscribe to events
-		m_scriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
+			m_scriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
 			m_scriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController_v2_0::OnWindowOutOfFocus, this)
 			m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
+			m_scriptData[id].returnFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus,GameStateController_v2_0::OnWindowReturnFocus,this)
 
 			//resetting current turn
 			currentTurn = 0;
 			m_isPotraitShowing = false;
+			m_journalStayTime = m_journalStayTimer;
+			m_startJournalTimer = false;
 			m_journalShowing = false;
 
 		//getting the texture key for the current background and adding sepia to it
@@ -133,7 +146,10 @@ namespace PE
 
 		PlayBackgroundMusicForStage();
 
-		ResetPhaseBanner(true);
+		if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
+		{
+			EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon).StopAnimation();
+		}
 		m_nextTurnOnce = false;
 	}
 	
@@ -180,6 +196,24 @@ namespace PE
 			}
 		}
 
+		if (m_startJournalTimer)
+		{
+			if (m_journalStayTime >= 0)
+			{
+				m_journalStayTime -= deltaTime;
+			}
+			else
+			{
+				m_journalStayTime = m_journalStayTimer;
+				m_startJournalTimer = false;
+				m_journalShowing = false;
+			}
+		}
+		else
+		{
+			m_journalStayTime = m_journalStayTimer;
+		}
+
 		//switch statement for the different states
 		switch (currentState)
 		{
@@ -193,6 +227,7 @@ namespace PE
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			DeactiveObject(m_scriptData.at(id).JournalIcon);
 			FadeAllObject(m_scriptData[id].RatKingJournal, 0);
 			FadeAllObject(m_scriptData[id].Journal, 0);
 
@@ -211,6 +246,15 @@ namespace PE
 				}
 
 				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndPlanningText")
+				{
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+					}
+					continue;
+				}
+
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "UndoButton")
 				{
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
 					{
@@ -298,6 +342,7 @@ namespace PE
 		{
 			REMOVE_KEY_EVENT_LISTENER(m_scriptData[id].keyEventHandlerId);
 			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].outOfFocusEventHandlerId);
+			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].returnFocusEventHandlerId);
 			REMOVE_MOUSE_EVENT_LISTENER(m_scriptData[id].mouseClickEventID);
 		}
 
@@ -312,7 +357,7 @@ namespace PE
 		GlobalMusicManager::GetInstance().StopAllAudio();
 
 		// reset bgm flag
-		bgmStarted = false;
+		m_bgmStarted = false;
 	}
 
 	void GameStateController_v2_0::OnAttach(EntityID id)
@@ -352,6 +397,14 @@ namespace PE
 			PauseBGM();
 			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
+		}
+	}
+
+	void GameStateController_v2_0::OnWindowReturnFocus(const PE::Event<PE::WindowEvents>& r_event)
+	{
+		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
+		{
+			ResumeBGM();
 		}
 	}
 
@@ -449,6 +502,22 @@ namespace PE
 			NextState();
 		}
 
+		//if (KTE.keycode == GLFW_KEY_F)
+		//{
+		//	// Increase frequency
+		//	GlobalMusicManager::GetInstance().SetTrackPlaybackFrequency("AudioObject/Background Music1.prefab", 1.8f);
+
+		//	std::cout << "Increasing music frequency" << std::endl; // Debug log
+
+		//}
+		//else if (KTE.keycode == GLFW_KEY_S)
+		//{
+		//	// Decrease frequency
+		//	GlobalMusicManager::GetInstance().SetTrackPlaybackFrequency("AudioObject/Background Music1.prefab", 0.2f);
+		//	std::cout << "Decreasing music frequency" << std::endl; // Debug log
+
+		//}
+
 	}
 
 	void GameStateController_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)
@@ -466,7 +535,16 @@ namespace PE
 				CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 				BossRatScript* BossRat = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 				EntityID BossID = BossRat->currentBoss;
-			
+
+				m_journalStayTime = m_journalStayTimer;
+				m_startJournalTimer = false;
+				m_journalShowing = false;
+
+				if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon).StopAnimation();
+				}
+
 				//get mouse position
 				vec2 cursorPosition{};
 				GetMouseCurrentPosition(cursorPosition);
@@ -484,6 +562,14 @@ namespace PE
 							m_isPotraitShowing = true;
 							m_bossRatSelected = true;
 							m_isRat = true;
+
+							int randomSelection = std::rand() % 5 + 1;  // Random number between 1 and 5
+							std::string soundPath = "AudioObject/Rat Brawler Selection SFX" + std::to_string(randomSelection) + ".prefab";
+							PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
+
+							//@DEBUGHANS For PR-er to test
+							//std::cout << "Playing Boss Rat selection sound: " << soundPath << std::endl;
+
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Rat King_256px.png"));
 							ActiveObject(m_scriptData[m_currentGameStateControllerID].RatKingPortrait);
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
@@ -687,7 +773,6 @@ namespace PE
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
 
-			
 			GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
 
 			//PauseBGM();
@@ -726,7 +811,7 @@ namespace PE
 
 			PauseManager::GetInstance().SetPaused(false);
 
-			ResumeBGM();
+			//ResumeBGM();
 			PlayClickAudio();
 			PlayPageAudio();
 		}
@@ -770,6 +855,8 @@ namespace PE
 
 	void GameStateController_v2_0::DeactiveObject(EntityID id)
 	{
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
 		//deactive all the children objects first
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
@@ -815,6 +902,7 @@ namespace PE
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].AreYouSureCanvas);
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].LoseCanvas);
 		DeactiveObject(m_scriptData[m_currentGameStateControllerID].WinCanvas);
+		DeactiveObject(m_scriptData[m_currentGameStateControllerID].SettingsMenu);
 	}
 
 	void GameStateController_v2_0::NextState(EntityID)
@@ -833,8 +921,6 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_exexcutePhaseBanner);
@@ -850,8 +936,6 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateCurrentCats(CatManager->mainInstance);
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);
@@ -953,6 +1037,7 @@ namespace PE
 		if (!m_isPotraitShowing)
 		{
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			DeactiveObject(m_scriptData.at(id).JournalIcon);
 		}
 
 		if (prevState == GameStates_v2_0::EXECUTE)
@@ -1083,7 +1168,6 @@ namespace PE
 		{
 			m_isTransitioning = false;
 			m_isTransitioningIn = true;	
-			LogicSystem::restartingScene = true;
 			LoadSceneFunction(m_leveltoLoad);
 
 			m_timeSinceTransitionStarted = 0;
@@ -1179,13 +1263,36 @@ namespace PE
 
 	void GameStateController_v2_0::JournalHoverEnter(EntityID)
 	{
-		if(m_isPotraitShowing)
-		m_journalShowing = true;
+		if (m_isPotraitShowing)
+		{
+			m_journalShowing = true;
+
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon).ResetAnimation();
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon).PlayAnimation();
+			}
+
+		}
 	}
 
 	void GameStateController_v2_0::JournalHoverExit(EntityID)
 	{
-		m_journalShowing = false;
+		m_startJournalTimer = true;
+	}
+
+	void GameStateController_v2_0::OpenSettings(EntityID)
+	{
+		PlayClickAudio();
+		DeactiveAllMenu();
+		ActiveObject(m_scriptData[m_currentGameStateControllerID].SettingsMenu);
+	}
+
+	void GameStateController_v2_0::CloseSettings(EntityID)
+	{
+		PlayClickAudio();
+		DeactiveAllMenu();
+		ActiveObject(m_scriptData[m_currentGameStateControllerID].PauseMenuCanvas);
 	}
 
 	void GameStateController_v2_0::RetryStage(EntityID)
@@ -1198,7 +1305,7 @@ namespace PE
 		PlaySceneTransition();
 		GETANIMATIONMANAGER()->PlayAllAnimations();
 
-		bgmStarted = false;
+		m_bgmStarted = false;
 
 		m_leveltoLoad = SceneManager::GetInstance().GetActiveScene();
 	}
@@ -1224,6 +1331,7 @@ namespace PE
 		case 1: // 2nd level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 			
 			m_isTransitioning = true;
@@ -1238,6 +1346,7 @@ namespace PE
 		case 2: // 3rd level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;
@@ -1252,6 +1361,7 @@ namespace PE
 		case 3: // boss level
 		{
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateCurrentCats(p_catManager->mainInstance);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;
@@ -1265,10 +1375,36 @@ namespace PE
 		}
 		default:
 			WinGame();
-			m_leveltoLoad = "MainMenu.scene";
+			m_leveltoLoad = m_mainMenuSceneName;
 			break;
 		}
 	
+	}
+
+	void GameStateController_v2_0::GoToOutroCutscene()
+	{
+		gameEnded = true;
+		m_isTransitioning = true;
+		m_isTransitioningIn = false;
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
+		m_currentLevel = 0;
+		m_leveltoLoad = m_outroCutsceneScene;
+	}
+
+	void GameStateController_v2_0::ReturnToMainMenu(EntityID ID)
+	{
+		m_isTransitioning = true;
+		m_isTransitioningIn = false;
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		m_currentLevel = 0;
+		m_leveltoLoad = m_mainMenuSceneName;
+
+		GETSCRIPTINSTANCEPOINTER(MainMenuController)->NotFirstStart();
 	}
 
 	void GameStateController_v2_0::StartGameLoop()
@@ -1527,7 +1663,7 @@ namespace PE
 
 	void GameStateController_v2_0::PlayBackgroundMusicForStage()
 	{
-		if (bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
+		if (m_bgmStarted)  // Check if the background music has already been started to avoid restarting it unnecessarily
 		{
 			return;
 		}
@@ -1535,7 +1671,7 @@ namespace PE
 		// Defining the audio tracks for each stage
 		std::vector<std::vector<std::string>> stageAudio =
 		{
-			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab"}, // Stage 1
+			{/*"AudioObject/Background Ambience.prefab",*/ "AudioObject/Background Music1.prefab"}, // Stage 1
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab"}, // Stage 2
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"},
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"} // Stage 3 & Boss (boss temp for now till m6-hans)
@@ -1546,9 +1682,9 @@ namespace PE
 			// Play each audio track based on the concurrent level
 			for (const std::string& track : stageAudio[m_currentLevel])
 			{
-				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f);
+				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f, 5.0f);
 			}
-			bgmStarted = true; // Flag the background music as started
+			m_bgmStarted = true; // Flag the background music as started
 		}
 		else
 		{
@@ -1583,6 +1719,11 @@ namespace PE
 
 	void GameStateController_v2_0::CheckFinishExecution()
 	{
+		if (gameEnded)
+		{
+			return;
+		}
+
 		bool Finished = true;
 
 		RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
