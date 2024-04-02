@@ -25,6 +25,8 @@
                 "type": "AABBCollider"
             },
             "EntityDescriptor": {
+                "InteractionLayer": 2,
+                "Layer": 2,
                 "Prefab Type": "CatUI",
                 "children": [],
                 "isActive": true,

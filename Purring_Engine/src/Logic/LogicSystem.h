@@ -32,6 +32,7 @@
 #define GETSCRIPTDATA(script,id) &reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData()[id]
 #define CHECKSCRIPTDATA(script, id) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData().count(id)
 #define GETSCRIPTINSTANCEPOINTER(script) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])
+#define CHECKSCRIPTINSTANCEPOINTER(script) (LogicSystem::m_scriptContainer.count(#script) > 0)
 #define GETSCRIPTNAME(script) #script
 //will return a key to get the object next frame
 #define ADDNEWENTITYTOQUEUE(prefab) PE::LogicSystem::AddNewEntityToQueue(prefab)

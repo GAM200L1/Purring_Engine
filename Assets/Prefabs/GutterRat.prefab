@@ -32,8 +32,8 @@
                             "type": "CircleCollider"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 1,
-                            "Layer": 1,
+                            "InteractionLayer": 3,
+                            "Layer": 3,
                             "Old ID": 1,
                             "Prefab Type": "GutterRat",
                             "children": [],
@@ -49,7 +49,7 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png"
+                            "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,

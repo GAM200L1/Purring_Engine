@@ -175,8 +175,9 @@ namespace PE
                     shapes to visualise their bounds, direction and magnitude for debug purposes. 
 
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from view to NDC space.
             *************************************************************************************/
-            void DrawDebug(glm::mat4 const& r_worldToNdc);
+            void DrawDebug(glm::mat4 const& r_worldToNdc, glm::mat4 const& r_viewToNdc);
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
 

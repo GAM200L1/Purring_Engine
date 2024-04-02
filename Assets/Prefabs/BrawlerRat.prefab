@@ -32,15 +32,15 @@
                             "type": "CircleCollider"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 1,
-                            "Layer": 1,
-                            "Old ID": 184467440737095516153,
+                            "InteractionLayer": 3,
+                            "Layer": 3,
+                            "Old ID": 1,
                             "Prefab Type": "BrawlerRat",
                             "children": [],
                             "isActive": true,
                             "name": "BrawlerRat",
                             "parent": null,
-                            "sceneID": 6118446744073709551615
+                            "sceneID": 1
                         },
                         "Renderer": {
                             "Color": {
