@@ -967,7 +967,7 @@ namespace PE
 		PlayLoseAudio();
 		PauseBGM();
 		IncrementDeathCount();
-		IncrementTurnCount(currentTurn);
+
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
 	}
@@ -1306,6 +1306,9 @@ namespace PE
 		m_isTransitioningIn = false;
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		IncrementTurnCount(currentTurn);
+
 		PlayClickAudio();
 		PlaySceneTransition();
 		GETANIMATIONMANAGER()->PlayAllAnimations();
