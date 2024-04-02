@@ -207,7 +207,7 @@ namespace PE
 		if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
 		{
 			MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-			if (MBPE.button != 0 && MBPE.button == 1)
+			if (MBPE.button == 1)
 				m_mouseClick = true;
 		}
 	}
@@ -217,7 +217,7 @@ namespace PE
 		if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
 		{
 			MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
-			if (MBRE.button != 0 && MBRE.button == 1)
+			if (MBRE.button == 1)
 				m_mouseClick = false;
 		}
 	}
