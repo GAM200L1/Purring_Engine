@@ -80,10 +80,14 @@
                                 "BackgroundCanvas": 18,
                                 "ContinueButton": 22,
                                 "CutsceneObject": 1,
+                                "DeathCounter": 26,
                                 "FinalScene": 4,
+                                "KillCounter": 24,
+                                "RescueCounter": 23,
                                 "SkipButton": 21,
                                 "Text": 14,
                                 "TransitionScreen": 10,
+                                "TurnCounter": 25,
                                 "WinCanvas": 32
                             },
                             "state": 0
@@ -599,8 +603,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 0.0,
-                        "Width": 0.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -608,6 +612,10 @@
                         "Old ID": 32,
                         "Prefab Type": "Canvas Object",
                         "children": [
+                            23,
+                            24,
+                            25,
+                            26,
                             33,
                             34,
                             35,
@@ -648,7 +656,7 @@
                         "isActive": false,
                         "name": "youwintextobj",
                         "parent": 32,
-                        "sceneID": 33
+                        "sceneID": 11
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -689,7 +697,7 @@
                         "isActive": false,
                         "name": "HappyCat",
                         "parent": 32,
-                        "sceneID": 34
+                        "sceneID": 12
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -781,8 +789,8 @@
                         "height": 128.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -500.0,
-                            "y": -425.0
+                            "x": -391.0,
+                            "y": -410.0
                         },
                         "relativeposition": {
                             "x": -391.0,
@@ -858,8 +866,8 @@
                         "height": 128.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 500.0,
-                            "y": -427.0
+                            "x": 391.0,
+                            "y": -410.0
                         },
                         "relativeposition": {
                             "x": 391.0,
@@ -1418,6 +1426,198 @@
                         },
                         "relorientation": 0.0,
                         "width": 512.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 23,
+                        "Prefab Type": "Text",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Text",
+                        "parent": 32,
+                        "sceneID": 13
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "HAlignment": 4,
+                        "HOverflow": 0,
+                        "LineSpacing": 1.0,
+                        "Size": 2.0,
+                        "Text": "99",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 200.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -550.9998779296875,
+                            "y": 172.5
+                        },
+                        "relativeposition": {
+                            "x": -550.9998779296875,
+                            "y": 172.5
+                        },
+                        "relorientation": 0.0,
+                        "width": 200.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 24,
+                        "Prefab Type": "Text",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Text",
+                        "parent": 32,
+                        "sceneID": 14
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "HAlignment": 4,
+                        "HOverflow": 0,
+                        "LineSpacing": 1.0,
+                        "Size": 2.0,
+                        "Text": "99",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 200.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -187.99996948242188,
+                            "y": 172.5
+                        },
+                        "relativeposition": {
+                            "x": -187.99996948242188,
+                            "y": 172.5
+                        },
+                        "relorientation": 0.0,
+                        "width": 200.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 25,
+                        "Prefab Type": "Text",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Text",
+                        "parent": 32,
+                        "sceneID": 33
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "HAlignment": 4,
+                        "HOverflow": 0,
+                        "LineSpacing": 1.0,
+                        "Size": 2.0,
+                        "Text": "99",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 200.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 180.0001220703125,
+                            "y": 172.5
+                        },
+                        "relativeposition": {
+                            "x": 180.0001220703125,
+                            "y": 172.5
+                        },
+                        "relorientation": 0.0,
+                        "width": 200.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 26,
+                        "Prefab Type": "Text",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Text",
+                        "parent": 32,
+                        "sceneID": 34
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "HAlignment": 4,
+                        "HOverflow": 0,
+                        "LineSpacing": 1.0,
+                        "Size": 2.0,
+                        "Text": "99",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 200.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 546.0000610351563,
+                            "y": 172.5
+                        },
+                        "relativeposition": {
+                            "x": 546.0000610351563,
+                            "y": 172.5
+                        },
+                        "relorientation": 0.0,
+                        "width": 200.0
                     }
                 },
                 "name": ""
