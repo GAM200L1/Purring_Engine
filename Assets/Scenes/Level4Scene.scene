@@ -580,7 +580,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/SadCat_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/VerySadCat_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -3218,7 +3218,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/SadCat_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/VerySadCat_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
