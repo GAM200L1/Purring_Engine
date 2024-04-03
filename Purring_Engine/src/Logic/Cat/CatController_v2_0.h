@@ -37,7 +37,7 @@ namespace PE
 
 	public:
 		// ----- Public Functions ----- //
-
+		CatController_v2_0();
 		// ----- Constructor ----- //
 		/*!***********************************************************************************
 		 \brief					Constructor for CatController_v2_0
