@@ -325,7 +325,11 @@ RTTR_REGISTRATION
         .property("WinCanvas", &PE::EndingCutsceneControllerData::WinCanvas)
         .property("SkipButton", &PE::EndingCutsceneControllerData::SkipButton)
         .property("ContinueButton", &PE::EndingCutsceneControllerData::ContinueButton)
-        .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen);
+        .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen)
+        .property("DeathCounter", &PE::EndingCutsceneControllerData::DeathCounter)
+        .property("KillCounter", &PE::EndingCutsceneControllerData::KillCounter)
+        .property("RescueCounter", &PE::EndingCutsceneControllerData::RescueCounter)
+        .property("TurnCounter", &PE::EndingCutsceneControllerData::TurnCounter);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)

@@ -65,6 +65,8 @@ namespace PE
 		REGISTER_UI_FUNCTION(OpenSettings, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(CloseSettings, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(ReturnToMainMenu, PE::GameStateController_v2_0);
+
+		ResetStats();
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -501,6 +503,7 @@ namespace PE
 		{
 			NextState();
 		}
+
 
 		//if (KTE.keycode == GLFW_KEY_F)
 		//{
@@ -963,6 +966,8 @@ namespace PE
 		GETANIMATIONMANAGER()->PauseAllAnimations();
 		PlayLoseAudio();
 		PauseBGM();
+		IncrementDeathCount();
+
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
 	}
@@ -1301,6 +1306,9 @@ namespace PE
 		m_isTransitioningIn = false;
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		IncrementTurnCount(currentTurn);
+
 		PlayClickAudio();
 		PlaySceneTransition();
 		GETANIMATIONMANAGER()->PlayAllAnimations();
@@ -1315,6 +1323,8 @@ namespace PE
 		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
 
 		PlaySceneTransition();
+
+		IncrementTurnCount(currentTurn);
 
 		switch (nextStage)
 		{
@@ -1404,6 +1414,8 @@ namespace PE
 		m_currentLevel = 0;
 		m_leveltoLoad = m_mainMenuSceneName;
 
+		ResetStats();
+
 		GETSCRIPTINSTANCEPOINTER(MainMenuController)->NotFirstStart();
 	}
 
@@ -1459,6 +1471,54 @@ namespace PE
 				return true;
 		}
 		return false;
+	}
+
+	void GameStateController_v2_0::ResetStats()
+	{
+		m_catsRescued = 0;
+		m_ratsVanquished = 0;
+		m_deathCount = 0;
+		m_totalTurns = 0;
+	}
+
+	void GameStateController_v2_0::IncrementCatRescued()
+	{
+		++m_catsRescued;
+	}
+
+	void GameStateController_v2_0::IncrementRatsKilled()
+	{
+		++m_ratsVanquished;
+	}
+
+	void GameStateController_v2_0::IncrementTurnCount(int count)
+	{
+		m_totalTurns += count;
+	}
+
+	void GameStateController_v2_0::IncrementDeathCount()
+	{
+		++m_deathCount;
+	}
+
+	int GameStateController_v2_0::GetCatRescued()
+	{
+		return m_catsRescued;
+	}
+
+	int GameStateController_v2_0::GetRatsKilled()
+	{
+		return m_ratsVanquished;
+	}
+
+	int GameStateController_v2_0::GetTurnCount()
+	{
+		return m_totalTurns;
+	}
+
+	int GameStateController_v2_0::GetDeathCount()
+	{
+		return m_deathCount;
 	}
 
 	void GameStateController_v2_0::GetMouseCurrentPosition(vec2& Output)
