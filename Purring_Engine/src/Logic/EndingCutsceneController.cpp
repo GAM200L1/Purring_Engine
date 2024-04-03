@@ -320,11 +320,26 @@ namespace PE
 
 		ActiveObject(m_scriptData[m_currentCutsceneObject].WinCanvas);
 		ActiveObject(m_scriptData[m_currentCutsceneObject].BackgroundCanvas);
+
+		if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[m_currentCutsceneObject].DeathCounter))
+			EntityManager::GetInstance().Get<TextComponent>(m_scriptData[m_currentCutsceneObject].DeathCounter).SetText(std::to_string(GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetDeathCount()));
+		
+		if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[m_currentCutsceneObject].RescueCounter))
+			EntityManager::GetInstance().Get<TextComponent>(m_scriptData[m_currentCutsceneObject].RescueCounter).SetText(std::to_string(GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCatRescued()));
+		
+		if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[m_currentCutsceneObject].TurnCounter))
+			EntityManager::GetInstance().Get<TextComponent>(m_scriptData[m_currentCutsceneObject].TurnCounter).SetText(std::to_string(GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetTurnCount()));
+		
+		if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[m_currentCutsceneObject].KillCounter))
+			EntityManager::GetInstance().Get<TextComponent>(m_scriptData[m_currentCutsceneObject].KillCounter).SetText(std::to_string(GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetRatsKilled()));
+
 	}
 
 	void EndingCutsceneController::ECReturnToMainMenu(EntityID)
 	{
 		m_isTransitioning = true;
+		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->ResetStats();
+
 
 		GETSCRIPTINSTANCEPOINTER(MainMenuController)->NotFirstStart();
 		PlayClickAudio();

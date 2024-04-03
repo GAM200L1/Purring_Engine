@@ -246,15 +246,23 @@ namespace PE
 		*************************************************************************************/
 		bool GetSelectedCat(EntityID catID);
 
-		/*!***********************************************************************************
-		 \brief      Shows the selection indicator for a cat.
-		*************************************************************************************/
-		void ShowSelectionIndicator(EntityID catID);
+		void ResetStats();
 
-		/*!***********************************************************************************
-		 \brief      Hides the selection indicator for a cat.
-		*************************************************************************************/
-		void HideSelectionIndicator();
+		void IncrementCatRescued();
+
+		void IncrementRatsKilled();
+
+		void IncrementTurnCount(int count);
+
+		void IncrementDeathCount();
+
+		int GetCatRescued();
+
+		int GetRatsKilled();
+
+		int GetTurnCount();
+
+		int GetDeathCount();
 
 		// ----- Object Helper Functions ----- //
 	private:
@@ -557,7 +565,11 @@ namespace PE
 		// Audio Controls
 		bool m_bgmStarted = false;
 
-
+		//stats
+		int m_catsRescued;
+		int m_ratsVanquished;
+		int m_totalTurns;
+		int m_deathCount;
 	};
 }
 
