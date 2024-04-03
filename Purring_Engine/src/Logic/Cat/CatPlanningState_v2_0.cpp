@@ -148,7 +148,8 @@ namespace PE
 
 	void Cat_v2_0PLAN::ResetMovement(EntityID id)
 	{
-		p_catAttack->ToggleTelegraphs(false, false);
+		if (p_data->planningAttack)
+			p_catAttack->ToggleTelegraphs(false, false);
 		p_catMovement->ResetDrawnPath();
 		PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
 	}
