@@ -27,11 +27,18 @@
 #include <cstdlib>   // For srand and rand
 #include <ctime>     // For time
 
+#include "GUISystem.h"
 
 namespace PE
 {
+	CatController_v2_0::CatController_v2_0()
+	{
+		REGISTER_UI_FUNCTION(UndoCatPlanButtonCall, PE::CatController_v2_0);
+	}
+
 	CatController_v2_0::~CatController_v2_0()
 	{
+
 	}
 
 	void CatController_v2_0::Init(EntityID id)
@@ -41,6 +48,7 @@ namespace PE
 		UpdateCachedCats(id);
 		m_mouseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatController_v2_0::OnMouseClick, this);
 		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatController_v2_0::OnMouseRelease, this);
+		
 	}
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)

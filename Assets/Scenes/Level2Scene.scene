@@ -45,6 +45,12 @@
             "Entity": {
                 "components": {
                     "Camera": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
                         "ismaincamera": true,
                         "magnification": 1.0,
                         "viewportHeight": 1080.0,
@@ -6722,7 +6728,7 @@
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_UndoAction_Highlighted_222x112.png",
-                        "m_onClicked": "",
+                        "m_onClicked": "UndoCatPlanButtonCall",
                         "m_onHoverEnter": "ButtonHoverExpand",
                         "m_onHoverExit": "ButtonOffHoverShrink",
                         "m_onHovered": "",
