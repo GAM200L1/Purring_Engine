@@ -95,7 +95,7 @@ namespace PE
 		{
 			p_catAttack->Update(id, deltatime);
 		}
-		else if(!p_data->attackSelected && r_cursorPosition != m_mousePositionPrevious)
+		else if (!p_data->attackSelected || p_catMovement->CheckInvalid())
 		{
 			p_catMovement->Update(id, deltatime);
 		}
