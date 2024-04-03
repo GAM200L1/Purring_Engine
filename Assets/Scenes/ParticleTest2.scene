@@ -334,6 +334,84 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
+                        "Old ID": 6,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SpikeballParticles",
+                        "parent": null,
+                        "sceneID": 17
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 6.2831854820251465,
+                        "Emission Direction": 0.0,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 0.75,
+                        "Looping": false,
+                        "Max particles": 3,
+                        "MinMax Speed": {
+                            "x": 150.0,
+                            "y": 150.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 20.0,
+                            "y": 20.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Spikeball_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
                         "Old ID": 7,
                         "Prefab Type": "",
                         "children": [],
@@ -386,9 +464,9 @@
                     "Renderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.46046513319015503,
-                            "g": 0.46046513319015503,
-                            "r": 0.46046513319015503
+                            "b": 0.2930232286453247,
+                            "g": 0.2930232286453247,
+                            "r": 0.2930232286453247
                         },
                         "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
                     },
@@ -587,13 +665,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Particle_SnowSmoke_512px.png"
+                        "TextureKey": "../Assets/Textures/Particle_Dirt3_512px.png"
                     },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 13.49969482421875,
+                            "x": 11.100086212158203,
                             "y": 125.90000915527344
                         },
                         "relativeposition": {
@@ -683,16 +761,16 @@
                         "Is Active": true,
                         "Lifetime": 1000.0,
                         "Looping": true,
-                        "Max particles": 5,
+                        "Max particles": 10,
                         "MinMax Speed": {
-                            "x": 100.0,
-                            "y": 100.0
+                            "x": 50.0,
+                            "y": 274.0
                         },
                         "Mode": 1,
                         "Paused": false,
                         "Starting Scale": {
-                            "x": 40.0,
-                            "y": 40.0
+                            "x": 20.0,
+                            "y": 10.0
                         },
                         "Toggles": {
                             "Emission Arc": false
@@ -713,7 +791,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -105.0001220703125,
-                            "y": 625.0
+                            "y": 385.8000183105469
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -870,6 +948,84 @@
                         "position": {
                             "x": -199.19964599609375,
                             "y": 61.200355529785156
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 16,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatKingShockwaveParticles",
+                        "parent": null,
+                        "sceneID": 19
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 6.2831854820251465,
+                        "Emission Direction": 0.0,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.5,
+                        "Looping": false,
+                        "Max particles": 5,
+                        "MinMax Speed": {
+                            "x": 200.0,
+                            "y": 200.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 50.0,
+                            "y": 50.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Dirt3_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 431.00042724609375,
+                            "y": -159.89964294433594
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -1125,14 +1281,14 @@
                         "Old ID": 21,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "RatKingBubbleParticles",
                         "parent": null,
-                        "sceneID": 20
+                        "sceneID": 21
                     },
                     "ParticleEmitter": {
                         "Color": {
-                            "w": 1.0,
+                            "w": 0.7843137383460999,
                             "x": 1.0,
                             "y": 1.0,
                             "z": 1.0
@@ -1145,13 +1301,13 @@
                         "Emission Direction": 0.0,
                         "Emittor Length": 200.0,
                         "End Scale": {
-                            "x": 0.10000000149011612,
-                            "y": 0.10000000149011612
+                            "x": 30.0,
+                            "y": 30.0
                         },
-                        "Is Active": true,
-                        "Lifetime": 1.0,
+                        "Is Active": false,
+                        "Lifetime": 20.0,
                         "Looping": true,
-                        "Max particles": 1,
+                        "Max particles": 2,
                         "MinMax Speed": {
                             "x": 50.0,
                             "y": 50.0
@@ -1159,8 +1315,8 @@
                         "Mode": 1,
                         "Paused": false,
                         "Starting Scale": {
-                            "x": 30.0,
-                            "y": 30.0
+                            "x": 10.0,
+                            "y": 10.0
                         },
                         "Toggles": {
                             "Emission Arc": false
@@ -1180,8 +1336,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 432.3003845214844,
-                            "y": -200.1995391845703
+                            "x": 430.10040283203125,
+                            "y": -220.5995330810547
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -1203,7 +1359,7 @@
                         "Old ID": 24,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "GameObject24",
                         "parent": 22,
                         "sceneID": 24
@@ -1226,7 +1382,7 @@
                             "x": 1.0,
                             "y": 1.0
                         },
-                        "Is Active": true,
+                        "Is Active": false,
                         "Lifetime": 0.25,
                         "Looping": true,
                         "Max particles": 1,
@@ -1281,7 +1437,7 @@
                         "Old ID": 25,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "GameObject25",
                         "parent": 22,
                         "sceneID": 25
@@ -1304,7 +1460,7 @@
                             "x": 1.0,
                             "y": 1.0
                         },
-                        "Is Active": true,
+                        "Is Active": false,
                         "Lifetime": 0.25,
                         "Looping": true,
                         "Max particles": 1,
@@ -1359,10 +1515,10 @@
                         "Old ID": 26,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "GameObject26",
                         "parent": 22,
-                        "sceneID": 21
+                        "sceneID": 26
                     },
                     "ParticleEmitter": {
                         "Color": {
@@ -1382,7 +1538,7 @@
                             "x": 1.0,
                             "y": 1.0
                         },
-                        "Is Active": true,
+                        "Is Active": false,
                         "Lifetime": 0.25,
                         "Looping": true,
                         "Max particles": 1,
@@ -1437,7 +1593,7 @@
                         "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "GameObject27",
                         "parent": 22,
                         "sceneID": 27
@@ -1460,7 +1616,7 @@
                             "x": 1.0,
                             "y": 1.0
                         },
-                        "Is Active": true,
+                        "Is Active": false,
                         "Lifetime": 0.25,
                         "Looping": true,
                         "Max particles": 1,
@@ -1520,10 +1676,10 @@
                             26,
                             27
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "RatKingChargingParticles",
                         "parent": null,
-                        "sceneID": 21
+                        "sceneID": 22
                     },
                     "Renderer": {
                         "Color": {
@@ -1558,45 +1714,45 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 16,
+                        "Old ID": 20,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "RatKingShockwaveParticles",
+                        "name": "RatKingChargeParticles",
                         "parent": null,
-                        "sceneID": 19
+                        "sceneID": 20
                     },
                     "ParticleEmitter": {
                         "Color": {
                             "w": 1.0,
                             "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
+                            "y": 0.0,
+                            "z": 0.0
                         },
                         "Delta Scale": {
                             "x": -10.0,
                             "y": -10.0
                         },
-                        "Emission Arc": 6.2831854820251465,
+                        "Emission Arc": 0.8726646304130554,
                         "Emission Direction": 0.0,
-                        "Emittor Length": 0.0,
+                        "Emittor Length": 150.0,
                         "End Scale": {
-                            "x": 0.10000000149011612,
-                            "y": 0.10000000149011612
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "Is Active": true,
-                        "Lifetime": 1.5,
-                        "Looping": false,
+                        "Lifetime": 0.5,
+                        "Looping": true,
                         "Max particles": 5,
                         "MinMax Speed": {
-                            "x": 200.0,
-                            "y": 200.0
+                            "x": 500.0,
+                            "y": 1000.0
                         },
-                        "Mode": 0,
+                        "Mode": 1,
                         "Paused": false,
                         "Starting Scale": {
-                            "x": 50.0,
-                            "y": 50.0
+                            "x": 10.0,
+                            "y": 10.0
                         },
                         "Toggles": {
                             "Emission Arc": true
@@ -1610,92 +1766,14 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Particle_SnowSmoke_512px.png"
+                        "TextureKey": "../Assets/Textures/Particle_Snow_512px.png"
                     },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 431.00042724609375,
-                            "y": -159.89964294433594
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 6,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "SpikeballParticles",
-                        "parent": null,
-                        "sceneID": 17
-                    },
-                    "ParticleEmitter": {
-                        "Color": {
-                            "w": 1.0,
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        },
-                        "Delta Scale": {
-                            "x": -10.0,
-                            "y": -10.0
-                        },
-                        "Emission Arc": 6.2831854820251465,
-                        "Emission Direction": 0.0,
-                        "Emittor Length": 0.0,
-                        "End Scale": {
-                            "x": 0.10000000149011612,
-                            "y": 0.10000000149011612
-                        },
-                        "Is Active": true,
-                        "Lifetime": 0.75,
-                        "Looping": false,
-                        "Max particles": 3,
-                        "MinMax Speed": {
-                            "x": 150.0,
-                            "y": 150.0
-                        },
-                        "Mode": 0,
-                        "Paused": false,
-                        "Starting Scale": {
-                            "x": 20.0,
-                            "y": 20.0
-                        },
-                        "Toggles": {
-                            "Emission Arc": true
-                        },
-                        "Type": 1
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Particle_Spikeball_512px.png"
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": 430.10040283203125,
+                            "y": -229.39952087402344
                         },
                         "relativeposition": {
                             "x": 0.0,
