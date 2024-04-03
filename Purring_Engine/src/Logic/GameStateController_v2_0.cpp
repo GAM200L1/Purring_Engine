@@ -502,6 +502,22 @@ namespace PE
 			NextState();
 		}
 
+		//if (KTE.keycode == GLFW_KEY_F)
+		//{
+		//	// Increase frequency
+		//	GlobalMusicManager::GetInstance().SetTrackPlaybackFrequency("AudioObject/Background Music1.prefab", 1.8f);
+
+		//	std::cout << "Increasing music frequency" << std::endl; // Debug log
+
+		//}
+		//else if (KTE.keycode == GLFW_KEY_S)
+		//{
+		//	// Decrease frequency
+		//	GlobalMusicManager::GetInstance().SetTrackPlaybackFrequency("AudioObject/Background Music1.prefab", 0.2f);
+		//	std::cout << "Decreasing music frequency" << std::endl; // Debug log
+
+		//}
+
 	}
 
 	void GameStateController_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)
@@ -757,7 +773,6 @@ namespace PE
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
 
-			
 			GlobalMusicManager::GetInstance().PauseBackgroundMusic();  // Adjust volume for pausing
 
 			//PauseBGM();
@@ -1656,7 +1671,7 @@ namespace PE
 		// Defining the audio tracks for each stage
 		std::vector<std::vector<std::string>> stageAudio =
 		{
-			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab"}, // Stage 1
+			{/*"AudioObject/Background Ambience.prefab",*/ "AudioObject/Background Music1.prefab"}, // Stage 1
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab"}, // Stage 2
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"},
 			{"AudioObject/Background Ambience.prefab", "AudioObject/Background Music1.prefab", "AudioObject/Background Music2.prefab", "AudioObject/Background Music3.prefab"} // Stage 3 & Boss (boss temp for now till m6-hans)
@@ -1667,7 +1682,7 @@ namespace PE
 			// Play each audio track based on the concurrent level
 			for (const std::string& track : stageAudio[m_currentLevel])
 			{
-				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f);
+				GlobalMusicManager::GetInstance().PlayBGM(track, true, 2.5f, 5.0f);
 			}
 			m_bgmStarted = true; // Flag the background music as started
 		}

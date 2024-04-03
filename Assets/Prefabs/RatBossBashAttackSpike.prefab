@@ -8,8 +8,8 @@
                 "CurrentAnimationID": "../Assets/Animation/RatKingBashAttack.anim"
             },
             "EntityDescriptor": {
-                "InteractionLayer": 0,
-                "Layer": 0,
+                "InteractionLayer": 1,
+                "Layer": 1,
                 "Old ID": 18446744073709551615,
                 "Prefab Type": "RatBossBashAttackSpike",
                 "children": [],
