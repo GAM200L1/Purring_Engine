@@ -919,6 +919,7 @@ namespace PE
 
 		if (currentState == GameStates_v2_0::PLANNING && !m_nextTurnOnce)
 		{
+			currentTurn++;
 			SetGameState(GameStates_v2_0::EXECUTE);
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
@@ -931,7 +932,6 @@ namespace PE
 		}
 		else if (currentState == GameStates_v2_0::EXECUTE && !m_nextTurnOnce)
 		{
-			currentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
@@ -1324,7 +1324,7 @@ namespace PE
 
 		PlaySceneTransition();
 
-		IncrementTurnCount(currentTurn + 1);
+		IncrementTurnCount(currentTurn);
 
 		switch (nextStage)
 		{
