@@ -919,6 +919,7 @@ namespace PE
 
 		if (currentState == GameStates_v2_0::PLANNING && !m_nextTurnOnce)
 		{
+			currentTurn++;
 			SetGameState(GameStates_v2_0::EXECUTE);
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
@@ -931,7 +932,6 @@ namespace PE
 		}
 		else if (currentState == GameStates_v2_0::EXECUTE && !m_nextTurnOnce)
 		{
-			currentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
 			m_isPotraitShowing = false;
 			m_journalShowing = false;
@@ -1398,6 +1398,7 @@ namespace PE
 		m_isTransitioningIn = false;
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
+		IncrementTurnCount(currentTurn);
 
 		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
 		m_currentLevel = 0;
