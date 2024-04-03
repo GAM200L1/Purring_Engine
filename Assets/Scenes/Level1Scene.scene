@@ -1209,8 +1209,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1061.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3325,8 +3325,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1061.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4159,8 +4159,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1061.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4281,7 +4281,8 @@
                         "Old ID": 60,
                         "Prefab Type": "Grey Cat",
                         "children": [
-                            84
+                            84,
+                            114
                         ],
                         "isActive": true,
                         "name": "Grey Cat",
@@ -4514,8 +4515,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1061.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -6435,6 +6436,53 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/Animation_CatHeat.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/Animation_CatHeat.anim"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 114,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Cage Cat Heart",
+                        "parent": 60,
+                        "sceneID": 114
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Heart.png"
+                    },
+                    "Transform": {
+                        "height": 32.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 388.60040283203125,
+                            "y": 109.20036315917969
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 52.999969482421875
+                        },
+                        "relorientation": 0.0,
+                        "width": 32.0
                     }
                 },
                 "name": ""
