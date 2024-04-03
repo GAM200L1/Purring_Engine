@@ -3401,6 +3401,7 @@ namespace PE {
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
 										int JournalIconID = static_cast<int> (it->second.JournalIcon);
 										int WindParticlesID = static_cast<int> (it->second.WindParticles);
+										int SnowParticlesID = static_cast<int> (it->second.SnowParticles);
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
 										if (PauseBackGroundCanvasID != m_currentSelectedObject) { it->second.PauseBackGroundCanvas = PauseBackGroundCanvasID; }
@@ -3476,6 +3477,9 @@ namespace PE {
 										
 										ImGui::Text("Wind Particles ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##gscwpid", &WindParticlesID);
 										if (WindParticlesID != m_currentSelectedObject) { it->second.WindParticles = WindParticlesID; }
+
+										ImGui::Text("Snow Particles ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##gscspid", &SnowParticlesID);
+										if (SnowParticlesID != m_currentSelectedObject) { it->second.SnowParticles = SnowParticlesID; }
 
 										for (int i = 0; i < 5; i++)
 										{

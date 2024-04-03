@@ -147,6 +147,9 @@ namespace PE
 		m_windParticleTexture = ResourceManager::GetInstance().LoadTexture("LeafTwirl.png");
 		m_sepiaWindParticleTexture = ResourceManager::GetInstance().LoadTexture("LeafTwirl_Sepia.png");
 
+		m_snowParticleTextures = ResourceManager::GetInstance().LoadTexture("Particle_Snow_512px.png");
+		m_sepiaSnowParticleTexture = ResourceManager::GetInstance().LoadTexture("Particle_Snow_Sepia_512px.png");
+
 		PlayBackgroundMusicForStage();
 
 		if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
@@ -225,8 +228,11 @@ namespace PE
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
-			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles).SetTextureKey(m_sepiaWindParticleTexture);
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles).GetAnimation()->SetSpriteSheetKey(m_sepiaWindParticleTexture);
+
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles).SetTextureKey(m_sepiaSnowParticleTexture);
 
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 			DeactiveAllMenu();
@@ -281,8 +287,11 @@ namespace PE
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
-			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles).SetTextureKey(m_sepiaWindParticleTexture);
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles).GetAnimation()->SetSpriteSheetKey(m_sepiaWindParticleTexture);
+
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles).SetTextureKey(m_sepiaSnowParticleTexture);
 
 			PhaseBannerTransition(id, deltaTime);
 			UpdateTurnCounter("Planning");
@@ -295,9 +304,11 @@ namespace PE
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelBackground);
 
-			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles).SetTextureKey(m_windParticleTexture);
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles).GetAnimation()->SetSpriteSheetKey(m_windParticleTexture);
 
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles).SetTextureKey(m_snowParticleTextures);
 
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);

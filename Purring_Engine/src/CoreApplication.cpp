@@ -262,6 +262,7 @@ RTTR_REGISTRATION
         .property("SettingsMenu", &PE::GameStateController_v2_0Data::SettingsMenu)
         .property("JournalIcon", &PE::GameStateController_v2_0Data::JournalIcon)
         .property("WindParticles", &PE::GameStateController_v2_0Data::WindParticles)
+        .property("WindParticles", &PE::GameStateController_v2_0Data::SnowParticles)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")

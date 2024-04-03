@@ -60,6 +60,7 @@ namespace PE
 		EntityID SettingsMenu;
 
 		EntityID WindParticles;
+		EntityID SnowParticles;
 
 		int NumberInList{5};
 		std::vector<EntityID> clicklisttest;
@@ -493,6 +494,9 @@ namespace PE
 
 		std::string m_windParticleTexture;
 		std::string m_sepiaWindParticleTexture;
+
+		std::string m_snowParticleTextures;
+		std::string m_sepiaSnowParticleTexture;
 
 		//Pause and Win/Lose Variables
 		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
