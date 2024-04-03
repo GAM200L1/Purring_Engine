@@ -144,6 +144,9 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
+		m_windParticleTexture = ResourceManager::GetInstance().LoadTexture("LeafTwirl.png");
+		m_sepiaWindParticleTexture = ResourceManager::GetInstance().LoadTexture("LeafTwirl_Sepia.png");
+
 		PlayBackgroundMusicForStage();
 
 		if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
@@ -222,6 +225,9 @@ namespace PE
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles).SetTextureKey(m_sepiaWindParticleTexture);
+
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 			DeactiveAllMenu();
 			ActiveObject(m_scriptData[id].HUDCanvas);
@@ -275,6 +281,9 @@ namespace PE
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles).SetTextureKey(m_sepiaWindParticleTexture);
+
 			PhaseBannerTransition(id, deltaTime);
 			UpdateTurnCounter("Planning");
 			prevState = currentState;
@@ -285,6 +294,10 @@ namespace PE
 
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelBackground);
+
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].WindParticles).SetTextureKey(m_windParticleTexture);
+
 
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
