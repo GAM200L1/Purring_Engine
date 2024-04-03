@@ -220,6 +220,15 @@ namespace PE
 		State* p_queuedState{ nullptr }; // State to load
 
 	public:
+		/*!***********************************************************************************
+		\brief Delete the data.
+		*************************************************************************************/
+		void DeleteData()
+		{
+			DeleteAttackData();
+			DeleteQueuedState();
+			delete p_stateManager;
+		}
 
 		/*!***********************************************************************************
 		\brief Helper function to get the name of the rat based on its type.
