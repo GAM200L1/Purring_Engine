@@ -31,8 +31,8 @@
                             "type": "CircleCollider"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 0,
-                            "Layer": 2,
+                            "InteractionLayer": 4,
+                            "Layer": 4,
                             "Old ID": 1,
                             "Prefab Type": "Grey Cat",
                             "children": [],

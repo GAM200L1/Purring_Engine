@@ -149,6 +149,7 @@ namespace PE
 		vec2 detectionIconOffset{ 55.f, 40.f }; 
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
+		bool firstTimeIdle{ true }; // True if the rat has not entered its idle state yet, false otherwise
 		bool hasChangedToDeathState{ false }; // True if the rat has been changed to the death state
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		std::unique_ptr<AttackDataBase_v2_0> p_attackData{};
