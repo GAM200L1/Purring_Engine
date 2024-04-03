@@ -73,6 +73,8 @@ namespace PE
 		~GreyCatAttack_v2_0PLAN()
 		{
 			p_attackData = nullptr;
+			p_mouseClick = nullptr;
+			p_mouseClickedPrevious = nullptr;
 		}
 
 		// ----- Public Functions ----- //
@@ -80,8 +82,10 @@ namespace PE
 		\brief Set up the state and subscribe to the collision events
 
 		\param[in,out] id - ID of instance of script
+		\param[in] p_planMouseClick - pointer to mouse click bool in plan state
+		\param[in] p_planMouseClickPrev - pointer to mouse click previous bool in plan state
 		*************************************************************************************/
-		virtual void Enter(EntityID id);
+		virtual void Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev);
 
 		/*!***********************************************************************************
 			\brief Checks if its state should change
@@ -117,42 +121,21 @@ namespace PE
 		 \param ignoreSelected - ignore telegraphs selected or not
 		*************************************************************************************/
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
-
-		/*!***********************************************************************************
-		 \brief Forces number of mouse clicks to 0
-		*************************************************************************************/
-		virtual void ForceZeroMouse() { m_mouseClick = false; }
 	
 	private:
 		// ----- Private Variables ----- //
 		GreyCatAttackVariables* p_attackData = nullptr; // attack data for the cat
 
 		bool m_showTelegraphs{ false }; // True if telegraphs are to be displayed
+		bool m_firstUpdate{ true };
 
 		// Telegraph colors
 		vec4 const m_defaultColor{ 0.545f, 1.f, 0.576f, 1.f };
 		vec4 const m_hoverColor{ 1.f, 0.859f, 0.278f, 1.f };
 		vec4 const m_selectColor{ 1.f, 0.784f, 0.f, 1.f };
 
-		bool m_mouseClick{ false }; // set to true when mouse is clicked
-		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
-		int m_mouseClickEventListener; // Stores the handler for the mouse click event
-		int m_mouseReleaseEventListener; // Stores the handler for the mouse release event
-
-	private:
-		// ----- Private Functions ----- //
-		/*!***********************************************************************************
-		 \brief Function to handle mouse click events for GreyCatPLAN
-
-		 \param[in] r_ME - Mouse event data.
-		*************************************************************************************/
-		void OnMouseClick(const Event<MouseEvents>& r_ME);
-		/*!***********************************************************************************
-		 \brief Function to handle mouse release events for GreyCatPLAN
-
-		 \param[in] r_ME - Mouse event data.
-		*************************************************************************************/
-		void OnMouseRelease(const Event<MouseEvents>& r_ME);
+		bool* p_mouseClick{ false }; // set to true when mouse is clicked
+		bool* p_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 	};
 
 	class GreyCatAttack_v2_0EXECUTE : public State

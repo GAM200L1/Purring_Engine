@@ -42,61 +42,65 @@
 namespace PE
 {
 	// ----- Movement Plan Functions ----- //
-	void CatMovement_v2_0PLAN::Enter(EntityID id)
+	void CatMovement_v2_0PLAN::Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev)
 	{
+		// retrieve cat data
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
+		
+		// retrive mouse click data
+		p_mouseClick = p_planMouseClick;
+		p_mouseClickPrevious = p_planMouseClickPrev;
 
-		// Subscribe to events
-		m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, CatMovement_v2_0PLAN::OnMouseClick, this);
-		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
+		// subscribe to collision events
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
 
-		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
-
-		if (p_data->catType == EnumCatType::MAINCAT)
+		// reset energy, toggle off all path nodes, reset path node colors and add a path position
+		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
+		for (EntityID nodeID : p_data->pathQuads)
 		{
-			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
+			CatHelperFunctions::ToggleEntity(nodeID, false);
 		}
-		
-		ResetDrawnPath();
+		SetPathColor(m_defaultPathColor);
+		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
 	}
 
 	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		
-		// Check if pause state
-		if (gsc->currentState == GameStates_v2_0::PAUSE)
-		{
-			EndPathDrawing(id);
-			return;
-		}
+		// Get the position of the cat
+		vec2 const& r_cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
 		// If the player has released their mouse and the path is invalid
-		if (m_invalidPath && !m_mouseClick && m_mouseClickPrevious)
+		if (m_invalidPath && !(*p_mouseClick) && *p_mouseClickPrevious)
 		{
 			ResetDrawnPath();
 			m_invalidPath = false;
 			return;
 		}
-
+		
 		// Check if the mouse has just been clicked
-		if (m_mouseClick && !m_pathBeingDrawn && p_data->catCurrentEnergy)
+		if (*p_mouseClick && !m_pathBeingDrawn && p_data->catCurrentEnergy)
 		{
-			// Get the position of the cat
-			vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
-
 			// Check if the cat has been clicked
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
-			if (PointCollision(catCollider, cursorPosition))
+			if (PointCollision(catCollider, r_cursorPosition) && r_cursorPosition != m_previousCursorPosition)
 			{
+				if (p_data->pathPositions.empty())
+					m_resetPositions.push(std::make_pair(-1, CatHelperFunctions::GetEntityPosition(id)));
+				else
+					m_resetPositions.push(std::make_pair(static_cast<int>(p_data->pathPositions.size() - 1), p_data->pathPositions.back()));
+				
+				// save the positions of the follow cats
+				if (p_data->catType == EnumCatType::MAINCAT)
+				{
+					GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
+				}
 				// Start drawing a path
 				m_pathBeingDrawn = true;
 			}
 		}
 		
 		// If the mouse is being pressed
-		if (m_mouseClick && m_pathBeingDrawn)
+		if (*p_mouseClick && m_pathBeingDrawn)
 		{
 			if (p_data->catCurrentEnergy) // Check if the player has sufficient energy
 			{
@@ -110,29 +114,32 @@ namespace PE
 				EndPathDrawing(id);
 			}
 		}
-		else if (!m_mouseClick && m_mouseClickPrevious && m_pathBeingDrawn)
+		else if (!*(p_mouseClick) && *p_mouseClickPrevious && m_pathBeingDrawn)
 		{
 			// The mouse has been released, so end the path
 			EndPathDrawing(id);
 		}
-		// Store the current frame's mouse click status
-		m_mouseClickPrevious = m_mouseClick;
+
+		m_previousCursorPosition = r_cursorPosition;
 	}
 
 	void CatMovement_v2_0PLAN::CleanUp()
 	{
-		REMOVE_MOUSE_EVENT_LISTENER(m_clickEventListener);
-		REMOVE_MOUSE_EVENT_LISTENER(m_releaseEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 	}
 
 	void CatMovement_v2_0PLAN::Exit(EntityID id)
 	{
 		EndPathDrawing(id);
-		// set follow cats to their previous positions
-		GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+		
+		if (p_data->catType == EnumCatType::MAINCAT) {
+			// set follow cats to their previous positions
+			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
+		}
 
 		p_data = nullptr;
+		p_mouseClick = nullptr;
+		p_mouseClickPrevious = nullptr;
 	}
 
 
@@ -157,7 +164,6 @@ namespace PE
 		// Get the distance of the proposed position from the last node in the path
 		float distanceOfPosition = p_data->pathPositions.back().Distance(r_position);
 		
-
 		if (distanceOfPosition > p_data->maxDistance)
 		{
 			// Compute the direction of the proposed position from the last node in the path
@@ -236,6 +242,9 @@ namespace PE
 		// Position the cat at the end of the path
 		if (!p_data->pathPositions.empty())
 			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.back());
+
+		// push into undo stack
+		GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_MOVEMENT);
 	}
 
 
@@ -250,34 +259,52 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::ResetDrawnPath()
 	{
+		if (m_resetPositions.empty()) { return; }
 		if (p_data->catType == EnumCatType::MAINCAT)
 		{
 			// reset follower cats positions
 			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
 		}
 
-		// reset main cat position
-		CatHelperFunctions::PositionEntity(p_data->catID, p_data->resetPosition);
+		std::pair<int, vec2> const& r_resetPosition = m_resetPositions.top();
+
+		// reset this cat's position
+		CatHelperFunctions::PositionEntity(p_data->catID, r_resetPosition.second);
 	
-		// reset to max energy
-		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
-		m_mouseClickPrevious = false;
-		
-		// Clear all the path data
-		if (!p_data->pathPositions.empty())
+		// reset to previous energy
+		if (r_resetPosition.first != -1)
 		{
-			CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions.front());
+			p_data->catCurrentEnergy = p_data->catMaxMovementEnergy - r_resetPosition.first;
 		}
-		p_data->pathPositions.clear();
+		else
+		{
+			p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
+		}
+		
+		if (r_resetPosition.first != -1)
+		{
+			std::vector<vec2> temp;
+			for (int i{ 0 }; i < r_resetPosition.first; ++i)
+				temp.emplace_back(p_data->pathPositions[i]);
+			p_data->pathPositions.clear();
+			p_data->pathPositions = temp;
+		}
 
 		// Disable all the path nodes
-		for (EntityID& nodeId : p_data->pathQuads)
+		for (int i{ static_cast<int>(p_data->pathQuads.size() - 1) }; i > r_resetPosition.first; --i)
 		{
-			CatHelperFunctions::ToggleEntity(nodeId, false);
+			CatHelperFunctions::ToggleEntity(p_data->pathQuads[i], false);
 		}
+		
+		// reset the last node's position to where the cat is
+		CatHelperFunctions::PositionEntity(p_data->pathQuads[r_resetPosition.first], r_resetPosition.second);
 
 		SetPathColor(m_defaultPathColor);
 
+		*p_mouseClickPrevious = false;
+		m_pathBeingDrawn = false;
+
+		m_resetPositions.pop();
 		// Add the player's starting position as a node
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
 	}
@@ -286,25 +313,6 @@ namespace PE
 	{
 		return m_invalidPath;
 	}
-
-	void CatMovement_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
-	{
-		if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
-		{
-			// Reset the path on pressing right click
-			MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
-			if (MBPE.button != 1)
-				m_mouseClick = true; // Flag that the mouse has been clicked
-		}
-	}
-
-
-	void CatMovement_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
-	{
-		if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
-			m_mouseClick = false;
-	}
-
 
 	void CatMovement_v2_0PLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 	{

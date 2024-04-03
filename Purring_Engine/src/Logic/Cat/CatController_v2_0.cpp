@@ -18,6 +18,8 @@
 #include "CatController_v2_0.h"
 #include "CatHelperFunctions.h"
 #include "FollowScript_v2_0.h"
+#include "CatMovementStates_v2_0.h"
+#include "CatPlanningState_v2_0.h"
 
 #include "Layers/LayerManager.h"
 #include "Logic/LogicSystem.h"
@@ -25,12 +27,18 @@
 #include <cstdlib>   // For srand and rand
 #include <ctime>     // For time
 
+#include "GUISystem.h"
 
 namespace PE
 {
+	CatController_v2_0::CatController_v2_0()
+	{
+		REGISTER_UI_FUNCTION(UndoCatPlanButtonCall, PE::CatController_v2_0);
+	}
 
 	CatController_v2_0::~CatController_v2_0()
 	{
+
 	}
 
 	void CatController_v2_0::Init(EntityID id)
@@ -38,10 +46,22 @@ namespace PE
 		m_lostGame = false;
 		UpdateCurrentCats(id);
 		UpdateCachedCats(id);
+		m_mouseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatController_v2_0::OnMouseClick, this);
+		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatController_v2_0::OnMouseRelease, this);
+		
 	}
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::EXECUTE)
+		{
+			ClearCatUndoStack(); 
+			return;
+		}
+		// undo if right mouse button triggered
+		if (m_mouseClick && !m_mouseClickPrev)
+			UndoCatPlan();
+		m_mouseClickPrev = m_mouseClick;
 	}
 
 	void CatController_v2_0::OnAttach(EntityID id)
@@ -49,6 +69,7 @@ namespace PE
 		mainInstance = id;
 		m_scriptData[id] = CatController_v2_0Data{};
 		m_currentCats.clear();
+		ClearCatUndoStack();
 	}
 
 	void CatController_v2_0::OnDetach(EntityID id)
@@ -56,6 +77,8 @@ namespace PE
 		auto iter = m_scriptData.find(id);
 		if (iter != m_scriptData.end())
 		{
+			REMOVE_MOUSE_EVENT_LISTENER(m_mouseEventListener);
+			REMOVE_MOUSE_EVENT_LISTENER(m_mouseReleaseEventListener);
 			m_scriptData.erase(id);
 		}
 	}
@@ -64,6 +87,7 @@ namespace PE
 	{
 		if (!m_lostGame)
 			m_cachedCats = m_currentCats;
+		ClearCatUndoStack();
 	}
 
 	// getters
@@ -152,5 +176,57 @@ namespace PE
 	{
 		return (std::find((GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.begin(), 
 						  (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end(), catID) != (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end());
+	}
+	
+	void CatController_v2_0::AddToUndoStack(EntityID catID, EnumUndoType undoType)
+	{
+		m_catUndoStack.push(std::make_pair(catID, undoType));
+	}
+
+	void CatController_v2_0::UndoCatPlan()
+	{
+		if (m_catUndoStack.empty()) { return; }
+		// get the id of the cat to undo and which planning to undo
+		auto const& toUndo = m_catUndoStack.top();
+		// pop the stack
+		m_catUndoStack.pop();
+
+		// get the planning state and call reset functions based on the undo type
+		Cat_v2_0PLAN* planState = dynamic_cast<Cat_v2_0PLAN*>((GETSCRIPTDATA(CatScript_v2_0, toUndo.first))->p_stateManager->GetCurrentState());
+		if (toUndo.second == EnumUndoType::UNDO_MOVEMENT)
+		{ planState->ResetMovement(toUndo.first);}
+		else if (toUndo.second == EnumUndoType::UNDO_ATTACK)
+		{ planState->ResetAttack(toUndo.first); }
+	}
+	
+	void CatController_v2_0::UndoCatPlanButtonCall(EntityID)
+	{
+		UndoCatPlan();
+	}
+
+	void CatController_v2_0::ClearCatUndoStack()
+	{
+		while (!m_catUndoStack.empty())
+			m_catUndoStack.pop();
+	}
+
+	void CatController_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)
+	{
+		if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
+		{
+			MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+			if (MBPE.button == 1)
+				m_mouseClick = true;
+		}
+	}
+
+	void CatController_v2_0::OnMouseRelease(const Event<MouseEvents>& r_ME)
+	{
+		if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
+		{
+			MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
+			if (MBRE.button == 1)
+				m_mouseClick = false;
+		}
 	}
 }

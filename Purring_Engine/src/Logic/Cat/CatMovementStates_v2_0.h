@@ -32,15 +32,17 @@ namespace PE
 		/*!**********************************************************************************
 		 \brief Destructor for CatMovement_v2_0PLAN
 		*************************************************************************************/
-		~CatMovement_v2_0PLAN() { p_data = nullptr; }
+		~CatMovement_v2_0PLAN() { p_data = nullptr; p_mouseClick = nullptr; p_mouseClickPrevious = nullptr; }
 
 		// ----- Public Functions ----- //
 		/*!***********************************************************************************
 		 \brief Subscribes to input and collision events and resets the variables of the state.
 
 		 \param[in] id - EntityID of the entity this instance of the script is attached to.
+		 \param[in] p_planMouseClick - pointer to mouse click bool in plan state
+		 \param[in] p_planMouseClickPrev - pointer to mouse click previous bool in plan state
 		*************************************************************************************/
-		void Enter(EntityID id);
+		void Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev);
 
 		/*!***********************************************************************************
 		 \brief Attempts to draw paths following the player's cursor position.
@@ -115,24 +117,7 @@ namespace PE
 		*************************************************************************************/
 		void SetPathColor(vec4 const& r_color = {1.f, 1.f, 1.f, 1.f});
 
-
-		// ----- Events ----- // 
-
-		/*!***********************************************************************************
-		 \brief Callback function for the mouse click event.
-
-		 \param[in] r_mouseEvent - Mouse event data.
-		*************************************************************************************/
-		void OnMouseClick(const Event<MouseEvents>& r_mouseEvent);
-
-
-		/*!***********************************************************************************
-		 \brief Callback function for the mouse release event.
-
-		 \param[in] r_mouseEvent - Mouse event data.
-		*************************************************************************************/
-		void OnMouseRelease(const Event<MouseEvents>& r_mouseEvent);
-
+		// ----- EVENTS ----- //
 
 		/*!***********************************************************************************
 		 \brief Callback function for collision events.
@@ -158,12 +143,16 @@ namespace PE
 		CatScript_v2_0Data* p_data = nullptr;
 		vec4 m_invalidPathColor{ 1.f, 0.f, 0.f, 1.f };
 		vec4 m_defaultPathColor{ 0.506f, 0.490f, 0.490f, 1.f };
-
-		int m_clickEventListener{}, m_releaseEventListener{}, m_collisionEventListener{}; // Stores the handler for the mouse click and release events
+		
+		std::stack<std::pair<int, vec2>> m_resetPositions{};
+		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
-		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
-		bool m_mouseClickPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 		bool m_invalidPath{ false };
+		vec2 m_previousCursorPosition{};
+
+		// taken from planning state
+		bool* p_mouseClick{ nullptr }; // Set to true when the mouse is pressed, false otherwise
+		bool* p_mouseClickPrevious{ nullptr }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 	};
 
 	// ----- CAT MOVEMENT EXECUTE STATE ----- //

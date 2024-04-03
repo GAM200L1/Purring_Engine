@@ -36,10 +36,10 @@ namespace PE
 		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
 
 		// initializes the cat movement planning sub state
-		p_catMovement->Enter(id);
+		p_catMovement->Enter(id, &m_mouseClicked, &m_mouseClickPrevious);
 
 		// initializes the cat attack planning sub state
-		p_catAttack->Enter(id);
+		p_catAttack->Enter(id, &m_mouseClicked, &m_mouseClickPrevious);
 
 		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, Cat_v2_0PLAN::OnMouseClick, this);
 		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, Cat_v2_0PLAN::OnMouseRelease, this);
@@ -48,47 +48,62 @@ namespace PE
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
 	{	
 		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
-
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE)
+		{
+			p_catMovement->EndPathDrawing(id);
+			return;
+		}
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
+		bool const collidedCurrent = PointCollision(r_catCollider, r_cursorPosition);
 
+		// check for double click
+		if (!p_data->planningAttack)
+		{
+			// if in previous frame and current frame the mouse has always been there allow double click
+			// if previous frame not clicked and this frame clicked increment double click
+			if (m_doubleClickTimer >= 0.25f) // resets double click when 1 second has passed
+			{
+				m_startDoubleClickTimer = false;
+				m_doubleClickTimer = 0.f;
+			}
+			else
+			{
+				// if mouse triggered
+				if (m_mouseClicked && !m_mouseClickPrevious)
+				{	
+					// second time triggered
+					if (m_startDoubleClickTimer && collidedCurrent && m_collidedPreviously)
+					{
+						p_data->planningAttack = true;
+						p_catAttack->ToggleTelegraphs(true, false);
+						m_startDoubleClickTimer = false;
+						m_doubleClickTimer = 0.f;
+					}
+					else if (collidedCurrent) // first time clicking
+					{ m_startDoubleClickTimer = true; }
+				}
+
+				// if mouse triggered once
+				if (m_startDoubleClickTimer)
+					m_doubleClickTimer += deltatime;
+			}
+		}
+
+		// if planning attack
 		if (p_data->planningAttack)
 		{
-			p_catAttack->ToggleTelegraphs(true, false);
 			p_catAttack->Update(id, deltatime);
 		}
-		else
+		else if (!p_data->attackSelected)
 		{
-			if (m_timer >= 1.f) // resets double click when 1 second has passed
-			{
-				m_doubleClick = 0;
-				m_timer = 0.f;
-			}
-
-			if (m_doubleClick >= 2)
-			{
-				p_data->planningAttack = true;
-				m_doubleClick = 0;
-				p_catAttack->ForceZeroMouse();
-			}
-			
-			if (PointCollision(r_catCollider, r_cursorPosition))
-			{
-				if (r_cursorPosition != m_prevCursorPosition && m_mouseClicked && !p_data->attackSelected) // if current and prev cursor position are not the same, update movement
-				{
-					m_moving = true;
-				}
-			}
+			p_catMovement->Update(id, deltatime);
 		}
 
-		if ((m_moving && !p_data->planningAttack) || p_catMovement->CheckInvalid())
-			p_catMovement->Update(id, deltatime);
-		
-
-		m_timer += deltatime;
-		m_prevCursorPosition = r_cursorPosition;
+		// save previous frame data
 		m_mouseClickPrevious = m_mouseClicked;
-		m_collidedPreviously = PointCollision(r_catCollider, r_cursorPosition);
+		m_collidedPreviously = collidedCurrent;
+		m_mousePositionPrevious = r_cursorPosition;
 	}
 
 	void Cat_v2_0PLAN::StateCleanUp()
@@ -112,41 +127,39 @@ namespace PE
 
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
-		if (!p_data->planningAttack && !GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
-		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		if (MBPE.button == 1 && p_data->attackSelected)
+		if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
 		{
-			if (!p_data->planningAttack) // if not currently planning attack, 
-				p_catAttack->ToggleTelegraphs(false, false);
-			p_catAttack->ResetSelection(p_data->catID);
-			// Play undo audio
-			PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
-			m_doubleClick = 0;
+			MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+			if (MBPE.button == 0)
+				m_mouseClicked = true;
 		}
-		else if (MBPE.button == 1)
-		{
-			p_catMovement->ResetDrawnPath();
-			p_catAttack->ToggleTelegraphs(false, false);
-			p_data->planningAttack = false;
-			// Play undo audio
-			PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
-			m_doubleClick = 0;
-		}
-		else
-			m_mouseClicked = true;
 	}
 	
 	void Cat_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
 	{
-		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
-		if (m_mouseClicked)
+		if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
 		{
-			if (m_collidedPreviously && PointCollision(std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_data->catID).colliderVariant), CatHelperFunctions::GetCursorPositionInWorld()))
-				++m_doubleClick;
-			m_mouseClicked = false;
+			MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
+			//if (m_collidedPreviously && PointCollision(std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_data->catID).colliderVariant), CatHelperFunctions::GetCursorPositionInWorld()))
+			if (MBRE.button == 0)
+				m_mouseClicked = false;
 		}
-		m_moving = false;
 	}
 
+	void Cat_v2_0PLAN::ResetMovement(EntityID id)
+	{
+		if (p_data->planningAttack)
+			p_catAttack->ToggleTelegraphs(false, false);
+		p_catMovement->ResetDrawnPath();
+		PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
+	}
+
+	void Cat_v2_0PLAN::ResetAttack(EntityID id)
+	{
+		if (!p_data->planningAttack) // if not currently planning attack, 
+			p_catAttack->ToggleTelegraphs(false, false);
+		p_catAttack->ResetSelection(p_data->catID);
+		PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
+	}
 	// add mouse released
 }

@@ -116,21 +116,31 @@ namespace PE
 
 	void FollowScript_v2_0::SavePositions(EntityID id)
 	{
-		scriptData[id].cacheFollowerPosition.clear();
+		while (!scriptData[id].cacheFollowerPosition.empty())
+			scriptData[id].cacheFollowerPosition.pop();
+
+		std::vector<vec2> temp;
 		for (EntityID followerID : scriptData[id].followers)
 		{
 			// save position of follower cats
-			scriptData[id].cacheFollowerPosition.emplace_back(CatHelperFunctions::GetEntityPosition(followerID));
+			temp.emplace_back(CatHelperFunctions::GetEntityPosition(followerID));
 		}
+		scriptData[id].cacheFollowerPosition.push(temp);
 	}
 
 	void FollowScript_v2_0::ResetToSavePositions(EntityID id)
 	{
+		if (scriptData[id].cacheFollowerPosition.empty()) { return; }
+		std::vector<vec2> const& r_undoPositions = scriptData[id].cacheFollowerPosition.top();
+		
+		// reset positions
 		for (int i{ 0 }; i < scriptData[id].followers.size(); ++i)
 		{
-			CatHelperFunctions::PositionEntity(scriptData[id].followers[i], scriptData[id].cacheFollowerPosition[i]);
+			CatHelperFunctions::PositionEntity(scriptData[id].followers[i], r_undoPositions[i]);
 		}
 		scriptData[id].prevPosition = CatHelperFunctions::GetEntityPosition(id);
+
+		scriptData[id].cacheFollowerPosition.pop();
 	}
 
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)

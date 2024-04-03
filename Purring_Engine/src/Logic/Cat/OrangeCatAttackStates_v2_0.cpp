@@ -69,20 +69,18 @@ namespace PE
 
 	// ----- ATTACK PLAN ----- //
 
-	void OrangeCatAttack_v2_0PLAN::Enter(EntityID id)
+	void OrangeCatAttack_v2_0PLAN::Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev)
 	{
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 
-		// subscribe to mouse click event for selecting attack telegraphs
-		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, OrangeCatAttack_v2_0PLAN::OnMouseClick, this);
-		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, OrangeCatAttack_v2_0PLAN::OnMouseRelease, this);
+		// retrive mouse click data from plan state
+		p_mouseClick = p_planMouseClick;
+		p_mouseClickedPrevious = p_planMouseClickPrev;
 	}
 
 	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE) { return; }
-
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		
@@ -94,10 +92,11 @@ namespace PE
 		if (collidingWithTelegraph && !collidingWithCat)
 		{
 			CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
-			if (m_mouseClick)
+			if (*p_mouseClick)
 			{
 				(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_selectColor);
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
 			}
 		}
 		else
@@ -106,21 +105,23 @@ namespace PE
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		}
 
-		if (m_mouseClick && !m_mouseClickedPrevious && !collidingWithTelegraph)
+		if (*p_mouseClick && !(*p_mouseClickedPrevious) && !collidingWithTelegraph && !m_firstUpdate)
 		{
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 
 			if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
 				ToggleTelegraphs(false, false);
-		}
 
-		m_mouseClickedPrevious = m_mouseClick;
+			m_firstUpdate = true;
+		}
+		else if (m_firstUpdate) // check if its the first update so that it does not overlap with double click
+		{
+			m_firstUpdate = false;
+		}
 	}
 
 	void OrangeCatAttack_v2_0PLAN::CleanUp()
 	{
-		REMOVE_MOUSE_EVENT_LISTENER(m_mouseClickEventListener);
-		REMOVE_MOUSE_EVENT_LISTENER(m_mouseReleaseEventListener);
 	}
 
 	void OrangeCatAttack_v2_0PLAN::Exit(EntityID id)
@@ -128,25 +129,14 @@ namespace PE
 		ToggleTelegraphs(false, false);
 
 		p_attackData = nullptr;
+		p_mouseClick = nullptr;
+		p_mouseClickedPrevious = nullptr;
 	}
 
 	void OrangeCatAttack_v2_0PLAN::ResetSelection(EntityID id)
 	{
 		CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = false;
-	}
-
-	void OrangeCatAttack_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
-	{
-		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		if (MBPE.button != 1)
-			m_mouseClick = true;
-	}
-
-	void OrangeCatAttack_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
-	{
-		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
-		m_mouseClick = false;
 	}
 
 	void OrangeCatAttack_v2_0PLAN::ToggleTelegraphs(bool setToggle, bool ignoreSelected)
