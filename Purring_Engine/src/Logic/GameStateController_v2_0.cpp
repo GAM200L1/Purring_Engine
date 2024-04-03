@@ -1324,7 +1324,7 @@ namespace PE
 
 		PlaySceneTransition();
 
-		IncrementTurnCount(currentTurn);
+		IncrementTurnCount(currentTurn + 1);
 
 		switch (nextStage)
 		{
@@ -1398,6 +1398,7 @@ namespace PE
 		m_isTransitioningIn = false;
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
+		IncrementTurnCount(1);
 
 		GlobalMusicManager::GetInstance().StartFadeOut(0.75f);
 		m_currentLevel = 0;
