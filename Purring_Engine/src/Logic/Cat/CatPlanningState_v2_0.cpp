@@ -95,7 +95,7 @@ namespace PE
 		{
 			p_catAttack->Update(id, deltatime);
 		}
-		else if (!p_data->attackSelected || p_catMovement->CheckInvalid())
+		else if (!p_data->attackSelected)
 		{
 			p_catMovement->Update(id, deltatime);
 		}
