@@ -233,6 +233,24 @@ namespace PE
 		 \brief Play Bash Spike Audio
 		*************************************************************************************/
 		void PlayBashSpikeAudio();
+
+		/*!***********************************************************************************
+		 \brief Play Charge Particles
+		 \param[in] vec2 pos position to play the particles
+		*************************************************************************************/
+		void PlayChargeParticles(vec2 pos);
+
+		/*!***********************************************************************************
+		 \brief Stop Charge Particles
+		*************************************************************************************/
+		void StopChargeParticles();
+
+		/*!***********************************************************************************
+		 \brief Reset Charge Particles
+		 \param[in] EntityID id of the entity to reset the particles
+		*************************************************************************************/
+		void ResetChargeParticles(EntityID);
+
 		// ----- Private Members ----- //
 	private:
 		// --- STATE CHANGE --- //
@@ -261,6 +279,19 @@ namespace PE
 		*************************************************************************************/
 		bool IsObstacle(EntityID);
 
+		/*!***********************************************************************************
+		 \brief			Activate the given object and its childrens
+
+		 \param[in]		The objects to set active
+		*************************************************************************************/
+		void ActiveObject(EntityID);
+
+		/*!***********************************************************************************
+		 \brief			Deactivate the given object and its childrens
+
+		 \param[in]		The objects to set deactivate
+		*************************************************************************************/
+		void DeactiveObject(EntityID);
 
 	private:
 		// ----- Private Variables ----- //
@@ -269,6 +300,9 @@ namespace PE
 
 		float m_deathDelayTimerBeforeOutro{.75f};
 		float m_deathDelayTimeBeforeOutro{ m_deathDelayTimerBeforeOutro };
+
+		EntityID m_chargeParticlePrefabID;
+		std::string m_chargeParticlePrefab{ "RatKingChargingParticles.prefab" };
 		//do i want to store all the obstacles here?
 	}; // end of class 
 

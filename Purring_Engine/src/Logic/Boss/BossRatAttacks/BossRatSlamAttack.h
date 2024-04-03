@@ -138,5 +138,6 @@ namespace PE
 
 		EntityID m_shockWavePrefabID;
 		std::string m_shockWavePrefab{"RatKingShockwaveParticles.prefab"};
+
 	};
 }

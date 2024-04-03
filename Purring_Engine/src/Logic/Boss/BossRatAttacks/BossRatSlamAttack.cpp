@@ -61,8 +61,10 @@ namespace PE
 		if (p_script->currentSlamTurnCounter == 2)
 		{
 			if (p_data->curr_Anim != BossRatAnimationsEnum::CHARGE)
+			{
+				p_script->PlayChargeParticles(vec2(EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.x + 15, EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.y - 94));
 				p_script->PlayAnimation(BossRatAnimationsEnum::CHARGE);
-
+			}
 			p_script->PlayAttackAudio();
 		}
 		if (p_script->currentSlamTurnCounter == 0)
@@ -76,9 +78,15 @@ namespace PE
 		if (p_script->currentSlamTurnCounter == 2)
 		{
 			if (EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetAnimationMaxIndex())
-			JumpUp(p_script->currentBoss,dt);
-			if(m_ratSpawned)
-			p_data->finishExecution = true;
+			{
+				p_script->StopChargeParticles();
+				JumpUp(p_script->currentBoss, dt);
+			}
+			if (m_ratSpawned)
+			{	
+
+				p_data->finishExecution = true;
+			}
 		
 		}
 		else if (p_script->currentSlamTurnCounter == 1)
@@ -375,6 +383,7 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive = false;
 
 		EntityManager::GetInstance().RemoveEntity(m_shockWavePrefabID);
+
 
 		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT && p_data->curr_Anim != BossRatAnimationsEnum::DEATH)
 			p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);

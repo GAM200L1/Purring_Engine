@@ -21,7 +21,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Layers/LayerManager.h"
 #include "AudioManager/GlobalMusicManager.h"
-
+#include "ResourceManager/ResourceManager.h"
+#include "VisualEffects/ParticleSystem.h"
 namespace PE
 {
 	// ---------- FUNCTION DEFINITIONS ---------- //
@@ -43,6 +44,10 @@ namespace PE
 		m_deathDelayTimeBeforeOutro = m_deathDelayTimerBeforeOutro;
 
 		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(3);
+		
+		m_chargeParticlePrefabID = ResourceManager::GetInstance().LoadPrefabFromFile(m_chargeParticlePrefab);
+		DeactiveObject(m_chargeParticlePrefabID);
+	
 	}
 
 
@@ -356,5 +361,81 @@ namespace PE
 	void BossRatScript::PlayBashSpikeAudio()
 	{
 		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatBashSpikeSFX.prefab", false);
+	}
+
+	void BossRatScript::PlayChargeParticles(vec2 pos)
+	{	
+		if (EntityManager::GetInstance().Has<Transform>(m_chargeParticlePrefabID))
+		{
+			EntityManager::GetInstance().Get<Transform>(m_chargeParticlePrefabID).position = pos;
+		}
+		
+		ActiveObject(m_chargeParticlePrefabID);
+		ResetChargeParticles(m_chargeParticlePrefabID);
+	}
+
+	void BossRatScript::StopChargeParticles()
+	{
+		DeactiveObject(m_chargeParticlePrefabID);
+	}
+
+	void BossRatScript::ResetChargeParticles(EntityID id)
+	{
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+		{
+			if (EntityManager::GetInstance().Has<ParticleEmitter>(id2))
+			{
+				EntityManager::GetInstance().Get<ParticleEmitter>(id2).ResetAllParticles();
+			}
+		}
+	}
+
+	void BossRatScript::ActiveObject(EntityID id)
+	{
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
+
+		//set active the current object
+		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = true;
+
+		//set active the childrens if there are any
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+		{
+			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+				break;
+
+			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+
+			if (EntityManager::GetInstance().Has<ParticleEmitter>(id2))
+			{
+				EntityManager::GetInstance().Get<ParticleEmitter>(id2).ResetAllParticles();
+			}
+		}
+	}
+	void BossRatScript::DeactiveObject(EntityID id)
+	{
+		//deactive all the children objects first
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+			{
+				if (EntityManager::GetInstance().Has<ParticleEmitter>(id2))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(id2).ResetAllParticles();
+				}
+
+				if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+					break;
+
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
+
+		//deactive current object
+		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
 	}
 } // End of namespace PE

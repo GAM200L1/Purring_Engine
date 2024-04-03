@@ -69,6 +69,8 @@ namespace PE
 	{
 		if (!m_isCharging)
 		{
+			p_script->PlayChargeParticles(vec2(EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.x + 15, EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.y - 94));
+
 			if (p_data->curr_Anim != BossRatAnimationsEnum::CHARGE)
 			p_script->PlayAnimation(BossRatAnimationsEnum::CHARGE);
 		}
@@ -82,6 +84,7 @@ namespace PE
 		{
 			m_animationPlayed = true;
 			p_script->PlayAttackAudio();
+			p_script->StopChargeParticles();
 			p_script->PlayAnimation(BossRatAnimationsEnum::WALKFASTER);
 			m_isCharging = true;
 		}
