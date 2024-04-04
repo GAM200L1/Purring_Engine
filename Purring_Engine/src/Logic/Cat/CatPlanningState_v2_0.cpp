@@ -99,6 +99,7 @@ namespace PE
 		{
 			p_catMovement->Update(id, deltatime);
 		}
+		p_catMovement->StopHeartAnimation(id);
 
 		// save previous frame data
 		m_mouseClickPrevious = m_mouseClicked;

@@ -136,7 +136,13 @@ namespace PE
 		 \brief Checks if the path drawn is invalid
 		*************************************************************************************/
 		bool CheckInvalid();
-
+		
+		/*!**********************************************************************************
+		 \brief Removes Heart Animation once it is done
+		 
+		 \param [in] EntityID - id of the cat with this script
+		*************************************************************************************/
+		void StopHeartAnimation(EntityID);
 
 	private:
 		// ----- Private Variables ----- //
@@ -146,7 +152,7 @@ namespace PE
 		
 		std::stack<std::pair<int, vec2>> m_resetPositions{};
 		std::vector<EntityID> m_pathCollidersOnCage{}; // vector of path colliders that are colliding with the caged cat, saved to play animation
-		EntityID m_cagedCat;
+		EntityID m_cagedCatID, m_heartIcon;
 		bool m_pathHasCagedCat{ false };
 		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn

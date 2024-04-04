@@ -317,14 +317,9 @@ namespace PE
 		if (m_pathHasCagedCat && m_pathCollidersOnCage.empty())
 		{
 			m_pathHasCagedCat = false;
-			for (EntityID findHeartID : Hierarchy::GetInstance().GetChildren(m_cagedCat))
-			{
-				if (EntityManager::GetInstance().Get<EntityDescriptor>(findHeartID).name.find("Heart") != std::string::npos)
-				{
-					EntityManager::GetInstance().Get<AnimationComponent>(findHeartID).StopAnimation();
-					CatHelperFunctions::ToggleEntity(findHeartID, false);
-				}
-			}
+			
+			EntityManager::GetInstance().Get<AnimationComponent>(m_heartIcon).StopAnimation();
+			CatHelperFunctions::ToggleEntity(m_heartIcon, false);
 			//std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
 			//PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 		}
@@ -360,14 +355,17 @@ namespace PE
 						return false;
 				};
 			auto PlayHeart = 
-				[&](EntityID catID)
+				[&](EntityID cagedCatID)
 				{
-					for (EntityID findHeartID : Hierarchy::GetInstance().GetChildren(catID))
+					for (EntityID findHeartID : Hierarchy::GetInstance().GetChildren(cagedCatID))
 					{
 						if (EntityManager::GetInstance().Get<EntityDescriptor>(findHeartID).name.find("Heart") != std::string::npos)
 						{
+							m_heartIcon = findHeartID;
 							CatHelperFunctions::ToggleEntity(findHeartID, true);
 							EntityManager::GetInstance().Get<AnimationComponent>(findHeartID).PlayAnimation();
+							// play adopt audio
+							CatScript_v2_0::PlayRescueCatAudio(*GETSCRIPTDATA(CatScript_v2_0, cagedCatID).catType);
 						}
 					}
 					// @TODO Play audio for gonna rescue cat
@@ -406,7 +404,7 @@ namespace PE
 					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity2);
 					m_pathHasCagedCat = true;
-					m_cagedCat = OTEE.Entity2;
+					m_cagedCatID = OTEE.Entity2;
 				}
 				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
 				{
@@ -420,7 +418,7 @@ namespace PE
 					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity1);
 					m_pathHasCagedCat = true;
-					m_cagedCat = OTEE.Entity1;
+					m_cagedCatID = OTEE.Entity1;
 				}
 				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
 				{
@@ -430,6 +428,14 @@ namespace PE
 		}
 	}
 
+	void CatMovement_v2_0PLAN::StopHeartAnimation(EntityID)
+	{
+		if (EntityManager::GetInstance().Has<AnimationComponent>(m_heartIcon) &&
+			EntityManager::GetInstance().Get<AnimationComponent>(m_heartIcon).HasAnimationEnded())
+		{
+			CatHelperFunctions::ToggleEntity(m_heartIcon, false);
+		}
+	}
 
 	// ----- Movement Execution Functions ----- //
 	void CatMovement_v2_0EXECUTE::StateEnter(EntityID id)
