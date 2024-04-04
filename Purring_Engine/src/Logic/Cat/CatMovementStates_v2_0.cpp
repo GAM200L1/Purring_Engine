@@ -318,10 +318,23 @@ namespace PE
 		{
 			m_pathHasCagedCat = false;
 			
+			// stop heart animation
 			EntityManager::GetInstance().Get<AnimationComponent>(m_heartIcon).StopAnimation();
 			CatHelperFunctions::ToggleEntity(m_heartIcon, false);
-			//std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
-			//PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
+
+			// play sad cat sounds
+			switch (*GETSCRIPTDATA(CatScript_v2_0, m_cagedCatID).catType)
+			{
+				case EnumCatType::ORANGECAT:
+				{
+					PE::GlobalMusicManager::GetInstance().PlaySFX("AudioObject/Cat Orange Stop Rescue SFX.prefab", false);
+					break;
+				}
+				default:
+				{
+					PE::GlobalMusicManager::GetInstance().PlaySFX("AudioObject/Cat Grey Stop Rescue SFX.prefab", false);
+				}
+			}
 		}
 	}
 
@@ -433,6 +446,7 @@ namespace PE
 		if (EntityManager::GetInstance().Has<AnimationComponent>(m_heartIcon) &&
 			EntityManager::GetInstance().Get<AnimationComponent>(m_heartIcon).HasAnimationEnded())
 		{
+			EntityManager::GetInstance().Get<AnimationComponent>(m_heartIcon).StopAnimation();
 			CatHelperFunctions::ToggleEntity(m_heartIcon, false);
 		}
 	}
