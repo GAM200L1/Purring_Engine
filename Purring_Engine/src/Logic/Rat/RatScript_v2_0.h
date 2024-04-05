@@ -26,7 +26,7 @@
 #include "../GameStateController_v2_0.h"
 
 namespace PE
-{
+{	
 	class RatScript_v2_0 : public Script
 	{
 
@@ -41,7 +41,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Does nothing.
 		*************************************************************************************/
-		virtual ~RatScript_v2_0()
+		virtual ~RatScript_v2_0() 
 		{
 			for (auto& [id, data] : m_scriptData)
 			{
@@ -103,7 +103,7 @@ namespace PE
 		 \param[in] r_position Position to set the transform to.
 		*************************************************************************************/
 		static void PositionEntity(EntityID const transformId, vec2 const& r_position);
-
+		
 		/*!***********************************************************************************
 		 \brief Adjusts the relative position of the transform to the value passed in.
 
@@ -122,19 +122,19 @@ namespace PE
 		static void ScaleEntity(EntityID const transformId, float const width, float const height);
 
 		/*!***********************************************************************************
-		 \brief Rotates the entity by the orientation amount passed in.
+		 \brief Rotates the entity by the orientation amount passed in. 
 
 		 \param[in] transformId ID of the entity to update the transform of.
-		 \param[in] orientation Angle in radians about the z-axis starting from
+		 \param[in] orientation Angle in radians about the z-axis starting from 
 						the positive x axis.
 		*************************************************************************************/
 		static void RotateEntity(EntityID const transformId, float const orientation);
 
 		/*!***********************************************************************************
-		 \brief Updates the relative rotation of the entity by the orientation amount passed in.
+		 \brief Updates the relative rotation of the entity by the orientation amount passed in. 
 
 		 \param[in] transformId ID of the entity to update the transform of.
-		 \param[in] orientation Angle in radians about the z-axis starting from
+		 \param[in] orientation Angle in radians about the z-axis starting from 
 						the positive x axis.
 		*************************************************************************************/
 		static void RotateEntityRelative(EntityID const transformId, float const orientation);
@@ -161,10 +161,10 @@ namespace PE
 		// ----- Animation Helper Functions ----- //
 
 		/*!***********************************************************************************
-		 \brief Returns true if the current animation being played is the hurt animation,
+		 \brief Returns true if the current animation being played is the hurt animation, 
 				false otherwise.
 
-		 \return Returns true if the current animation being played is the hurt animation,
+		 \return Returns true if the current animation being played is the hurt animation, 
 				false otherwise.
 		*************************************************************************************/
 		bool GetIsPlayingHurtAnim(EntityID const id);
@@ -181,7 +181,7 @@ namespace PE
 
 		 \param[in] id - EntityID of the rat which the animation should be playing on.
 		 \param[in] animationState - Animation state that should be played.
-		 \param[in] forceRestart - Set to true if the current animation should be restarted
+		 \param[in] forceRestart - Set to true if the current animation should be restarted 
 										if the animation state passed in matches the current state.
 		*************************************************************************************/
 		void PlayAnimation(EntityID const id, EnumRatAnimations const animationState, bool const forceRestart = false);
@@ -271,7 +271,7 @@ namespace PE
 
 		 \return std::map<EntityID, RatScript_v2_0_Data>& Map of script data.
 		*************************************************************************************/
-		std::map<EntityID, RatScript_v2_0_Data>& GetScriptData();
+		std::map<EntityID, RatScript_v2_0_Data> &GetScriptData();
 
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
@@ -285,7 +285,7 @@ namespace PE
 		// --- TELEGRAPH HELPER FUNCTIONS --- // 
 
 		/*!***********************************************************************************
-		 \brief Rotates the movement telegraph to face the target position of the rat
+		 \brief Rotates the movement telegraph to face the target position of the rat 
 				and enable it.
 
 		 \param[in] id - EntityID of the rat.
@@ -389,7 +389,7 @@ namespace PE
 		void ChangeStateToMovement(EntityID const id, float const stateChangeDelay = 0.f);
 
 		/*!***********************************************************************************
-		 \brief Sets the flag for the state to be changed to the attack state
+		 \brief Sets the flag for the state to be changed to the attack state 
 						after the delay passed in.
 
 		 \param[in] id - EntityID of the entity to change the state of.
@@ -399,7 +399,7 @@ namespace PE
 		void ChangeStateToAttack(EntityID const id, float const stateChangeDelay = 0.f);
 
 		/*!***********************************************************************************
-		 \brief Sets the flag for the state to be changed to the death state
+		 \brief Sets the flag for the state to be changed to the death state 
 						after the delay passed in.
 
 		 \param[in] id - EntityID of the entity to change the state of.
@@ -528,7 +528,7 @@ namespace PE
 		bool CheckRatTouchingWall(EntityID const ratId, EntityID const entity1, EntityID const entity2);
 
 		/*!***********************************************************************************
-		\brief Checks if the collision event involves the rat's collider and a wall.
+		\brief Checks if the collision event involves the rat's collider and a wall. 
 				Call during on collision exit events.
 
 		\param[in] ratId - EntityID of the rat to check the detection radius of.
@@ -575,21 +575,21 @@ namespace PE
 		bool SetTarget(EntityID id, EntityID targetId, bool const capMaximum);
 
 		/*!***********************************************************************************
-		 \brief Sets the position that the rat should move towards when CalculateMovement
-						is called.
+		 \brief Sets the position that the rat should move towards when CalculateMovement 
+						is called. 
 
 		 \param[in] id - EntityID of the rat.
 		 \param[in] r_targetPosition - position to move towards.
-		 \param[in] capMaximum - Set to true to shift the target position within the range
-					of the rat's maximum range per turn, false to allow the rat to exceed their
+		 \param[in] capMaximum - Set to true to shift the target position within the range 
+					of the rat's maximum range per turn, false to allow the rat to exceed their 
 					max range.
 		 \return Returns true if the target position is far enough away from the rat, false otherwise.
 		*************************************************************************************/
 		bool SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum);
 
 		/*!***********************************************************************************
-		 \brief Moves the rat at a speed of [RatScriptData::movementSpeed] in the direction
-				of [RatScriptData::directionFromRatToPlayerCat]. After moving the rat, if
+		 \brief Moves the rat at a speed of [RatScriptData::movementSpeed] in the direction 
+				of [RatScriptData::directionFromRatToPlayerCat]. After moving the rat, if 
 				[RatScriptData::ratPlayerDistance] is within [RatScriptData::minDistanceToTarget]
 				of the target position, the function returns true.
 
@@ -598,7 +598,7 @@ namespace PE
 		 \param[in] capMaximum - Set to true to shift the target position within the range
 					of the rat's maximum range per turn, false to allow the rat to exceed their
 					max range.
-		 \return Returns true if the rat is within [RatScriptData::minDistanceToTarget]
+		 \return Returns true if the rat is within [RatScriptData::minDistanceToTarget] 
 				of the target, false otherwise.
 		*************************************************************************************/
 		bool CalculateMovement(EntityID id, float deltaTime);
@@ -616,17 +616,17 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Returns true if [newPosition] is within [minDistanceToTarget] of [targetPosition].
 
-		 \param[in] minDistanceToTarget - Maximum distance [newPosition] can be from
+		 \param[in] minDistanceToTarget - Maximum distance [newPosition] can be from 
 				[targetPosition] for the function to return true.
 		 \param[in] newPosition - Position to compare with the target position.
 		 \param[in] targetPosition - Position to get [newPosition]'s distance from.
-		 \return Returns true if [newPosition] is within [minDistanceToTarget] of
+		 \return Returns true if [newPosition] is within [minDistanceToTarget] of 
 				[targetPosition], false otherwise.
 		*************************************************************************************/
 		static bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
 
 		/*!***********************************************************************************
-		 \brief Reduces the health of the rat and plays the SFX. If the rat has run out of
+		 \brief Reduces the health of the rat and plays the SFX. If the rat has run out of 
 						health, the rat is killed using the KillRat function.
 
 		 \param[in] ratId - EntityID of the rat.
@@ -644,11 +644,11 @@ namespace PE
 
 		// ----- Private Members ----- //
 	private:
-		// Event listener IDs 
-		GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
-		GameStates_v2_0 previousGameState; // The game state in the previous frame
-		float timeSinceLastSFX{ 0.f }; // Time in seconds since the last rat SFX was played
-		float SFXcooldown{ 0.25f }; // Time in seconds before the next SFX can be played
+			// Event listener IDs 
+			GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
+			GameStates_v2_0 previousGameState; // The game state in the previous frame
+			float timeSinceLastSFX{ 0.f }; // Time in seconds since the last rat SFX was played
+			float SFXcooldown{ 0.25f }; // Time in seconds before the next SFX can be played
 
 		// ----- Private Methods ----- // 
 	private:
@@ -674,7 +674,7 @@ namespace PE
 		*************************************************************************************/
 		inline bool GameStateJustChanged() const
 		{
-			return previousGameState != gameStateController->currentState;
+				return previousGameState != gameStateController->currentState;
 		}
 
 		// --- OBJECT CREATION --- //
@@ -710,10 +710,10 @@ namespace PE
 		void CreateRatDetectionTelegraph(RatScript_v2_0_Data& r_data);
 
 		/*!***********************************************************************************
-		 \brief Create an instance of the appropriate attack object for the rat according
+		 \brief Create an instance of the appropriate attack object for the rat according 
 					to its type and store it in the rat data.
 
-		 \param[in, out] r_data - Reference to this rat's data.
+		 \param[in, out] r_data - Reference to this rat's data. 
 		*************************************************************************************/
 		void InstantiateRatAttack(RatScript_v2_0_Data& r_data);
 	}; // end of class 
