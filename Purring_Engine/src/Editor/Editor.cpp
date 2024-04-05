@@ -3643,6 +3643,11 @@ namespace PE {
 										int SkipButtonID = static_cast<int> (it->second.SkipButton);
 										int ContinueButtonID = static_cast<int> (it->second.ContinueButton);
 
+										int DeathCounterID = static_cast<int> (it->second.DeathCounter);
+										int KillCounterID = static_cast<int> (it->second.KillCounter);
+										int RescueCounterID = static_cast<int> (it->second.RescueCounter);
+										int TurnCounterID = static_cast<int> (it->second.TurnCounter);
+
 										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ecsoi", &CutsceneObjectID);
 										it->second.CutsceneObject = CutsceneObjectID;
 
@@ -3669,6 +3674,18 @@ namespace PE {
 
 										ImGui::Text("Skip Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcssbid", &SkipButtonID);
 										{ it->second.SkipButton = SkipButtonID; }
+									
+										ImGui::Text("Death Counter ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcdcid", &DeathCounterID);
+										{ it->second.DeathCounter = DeathCounterID; }
+
+										ImGui::Text("Kill Counter ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etckcid", &KillCounterID);
+										{ it->second.KillCounter = KillCounterID; }
+
+										ImGui::Text("Rescue Counter ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etcrcid", &RescueCounterID);
+										{ it->second.RescueCounter = RescueCounterID; }
+
+										ImGui::Text("Turn Counter ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##etctcid", &TurnCounterID);
+										{ it->second.TurnCounter = TurnCounterID; }
 									}
 								}
 							}

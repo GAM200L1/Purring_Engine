@@ -182,12 +182,11 @@ namespace PE
 			{
 				// toggle is caged to false
 				p_catData->isCaged = false;
-				for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(p_catData->catID))
+				for (EntityID childrenID : Hierarchy::GetInstance().GetChildren(p_catData->catID))
 				{
-					if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
-					{
-						CatHelperFunctions::ToggleEntity(findCageID, false);
-					}
+					// all children will be inactive anyway - heart, cage, telegraphs, and projectile
+					CatHelperFunctions::ToggleEntity(childrenID, false);
+					
 				}
 				// play adopt audio
 				CatScript_v2_0::PlayRescueCatAudio(p_catData->catType);

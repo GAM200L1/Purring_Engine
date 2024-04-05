@@ -250,6 +250,24 @@ namespace PE
 		*************************************************************************************/
 		bool GetSelectedCat(EntityID catID);
 
+		void ResetStats();
+
+		void IncrementCatRescued();
+
+		void IncrementRatsKilled();
+
+		void IncrementTurnCount(int count);
+
+		void IncrementDeathCount();
+
+		int GetCatRescued();
+
+		int GetRatsKilled();
+
+		int GetTurnCount();
+
+		int GetDeathCount();
+
 		// ----- Object Helper Functions ----- //
 	private:
 		/*!***********************************************************************************
@@ -544,7 +562,11 @@ namespace PE
 		// Audio Controls
 		bool m_bgmStarted = false;
 
-
+		//stats
+		int m_catsRescued;
+		int m_ratsVanquished;
+		int m_totalTurns;
+		int m_deathCount;
 	};
 }
 
