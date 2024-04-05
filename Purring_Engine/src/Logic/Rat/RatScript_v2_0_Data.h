@@ -46,7 +46,7 @@ namespace PE
 		HURT,
 		DEATH,
 		RAT_ANIM_COUNT // Use this to get the number of rat animation states
-	};	
+	};
 
 	enum class EnumRatIconAnimations : char
 	{
@@ -60,74 +60,74 @@ namespace PE
 
 	class AttackDataBase_v2_0
 	{
-			// ----- Public variables ----- // 
+		// ----- Public variables ----- // 
 	public:
-			EntityID mainID{}; // ID of the rat these attacks belong to
+		EntityID mainID{}; // ID of the rat these attacks belong to
 
 
-			// ----- Constructors ----- // 
+		// ----- Constructors ----- // 
 	public:
-			/*!***********************************************************************************
-			\brief Constructs the base attack object.
+		/*!***********************************************************************************
+		\brief Constructs the base attack object.
 
-			\param _mainID - ID of the rat that this attack belongs to.
-			*************************************************************************************/
-			AttackDataBase_v2_0(EntityID _mainID) : mainID{ _mainID } { /* Empty by design */ }
+		\param _mainID - ID of the rat that this attack belongs to.
+		*************************************************************************************/
+		AttackDataBase_v2_0(EntityID _mainID) : mainID{ _mainID } { /* Empty by design */ }
 
-			/*!***********************************************************************************
-			\brief Destructor.
-			*************************************************************************************/
-			virtual ~AttackDataBase_v2_0() { /* Empty by design */ }
+		/*!***********************************************************************************
+		\brief Destructor.
+		*************************************************************************************/
+		virtual ~AttackDataBase_v2_0() { /* Empty by design */ }
 
 
-			// ----- Public methods ----- // 
+		// ----- Public methods ----- // 
 	public:
-			/*!***********************************************************************************
-			\brief Initializes the attack (e.g. position objects at the start position etc.).
-						Does nothing by default.
-			*************************************************************************************/
-			virtual void InitAttack() {}
+		/*!***********************************************************************************
+		\brief Initializes the attack (e.g. position objects at the start position etc.).
+					Does nothing by default.
+		*************************************************************************************/
+		virtual void InitAttack() {}
 
-			/*!***********************************************************************************
-			\brief Executes the attack. Called once every frame during update.
-						Returns true when the attack is done executing.
+		/*!***********************************************************************************
+		\brief Executes the attack. Called once every frame during update.
+					Returns true when the attack is done executing.
 
-			\param deltaTime - Time in seconds since the last frame.
+		\param deltaTime - Time in seconds since the last frame.
 
-			\return Returns true when the attack is done executing, false otherwise.
-			*************************************************************************************/
-			virtual bool ExecuteAttack(float deltaTime) = 0;
+		\return Returns true when the attack is done executing, false otherwise.
+		*************************************************************************************/
+		virtual bool ExecuteAttack(float deltaTime) = 0;
 
-			/*!***********************************************************************************
-			\brief Spawns the objects required for this attack.
-			*************************************************************************************/
-			virtual void CreateAttackObjects() = 0;
+		/*!***********************************************************************************
+		\brief Spawns the objects required for this attack.
+		*************************************************************************************/
+		virtual void CreateAttackObjects() = 0;
 
-			/*!***********************************************************************************
-			\brief Disable all the attack objects. Called when the attack state ends and
-						when the rat dies.
-			*************************************************************************************/
-			virtual void DisableAttackObjects() = 0;
+		/*!***********************************************************************************
+		\brief Disable all the attack objects. Called when the attack state ends and
+					when the rat dies.
+		*************************************************************************************/
+		virtual void DisableAttackObjects() = 0;
 
-			/*!***********************************************************************************
-			\brief Checks if the collision involved the attack objects and relevant entities and
-					handles it (e.g. calls the "LoseHealth" function on the victim entity).
+		/*!***********************************************************************************
+		\brief Checks if the collision involved the attack objects and relevant entities and
+				handles it (e.g. calls the "LoseHealth" function on the victim entity).
 
-			\param entity1 - One of the entities involved in the collision event.
-			\param entity2 - One of the entities involved in the collision event.
+		\param entity1 - One of the entities involved in the collision event.
+		\param entity2 - One of the entities involved in the collision event.
 
-			\return Returns true if the collision involved the attack object and/or the rat and a cat,
-					false otherwise.
-			*************************************************************************************/
-			virtual bool OnCollisionEnter(EntityID entity1, EntityID entity2) = 0;
+		\return Returns true if the collision involved the attack object and/or the rat and a cat,
+				false otherwise.
+		*************************************************************************************/
+		virtual bool OnCollisionEnter(EntityID entity1, EntityID entity2) = 0;
 
-			/*!***********************************************************************************
-			\brief Picks a target position to move towards during the movement state and returns it.
-					Calls RatScript_v2_0::SetTarget();
+		/*!***********************************************************************************
+		\brief Picks a target position to move towards during the movement state and returns it.
+				Calls RatScript_v2_0::SetTarget();
 
-			\return vec2 - Target position to move towards during the movement state.
-			*************************************************************************************/
-			virtual vec2 PickTargetPosition() = 0;
+		\return vec2 - Target position to move towards during the movement state.
+		*************************************************************************************/
+		virtual vec2 PickTargetPosition() = 0;
 	}; // end of struct AttackDataBase_v2_0
 
 
@@ -137,16 +137,6 @@ namespace PE
 	*************************************************************************************/
 	struct RatScript_v2_0_Data
 	{
-		/*!***********************************************************************************
-		 \brief Destructor.
-		*************************************************************************************/
-		~RatScript_v2_0_Data()
-		{
-			DeleteAttackData();
-			DeleteQueuedState();
-			delete p_stateManager;
-		}
-
 		// reference entities
 		EntityID myID{ 0 };						// id of the rat with this data
 		EntityID detectionRadiusId{};
@@ -154,27 +144,27 @@ namespace PE
 		EntityID telegraphArrowEntityID{ 0 };	// id of paw print movement telegraph
 		EntityID detectionIcon{ 0 };			// id of question/exclamation mark icon
 		StateMachine* p_stateManager{ nullptr };
-		
+
 		// Positional offset from the center of the rat that the detection icon should be located
-		vec2 detectionIconOffset{ 55.f, 40.f }; 
+		vec2 detectionIconOffset{ 55.f, 40.f };
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 		bool firstTimeIdle{ true }; // True if the rat has not entered its idle state yet, false otherwise
 		bool hasChangedToDeathState{ false }; // True if the rat has been changed to the death state
 		EnumRatType ratType{ EnumRatType::GUTTER };
-		AttackDataBase_v2_0* p_attackData{ nullptr };
+		std::unique_ptr<AttackDataBase_v2_0> p_attackData{};
 
 		// animation
 		AnimationComponent* p_ratAnimationComponent{ nullptr };
 		// animation states of the rat <state name, file name>
-		std::map<std::string, std::string> animationStates{}; 
+		std::map<std::string, std::string> animationStates{};
 		// The animation state to play when the rat is done with its hurt animation
-		EnumRatAnimations cachedRatAnimation{ EnumRatAnimations::RAT_ANIM_COUNT }; 
+		EnumRatAnimations cachedRatAnimation{ EnumRatAnimations::RAT_ANIM_COUNT };
 		// animation states of the rat icon
-		std::vector<std::string> iconAnimationStates{ 
-				"../Assets/Animation/Animation_Detect.anim", 
-				"../Assets/Animation/Animation_Confused.anim" }; 
-		
+		std::vector<std::string> iconAnimationStates{
+				"../Assets/Animation/Animation_Detect.anim",
+				"../Assets/Animation/Animation_Confused.anim" };
+
 		// rat stats
 		int ratHealth{ 0 };								// health of the rat, needs manual setting
 		int ratMaxHealth{ 3 };						// maximum health of the rat
@@ -212,12 +202,12 @@ namespace PE
 		// Hunting and returning
 		int maxHuntTurns{ 2 }; // Number of turn the rat will hunt before returning to their original position
 		vec2 originalPosition{ 0.f, 0.f }; // Position to return to
-		
+
 		// Patrol Points
 		std::vector<vec2> patrolPoints{ /*vec2{ 11.f, -134.f }*/ };
 
 	private:
-		State* p_queuedState{ nullptr }; // State to load
+		std::unique_ptr<State> p_queuedState{}; // State to load
 
 	public:
 		/*!***********************************************************************************
@@ -245,29 +235,37 @@ namespace PE
 		static std::string GetRatName(char ratTypeIndex);
 
 		/*!***********************************************************************************
-		\brief Setter for the pointer to the state the rat should be set to. 
+		\brief Setter for the pointer to the state the rat should be set to.
 						Deletes any states currently being pointed to.
 
 		\param p_newState - Pointer to the state the rat should be set to.
 		\param bypassDeletion - Set to true to not delete the existing data being pointed at,
 								false to delete any data being pointed at if setting a new state.
 		*************************************************************************************/
-		void SetQueuedState(State* p_newState, bool bypassDeletion)
+		void SetQueuedState(std::unique_ptr<State>&& p_newState, bool bypassDeletion)
 		{
 			if (!bypassDeletion && p_queuedState)
 			{
 				DeleteQueuedState();
 			}
 
-			p_queuedState = p_newState;
+			p_queuedState = std::move(p_newState);
 		}
 
 		/*!***********************************************************************************
 		 \brief Getter for the pointer to the state the rat should be set to.
 		*************************************************************************************/
-		State* GetQueuedState()
+		std::unique_ptr<State> const& GetQueuedState() const
 		{
 			return p_queuedState;
+		}
+
+		/*!***********************************************************************************
+		 \brief Getter for the pointer to the state the rat should be set to.
+		*************************************************************************************/
+		State* ReleaseQueuedState()
+		{
+			return p_queuedState.release();
 		}
 
 		/*!***********************************************************************************
@@ -275,11 +273,7 @@ namespace PE
 		*************************************************************************************/
 		void DeleteAttackData()
 		{
-			if (p_attackData) 
-			{
-				delete p_attackData;
-				p_attackData = nullptr;
-			}
+			p_attackData.reset();
 		}
 
 		/*!***********************************************************************************
@@ -289,8 +283,7 @@ namespace PE
 		{
 			if (p_queuedState)
 			{
-				delete p_queuedState;
-				p_queuedState = nullptr;
+				p_queuedState.reset();
 			}
 		}
 
