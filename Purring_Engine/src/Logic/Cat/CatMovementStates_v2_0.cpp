@@ -261,6 +261,9 @@ namespace PE
 	void CatMovement_v2_0PLAN::ResetDrawnPath()
 	{
 		if (m_resetPositions.empty()) { return; }
+		
+		EntityID const& r_mainID = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID();
+
 		if (p_data->catType == EnumCatType::MAINCAT)
 		{
 			// reset follower cats positions
@@ -295,7 +298,7 @@ namespace PE
 		for (int i{ static_cast<int>(p_data->pathQuads.size() - 1) }; i > r_resetPosition.first; --i)
 		{
 			// erases path node which entityid is in the path colliders on cage
-			if (!m_pathCollidersOnCage.empty())
+			if (r_mainID == p_data->catID && !m_pathCollidersOnCage.empty())
 				m_pathCollidersOnCage.erase(std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), i));
 			
 			// deactivates path node
@@ -314,7 +317,7 @@ namespace PE
 		// Add the player's starting position as a node
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
 
-		if (m_pathHasCagedCat && m_pathCollidersOnCage.empty())
+		if (r_mainID == p_data->catID && m_pathHasCagedCat && m_pathCollidersOnCage.empty())
 		{
 			m_pathHasCagedCat = false;
 			
@@ -412,28 +415,28 @@ namespace PE
 			}
 			else if (IsCatAndCaged(OTEE.Entity2))
 			{
-				if (OTEE.Entity1 == p_data->catID)
+				if (OTEE.Entity1 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())
 				{
 					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity2);
 					m_pathHasCagedCat = true;
 					m_cagedCatID = OTEE.Entity2;
 				}
-				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
+				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
 				{
 					m_pathCollidersOnCage.emplace_back(OTEE.Entity1);
 				}
 			}
 			else if (IsCatAndCaged(OTEE.Entity1))
 			{
-				if (OTEE.Entity2 == p_data->catID)
+				if (OTEE.Entity2 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())
 				{
 					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity1);
 					m_pathHasCagedCat = true;
 					m_cagedCatID = OTEE.Entity1;
 				}
-				else if (std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
+				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
 				{
 					m_pathCollidersOnCage.emplace_back(OTEE.Entity2);
 				}
