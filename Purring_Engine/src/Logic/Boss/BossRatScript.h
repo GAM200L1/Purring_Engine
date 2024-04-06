@@ -269,6 +269,8 @@ namespace PE
 
 		float m_deathDelayTimerBeforeOutro{.75f};
 		float m_deathDelayTimeBeforeOutro{ m_deathDelayTimerBeforeOutro };
+
+		bool m_hasInitiatedAudioFadeOut = false;				// Tracks if the audio fade out has been initiated
 		//do i want to store all the obstacles here?
 	}; // end of class 
 
