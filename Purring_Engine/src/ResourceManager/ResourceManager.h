@@ -47,6 +47,8 @@
 #include "MetaData.h"
 #include "Data/SerializationManager.h"
 
+#define RESOURCE_LOG
+
 //class Resource
 //{
 //public:
@@ -377,5 +379,9 @@ namespace PE
         std::unordered_set<std::string> m_allFontKeys;
         std::unordered_set<std::string> m_allAnimationKeys;
         std::unordered_set<std::string> m_allPrefabKeys;
+
+#ifdef RESOURCE_LOG
+        std::set<std::string> m_allResourcesUsed;
+#endif // RESOURCE_LOG
     };
 }
