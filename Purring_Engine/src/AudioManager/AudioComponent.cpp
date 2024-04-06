@@ -112,6 +112,7 @@ namespace PE
         if (audio && audio->GetChannel())
         {
             audio->GetChannel()->setPaused(true);
+            std::cout << "AudioComponent [" << m_audioKey << "] Paused\n";
         }
         m_isPaused = true;
     }
@@ -122,6 +123,7 @@ namespace PE
         if (audio && audio->GetChannel())
         {
             audio->GetChannel()->setPaused(false);
+            std::cout << "AudioComponent [" << m_audioKey << "] Resumed\n";
         }
         m_isPaused = false;
     }
@@ -133,6 +135,8 @@ namespace PE
         {
             audio->GetChannel()->stop();
         }
+        // Reset pause state
+        m_isPaused = false;
     }
 
     std::string const& AudioComponent::GetAudioKey() const
