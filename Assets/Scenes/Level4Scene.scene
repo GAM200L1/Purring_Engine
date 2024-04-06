@@ -1441,12 +1441,12 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_EndPlanning_512x128.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_512x128.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_EndPlanning_512x128.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,
@@ -6480,12 +6480,12 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_UndoAction_222x112.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_512x128.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_UndoAction_222x112.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,

@@ -1202,8 +1202,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1431,12 +1431,12 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_EndPlanning_512x128.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_512x128.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_EndPlanning_512x128.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,
@@ -2364,9 +2364,9 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_Menu_127x107.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_disabledTexture": "../Assets/Textures/Button_Menu_127x107.png",
@@ -4911,8 +4911,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4990,8 +4990,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5081,8 +5081,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -6717,12 +6717,12 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_UndoAction_222x112.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_512x128.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_UndoAction_222x112.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,
@@ -6970,7 +6970,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/LeafTwirl.png"
+                        "TextureKey": "../Assets/Textures/Resources/LeafTwirl_Sepia.png"
                     },
                     "Transform": {
                         "height": 100.0000228881836,
