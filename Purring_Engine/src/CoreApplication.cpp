@@ -40,6 +40,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/GUIRenderer.h"
 #include "Graphics/CameraManager.h"
+#include "Graphics/Cursor.h"
 
 // Core Functionality
 #include "CoreApplication.h"
@@ -567,6 +568,14 @@ void PE::CoreApplication::Run()
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE
 
+#ifdef GAMERELEASE
+    // Enable the custom cursor
+    Graphics::Cursor::GetInstance().SetVisibility(true);
+#else
+    // Disable the custom cursor
+    Graphics::Cursor::GetInstance().SetVisibility(false);
+#endif // GAMERELEASE
+
     // Set the default background colour to black
     const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
 
@@ -622,6 +631,7 @@ void PE::CoreApplication::Run()
         }
 
         Hierarchy::GetInstance().Update();
+        Graphics::Cursor::GetInstance().Update(); // Update the position of the cursor texture
 
         
         //std::cout << Graphics::CameraManager::GetUiCameraId() << std::endl;
@@ -637,6 +647,8 @@ void PE::CoreApplication::Run()
         // if the scene is being loaded, skip the rest of the frame
         if (SceneManager::GetInstance().IsLoadingScene())
         {
+            Graphics::Cursor::GetInstance().SetCursorDefault();
+
             // Set the default background colour to black
             const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
             SceneManager::GetInstance().LoadSceneToLoad();
@@ -644,6 +656,8 @@ void PE::CoreApplication::Run()
         }
         else if (SceneManager::GetInstance().IsRestartingScene())
         {
+            Graphics::Cursor::GetInstance().SetCursorDefault();
+
             // Set the default background colour to black
             const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0, 0, 0);
             SceneManager::GetInstance().RestartScene(SceneManager::GetInstance().GetActiveScene());

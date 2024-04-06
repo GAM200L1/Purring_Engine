@@ -99,8 +99,9 @@ namespace PE
 		{
 			p_catMovement->Update(id, deltatime, cursorPosition, m_mousePositionPrevious, m_mouseClicked, m_mouseClickPrevious);
 		}
-		p_catMovement->StopHeartAnimation(id);
-
+		if (p_data->catType == EnumCatType::MAINCAT)
+			p_catMovement->StopHeartAnimation(id);
+		
 		// save previous frame data
 		m_mouseClickPrevious = m_mouseClicked;
 		m_collidedPreviously = collidedCurrent;

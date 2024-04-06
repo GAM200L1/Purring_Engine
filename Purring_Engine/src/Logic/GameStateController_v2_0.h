@@ -498,6 +498,7 @@ namespace PE
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
 		int currentTurn{1};
 		bool gameEnded{ false };
+		bool godMode{ false };
 	private:
 		//Script Variables
 		std::map<EntityID, GameStateController_v2_0Data> m_scriptData; // Data associated with each instance of the script

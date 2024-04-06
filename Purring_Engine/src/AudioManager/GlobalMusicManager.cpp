@@ -91,8 +91,11 @@ namespace PE
             // Update the current track key to reflect the newly playing BGM
             m_currentTrackKey = r_prefabPath;
 
-            // Store the audio component in the map using the prefab path as the key
-            m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+            // Check if the audio component already exists before adding
+            if (m_audioComponents.find(r_prefabPath) == m_audioComponents.end())
+            {
+                m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+            }
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
@@ -107,6 +110,12 @@ namespace PE
             audioComponent.SetLoop(loop);
             audioComponent.PlayAudioSound(AudioComponent::AudioType::SFX);
             m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+
+            // Check if the audio component already exists before adding
+            if (m_audioComponents.find(r_prefabPath) == m_audioComponents.end())
+            {
+                m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+            }
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
@@ -133,6 +142,27 @@ namespace PE
             audioComponent->StartIndividualFadeIn(1.0f, 1.0f);
         }
     }
+
+    void GlobalMusicManager::PauseAllAudio()
+    {
+        m_isPaused = true;
+
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            audioComponent->PauseSound();
+        }
+    }
+
+    void GlobalMusicManager::ResumeAllAudio()
+    {
+        m_isPaused = false;
+
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            audioComponent->ResumeSound();
+        }
+    }
+
 
     void GlobalMusicManager::StopBackgroundMusic()
     {
@@ -222,6 +252,8 @@ namespace PE
 
     void GlobalMusicManager::StopAllAudio()
     {
+        m_isPaused = false;
+
         for (auto& [key, audioComponent] : m_audioComponents)
         {
             if (audioComponent)

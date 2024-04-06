@@ -141,7 +141,8 @@ namespace PE
 			}
 
 			// disables telegraphs if anywhere but the telegraphs are clicked
-			if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id) && mouseClicked && !mouseClickedPrevious && !collidingWithAnyTelegraph && !m_firstUpdate)
+			if ((mouseClicked && !mouseClickedPrevious && !m_firstUpdate) && 
+				(!collidingWithAnyTelegraph || !GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id)))
 			{
 				(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 				ToggleTelegraphs(false, true);
@@ -166,8 +167,6 @@ namespace PE
 		ToggleTelegraphs(false, false);
 		
 		p_attackData = nullptr;
-		/*p_mouseClick = nullptr;
-		p_mouseClickedPrevious = nullptr;*/
 	}
 
 	void GreyCatAttack_v2_0PLAN::ResetSelection(EntityID id)
@@ -322,12 +321,15 @@ namespace PE
 	{
 		if (id1 != m_catID && id2 != m_catID)
 		{
+			int damage{ p_attackData->damage };
+			damage *= (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->godMode) ? 2 : 1;
+
 			// kill cat if it is not following and not in cage and projectile hits catif (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 			if (id1 == p_attackData->projectileID)
 			{
 				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 				{
-					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
+					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, damage);
 					PlayProjectileHitAudio(false);
 					return true;
 				}
@@ -339,7 +341,7 @@ namespace PE
 				}
 				else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
-					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(damage);
 					PlayProjectileHitAudio(false);
 					return true;
 				}
@@ -353,7 +355,7 @@ namespace PE
 			{
 				if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 				{
-					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, damage);
 					PlayProjectileHitAudio(false);
 					return true;
 				}
@@ -365,7 +367,7 @@ namespace PE
 				}
 				else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 				{
-					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+					GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(damage);
 					PlayProjectileHitAudio(false);
 					return true;
 				}
