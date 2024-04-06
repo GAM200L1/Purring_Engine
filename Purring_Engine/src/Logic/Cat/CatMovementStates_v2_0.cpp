@@ -118,6 +118,8 @@ namespace PE
 		else if (!mouseClicked && mouseClickedPrevious && m_pathBeingDrawn)
 		{
 			// The mouse has been released, so end the path
+			p_data->startDoubleClickTimer = false;
+			p_data->doubleClickTimer = 0.f;
 			EndPathDrawing(id);
 		}
 	}

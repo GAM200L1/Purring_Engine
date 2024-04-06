@@ -83,7 +83,7 @@ namespace PE
 		bool collidingWithTelegraph = PointCollision(r_telegraphCollider, r_cursorPosition);
 		bool collidingWithCat = PointCollision(r_catCollider, r_cursorPosition);
 
-		if (collidingWithTelegraph && !collidingWithCat)
+		if (collidingWithTelegraph && !collidingWithCat && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id))
 		{
 			if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
@@ -101,7 +101,7 @@ namespace PE
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		}
 
-		if (mouseClicked && !mouseClickedPrevious && (collidingWithCat || !collidingWithTelegraph) && !m_firstUpdate)
+		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id) && mouseClicked && !mouseClickedPrevious && (collidingWithCat || !collidingWithTelegraph) && !m_firstUpdate)
 		{
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 
