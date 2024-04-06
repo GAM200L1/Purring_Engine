@@ -422,4 +422,6 @@ Assets/*
 # do not ignore .meta files in Assets/
 !Assets/**/*.meta
 
+# ignore these
 Assets/Scenes/Savestate/savestate.scene
+Assets/Settings/resourcelog.txt
