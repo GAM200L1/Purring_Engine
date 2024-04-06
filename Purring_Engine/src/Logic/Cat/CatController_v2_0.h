@@ -156,12 +156,29 @@ namespace PE
 			return (IsCat(catID) && !IsCatCaged(catID));
 		}
 		
+		/*!***********************************************************************************
+		 \brief Adds cat id and the undo to perform to the internal stack
+
+		 \param[in] catID - catID to undo
+		 \param[in] undoType - to undo movement or attack
+		*************************************************************************************/
 		void AddToUndoStack(EntityID catID, EnumUndoType undoType);
 
+		/*!***********************************************************************************
+		 \brief Wrapper function for undo call
+
+		 \param[in] id - button for undoing
+		*************************************************************************************/
 		void UndoCatPlanButtonCall(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Undos the latest action
+		*************************************************************************************/
 		void UndoCatPlan();
 
+		/*!***********************************************************************************
+		 \brief Clears the undo stack
+		*************************************************************************************/
 		void ClearCatUndoStack();
 
 		// getters
@@ -238,8 +255,18 @@ namespace PE
 		int m_mouseEventListener{}, m_mouseReleaseEventListener{};
 		bool m_mouseClick{ false }, m_mouseClickPrev{ false };
 
+		/*!***********************************************************************************
+		 \brief Function to handle mouse click events for Cat_v2_0PLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
+		/*!***********************************************************************************
+		 \brief Function to handle mouse release events for Cat_v2_0PLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
 		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 	};
 }
