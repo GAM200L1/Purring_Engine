@@ -59,8 +59,12 @@ namespace PE
 
 	void EndingCutsceneController::Update(EntityID id, float deltaTime)
 	{
+		if(!m_hasStoppedCutscene)
 		GlobalMusicManager::GetInstance().Update(deltaTime);
-
+		else
+		{
+			GlobalMusicManager::GetInstance().StopBackgroundMusic();
+		}
 		if (PauseManager::GetInstance().IsPaused())
 		{
 			EntityID cutsceneSounds = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Outro Cutscene Music.prefab");
@@ -310,6 +314,8 @@ namespace PE
 	void EndingCutsceneController::WinScreen(EntityID)
 	{
 		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState = GameStates_v2_0::WIN;
+
+		m_hasStoppedCutscene = true;
 
 		EntityID bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Outro Cutscene Music.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
