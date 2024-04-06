@@ -24,6 +24,9 @@
 #include "ECS/SceneView.h"
 #include "Animation/Animation.h"
 #include "LogicSystem.h"
+#include "Logic/CameraShakeScript.h"
+#include "System.h"
+#include "Graphics/CameraManager.h"
 
 #include <limits>
 
@@ -103,9 +106,10 @@ namespace PE
 		std::cout << "Test Function Called" << std::endl;
 	}
 
-	void testScript::TestFunction2(EntityID)
+	void testScript::TestFunction2(EntityID id)
 	{
 		std::cout << "Test Function 2 Called" << std::endl;
+		GETSCRIPTINSTANCEPOINTER(CameraShakeScript)->Shake(GETCAMERAMANAGER()->GetMainCameraId());
 	}
 
 	void testScript::TestFunction3(EntityID)

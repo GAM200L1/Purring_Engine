@@ -69,17 +69,13 @@ namespace PE
 
 	// ----- ATTACK PLAN ----- //
 
-	void OrangeCatAttack_v2_0PLAN::Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev)
+	void OrangeCatAttack_v2_0PLAN::Enter(EntityID id)
 	{
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
-
-		// retrive mouse click data from plan state
-		p_mouseClick = p_planMouseClick;
-		p_mouseClickedPrevious = p_planMouseClickPrev;
 	}
 
-	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
+	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious)
 	{
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
@@ -92,11 +88,12 @@ namespace PE
 		if (collidingWithTelegraph && !collidingWithCat)
 		{
 			CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
-			if (*p_mouseClick)
+			if (mouseClicked && !mouseClickedPrevious)
 			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
+				
 				(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_selectColor);
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
 			}
 		}
 		else
@@ -105,7 +102,7 @@ namespace PE
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		}
 
-		if (*p_mouseClick && !(*p_mouseClickedPrevious) && !collidingWithTelegraph && !m_firstUpdate)
+		if (mouseClicked && !mouseClickedPrevious && !collidingWithTelegraph && !m_firstUpdate)
 		{
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 
@@ -129,8 +126,8 @@ namespace PE
 		ToggleTelegraphs(false, false);
 
 		p_attackData = nullptr;
-		p_mouseClick = nullptr;
-		p_mouseClickedPrevious = nullptr;
+		/*p_mouseClick = nullptr;
+		p_mouseClickedPrevious = nullptr;*/
 	}
 
 	void OrangeCatAttack_v2_0PLAN::ResetSelection(EntityID id)

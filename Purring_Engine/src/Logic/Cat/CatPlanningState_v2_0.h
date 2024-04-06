@@ -107,14 +107,14 @@ namespace PE
 		float m_doubleClickTimer{ 0.f };
 
 		/*!***********************************************************************************
-		 \brief Function to handle mouse click events for GreyCatPLAN
+		 \brief Function to handle mouse click events for Cat_v2_0PLAN
 
 		 \param[in] r_ME - Mouse event data.
 		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
 		/*!***********************************************************************************
-		 \brief Function to handle mouse release events for GreyCatPLAN
+		 \brief Function to handle mouse release events for Cat_v2_0PLAN
 
 		 \param[in] r_ME - Mouse event data.
 		*************************************************************************************/
