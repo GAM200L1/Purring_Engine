@@ -188,7 +188,7 @@ namespace PE
 		if (m_catUndoStack.empty()) { return; }
 		while (m_catUndoStack.top().second == EnumUndoType::UNDO_ATTACK)
 		{
-			if (!GETSCRIPTDATA(CatScript_v2_0, m_catUndoStack.top().first).attackSelected)
+			if (!(GETSCRIPTDATA(CatScript_v2_0, m_catUndoStack.top().first))->attackSelected)
 				m_catUndoStack.pop();
 			else
 				break;

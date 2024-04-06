@@ -88,10 +88,9 @@ namespace PE
 		if (collidingWithTelegraph && !collidingWithCat)
 		{
 			CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
-			if (mouseClicked)
+			if (mouseClicked && !mouseClickedPrevious)
 			{
-				if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
-					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
 				
 				(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_selectColor);

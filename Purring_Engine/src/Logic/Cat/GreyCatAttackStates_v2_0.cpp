@@ -126,8 +126,7 @@ namespace PE
 					if (mouseClicked && !mouseClickedPrevious)
 					{
 						// add action to undo stack
-						if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
-							GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
+						GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
 
 						p_attackData->attackDirection = r_telegraph.first;
 						(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
