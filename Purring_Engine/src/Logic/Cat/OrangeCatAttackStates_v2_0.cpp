@@ -101,7 +101,8 @@ namespace PE
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		}
 
-		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id) && mouseClicked && !mouseClickedPrevious && (collidingWithCat || !collidingWithTelegraph) && !m_firstUpdate)
+		if ((mouseClicked && !mouseClickedPrevious && !m_firstUpdate) &&
+			(!collidingWithTelegraph || !GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id)))
 		{
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 
@@ -243,6 +244,9 @@ namespace PE
 
 	void OrangeCatAttack_v2_0EXECUTE::SeismicHitCatOrRat(EntityID id1, EntityID id2)
 	{
+		int damage{ p_attackData->damage };
+		damage *= (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->godMode) ? 2 : 1;
+
 		// kill cat if it is not following and not in cage and projectile hits catif (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 		if (id1 == p_attackData->seismicID)
 		{
