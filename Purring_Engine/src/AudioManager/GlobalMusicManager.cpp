@@ -146,7 +146,6 @@ namespace PE
     void GlobalMusicManager::PauseAllAudio()
     {
         m_isPaused = true;
-        std::cout << "Pausing all audio. m_isPaused set to: " << m_isPaused << std::endl;
 
         for (auto& [key, audioComponent] : m_audioComponents)
         {
@@ -157,7 +156,6 @@ namespace PE
     void GlobalMusicManager::ResumeAllAudio()
     {
         m_isPaused = false;
-        std::cout << "Resuming all audio. m_isPaused set to: " << m_isPaused << std::endl;
 
         for (auto& [key, audioComponent] : m_audioComponents)
         {
@@ -255,7 +253,6 @@ namespace PE
     void GlobalMusicManager::StopAllAudio()
     {
         m_isPaused = false;
-        std::cout << "Stopping all audio. m_isPaused set to: " << m_isPaused << std::endl;
 
         for (auto& [key, audioComponent] : m_audioComponents)
         {

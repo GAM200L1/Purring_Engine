@@ -112,7 +112,7 @@ namespace PE
         if (audio && audio->GetChannel())
         {
             audio->GetChannel()->setPaused(true);
-            std::cout << "AudioComponent [" << m_audioKey << "] Paused\n";
+            //std::cout << "AudioComponent [" << m_audioKey << "] Paused\n";
         }
         m_isPaused = true;
     }
@@ -123,7 +123,7 @@ namespace PE
         if (audio && audio->GetChannel())
         {
             audio->GetChannel()->setPaused(false);
-            std::cout << "AudioComponent [" << m_audioKey << "] Resumed\n";
+            //std::cout << "AudioComponent [" << m_audioKey << "] Resumed\n";
         }
         m_isPaused = false;
     }
