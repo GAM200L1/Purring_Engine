@@ -66,6 +66,8 @@ namespace PE
 					// Move the rat back towards its original position
 					if(!(p_data->finishedExecution))
 						p_data->finishedExecution = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime);
+
+					p_data->ratIsMoving = !(p_data->finishedExecution);
 			}
 			// If the game state is planning, set the target 
 			else if (gameStateController->currentState == GameStates_v2_0::PLANNING)
@@ -81,6 +83,7 @@ namespace PE
 							{
 									m_planningRunOnce = true;
 									p_data->finishedExecution = false;
+									p_data->ratIsMoving = false;
 
 									// Play idle animation
 									GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);

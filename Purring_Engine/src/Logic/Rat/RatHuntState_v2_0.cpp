@@ -84,6 +84,7 @@ namespace PE
 						// Move towards the target position until we've reached or we've run out of turns
 						if (!(p_data->finishedExecution)) {
 								p_data->finishedExecution = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime);
+								p_data->ratIsMoving = !(p_data->finishedExecution);
 #ifdef DEBUG_PRINT
 								std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute - moving\n";
 #endif // DEBUG_PRINT
@@ -92,6 +93,7 @@ namespace PE
 						{
 								// Play animation
 								GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
+								p_data->ratIsMoving = false;
 #ifdef DEBUG_PRINT
 								std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute - finished moving\n";
 #endif // DEBUG_PRINT
@@ -118,6 +120,7 @@ namespace PE
 #endif // DEBUG_PRINT
 					m_planningRunOnce = true;
 					p_data->finishedExecution = false;
+					p_data->ratIsMoving = false;
 
 					// Play animation
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);

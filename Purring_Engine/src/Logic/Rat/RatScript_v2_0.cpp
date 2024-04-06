@@ -784,8 +784,12 @@ namespace PE
 				EnableDetectionTelegraphs(id, EnumRatIconAnimations::DETECT);
 			}
 
-			// Orient the rat
-			UpdateEntityFacingdirection(id, (GetEntityPosition(catID) - GetEntityPosition(id)));
+			// If the rat isn't moving
+			if (!(it->second.ratIsMoving))
+			{
+				// Orient the rat to face the cat
+				UpdateEntityFacingdirection(id, (GetEntityPosition(catID) - GetEntityPosition(id)));
+			}
 
 			// Store the cat in the container
 			it->second.catsInDetectionRadius.insert(catID);
