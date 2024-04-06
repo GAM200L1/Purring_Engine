@@ -2,14 +2,14 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "../Assets/Audio/MOTM_M5_EndingCutscene_AudioOnly.wav",
+                "audioKey": "../Assets/Audio/MOTM_M6_EndingCutscene_AudioOnly.wav",
                 "loop": true
             },
             "EntityDescriptor": {
-                "Prefab Type": "Background Music",
+                "Prefab Type": "M6 Ending Cutscene Music",
                 "children": [],
                 "isActive": true,
-                "name": "Background Music",
+                "name": "M6 Ending Cutscene Music",
                 "parent": null,
                 "sceneID": 18446744073709551615
             }
