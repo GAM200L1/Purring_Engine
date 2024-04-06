@@ -17,6 +17,10 @@
         "showSceneView": true,
         "showTestWindows": false
     },
+    "cursor": {
+        "cursorDefaultTexture": "../Assets/Textures/Cursor/PointyCursor_32px.png",
+        "cursorHoverTexture": "../Assets/Textures/Cursor/CustomCursor_32px.png"
+    },
     "window": {
         "height": 1080,
         "width": 1920
