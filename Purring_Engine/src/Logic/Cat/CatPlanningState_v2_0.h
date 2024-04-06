@@ -82,34 +82,36 @@ namespace PE
 		*************************************************************************************/
 		virtual std::string_view GetName() { return "PLANNING"; }
 
+		// ----- Non-virtual functions ----- //
+
+		void ResetMovement(EntityID id);
+		void ResetAttack(EntityID id);
+		CatAttackBase_v2_0*& GetAttackPointer() { return p_catAttack; }
+		CatMovement_v2_0PLAN*& GetMovementPointer() { return p_catMovement; }
+
 	private:
 		CatAttackBase_v2_0* p_catAttack{ nullptr }; 
 		CatMovement_v2_0PLAN* p_catMovement{ nullptr }; 
 		CatScript_v2_0Data* p_data{ nullptr };
 
+		vec2 m_mousePositionPrevious{ 0.f, 0.f };
+
 		int m_mouseClickEventListener{};
 		int m_mouseReleaseEventListener{};
 
-		bool m_mouseRelease{ false };
 		bool m_mouseClicked{ false };
 		bool m_mouseClickPrevious{ false };
 		bool m_collidedPreviously{ false };
 
-		int m_doubleClick{ 0 };
-		float m_timer{ 0.f };
-		bool m_moving{ false };
-
-		vec2 m_prevCursorPosition{ 0.f, 0.f };
-
 		/*!***********************************************************************************
-		 \brief Function to handle mouse click events for GreyCatPLAN
+		 \brief Function to handle mouse click events for Cat_v2_0PLAN
 
 		 \param[in] r_ME - Mouse event data.
 		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
 		/*!***********************************************************************************
-		 \brief Function to handle mouse release events for GreyCatPLAN
+		 \brief Function to handle mouse release events for Cat_v2_0PLAN
 
 		 \param[in] r_ME - Mouse event data.
 		*************************************************************************************/

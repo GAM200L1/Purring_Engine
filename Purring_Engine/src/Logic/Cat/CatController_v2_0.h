@@ -19,6 +19,11 @@
 
 namespace PE
 {
+	enum EnumUndoType
+	{
+		UNDO_MOVEMENT,
+		UNDO_ATTACK
+	};
 
 	struct CatController_v2_0Data{};
 
@@ -32,10 +37,13 @@ namespace PE
 
 	public:
 		// ----- Public Functions ----- //
-
-		// ----- Constructor ----- //
 		/*!***********************************************************************************
 		 \brief					Constructor for CatController_v2_0
+		*************************************************************************************/
+		CatController_v2_0();
+		// ----- Constructor ----- //
+		/*!***********************************************************************************
+		 \brief					Destructor for CatController_v2_0
 		*************************************************************************************/
 		virtual ~CatController_v2_0();
 
@@ -151,6 +159,31 @@ namespace PE
 			return (IsCat(catID) && !IsCatCaged(catID));
 		}
 		
+		/*!***********************************************************************************
+		 \brief Adds cat id and the undo to perform to the internal stack
+
+		 \param[in] catID - catID to undo
+		 \param[in] undoType - to undo movement or attack
+		*************************************************************************************/
+		void AddToUndoStack(EntityID catID, EnumUndoType undoType);
+
+		/*!***********************************************************************************
+		 \brief Wrapper function for undo call
+
+		 \param[in] id - button for undoing
+		*************************************************************************************/
+		void UndoCatPlanButtonCall(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Undos the latest action
+		*************************************************************************************/
+		void UndoCatPlan();
+
+		/*!***********************************************************************************
+		 \brief Clears the undo stack
+		*************************************************************************************/
+		void ClearCatUndoStack();
+
 		// getters
 		/*!***********************************************************************************
 		 \brief Gets current movement energy of cat
@@ -221,5 +254,22 @@ namespace PE
 		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
 		std::vector<std::pair<EntityID, EnumCatType>> m_cachedCats;
 		std::vector<EnumCatType> m_deployableCats;
+		std::stack<std::pair<EntityID, EnumUndoType>> m_catUndoStack;
+		int m_mouseEventListener{}, m_mouseReleaseEventListener{};
+		bool m_mouseClick{ false }, m_mouseClickPrev{ false };
+
+		/*!***********************************************************************************
+		 \brief Function to handle mouse click events for Cat_v2_0PLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
+		/*!***********************************************************************************
+		 \brief Function to handle mouse release events for Cat_v2_0PLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
+		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 	};
 }

@@ -47,8 +47,12 @@ namespace PE
 
 		 \param[in] id - EntityID of the entity this instance of the script is attached to.
 		 \param[in] deltaTime - Time in seconds since the last frame.
+		 \param[in] r_cursorPosition - current cursor position
+		 \param[in] r_prevCursorPosition - previous cursor position
+		 \param[in] mouseClicked - is mouse clicked
+		 \param[in] mouseClickedPrevious - was mouse clicked in previous frame
 		*************************************************************************************/
-		void Update(EntityID id, float deltaTime);
+		void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, vec2 const& r_prevCursorPosition, bool mouseClicked, bool mouseClickedPrevious);
 
 		/*!***********************************************************************************
 		 \brief Unsubscribe from all the event listeners.
@@ -115,24 +119,7 @@ namespace PE
 		*************************************************************************************/
 		void SetPathColor(vec4 const& r_color = {1.f, 1.f, 1.f, 1.f});
 
-
-		// ----- Events ----- // 
-
-		/*!***********************************************************************************
-		 \brief Callback function for the mouse click event.
-
-		 \param[in] r_mouseEvent - Mouse event data.
-		*************************************************************************************/
-		void OnMouseClick(const Event<MouseEvents>& r_mouseEvent);
-
-
-		/*!***********************************************************************************
-		 \brief Callback function for the mouse release event.
-
-		 \param[in] r_mouseEvent - Mouse event data.
-		*************************************************************************************/
-		void OnMouseRelease(const Event<MouseEvents>& r_mouseEvent);
-
+		// ----- EVENTS ----- //
 
 		/*!***********************************************************************************
 		 \brief Callback function for collision events.
@@ -157,12 +144,11 @@ namespace PE
 		// ----- Private Variables ----- //
 		CatScript_v2_0Data* p_data = nullptr;
 		vec4 m_invalidPathColor{ 1.f, 0.f, 0.f, 1.f };
-		vec4 m_defaultPathColor{ 0.506f, 0.490f, 0.490f, 1.f };
-
-		int m_clickEventListener{}, m_releaseEventListener{}, m_collisionEventListener{}; // Stores the handler for the mouse click and release events
+		vec4 m_defaultPathColor{ };
+		
+		std::stack<std::pair<int, vec2>> m_resetPositions{};
+		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
-		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
-		bool m_mouseClickPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 		bool m_invalidPath{ false };
 	};
 

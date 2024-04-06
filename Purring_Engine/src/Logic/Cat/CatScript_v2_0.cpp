@@ -165,11 +165,6 @@ namespace PE
 		// changes states depending on cat type
 		switch (m_scriptData[id].catType)
 		{
-		//case EnumCatType::FLUFFYCAT:
-		//{
-		//	// change states here for fluffy cat
-		//	break;
-		//}
 		case EnumCatType::ORANGECAT:
 		{
 			if (p_gsc->currentState == GameStates_v2_0::PLANNING)
@@ -274,8 +269,13 @@ namespace PE
 		// create the entity
 		EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>() };
 
-		EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(0.506f, 0.490f, 0.490f, 1.f); // sets the color of the node to white
-
+		int currLvl = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel();
+		
+		if (currLvl == 0 || currLvl == 1)
+			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(1.f, 1.f, 1.f, 1.f); // sets the color of the node to white
+		else
+			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(0.506f, 0.490f, 0.490f, 1.f);
+		
 		EntityManager::GetInstance().Get<Transform>(nodeId).width = m_scriptData[id].nodeSize;
 		EntityManager::GetInstance().Get<Transform>(nodeId).height = m_scriptData[id].nodeSize;
 

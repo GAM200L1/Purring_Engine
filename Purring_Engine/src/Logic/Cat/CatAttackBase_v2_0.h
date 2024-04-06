@@ -27,6 +27,8 @@ namespace PE
 		\brief Set up the state and subscribe to the collision events
 
 		\param[in,out] id - ID of instance of script
+		\param[in] p_planMouseClick - pointer to mouse click bool in plan state
+		\param[in] p_planMouseClickPrev - pointer to mouse click previous bool in plan state
 		*************************************************************************************/
 		virtual void Enter(EntityID id) = 0;
 
@@ -35,8 +37,11 @@ namespace PE
 
 		\param[in,out] id - ID of instance of script
 		\param[in,out] deltaTime - delta time to update the state with
+		\param[in] r_cursorPosition - current cursor position
+		\param[in] mouseClicked - is mouse clicked
+		\param[in] mouseClickedPrevious - was mouse clicked in previous frame
 		*************************************************************************************/
-		virtual void Update(EntityID id, float deltaTime) = 0;
+		virtual void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious) = 0;
 
 		/*!***********************************************************************************
 		 \brief Unsubscribes from the collision events
@@ -64,10 +69,5 @@ namespace PE
 		 \param ignoreSelected - ignore telegraphs selected or not
 		*************************************************************************************/
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected) = 0;
-		
-		/*!***********************************************************************************
-		 \brief Forces number of mouse clicks to 0
-		*************************************************************************************/
-		virtual void ForceZeroMouse() = 0;
 	};
 }
