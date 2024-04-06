@@ -39,7 +39,7 @@ namespace PE
 		m_direction = shotTargetPosition - RatScript_v2_0::GetEntityPosition(mainID);
 		m_bulletImpulse = m_direction.GetNormalized() * bulletForce;
 		
-		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(mainID)/* + m_direction.GetNormalized() * RatScript_v2_0::GetEntityScale(mainID).x * 0.5f*/);
+		RatScript_v2_0::PositionEntity(spikeballID, RatScript_v2_0::GetEntityPosition(mainID) + m_direction.GetNormalized() * std::abs(RatScript_v2_0::GetEntityScale(mainID).x) * 0.5f);
 		EntityManager::GetInstance().Get<RigidBody>(spikeballID).velocity.Zero();
 
 		attackFeedbackOnce = false;
