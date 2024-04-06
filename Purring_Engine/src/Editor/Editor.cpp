@@ -6407,7 +6407,7 @@ namespace PE {
 		if (ImGui::Button("Stop")) 
 		{
 			LayerManager::GetInstance().RestoreLayerState();
-			GameStateManager::GetInstance().ResetDefaultState();
+
 			m_showEditor = true;
 			toDisable = true;
 			if (m_isRunTime)
