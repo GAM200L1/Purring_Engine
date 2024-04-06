@@ -141,7 +141,8 @@ namespace PE
 			}
 
 			// disables telegraphs if anywhere but the telegraphs are clicked
-			if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id) && mouseClicked && !mouseClickedPrevious && !collidingWithAnyTelegraph && !m_firstUpdate) 
+			if ((mouseClicked && !mouseClickedPrevious && !m_firstUpdate) && 
+				(!collidingWithAnyTelegraph || !GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id)))
 			{
 				(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 				ToggleTelegraphs(false, true);
