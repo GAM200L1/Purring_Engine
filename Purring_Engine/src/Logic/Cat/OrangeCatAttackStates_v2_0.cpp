@@ -79,11 +79,9 @@ namespace PE
 	{
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
-		
-		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
-		bool collidingWithTelegraph = PointCollision(r_telegraphCollider, cursorPosition);
-		bool collidingWithCat = PointCollision(r_catCollider, cursorPosition);
+		bool collidingWithTelegraph = PointCollision(r_telegraphCollider, r_cursorPosition);
+		bool collidingWithCat = PointCollision(r_catCollider, r_cursorPosition);
 
 		if (collidingWithTelegraph && !collidingWithCat)
 		{
