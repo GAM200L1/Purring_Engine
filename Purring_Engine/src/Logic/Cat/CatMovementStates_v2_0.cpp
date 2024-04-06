@@ -473,6 +473,12 @@ namespace PE
 
 		m_movementTimer = 0.5f;
 		m_startMovementTimer = false;
+
+		
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->godMode)
+			EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
+		else
+			EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
 	}
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
