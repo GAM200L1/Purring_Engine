@@ -103,9 +103,6 @@ namespace PE
 		bool m_mouseClickPrevious{ false };
 		bool m_collidedPreviously{ false };
 
-		bool m_startDoubleClickTimer{ false };
-		float m_doubleClickTimer{ 0.f };
-
 		/*!***********************************************************************************
 		 \brief Function to handle mouse click events for Cat_v2_0PLAN
 

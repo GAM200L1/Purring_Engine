@@ -169,11 +169,6 @@ namespace PE
 		// changes states depending on cat type
 		switch (m_scriptData[id].catType)
 		{
-		//case EnumCatType::FLUFFYCAT:
-		//{
-		//	// change states here for fluffy cat
-		//	break;
-		//}
 		case EnumCatType::ORANGECAT:
 		{
 			if (p_gsc->currentState == GameStates_v2_0::PLANNING)
