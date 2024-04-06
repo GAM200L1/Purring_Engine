@@ -83,6 +83,7 @@
 #include "Logic/ObjectAttachScript.h"
 #include "Logic/Settings.h"
 #include "Logic/TutorialController.h"
+#include "AudioManager/GlobalMusicManager.h"
 #include "Logic/CameraShakeScript.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -5597,6 +5598,11 @@ namespace PE {
 
 					if (ImGui::Button("Play"))
 					{
+						if (m_isRunTime == false)
+						{
+							GlobalMusicManager::GetInstance().ResumeAllAudio();
+						}
+
 						LayerManager::GetInstance().StoreLayerState();
 						LayerManager::GetInstance().ResetLayerState();
 						m_isRunTime = true;
@@ -5611,6 +5617,7 @@ namespace PE {
 						else
 						{
 							m_gameplayPaused = false;
+							GlobalMusicManager::GetInstance().ResumeAllAudio();
 						}
 						for (const auto& layer : LayerView<ParticleEmitter>())
 						{
@@ -6374,7 +6381,11 @@ namespace PE {
 		ImGui::BeginDisabled(toDisable);
 		if (ImGui::Button("Play"))
 		{
-			
+			if (m_isRunTime == false)
+			{
+				GlobalMusicManager::GetInstance().ResumeAllAudio();
+			}
+
 			m_isRunTime = true;	
 			toDisable = true;
 			for (const auto& layer : LayerView<ParticleEmitter>())
@@ -6384,7 +6395,6 @@ namespace PE {
 					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = EntityManager::GetInstance().Get<ParticleEmitter>(id).prevPause;
 				}
 			}
-			
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
@@ -6401,13 +6411,14 @@ namespace PE {
 					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = true;
 				}
 			}
+			GlobalMusicManager::GetInstance().PauseAllAudio();
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
 		if (ImGui::Button("Stop")) 
 		{
 			LayerManager::GetInstance().RestoreLayerState();
-			GameStateManager::GetInstance().ResetDefaultState();
+
 			m_showEditor = true;
 			toDisable = true;
 			if (m_isRunTime)

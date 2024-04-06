@@ -79,15 +79,14 @@ namespace PE
 	{
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
-		
-		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
-		bool collidingWithTelegraph = PointCollision(r_telegraphCollider, cursorPosition);
-		bool collidingWithCat = PointCollision(r_catCollider, cursorPosition);
+		bool collidingWithTelegraph = PointCollision(r_telegraphCollider, r_cursorPosition);
+		bool collidingWithCat = PointCollision(r_catCollider, r_cursorPosition);
 
-		if (collidingWithTelegraph && !collidingWithCat)
+		if (collidingWithTelegraph && !collidingWithCat && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id))
 		{
-			CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
+			if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
+				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
 			if (mouseClicked && !mouseClickedPrevious)
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
@@ -102,7 +101,7 @@ namespace PE
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		}
 
-		if (mouseClicked && !mouseClickedPrevious && !collidingWithTelegraph && !m_firstUpdate)
+		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id) && mouseClicked && !mouseClickedPrevious && (collidingWithCat || !collidingWithTelegraph) && !m_firstUpdate)
 		{
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 

@@ -53,7 +53,9 @@ namespace PE
 			m_defaultPathColor = vec4{ 1.f, 1.f, 1.f, 1.f };
 		else
 			m_defaultPathColor = vec4{ 0.506f, 0.490f, 0.490f, 1.f };
-
+		
+		p_data->pathPositions.clear();
+		
 		// subscribe to collision events
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
 
@@ -117,6 +119,8 @@ namespace PE
 		else if (!mouseClicked && mouseClickedPrevious && m_pathBeingDrawn)
 		{
 			// The mouse has been released, so end the path
+			p_data->startDoubleClickTimer = false;
+			p_data->doubleClickTimer = 0.f;
 			EndPathDrawing(id);
 		}
 	}
@@ -587,7 +591,6 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::StateExit(EntityID id)
 	{
 		StopMoving(id);
-		p_data->pathPositions.clear();
 
 		p_data = nullptr;
 	}

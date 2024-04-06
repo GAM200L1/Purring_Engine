@@ -63,10 +63,10 @@ namespace PE
 		{
 			// if in previous frame and current frame the mouse has always been there allow double click
 			// if previous frame not clicked and this frame clicked increment double click
-			if (m_doubleClickTimer >= 0.5f) // resets double click when 1 second has passed
+			if (p_data->doubleClickTimer >= 0.35f) // resets double click when 1 second has passed
 			{
-				m_startDoubleClickTimer = false;
-				m_doubleClickTimer = 0.f;
+				p_data->startDoubleClickTimer = false;
+				p_data->doubleClickTimer = 0.f;
 			}
 			else
 			{
@@ -74,20 +74,20 @@ namespace PE
 				if (m_mouseClicked && !m_mouseClickPrevious)
 				{	
 					// second time triggered
-					if (m_startDoubleClickTimer && collidedCurrent && m_collidedPreviously && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id))
+					if (p_data->startDoubleClickTimer && collidedCurrent && m_collidedPreviously && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id))
 					{
 						p_data->planningAttack = true;
 						p_catAttack->ToggleTelegraphs(true, false);
-						m_startDoubleClickTimer = false;
-						m_doubleClickTimer = 0.f;
+						p_data->startDoubleClickTimer = false;
+						p_data->doubleClickTimer = 0.f;
 					}
 					else if (collidedCurrent) // first time clicking
-					{ m_startDoubleClickTimer = true; }
+					{ p_data->startDoubleClickTimer = true; }
 				}
 
 				// if mouse triggered once
-				if (m_startDoubleClickTimer)
-					m_doubleClickTimer += deltatime;
+				if (p_data->startDoubleClickTimer)
+					p_data->doubleClickTimer += deltatime;
 			}
 		}
 		else // if planning attack
@@ -99,7 +99,6 @@ namespace PE
 		{
 			p_catMovement->Update(id, deltatime, cursorPosition, m_mousePositionPrevious, m_mouseClicked, m_mouseClickPrevious);
 		}
-		p_catMovement->StopHeartAnimation(id);
 
 		// save previous frame data
 		m_mouseClickPrevious = m_mouseClicked;
@@ -119,7 +118,10 @@ namespace PE
 	void Cat_v2_0PLAN::StateExit(EntityID id)
 	{
 		if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id) || GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id)) { return; } // if cat is following cat or cage cat in the chain
-
+		
+		p_data->startDoubleClickTimer = false;
+		p_data->doubleClickTimer = 0.f;
+		
 		p_catMovement->Exit(id);
 		p_catAttack->Exit(id);
 
@@ -150,7 +152,10 @@ namespace PE
 	void Cat_v2_0PLAN::ResetMovement(EntityID id)
 	{
 		if (p_data->planningAttack)
+		{
 			p_catAttack->ToggleTelegraphs(false, false);
+			p_data->planningAttack = false;
+		}
 		p_catMovement->ResetDrawnPath();
 		PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
 	}

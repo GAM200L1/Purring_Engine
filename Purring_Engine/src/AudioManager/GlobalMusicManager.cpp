@@ -67,14 +67,13 @@ namespace PE
 
     }
 
-    void GlobalMusicManager::PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration, float frequency)
+    void GlobalMusicManager::PlayBGM(const std::string& r_prefabPath, bool loop, float fadeInDuration)
     {
         EntityID audioEntity = ResourceManager::GetInstance().LoadPrefabFromFile(r_prefabPath);
         if (EntityManager::GetInstance().Has<AudioComponent>(audioEntity))
         {
             auto& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(audioEntity);
             audioComponent.SetLoop(loop);
-            audioComponent.SetPlaybackFrequency(frequency);
 
             if (fadeInDuration > 0.0f)
             {
@@ -92,11 +91,15 @@ namespace PE
             // Update the current track key to reflect the newly playing BGM
             m_currentTrackKey = r_prefabPath;
 
-            // Store the audio component in the map using the prefab path as the key
-            m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+            // Check if the audio component already exists before adding
+            if (m_audioComponents.find(r_prefabPath) == m_audioComponents.end())
+            {
+                m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+            }
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
+
 
     void GlobalMusicManager::PlaySFX(const std::string& r_prefabPath, bool loop)
     {
@@ -107,6 +110,12 @@ namespace PE
             audioComponent.SetLoop(loop);
             audioComponent.PlayAudioSound(AudioComponent::AudioType::SFX);
             m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+
+            // Check if the audio component already exists before adding
+            if (m_audioComponents.find(r_prefabPath) == m_audioComponents.end())
+            {
+                m_audioComponents[r_prefabPath] = std::make_shared<AudioComponent>(audioComponent);
+            }
         }
         EntityManager::GetInstance().RemoveEntity(audioEntity);
     }
@@ -133,6 +142,27 @@ namespace PE
             audioComponent->StartIndividualFadeIn(1.0f, 1.0f);
         }
     }
+
+    void GlobalMusicManager::PauseAllAudio()
+    {
+        m_isPaused = true;
+
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            audioComponent->PauseSound();
+        }
+    }
+
+    void GlobalMusicManager::ResumeAllAudio()
+    {
+        m_isPaused = false;
+
+        for (auto& [key, audioComponent] : m_audioComponents)
+        {
+            audioComponent->ResumeSound();
+        }
+    }
+
 
     void GlobalMusicManager::StopBackgroundMusic()
     {
@@ -180,6 +210,7 @@ namespace PE
         }
     }
 
+
     void GlobalMusicManager::ResumeFromState(const AudioState& state)
     {
         //PlayBackgroundMusic(state.trackKey, true);  //loop awlays
@@ -199,73 +230,30 @@ namespace PE
         m_fadeDuration = duration;
     }
 
-    void GlobalMusicManager::StartFadeOut(float duration)
+    void GlobalMusicManager::StartFadeOut(const std::string& r_trackKey, float duration)
     {
-        m_isFading = true;
-        m_isFadingIn = false;
-        m_fadeProgress = 0.0f;
-        m_fadeDuration = duration;
+        auto it = m_audioComponents.find(r_trackKey);
+        if (it != m_audioComponents.end())
+        {
+            it->second->StartIndividualFadeOut(0.0f, duration);
+        }
     }
 
-    void GlobalMusicManager::SetGlobalPitch(float pitch)
+    void GlobalMusicManager::StartFadeOutAllAudio(float duration)
     {
         for (auto& [key, audioComponent] : m_audioComponents)
         {
-            audioComponent->SetPitch(pitch);
-        }
-    }
-
-    void GlobalMusicManager::SetTrackPitch(const std::string& trackKey, float pitch)
-    {
-        auto it = m_audioComponents.find(trackKey);
-        if (it != m_audioComponents.end())
-        {
-            //std::cout << "[GlobalMusicManager] Setting pitch for track: " << trackKey << " to " << pitch << std::endl;
-            it->second->SetPitch(pitch);
-        }
-        else
-        {
-            //std::cout << "[GlobalMusicManager] Track key not found: " << trackKey << std::endl;
-        }
-    }
-
-    void GlobalMusicManager::SetGlobalPlaybackFrequency(float frequency)
-    {
-        for (auto& [key, audioComponent] : m_audioComponents)
-        {
-            audioComponent->SetPlaybackFrequency(frequency);
-        }
-    }
-
-    void GlobalMusicManager::SetTrackPlaybackFrequency(const std::string& trackKey, float frequency)
-    {
-        auto it = m_audioComponents.find(trackKey);
-        if (it != m_audioComponents.end())
-        {
-            it->second->SetPlaybackFrequency(frequency);
-            //std::cout << "Setting playback frequency for track: " << trackKey << " to " << frequency << std::endl;
-        }
-        else
-        {
-            std::cout << "Track key not found: " << trackKey << std::endl;
-        }
-    }
-
-    void GlobalMusicManager::AdjustBackgroundMusicFrequency(float newFrequency)
-    {
-        auto it = m_audioComponents.find(m_currentTrackKey);
-        if (it != m_audioComponents.end())
-        {
-            it->second->SetPlaybackFrequency(newFrequency);
-        }
-        else
-        {
-            //std::cout << "Track key not found: " << m_currentTrackKey << std::endl;
+            if (audioComponent)
+            {
+                audioComponent->StartIndividualFadeOut(0.0f, duration);        // Start an individual fade out for each active audio component
+            }
         }
     }
 
     void GlobalMusicManager::StopAllAudio()
     {
+        m_isPaused = false;
+
         for (auto& [key, audioComponent] : m_audioComponents)
         {
             if (audioComponent)

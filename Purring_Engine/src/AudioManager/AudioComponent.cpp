@@ -112,6 +112,7 @@ namespace PE
         if (audio && audio->GetChannel())
         {
             audio->GetChannel()->setPaused(true);
+            //std::cout << "AudioComponent [" << m_audioKey << "] Paused\n";
         }
         m_isPaused = true;
     }
@@ -122,6 +123,7 @@ namespace PE
         if (audio && audio->GetChannel())
         {
             audio->GetChannel()->setPaused(false);
+            //std::cout << "AudioComponent [" << m_audioKey << "] Resumed\n";
         }
         m_isPaused = false;
     }
@@ -133,6 +135,8 @@ namespace PE
         {
             audio->GetChannel()->stop();
         }
+        // Reset pause state
+        m_isPaused = false;
     }
 
     std::string const& AudioComponent::GetAudioKey() const
@@ -194,17 +198,6 @@ namespace PE
         SetVolume(newVolume);
 
         if (m_fadeProgressIndividual >= 1.0f) m_isFadingIndividual = false;
-
-        // Debug log for checking pitch
-        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
-        {
-            if (auto p_channel = audio->GetChannel())
-            {
-                float currentPitch;
-                p_channel->getPitch(&currentPitch);
-                //std::cout << "[AudioComponent] Current pitch for audio key: " << m_audioKey << " is " << currentPitch << std::endl;
-            }
-        }
     }
 
     void AudioComponent::StartIndividualFadeIn(float targetVolume, float duration)
@@ -225,62 +218,6 @@ namespace PE
         m_isFadingInIndividual = false;
         m_fadeDurationIndividual = duration;
         m_fadeProgressIndividual = 0.0f;
-    }
-
-    void AudioComponent::SetPitch(float pitch)
-    {
-        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
-        {
-            if (auto p_channel = audio->GetChannel())
-            {
-                FMOD_RESULT result = p_channel->setPitch(pitch);
-                if (result == FMOD_OK)
-                {
-                    //std::cout << "[AudioComponent] Pitch set successfully for audio key: " << m_audioKey << std::endl;
-                }
-                else
-                {
-                    //std::cout << "[AudioComponent] Failed to set pitch for audio key: " << m_audioKey << " Error: " << FMOD_ErrorString(result) << std::endl;
-                }
-            }
-            else
-            {
-                //std::cout << "[AudioComponent] Channel not found for audio key: " << m_audioKey << std::endl;
-            }
-        }
-        else
-        {
-            //std::cout << "[AudioComponent] Audio not found for audio key: " << m_audioKey << std::endl;
-        }
-    }
-
-    float AudioComponent::GetPitch() const
-    {
-        float pitch = 1.0f; // Default pitch value
-        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
-        {
-            if (auto p_channel = audio->GetChannel())
-            {
-                p_channel->getPitch(&pitch);
-            }
-        }
-        return pitch;
-    }
-
-    void AudioComponent::SetPlaybackFrequency(float frequency)
-    {
-        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
-        {
-            if (auto p_channel = audio->GetChannel())
-            {
-                p_channel->setFrequency(frequency);                 // Directly set the desired frequency value
-            }
-        }
-    }
-
-    float AudioComponent::GetPlaybackFrequency() const
-    {
-        return m_playbackFrequency;
     }
 
     nlohmann::json AudioComponent::ToJson() const

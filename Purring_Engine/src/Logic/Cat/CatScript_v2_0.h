@@ -65,7 +65,8 @@ namespace PE
 		unsigned currentPositionIndex{}; // Index of the position in the pathPositions container that the cat should move towards
 		
 		// planning variables
-		
+		bool startDoubleClickTimer{ false };
+		float doubleClickTimer{ 0.f };
 
 		// movement variables
 		std::vector<vec2> pathPositions{}; // Positions of the nodes of the player drawn path
