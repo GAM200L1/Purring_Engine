@@ -144,7 +144,7 @@ namespace PE
 		// ----- Private Variables ----- //
 		CatScript_v2_0Data* p_data = nullptr;
 		vec4 m_invalidPathColor{ 1.f, 0.f, 0.f, 1.f };
-		vec4 m_defaultPathColor{ 0.506f, 0.490f, 0.490f, 1.f };
+		vec4 m_defaultPathColor{ };
 		
 		std::stack<std::pair<int, vec2>> m_resetPositions{};
 		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events

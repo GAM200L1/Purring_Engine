@@ -47,9 +47,11 @@ namespace PE
 		// retrieve cat data
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		
-		// retrive mouse click data
-		/*p_mouseClick = p_planMouseClick;
-		p_mouseClickPrevious = p_planMouseClickPrev;*/
+		int currLvl = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel();
+		if (currLvl == 0 || currLvl == 1)
+			m_defaultPathColor = vec4{ 1.f, 1.f, 1.f, 1.f };
+		else
+			m_defaultPathColor = vec4{ 0.506f, 0.490f, 0.490f, 1.f };
 
 		// subscribe to collision events
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);

@@ -53,6 +53,7 @@ namespace PE
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::PAUSE) { return; }
 		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState == GameStates_v2_0::EXECUTE)
 		{
 			ClearCatUndoStack(); 
@@ -185,14 +186,14 @@ namespace PE
 
 	void CatController_v2_0::UndoCatPlan()
 	{
-		if (m_catUndoStack.empty()) { return; }
-		while (m_catUndoStack.top().second == EnumUndoType::UNDO_ATTACK)
+		while (!m_catUndoStack.empty() && m_catUndoStack.top().second == EnumUndoType::UNDO_ATTACK)
 		{
 			if (!(GETSCRIPTDATA(CatScript_v2_0, m_catUndoStack.top().first))->attackSelected)
 				m_catUndoStack.pop();
 			else
 				break;
 		}
+		if (m_catUndoStack.empty()) { return; }
 
 		// get the id of the cat to undo and which planning to undo
 		auto const& toUndo = m_catUndoStack.top();
