@@ -100,7 +100,7 @@ namespace PE
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		}
 
-		if (mouseClicked && !mouseClickedPrevious && !collidingWithTelegraph && !m_firstUpdate)
+		if (mouseClicked && !mouseClickedPrevious && (collidingWithCat || !collidingWithTelegraph) && !m_firstUpdate)
 		{
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 
