@@ -20,6 +20,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Hierarchy/HierarchyManager.h"
 #include "Logic/Cat/CatController_v2_0.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Logic/CameraShakeScript.h"
+#include "Graphics/CameraManager.h"
 namespace PE
 {
 	BossRatChargeAttack::BossRatChargeAttack(EntityID furthestCat) : m_furthestCat{furthestCat}
@@ -148,7 +150,10 @@ namespace PE
 		if (m_travelTime < 0)
 		{
 			if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && m_isCharging && p_data->curr_Anim != BossRatAnimationsEnum::DEATH)
+			{
 				p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
+				GETSCRIPTINSTANCEPOINTER(CameraShakeScript)->Shake(GETCAMERAMANAGER()->GetMainCameraId());
+			}
 			m_isCharging = false;
 
 		}
