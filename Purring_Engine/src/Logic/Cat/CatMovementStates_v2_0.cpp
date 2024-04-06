@@ -129,14 +129,13 @@ namespace PE
 	{
 		EndPathDrawing(id);
 		
-		if (p_data->catType == EnumCatType::MAINCAT) {
+		if (p_data->catType == EnumCatType::MAINCAT && !(GETSCRIPTDATA(FollowScript_v2_0, id))->followers.empty())
+		{
 			// set follow cats to their previous positions
 			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
 		}
 
 		p_data = nullptr;
-		/*p_mouseClick = nullptr;
-		p_mouseClickPrevious = nullptr;*/
 	}
 
 
