@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/BossAudio/vo_Rat_RatKing_Selected3.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Rat King Selection SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Rat King Selection SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

@@ -77,13 +77,6 @@ namespace PE
 				EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
 			}
 
-			// Start a fade-out effect 3 seconds before the cutscene ends
-			if (m_elapsedTime >= (m_sceneTimer - 3.0f) && !m_isFadingOut)
-			{
-				PE::GlobalMusicManager::GetInstance().StartFadeOut(3.0f);
-				m_isFadingOut = true;
-			}
-
 			if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 			{
 				m_endCutscene = true;

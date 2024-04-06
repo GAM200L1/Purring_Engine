@@ -242,7 +242,6 @@ namespace PE
 		*************************************************************************************/
 		void SetCurrentLevel(int lvl);
 
-
 		/*!***********************************************************************************
 		 \brief		Is Cat Selected
 
@@ -479,7 +478,20 @@ namespace PE
 		 \brief			Play BGM Ambience and BGM and its respective layers based on stage.
 		*************************************************************************************/
 		void PlayBackgroundMusicForStage();
-
+		/*!***********************************************************************************
+		\brief          Play Rat Boss Selection Sound
+		*************************************************************************************/
+		void PlayRatBossSelectionSound();
+		/*!***********************************************************************************
+		\brief          Play Rat Selection Sound based on ratType
+		\param			ratType The type of rat to play the selection sound for
+		*************************************************************************************/
+		void PlayRatSelectionSound(int ratType);
+		/*!***********************************************************************************
+		\brief          Play Cat Selection Sound based on catType
+		\param			catType The type of cat to play the selection sound for
+		*************************************************************************************/
+		void PlayCatSelectionSound(int catType);
 
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;

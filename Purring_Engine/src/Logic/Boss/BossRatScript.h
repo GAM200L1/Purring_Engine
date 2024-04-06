@@ -303,6 +303,8 @@ namespace PE
 
 		EntityID m_chargeParticlePrefabID;
 		std::string m_chargeParticlePrefab{ "RatKingChargingParticles.prefab" };
+
+		bool m_hasInitiatedAudioFadeOut = false;				// Tracks if the audio fade out has been initiated
 		//do i want to store all the obstacles here?
 	}; // end of class 
 
