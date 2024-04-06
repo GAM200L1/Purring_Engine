@@ -175,6 +175,12 @@ namespace PE
             static inline EntityID GetUiCameraId() { return m_uiCameraId; }
 
             /*!***********************************************************************************
+            \brief Returns the entity ID of the main camera object.
+            \return EntityID - The entity ID of the main camera object.
+            *************************************************************************************/
+            inline EntityID GetMainCameraId() const { return m_mainCameraId; }
+
+            /*!***********************************************************************************
              \brief  Returns a vec2 object with a position in world coordinates converted to 
                 window coordinates (with the origin at the center of the window). This function  
                 takes the ratio of the viewport to the window's dimensions into account.
