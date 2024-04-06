@@ -32,7 +32,7 @@ namespace PE
 		/*!**********************************************************************************
 		 \brief Destructor for CatMovement_v2_0PLAN
 		*************************************************************************************/
-		~CatMovement_v2_0PLAN() { p_data = nullptr; p_mouseClick = nullptr; p_mouseClickPrevious = nullptr; }
+		~CatMovement_v2_0PLAN() { p_data = nullptr; /*p_mouseClick = nullptr; p_mouseClickPrevious = nullptr;*/ }
 
 		// ----- Public Functions ----- //
 		/*!***********************************************************************************
@@ -42,7 +42,7 @@ namespace PE
 		 \param[in] p_planMouseClick - pointer to mouse click bool in plan state
 		 \param[in] p_planMouseClickPrev - pointer to mouse click previous bool in plan state
 		*************************************************************************************/
-		void Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev);
+		void Enter(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Attempts to draw paths following the player's cursor position.
@@ -50,7 +50,7 @@ namespace PE
 		 \param[in] id - EntityID of the entity this instance of the script is attached to.
 		 \param[in] deltaTime - Time in seconds since the last frame.
 		*************************************************************************************/
-		void Update(EntityID id, float deltaTime);
+		void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious);
 
 		/*!***********************************************************************************
 		 \brief Unsubscribe from all the event listeners.
@@ -151,8 +151,8 @@ namespace PE
 		vec2 m_previousCursorPosition{};
 
 		// taken from planning state
-		bool* p_mouseClick{ nullptr }; // Set to true when the mouse is pressed, false otherwise
-		bool* p_mouseClickPrevious{ nullptr }; // Set to true if the mouse was pressed in the previous frame, false otherwise
+		//bool* p_mouseClick{ nullptr }; // Set to true when the mouse is pressed, false otherwise
+		//bool* p_mouseClickPrevious{ nullptr }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 	};
 
 	// ----- CAT MOVEMENT EXECUTE STATE ----- //

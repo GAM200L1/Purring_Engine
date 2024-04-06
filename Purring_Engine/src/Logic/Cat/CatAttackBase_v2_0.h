@@ -30,7 +30,7 @@ namespace PE
 		\param[in] p_planMouseClick - pointer to mouse click bool in plan state
 		\param[in] p_planMouseClickPrev - pointer to mouse click previous bool in plan state
 		*************************************************************************************/
-		virtual void Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev) = 0;
+		virtual void Enter(EntityID id) = 0;
 
 		/*!***********************************************************************************
 		\brief Checks if its state should change
@@ -38,7 +38,7 @@ namespace PE
 		\param[in,out] id - ID of instance of script
 		\param[in,out] deltaTime - delta time to update the state with
 		*************************************************************************************/
-		virtual void Update(EntityID id, float deltaTime) = 0;
+		virtual void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious) = 0;
 
 		/*!***********************************************************************************
 		 \brief Unsubscribes from the collision events

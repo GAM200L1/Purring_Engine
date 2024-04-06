@@ -42,14 +42,14 @@
 namespace PE
 {
 	// ----- Movement Plan Functions ----- //
-	void CatMovement_v2_0PLAN::Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev)
+	void CatMovement_v2_0PLAN::Enter(EntityID id)
 	{
 		// retrieve cat data
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		
 		// retrive mouse click data
-		p_mouseClick = p_planMouseClick;
-		p_mouseClickPrevious = p_planMouseClickPrev;
+		/*p_mouseClick = p_planMouseClick;
+		p_mouseClickPrevious = p_planMouseClickPrev;*/
 
 		// subscribe to collision events
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
@@ -64,13 +64,10 @@ namespace PE
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
 	}
 
-	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime)
+	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious)
 	{
-		// Get the position of the cat
-		vec2 const& r_cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
-
 		// If the player has released their mouse and the path is invalid
-		if (m_invalidPath && !(*p_mouseClick) && *p_mouseClickPrevious)
+		if (m_invalidPath && !mouseClicked && mouseClickedPrevious)
 		{
 			ResetDrawnPath();
 			m_invalidPath = false;
@@ -78,7 +75,7 @@ namespace PE
 		}
 		
 		// Check if the mouse has just been clicked
-		if (*p_mouseClick && !m_pathBeingDrawn && p_data->catCurrentEnergy)
+		if (mouseClicked && !m_pathBeingDrawn && p_data->catCurrentEnergy)
 		{
 			// Check if the cat has been clicked
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
@@ -100,7 +97,7 @@ namespace PE
 		}
 		
 		// If the mouse is being pressed
-		if (*p_mouseClick && m_pathBeingDrawn)
+		if (mouseClicked && m_pathBeingDrawn)
 		{
 			if (p_data->catCurrentEnergy) // Check if the player has sufficient energy
 			{
@@ -114,7 +111,7 @@ namespace PE
 				EndPathDrawing(id);
 			}
 		}
-		else if (!*(p_mouseClick) && *p_mouseClickPrevious && m_pathBeingDrawn)
+		else if (!mouseClicked && mouseClickedPrevious && m_pathBeingDrawn)
 		{
 			// The mouse has been released, so end the path
 			EndPathDrawing(id);
@@ -138,8 +135,8 @@ namespace PE
 		}
 
 		p_data = nullptr;
-		p_mouseClick = nullptr;
-		p_mouseClickPrevious = nullptr;
+		/*p_mouseClick = nullptr;
+		p_mouseClickPrevious = nullptr;*/
 	}
 
 
@@ -301,7 +298,7 @@ namespace PE
 
 		SetPathColor(m_defaultPathColor);
 
-		*p_mouseClickPrevious = false;
+		//*p_mouseClickPrevious = false;
 		m_pathBeingDrawn = false;
 
 		m_resetPositions.pop();

@@ -73,8 +73,8 @@ namespace PE
 		~GreyCatAttack_v2_0PLAN()
 		{
 			p_attackData = nullptr;
-			p_mouseClick = nullptr;
-			p_mouseClickedPrevious = nullptr;
+			/*p_mouseClick = nullptr;
+			p_mouseClickedPrevious = nullptr;*/
 		}
 
 		// ----- Public Functions ----- //
@@ -85,7 +85,7 @@ namespace PE
 		\param[in] p_planMouseClick - pointer to mouse click bool in plan state
 		\param[in] p_planMouseClickPrev - pointer to mouse click previous bool in plan state
 		*************************************************************************************/
-		virtual void Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev);
+		virtual void Enter(EntityID id);
 
 		/*!***********************************************************************************
 			\brief Checks if its state should change
@@ -93,7 +93,7 @@ namespace PE
 			\param[in,out] id - ID of instance of script
 			\param[in,out] deltaTime - delta time to update the state with
 		*************************************************************************************/
-		virtual void Update(EntityID id, float deltaTime);
+		virtual void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious);
 
 		/*!***********************************************************************************
 		 \brief Unsubscribes from the collision events
@@ -134,8 +134,8 @@ namespace PE
 		vec4 const m_hoverColor{ 1.f, 0.859f, 0.278f, 1.f };
 		vec4 const m_selectColor{ 1.f, 0.784f, 0.f, 1.f };
 
-		bool* p_mouseClick{ false }; // set to true when mouse is clicked
-		bool* p_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
+		//bool* p_mouseClick{ false }; // set to true when mouse is clicked
+		//bool* p_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 	};
 
 	class GreyCatAttack_v2_0EXECUTE : public State

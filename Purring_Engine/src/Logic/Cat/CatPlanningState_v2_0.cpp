@@ -36,10 +36,10 @@ namespace PE
 		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
 
 		// initializes the cat movement planning sub state
-		p_catMovement->Enter(id, &m_mouseClicked, &m_mouseClickPrevious);
+		p_catMovement->Enter(id);
 
 		// initializes the cat attack planning sub state
-		p_catAttack->Enter(id, &m_mouseClicked, &m_mouseClickPrevious);
+		p_catAttack->Enter(id);
 
 		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, Cat_v2_0PLAN::OnMouseClick, this);
 		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, Cat_v2_0PLAN::OnMouseRelease, this);
@@ -54,8 +54,9 @@ namespace PE
 			return;
 		}
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
-		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
-		bool const collidedCurrent = PointCollision(r_catCollider, r_cursorPosition);
+		vec2 cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
+		//std::cout << "Cursor Pos: " << cursorPosition.x << ", " << cursorPosition.y << '\n';
+		bool const collidedCurrent = PointCollision(r_catCollider, cursorPosition);
 
 		// check for double click
 		if (!p_data->planningAttack)
@@ -73,7 +74,7 @@ namespace PE
 				if (m_mouseClicked && !m_mouseClickPrevious)
 				{	
 					// second time triggered
-					if (m_startDoubleClickTimer && collidedCurrent && m_collidedPreviously)
+					if (m_startDoubleClickTimer && collidedCurrent && m_collidedPreviously && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id))
 					{
 						p_data->planningAttack = true;
 						p_catAttack->ToggleTelegraphs(true, false);
@@ -93,17 +94,17 @@ namespace PE
 		// if planning attack
 		if (p_data->planningAttack)
 		{
-			p_catAttack->Update(id, deltatime);
+			p_catAttack->Update(id, deltatime, cursorPosition, m_mouseClicked, m_mouseClickPrevious);
 		}
-		else if (!p_data->attackSelected)
+		else if (!p_data->attackSelected && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id))
 		{
-			p_catMovement->Update(id, deltatime);
+			p_catMovement->Update(id, deltatime, cursorPosition, m_mouseClicked, m_mouseClickPrevious);
 		}
 
 		// save previous frame data
 		m_mouseClickPrevious = m_mouseClicked;
 		m_collidedPreviously = collidedCurrent;
-		m_mousePositionPrevious = r_cursorPosition;
+		m_mousePositionPrevious = cursorPosition;
 	}
 
 	void Cat_v2_0PLAN::StateCleanUp()

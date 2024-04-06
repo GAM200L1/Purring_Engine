@@ -97,20 +97,18 @@ namespace PE
 
 	// ----- ATTACK PLAN ----- //
 
-	void GreyCatAttack_v2_0PLAN::Enter(EntityID id, bool* p_planMouseClick, bool* p_planMouseClickPrev)
+	void GreyCatAttack_v2_0PLAN::Enter(EntityID id)
 	{
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<GreyCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 		
 		// retrieve mouse click pointers
-		p_mouseClick = p_planMouseClick;
-		p_mouseClickedPrevious = p_planMouseClickPrev;
+		/*p_mouseClick = p_planMouseClick;
+		p_mouseClickedPrevious = p_planMouseClickPrev;*/
 	}
 
-	void GreyCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
+	void GreyCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious)
 	{
-		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
-
 		bool collidingWithAnyTelegraph{ false };
 
 		try
@@ -120,7 +118,7 @@ namespace PE
 				AABBCollider const& r_telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(r_telegraph.second).colliderVariant);
 
 				// check if the mouse is hovering any of the boxes, if yes, boxes should change color
-				if (PointCollision(r_telegraphCollider, cursorPosition))
+				if (PointCollision(r_telegraphCollider, r_cursorPosition))
 				{
 					collidingWithAnyTelegraph = true;
 					if (r_telegraph.first == p_attackData->attackDirection) { continue; }
@@ -129,7 +127,7 @@ namespace PE
 					CatHelperFunctions::SetColor(r_telegraph.second, m_hoverColor);
 
 					// if hovering and mouse triggered
-					if (*p_mouseClick && !(*p_mouseClickedPrevious))
+					if (mouseClicked && !mouseClickedPrevious)
 					{
 						// @TODO: Add select direction sfx
 						p_attackData->attackDirection = r_telegraph.first;
@@ -148,7 +146,7 @@ namespace PE
 			}
 
 			// disables telegraphs if anywhere but the telegraphs are clicked
-			if (*p_mouseClick && !(*p_mouseClickedPrevious) && !collidingWithAnyTelegraph && !m_firstUpdate)
+			if (mouseClicked && !mouseClickedPrevious && !collidingWithAnyTelegraph && !m_firstUpdate)
 			{
 				(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 				ToggleTelegraphs(false, true);
@@ -173,8 +171,8 @@ namespace PE
 		ToggleTelegraphs(false, false);
 		
 		p_attackData = nullptr;
-		p_mouseClick = nullptr;
-		p_mouseClickedPrevious = nullptr;
+		/*p_mouseClick = nullptr;
+		p_mouseClickedPrevious = nullptr;*/
 	}
 
 	void GreyCatAttack_v2_0PLAN::ResetSelection(EntityID id)
