@@ -1491,6 +1491,8 @@ namespace PE
 	void GameStateController_v2_0::IncrementCatRescued()
 	{
 		++m_catsRescued;
+
+		std::cout << "Number of Cats Rescued Incremented" << std::endl;
 	}
 
 	void GameStateController_v2_0::IncrementRatsKilled()
