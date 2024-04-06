@@ -28,61 +28,62 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
 *************************************************************************************/
-#include "prpch.h" 
-#include "Editor.h" 
-#include "Memory/MemoryManager.h" 
-#include "AudioManager/AudioManager.h" 
-#include "AudioManager/AudioComponent.h" 
-#include "Time/FrameRateTargetControl.h" 
-#include "Time/TimeManager.h" 
-#include "ResourceManager/ResourceManager.h" 
-#include <Windows.h> 
-#include <Commdlg.h> 
-#include "Data/SerializationManager.h" 
-#include "Physics/PhysicsManager.h" 
-#include "Physics/CollisionManager.h" 
-#include "Logging/Logger.h" 
-#include "Logic/LogicSystem.h" 
-#include "Graphics/RendererManager.h" 
-#include "Logic/testScript.h" 
-#include "Logic/PlayerControllerScript.h" 
-#include "Logic/EnemyTestScript.h" 
-#include "Logic/FollowScript.h" 
-#include "Logic/CameraManagerScript.h" 
-#include "Logic/GameStateController.h" 
-#include "Logic/GameStateController_v2_0.h" 
-#include "Logic/UI/HealthBarScript_v2_0.h" 
-#include "Logic/DeploymentScript.h" 
-#include "Logic/MainMenuController.h" 
-#include "Logic/Cat/CatScript_v2_0.h" 
-#include "Logic/IntroCutsceneController.h" 
-#include "GUISystem.h" 
-#include "GUI/Canvas.h" 
-#include "Utilities/FileUtilities.h" 
-#include <random> 
-#include <cmath> 
-#include <rttr/type.h> 
-#include "Graphics/CameraManager.h" 
-#include "Graphics/Text.h" 
-#include "GameStateManager.h" 
-#include "Data/json.hpp" 
-#include "Input/InputSystem.h" 
-#include "Layers/CollisionLayer.h" 
-#include "Logic/CatScript.h" 
-#include "Logic/RatScript.h" 
-#include "UndoStack.h" 
-#include "System.h" 
-#include "Math/MathCustom.h" 
-#include "SceneManager/SceneManager.h" 
-#include "Logic/Rat/RatScript_v2_0.h" 
-#include "Logic/Rat/RatIdle_v2_0.h" 
-#include "Layers/LayerManager.h" 
-#include "Logic/IntroCutsceneController.h" 
-#include "Logic/EndingCutsceneController.h" 
-#include "Logic/Boss/BossRatScript.h" 
-#include "Logic/ObjectAttachScript.h" 
-#include "Logic/Settings.h" 
-#include "Logic/TutorialController.h" 
+#include "prpch.h"
+#include "Editor.h"
+#include "Memory/MemoryManager.h"
+#include "AudioManager/AudioManager.h"
+#include "AudioManager/AudioComponent.h"
+#include "Time/FrameRateTargetControl.h"
+#include "Time/TimeManager.h"
+#include "ResourceManager/ResourceManager.h"
+#include <Windows.h>
+#include <Commdlg.h>
+#include "Data/SerializationManager.h"
+#include "Physics/PhysicsManager.h"
+#include "Physics/CollisionManager.h"
+#include "Logging/Logger.h"
+#include "Logic/LogicSystem.h"
+#include "Graphics/RendererManager.h"
+#include "Logic/testScript.h"
+#include "Logic/PlayerControllerScript.h"
+#include "Logic/EnemyTestScript.h"
+#include "Logic/FollowScript.h"
+#include "Logic/CameraManagerScript.h"
+#include "Logic/GameStateController.h"
+#include "Logic/GameStateController_v2_0.h"
+#include "Logic/UI/HealthBarScript_v2_0.h"
+#include "Logic/DeploymentScript.h"
+#include "Logic/MainMenuController.h"
+#include "Logic/Cat/CatScript_v2_0.h"
+#include "Logic/IntroCutsceneController.h"
+#include "GUISystem.h"
+#include "GUI/Canvas.h"
+#include "Utilities/FileUtilities.h"
+#include <random>
+#include <cmath>
+#include <rttr/type.h>
+#include "Graphics/CameraManager.h"
+#include "Graphics/Text.h"
+#include "GameStateManager.h"
+#include "Data/json.hpp"
+#include "Input/InputSystem.h"
+#include "Layers/CollisionLayer.h"
+#include "Logic/CatScript.h"
+#include "Logic/RatScript.h"
+#include "UndoStack.h"
+#include "System.h"
+#include "Math/MathCustom.h"
+#include "SceneManager/SceneManager.h"
+#include "Logic/Rat/RatScript_v2_0.h"
+#include "Logic/Rat/RatIdle_v2_0.h"
+#include "Layers/LayerManager.h"
+#include "Logic/IntroCutsceneController.h"
+#include "Logic/EndingCutsceneController.h"
+#include "Logic/Boss/BossRatScript.h"
+#include "Logic/ObjectAttachScript.h"
+#include "Logic/Settings.h"
+#include "Logic/TutorialController.h"
+#include "Logic/CameraShakeScript.h"
 
 #include <glm/gtc/type_ptr.hpp> 
 #include <glm/glm.hpp> 
@@ -4309,6 +4310,17 @@ namespace PE {
 									}
 								}
 
+							if (key == "CameraShakeScript")
+							{
+								CameraShakeScript* p_Script = dynamic_cast<CameraShakeScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("CameraShakeScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("Shake Amount: "); ImGui::SameLine(); ImGui::InputFloat("##ShakeAmount", &it->second.shakeAmount, 1.0f, 100.f, "%.3f");
+										ImGui::Text("Shake Duration: "); ImGui::SameLine(); ImGui::InputFloat("##ShakeDuration", &it->second.shakeDuration, 1.0f, 100.f, "%.3f");
+									}
+							}
 
 							}
 						}
