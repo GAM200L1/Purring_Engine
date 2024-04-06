@@ -807,6 +807,7 @@
                                 "RatKingPortrait": 0,
                                 "RatPortrait": 53,
                                 "SettingsMenu": 102,
+                                "SnowParticles": 0,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
@@ -5653,7 +5654,7 @@
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 2,
+                        "Layer": 4,
                         "Old ID": 104,
                         "Prefab Type": "OrangeCat",
                         "children": [
