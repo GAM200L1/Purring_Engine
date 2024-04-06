@@ -32,7 +32,7 @@ namespace PE
 		/*!**********************************************************************************
 		 \brief Destructor for CatMovement_v2_0PLAN
 		*************************************************************************************/
-		~CatMovement_v2_0PLAN() { p_data = nullptr; /*p_mouseClick = nullptr; p_mouseClickPrevious = nullptr;*/ }
+		~CatMovement_v2_0PLAN() { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
 		/*!***********************************************************************************
@@ -150,10 +150,6 @@ namespace PE
 		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
 		bool m_invalidPath{ false };
-
-		// taken from planning state
-		//bool* p_mouseClick{ nullptr }; // Set to true when the mouse is pressed, false otherwise
-		//bool* p_mouseClickPrevious{ nullptr }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 	};
 
 	// ----- CAT MOVEMENT EXECUTE STATE ----- //
