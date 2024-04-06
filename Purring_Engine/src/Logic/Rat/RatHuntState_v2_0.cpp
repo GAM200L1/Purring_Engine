@@ -84,6 +84,7 @@ namespace PE
 						// Move towards the target position until we've reached or we've run out of turns
 						if (!(p_data->finishedExecution)) {
 								p_data->finishedExecution = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime);
+								p_data->ratIsMoving = !(p_data->finishedExecution);
 #ifdef DEBUG_PRINT
 								std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute - moving\n";
 #endif // DEBUG_PRINT
@@ -92,6 +93,7 @@ namespace PE
 						{
 								// Play animation
 								GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
+								p_data->ratIsMoving = false;
 #ifdef DEBUG_PRINT
 								std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute - finished moving\n";
 #endif // DEBUG_PRINT
@@ -118,6 +120,7 @@ namespace PE
 #endif // DEBUG_PRINT
 					m_planningRunOnce = true;
 					p_data->finishedExecution = false;
+					p_data->ratIsMoving = false;
 
 					// Play animation
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
@@ -178,66 +181,8 @@ namespace PE
 
 	vec2 RatHunt_v2_0::PickTargetPosition()
 	{
-		vec2 ratPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
 		vec2 finalTarget{ RatScript_v2_0::GetEntityPosition(targetId) };
 
-		//bool hitSomething{};
-		//bool continueLoop{ true };
-		//int loopTimer = 360 / 15;
-
-
-		//while (continueLoop)
-		//{
-		//	hitSomething = false;
-		//	// Check what cats have exited the collider
-
-		//	std::cout<<"help aaaaaaaaaaa: " << finalTarget.x << " " << finalTarget.y << std::endl;
-		//	float targetDistance{ (ratPosition - finalTarget).LengthSquared() }; //magnitude
-
-		//	vec2 targetNormalized = (ratPosition - finalTarget) / targetDistance;
-
-		//	float range = std::min(p_data->maxMovementRange, targetDistance);
-
-		//	vec2 endPoint = ratPosition + (targetNormalized * range);
-
-		//	LineSegment ls(ratPosition, endPoint);
-
-		//	for (const auto& layer : LayerView<Collider>())
-		//	{
-		//		for (EntityID objectID : InternalView(layer))
-		//		{
-		//			if (objectID == p_data->myID)
-		//				continue;
-
-		//			if (EntityManager::GetInstance().Has<EntityDescriptor>(objectID))
-		//			{
-		//				if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name == "Obstacle")
-		//				{
-		//					if (DoRayCast(ls, objectID).has_value())
-		//					{	
-		//						std::cout <<"I am: "<<p_data->myID << " I Have Hit Entity: " << objectID << std::endl;
-		//						hitSomething = true;
-		//					}
-		//				}
-		//			}
-		//		}
-		//	}
-		//	if (!hitSomething)
-		//	{
-		//		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
-		//		return finalTarget;
-		//	}
-		//	--loopTimer;
-
-		//	if (loopTimer == 0)
-		//	{
-		//		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
-		//		return finalTarget;
-		//	}
-
-		//	finalTarget = RotatePoint(ratPosition, finalTarget, 15);
-		//}
-		// 
 		// Set the rat target
 		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
 		return finalTarget;

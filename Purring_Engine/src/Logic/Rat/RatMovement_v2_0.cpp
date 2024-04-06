@@ -78,6 +78,7 @@ namespace PE
             if (!triggerWalkAnim) 
             {
                 triggerWalkAnim = true;
+                p_data->ratIsMoving = true;
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::WALK);
             }
 
@@ -91,6 +92,7 @@ namespace PE
                 // The function returns true if the target has been reached
                 if (GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime))
                 {
+                    p_data->ratIsMoving = false;
                     OnMovementDone();
                 }
                 break;
@@ -112,6 +114,7 @@ namespace PE
                 {
                     m_planningRunOnce = true;
                     p_data->finishedExecution = false;
+                    p_data->ratIsMoving = false;
 
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
 

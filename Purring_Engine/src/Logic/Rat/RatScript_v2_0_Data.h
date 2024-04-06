@@ -177,6 +177,7 @@ namespace PE
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
 		float maxObstacleCollisionTime{ 0.3f };		// Max time in seconds that the rat can stay colliding with an obstacle before it is forced out of the execution phase
 		float totalTimeCollidingIntoWall{ 0.f };	// Time since the rat first started walking into the wall 
+		bool ratIsMoving{ false };
 
 		// Attack variables
 		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack
