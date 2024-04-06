@@ -38,6 +38,11 @@ namespace PE
 		EntityID SkipButton;
 		EntityID ContinueButton;
 
+		EntityID DeathCounter;
+		EntityID RescueCounter;
+		EntityID KillCounter;
+		EntityID TurnCounter;
+
 		int windowNotFocusEventID;
 		int windowFocusEventID;
 	};
