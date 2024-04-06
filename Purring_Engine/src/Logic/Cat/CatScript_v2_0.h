@@ -271,7 +271,11 @@ namespace PE
 		*************************************************************************************/
 		inline void ChangeToPlanningState(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Function for Creating Cat Walking Particles
 
+		 \param[in] id - EntityID of the cat 
+		*************************************************************************************/
 		void CreateCatWalkParticles(EntityID id);
 	};
 }
