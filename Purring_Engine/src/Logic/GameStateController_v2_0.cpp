@@ -1761,7 +1761,7 @@ namespace PE
 			break;
 		}
 
-		std::string soundPath = "AudioObject/Rat " + ratTypeName + " Attack SFX" + std::to_string(randomSelection) + ".prefab";
+		std::string soundPath = "AudioObject/Rat " + ratTypeName + " Selection SFX" + std::to_string(randomSelection) + ".prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
 
 		//@DEBUGHANS For Reviewer to test
