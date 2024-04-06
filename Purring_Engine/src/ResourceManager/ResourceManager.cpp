@@ -53,6 +53,8 @@ namespace PE
                       m_defaultAudio{ std::make_shared<AudioManager::Audio>() },
                       m_defaultFont{ std::make_shared<Font>() },
                       m_defaultAnimation{ std::make_shared<Animation>() },
+                      m_defaultCursorTexture{ std::make_shared<Graphics::Texture>() },
+                      m_hoverCursorTexture{ std::make_shared<Graphics::Texture>() },
                       m_defaultTextureKey{ "../Assets/Defaults/Default_Texture_512px.png" },
                       m_defaultAudioKey{ "../Assets/Defaults/Default_Audio.wav" },
                       m_defaultFontKey{ "../Assets/Defaults/Default_Font.ttf" },
@@ -79,6 +81,9 @@ namespace PE
         m_defaultFont.reset();
         m_defaultAnimation.reset();
 
+        m_defaultCursorTexture.reset();
+        m_hoverCursorTexture.reset();
+        
 #ifdef RESOURCE_LOG
 
         const char* filepath = "../Assets/Settings/resourcelog.txt";
@@ -107,6 +112,28 @@ namespace PE
         m_defaultAudio->LoadSound(m_defaultAudioKey, AudioManager::GetInstance().GetFMODSystem());
         m_defaultFont->Initialize(m_defaultFontKey);
         m_defaultAnimation->LoadAnimation(m_defaultAnimationKey);
+
+
+        // Load cursor textures from configuration file
+        std::ifstream configFile("../Assets/Settings/config.json");
+        if (configFile)
+        {
+            // Read info from the JSON file
+            nlohmann::json configJson;
+            configFile >> configJson;
+
+            try
+            {
+                // Load texture from file
+                m_defaultCursorTexture->CreateTexture(configJson["cursor"]["cursorDefaultTexture"]); //"../Assets/Textures/Cursor/CustomCursor_32px.png");
+                m_hoverCursorTexture->CreateTexture(configJson["cursor"]["cursorHoverTexture"]); //"../Assets/Textures/Cursor/PointyCursor_32px.png");
+            }
+            catch (...)
+            {
+                std::cerr << "ResourceManager::LoadDefaultAssets(): Cursor texture keys could not be found in the JSON file" << std::endl;
+            }
+
+        }
     }
 
     void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderPath,
@@ -659,6 +686,22 @@ namespace PE
     void ResourceManager::AddPrefabKeyToLoad(std::string const& r_key)
     {
         m_allPrefabKeys.insert(r_key);
+    }
+
+    std::shared_ptr<Graphics::Texture> ResourceManager::GetDefaultCursorTexture() const
+    {
+        if (!m_defaultCursorTexture)
+            return m_defaultTexture;
+
+        return m_defaultCursorTexture;
+    }
+
+    std::shared_ptr<Graphics::Texture> ResourceManager::GetHoverCursorTexture() const
+    {
+        if (!m_hoverCursorTexture)
+            return m_defaultTexture;
+
+        return m_hoverCursorTexture;
     }
 
     void ResourceManager::UnloadResources()

@@ -20,7 +20,10 @@
 #include "Logging/Logger.h"
 #include "Events/EventHandler.h"
 #include "Time/TimeManager.h"
-namespace PE 
+
+#include "Graphics/Cursor.h"
+
+namespace PE
 {
     //static declarations
     float InputSystem::m_bufferTime = 0.12f;
@@ -76,7 +79,10 @@ namespace PE
             m_MouseDown.push_back(mbhe);
             PE::SEND_MOUSE_EVENT(mbpe)
 
-                break;
+            if (mbpe.button == 0)
+                Graphics::Cursor::GetInstance().CursorOnHoverEnter();
+
+            break;
         }
         case GLFW_RELEASE:
         {
@@ -87,6 +93,9 @@ namespace PE
             mbre.x = static_cast<int>(x);
             mbre.y = static_cast<int>(y);
             mbre.button = (int)button;
+            if (mbre.button == 0)
+                Graphics::Cursor::GetInstance().CursorOnHoverExit();
+
             if (!m_MouseDown.empty())
             {
                 for (std::vector<MouseButtonHoldEvent>::iterator it = std::begin(m_MouseDown); it != std::end(m_MouseDown);)

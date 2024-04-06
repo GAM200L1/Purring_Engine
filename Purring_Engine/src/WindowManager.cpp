@@ -188,6 +188,15 @@ namespace PE
 		}
 	}
 
+	void WindowManager::ToggleCursor(bool _isVisible)
+	{
+		if(_isVisible)
+			glfwSetInputMode(p_currWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		else
+			glfwSetInputMode(p_currWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+	}
+
 
 	/*                                                                                          Window Callback Functions
 	--------------------------------------------------------------------------------------------------------------------- */
