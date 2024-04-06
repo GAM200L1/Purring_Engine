@@ -392,85 +392,88 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-		for (const auto& layer : LayerView<Transform, GUIButton>())
-		{
-			for (EntityID objectID : InternalView(layer))
+			if (MBPE.button == GLFW_MOUSE_BUTTON_1)
 			{
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
-					continue;
-
-				//get the components
-				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
-				GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
-
-				std::string nameOfButton = EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name;
-
-
-				if (gui.disabled)
-					continue;
-
-				float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
-				InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
-				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
-				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
-
-				if (gui.m_UIType == UIType::Button)
+				for (const auto& layer : LayerView<Transform, GUIButton>())
 				{
-					if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
-						continue;
-					if (gui.m_clickedTimer <= 0)
+					for (EntityID objectID : InternalView(layer))
 					{
-						gui.OnClick(objectID);
-						gui.m_clickedTimer = .3f;
-						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) 
+						if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
+							continue;
+
+						//get the components
+						Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
+						GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
+
+						std::string nameOfButton = EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name;
+
+
+						if (gui.disabled)
+							continue;
+
+						float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
+						InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
+						mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
+						mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
+
+						if (gui.m_UIType == UIType::Button)
 						{
-							if (nameOfButton == EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name)
+							if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+								continue;
+							if (gui.m_clickedTimer <= 0)
 							{
-								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
-								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
+								gui.OnClick(objectID);
+								gui.m_clickedTimer = .3f;
+								if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID))
+								{
+									if (nameOfButton == EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name)
+									{
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
+									}
+								}
+								return;
 							}
 						}
-						return;
 					}
 				}
-			}
-		}
 #ifndef GAMERELEASE
-		if (Editor::GetInstance().IsRunTime())
+				if (Editor::GetInstance().IsRunTime())
 #endif
-		for (const auto& layer : LayerView<Transform, GUISlider>())
-		{
-			for (EntityID objectID : InternalView(layer))
-			{
+					for (const auto& layer : LayerView<Transform, GUISlider>())
+					{
+						for (EntityID objectID : InternalView(layer))
+						{
 
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
-					continue;
+							if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+								continue;
 
-				if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
-					continue;
-				//get the components
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
+								continue;
+							//get the components
 
 
-				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
-				if (EntityManager::GetInstance().Has<Transform>(slider.m_knobID.value()))
-				{
-					Transform& transform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
+							GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
+							if (EntityManager::GetInstance().Has<Transform>(slider.m_knobID.value()))
+							{
+								Transform& transform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
 
-				if (slider.m_disabled || slider.m_isHealthBar)
-					continue;
+								if (slider.m_disabled || slider.m_isHealthBar)
+									continue;
 
-					float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
-					InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
-					mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
-					mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
+								float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
+								InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
+								mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
+								mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
-					if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
-						continue;
+								if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+									continue;
 
-					slider.m_clicked = true;
-				}
+								slider.m_clicked = true;
+							}
+						}
+					}
 			}
-		}
 	}
 
 	void GUISystem::OnMouseRelease(const Event<MouseEvents>& r_ME)

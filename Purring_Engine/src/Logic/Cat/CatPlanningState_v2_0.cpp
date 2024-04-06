@@ -63,7 +63,7 @@ namespace PE
 		{
 			// if in previous frame and current frame the mouse has always been there allow double click
 			// if previous frame not clicked and this frame clicked increment double click
-			if (m_doubleClickTimer >= 0.25f) // resets double click when 1 second has passed
+			if (m_doubleClickTimer >= 0.5f) // resets double click when 1 second has passed
 			{
 				m_startDoubleClickTimer = false;
 				m_doubleClickTimer = 0.f;

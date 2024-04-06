@@ -125,13 +125,13 @@ namespace PE
 					// if hovering and mouse triggered
 					if (mouseClicked && !mouseClickedPrevious)
 					{
-						// @TODO: Add select direction sfx
+						// add action to undo stack
+						if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
+							GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
+
 						p_attackData->attackDirection = r_telegraph.first;
 						(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
 						CatHelperFunctions::SetColor(r_telegraph.second, m_selectColor);
-
-						// add action to undo stack
-						GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
 					}
 				}
 				else // if not hovering any telegraphs, set to default color
