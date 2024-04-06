@@ -2465,6 +2465,20 @@ namespace PE {
 								ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
+								// Color Setting
+								//get and set color variable of the camera component
+								ImVec4 color;
+								color.x = cameraComponent.GetBackgroundColor().r;
+								color.y = cameraComponent.GetBackgroundColor().g;
+								color.z = cameraComponent.GetBackgroundColor().b;
+								color.w = cameraComponent.GetBackgroundColor().a;
+
+								ImGui::Text("Change Background Color: "); ImGui::SameLine();
+								ImGui::ColorEdit4("##Change Background Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								cameraComponent.SetBackgroundColor(color.x, color.y, color.z, color.w);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
 								cameraComponent.SetViewDimensions(viewportWidth, viewportHeight);
 								cameraComponent.SetMagnification(zoom);
 								cameraComponent.SetMainCamera(isMainCamera);
