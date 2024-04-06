@@ -1602,6 +1602,8 @@ namespace PE
 		else
 		for (auto catid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
 		{
+			std::cout << "Cat object clicked " << EntityManager::GetInstance().Get<EntityDescriptor>(catid).name << std::endl;
+
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "CatPortraitName")
 			{
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(catid))
@@ -1620,6 +1622,20 @@ namespace PE
 					EntityManager::GetInstance().Get<GUISlider>(catid).m_currentValue = static_cast<float>(Current);
 				}
 			}
+
+			if (GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData().at(m_lastSelectedEntity).isCaged)
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "EnergyFrame")
+				{
+					DeactiveObject(catid);
+				}
+
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "CatEnergyBar")
+				{
+					DeactiveObject(catid);
+				}
+			}
+
 		}
 	}
 

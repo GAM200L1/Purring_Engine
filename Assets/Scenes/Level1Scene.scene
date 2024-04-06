@@ -1211,8 +1211,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2600,7 +2600,9 @@
                         "Layer": 0,
                         "Old ID": 50,
                         "Prefab Type": "",
-                        "children": [],
+                        "children": [
+                            54
+                        ],
                         "isActive": false,
                         "name": "EnergyFrame",
                         "parent": 51,
@@ -2648,8 +2650,7 @@
                         "children": [
                             48,
                             50,
-                            52,
-                            54
+                            52
                         ],
                         "isActive": false,
                         "name": "CatPortraitCanvas",
@@ -2685,7 +2686,7 @@
                         "children": [],
                         "isActive": false,
                         "name": "EnergyIcon",
-                        "parent": 51,
+                        "parent": 50,
                         "sceneID": 50
                     },
                     "GUIRenderer": {
@@ -2705,8 +2706,8 @@
                             "y": -450.8999938964844
                         },
                         "relativeposition": {
-                            "x": -891.3989868164063,
-                            "y": -450.8999938964844
+                            "x": -94.09893798828125,
+                            "y": 4.100006103515625
                         },
                         "relorientation": 0.0,
                         "width": 45.099998474121094
@@ -3327,8 +3328,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4161,8 +4162,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4517,8 +4518,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -6556,7 +6557,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/LeafTwirl.png"
+                        "TextureKey": "../Assets/Textures/Resources/LeafTwirl_Sepia.png"
                     },
                     "Transform": {
                         "height": 100.0000228881836,
