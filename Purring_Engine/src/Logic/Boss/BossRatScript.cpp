@@ -32,6 +32,8 @@ namespace PE
 
 	void BossRatScript::Init(EntityID id)
 	{
+		m_hasInitiatedAudioFadeOut = false; // Reset the flag for audio fade out
+
 		FindAllObstacles();
 
 		m_scriptData[id].collisionEnterEventKey = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, BossRatScript::OnCollisionStay, this)
@@ -66,6 +68,12 @@ namespace PE
 			{
 				PlayAnimation(BossRatAnimationsEnum::DEATH);
 				PlayDeathAudio();
+
+				if (!m_hasInitiatedAudioFadeOut)
+				{
+					GlobalMusicManager::GetInstance().StartFadeOutAllAudio(3.0f);
+					m_hasInitiatedAudioFadeOut = true;									// Ensure all audio fade-out only once
+				}
 			}
 
 			//keep in execution phase
@@ -223,6 +231,7 @@ namespace PE
 		}
 		return ClosestCat;
 	}
+
 	std::vector<EntityID> BossRatScript::GetAllObstacles()
 	{
 		return m_obstacles;
@@ -276,6 +285,7 @@ namespace PE
 			}
 		}
 	}
+
 	bool BossRatScript::IsObstacle(EntityID id)
 	{
 	 return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);;
@@ -328,6 +338,7 @@ namespace PE
 		
 
 	}
+
 	void BossRatScript::PlayAttackAudio()
 	{
 		int random = rand() % 5 + 1;
@@ -335,24 +346,30 @@ namespace PE
 		GlobalMusicManager::GetInstance().PlaySFX(attackAudio, false);
 
 	}
+
 	void BossRatScript::PlayHurtAudio()
 	{
 		int random = rand() % 8 + 1;
 		std::string hurtAudio = "AudioObject/BossAudioPrefab/BossRatInjured" + std::to_string(random) + "SFX.prefab";
 		GlobalMusicManager::GetInstance().PlaySFX(hurtAudio, false);
 	}
+
 	void BossRatScript::PlayDeathAudio()
 	{
-		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatDeath1SFX.prefab", false);
+		//GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatDeath1SFX.prefab", false);
+		GlobalMusicManager::GetInstance().StartFadeOut("AudioObject/BossAudioPrefab/BossRatDeath1SFX.prefab", 3.0f);
 	}
+
 	void BossRatScript::PlayPoisonPuddleAudio()
 	{
 		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatChargePuddlesSFX.prefab", false);
 	}
+
 	void BossRatScript::PlaySlamShockWaveAudio()
 	{
 		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatSlamShockwaveSFX.prefab",false);
 	}
+
 	void BossRatScript::PlayBashSpikeAudio()
 	{
 		GlobalMusicManager::GetInstance().PlaySFX("AudioObject/BossAudioPrefab/BossRatBashSpikeSFX.prefab", false);
