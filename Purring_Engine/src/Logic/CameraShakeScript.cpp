@@ -22,22 +22,15 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
-#include "Animation/Animation.h"
 #include "LogicSystem.h"
 
-#include <limits>
-
-
-# define M_PI           3.14159265358979323846 
+#include "Graphics/Camera.h"
+#include "Graphics/CameraManager.h"
 
 namespace PE 
 {
 	CameraShakeScript::CameraShakeScript()
 	{
-		REGISTERANIMATIONFUNCTION(TestFunction, PE::CameraShakeScript);
-		REGISTERANIMATIONFUNCTION(TestFunction2, PE::CameraShakeScript);
-		REGISTERANIMATIONFUNCTION(TestFunction3, PE::CameraShakeScript);
-
 
 	}
 
@@ -47,10 +40,24 @@ namespace PE
 	}
 	void CameraShakeScript::Update(EntityID id, float deltaTime)
 	{
-		//PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * m_ScriptData[id].m_rotationSpeed);
+		if (m_ScriptData[id].shakeEnabled)
+		{
+			if (m_ScriptData[id].elapsedTime < m_ScriptData[id].shakeDuration)
+			{
+				m_ScriptData[id].elapsedTime += deltaTime;
+				float shakeAmount = m_ScriptData[id].shakeAmount * (1 - m_ScriptData[id].elapsedTime / m_ScriptData[id].shakeDuration);
+				float x = (rand() % 100) / 100.0f * shakeAmount - shakeAmount * 0.5f;
+				float y = (rand() % 100) / 100.0f * shakeAmount - shakeAmount * 0.5f;
 
-	
-	
+				EntityManager::GetInstance().Get<PE::Transform>(id).position = m_ScriptData[id].originalPosition + vec2(x, y);
+			}
+			else
+			{
+				EntityManager::GetInstance().Get<PE::Transform>(id).position = m_ScriptData[id].originalPosition;
+				m_ScriptData[id].elapsedTime = 0;
+				m_ScriptData[id].shakeEnabled = false;
+			}
+		}
 	}
 	void CameraShakeScript::Destroy(EntityID id)
 	{
@@ -83,18 +90,9 @@ namespace PE
 		return rttr::instance(m_ScriptData.at(id));
 	}
 
-	void CameraShakeScript::TestFunction(EntityID)
+	void CameraShakeScript::Shake(EntityID id)
 	{
-		std::cout << "Test Function Called" << std::endl;
-	}
-
-	void CameraShakeScript::TestFunction2(EntityID)
-	{
-		std::cout << "Test Function 2 Called" << std::endl;
-	}
-
-	void CameraShakeScript::TestFunction3(EntityID)
-	{
-		std::cout << "Test Function 3 Called" << std::endl;
+		m_ScriptData[id].originalPosition = EntityManager::GetInstance().Get<PE::Transform>(id).position;
+		m_ScriptData[id].shakeEnabled = true;
 	}
 }

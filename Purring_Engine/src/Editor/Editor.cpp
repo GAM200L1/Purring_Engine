@@ -4309,7 +4309,8 @@ namespace PE {
 								if (it != p_Script->GetScriptData().end())
 									if (ImGui::CollapsingHeader("CameraShakeScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
+										ImGui::Text("Shake Amount: "); ImGui::SameLine(); ImGui::InputFloat("##ShakeAmount", &it->second.shakeAmount, 1.0f, 100.f, "%.3f");
+										ImGui::Text("Shake Duration: "); ImGui::SameLine(); ImGui::InputFloat("##ShakeDuration", &it->second.shakeDuration, 1.0f, 100.f, "%.3f");
 									}
 							}
 

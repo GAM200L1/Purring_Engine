@@ -26,6 +26,15 @@
                         "parent": null,
                         "sceneID": 2
                     },
+                    "ScriptComponent": {
+                        "CameraShakeScript": {
+                            "data": {
+                                "shakeAmount": 500.0,
+                                "shakeDuration": 2.0
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
@@ -52,7 +61,7 @@
                             "../Assets/Animation/AnimationOrange_Attack.anim",
                             "../Assets/Animation/AnimationOrange_walk.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_walk.anim"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Attack.anim"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -72,7 +81,15 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Animations/Cat_Citrus_Walk.png"
+                        "TextureKey": "../Assets/Textures/Animations/Cat_Citrus_Attack.png"
+                    },
+                    "ScriptComponent": {
+                        "testScript": {
+                            "data": {
+                                "m_rotationSpeed": 10.0
+                            },
+                            "state": 0
+                        }
                     },
                     "Transform": {
                         "height": 100.0,

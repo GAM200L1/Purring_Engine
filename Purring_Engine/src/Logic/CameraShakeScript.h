@@ -16,13 +16,18 @@
 *************************************************************************************/
 #pragma once
 #include "Script.h"
+#include "Math/MathCustom.h"
+
 namespace PE
 {
 	struct CameraShakeScriptData
 	{
-		float m_rotationSpeed{ 10 };
-		float shakeDuration{};
-		float shakeAmount{};
+		float shakeDuration{0.5f};
+		float shakeAmount{20.f};
+		float elapsedTime{};
+		vec2 originalPosition{};
+		bool shakeEnabled{ false };
+		
 
 		float m_timer{ 3 };
 		int newEntityKey{-1};
@@ -105,6 +110,8 @@ namespace PE
 		void TestFunction(EntityID);
 		void TestFunction2(EntityID);
 		void TestFunction3(EntityID);
+
+		void Shake(EntityID);
 	private:
 		std::map<EntityID, CameraShakeScriptData> m_ScriptData;
 	};

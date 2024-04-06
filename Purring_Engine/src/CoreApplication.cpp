@@ -481,7 +481,6 @@ RTTR_REGISTRATION
         .property("animationStates", &PE::BossRatScriptData::animationStates);
 
     rttr::registration::class_<PE::CameraShakeScriptData>("CameraShakeScript")
-        .property("m_rotationSpeed", &PE::CameraShakeScriptData::m_rotationSpeed)
         .property("shakeDuration", &PE::CameraShakeScriptData::shakeDuration)
         .property("shakeAmount", &PE::CameraShakeScriptData::shakeAmount);
 
