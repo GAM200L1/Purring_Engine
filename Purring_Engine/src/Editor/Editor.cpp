@@ -5596,7 +5596,6 @@ namespace PE {
 					if (off > 0.0f)
 						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
 
-					// hansongong
 					if (ImGui::Button("Play"))
 					{
 						if (m_isRunTime == false)
@@ -6410,7 +6409,6 @@ namespace PE {
 				for (const auto& id : InternalView(layer))
 				{
 					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = true;
-					// hansongong
 				}
 			}
 			GlobalMusicManager::GetInstance().PauseAllAudio();
