@@ -78,7 +78,6 @@ namespace PE
 		}
 
 		MakeStateManager(id);
-
 		m_scriptData[id].pathPositions.reserve(m_scriptData[id].catMaxMovementEnergy);
 		m_scriptData[id].pathQuads.reserve(m_scriptData[id].catMaxMovementEnergy);
 		for (size_t i{ 0 }; i < m_scriptData[id].catMaxMovementEnergy; ++i)
@@ -107,6 +106,11 @@ namespace PE
 		if (!m_scriptData[id].p_stateManager)
 		{
 			MakeStateManager(id);
+		}
+
+		if (m_scriptData[id].catMaxMovementEnergy == 50 && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->GetRats(GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->mainInstance).size())
+		{
+			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->FillPathNodes(id, m_scriptData[id].catPrevMaxMovementEnergy);
 		}
 
 		// cat dies
@@ -301,6 +305,7 @@ namespace PE
 		}
 		m_scriptData[id].pathQuads.clear();
 		m_scriptData[id].catMaxMovementEnergy = newEnergy;
+		m_scriptData[id].catCurrentEnergy = newEnergy;
 		m_scriptData[id].pathPositions.reserve(m_scriptData[id].catMaxMovementEnergy);
 		m_scriptData[id].pathQuads.reserve(m_scriptData[id].catMaxMovementEnergy);
 		for (size_t i{ 0 }; i < m_scriptData[id].catMaxMovementEnergy; ++i)
@@ -469,10 +474,12 @@ namespace PE
 
 	void CatScript_v2_0::ChangeToPlanningState(EntityID id)
 	{
-		if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->GetRats(GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->mainInstance).empty() && m_scriptData[id].catMaxMovementEnergy != 1000 && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 3)
+		if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->GetRats(GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->mainInstance).empty() && m_scriptData[id].catMaxMovementEnergy != 50 && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 3)
 		{
+			m_scriptData[id].catPrevMaxMovementEnergy = m_scriptData[id].catMaxMovementEnergy;
 			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->FillPathNodes(id, 50);
 		}
+
 		switch (m_scriptData[id].catType)
 		{
 		case EnumCatType::ORANGECAT:

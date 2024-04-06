@@ -22,7 +22,7 @@
                             "isActive": false,
                             "name": "WinCanvas",
                             "parent": null,
-                            "sceneID": 60
+                            "sceneID": 32
                         },
                         "Transform": {
                             "height": 100.0,
@@ -114,7 +114,7 @@
                                 "y": 0.0
                             },
                             "relativeposition": {
-                                "x": 0.0,
+                                "x": 64.0,
                                 "y": 0.0
                             },
                             "relorientation": 0.0,
