@@ -703,6 +703,13 @@ namespace PE
 		void CreateRatPathTelegraph(RatScript_v2_0_Data& r_data);
 
 		/*!***********************************************************************************
+		 \brief Load the movement telegraph prefab and store it in the rat data.
+
+		 \param[in, out] r_data - Reference to this rat's data.
+		*************************************************************************************/
+		void CreateRatWalkParticles(RatScript_v2_0_Data& r_data);
+
+		/*!***********************************************************************************
 		 \brief Load the detection telegraph prefab and store it in the rat data.
 
 		 \param[in, out] r_data - Reference to this rat's data.

@@ -37,6 +37,7 @@
 
 #include "../Time/TimeManager.h" // GetDeltaTime()
 
+#include "VisualEffects/ParticleSystem.h"
 //#define DEBUG_PRINT
 
 namespace PE
@@ -87,6 +88,8 @@ namespace PE
 			// Create the detection telegraph
 			CreateRatDetectionTelegraph(it->second);
 
+			CreateRatWalkParticles(it->second);
+
 			// Create the corresponding attack data object
 			InstantiateRatAttack(it->second);
 
@@ -105,9 +108,18 @@ namespace PE
 
 			if(gameStateController->currentState == GameStates_v2_0::PAUSE){
 					previousGameState = gameStateController->currentState;
+					ToggleEntity(m_scriptData.at(id).RatWalkParticles, false);
 					return;
 			}
-			
+			else if (gameStateController->currentState == GameStates_v2_0::PLANNING || gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
+			{
+				if (EntityManager::GetInstance().Has<ParticleEmitter>(m_scriptData.at(id).RatWalkParticles))
+				{
+					EntityManager::GetInstance().Get<ParticleEmitter>(m_scriptData.at(id).RatWalkParticles).ResetAllParticles();
+				}
+
+				ToggleEntity(m_scriptData.at(id).RatWalkParticles, false);
+			}
 			// Update the rat state
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
@@ -138,7 +150,6 @@ namespace PE
 					// NOTE: I'm still not too sure about whether it's a good idea to clear this here. 
 					// I'm making the assumption that all decisions the rat makes occurs during the planning phase
 					// Update: It was not a good idea. Keeping this here for reference
-
 					// Reset timeout
 					it->second.totalTimeCollidingIntoWall = 0.f;
 			}
@@ -1064,7 +1075,7 @@ namespace PE
 						vec2 newPosition = RatScript_v2_0::GetEntityPosition(id) + (it->second.directionFromRatToPlayerCat * amountToMove);
 						RatScript_v2_0::PositionEntity(id, newPosition);
 						it->second.ratPlayerDistance -= amountToMove;
-
+						ToggleEntity(m_scriptData.at(id).RatWalkParticles, true); // set to inactive, it will only show during exec phase
 #ifdef DEBUG_PRINT
 						printOnce = false;
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
@@ -1156,6 +1167,8 @@ namespace PE
 				ClearCollisionContainers(id); // Clear collision containers
 
 				ChangeStateToDeath(it->second.myID, 0.f); 
+
+
 		}
 
 
@@ -1264,6 +1277,22 @@ namespace PE
 				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent
 				
 				PositionEntityRelative(r_data.telegraphArrowEntityID, vec2{ ratScale.x * 0.7f, 0.f });
+		}
+
+		void RatScript_v2_0::CreateRatWalkParticles(RatScript_v2_0_Data& r_data)
+		{
+			// Check if the path telegraph entity alr exists
+			if (r_data.RatWalkParticles != 0UL && r_data.RatWalkParticles != MAXSIZE_T) { return; }
+			r_data.RatWalkParticles = ResourceManager::GetInstance().LoadPrefabFromFile("CatWalkDirtParticles.prefab");
+
+			if(GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 2 || GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 3)
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(r_data.RatWalkParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(r_data.RatWalkParticles).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Particle_SnowSmoke_512px.png"));
+
+			ToggleEntity(r_data.RatWalkParticles, false); // set to inactive, it will only show during planning phase
+			Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.RatWalkParticles); // attach child to parent
+
+			PositionEntityRelative(r_data.RatWalkParticles, vec2{ 7.f, -29.f });
 		}
 		
 

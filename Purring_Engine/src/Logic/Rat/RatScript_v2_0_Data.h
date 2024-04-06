@@ -143,6 +143,7 @@ namespace PE
 		EntityID pivotEntityID{ 0 };			// id of parent obj to rotate to adjust the orientation of the telegraphs
 		EntityID telegraphArrowEntityID{ 0 };	// id of paw print movement telegraph
 		EntityID detectionIcon{ 0 };			// id of question/exclamation mark icon
+		EntityID RatWalkParticles{ 0 };
 		StateMachine* p_stateManager{ nullptr };
 		
 		// Positional offset from the center of the rat that the detection icon should be located

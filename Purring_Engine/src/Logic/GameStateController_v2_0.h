@@ -563,10 +563,10 @@ namespace PE
 		bool m_bgmStarted = false;
 
 		//stats
-		int m_catsRescued;
-		int m_ratsVanquished;
-		int m_totalTurns;
-		int m_deathCount;
+		int m_catsRescued{};
+		int m_ratsVanquished{};
+		int m_totalTurns{};
+		int m_deathCount{};
 	};
 }
 
