@@ -37,6 +37,9 @@ namespace PE
 
 		\param[in,out] id - ID of instance of script
 		\param[in,out] deltaTime - delta time to update the state with
+		\param[in] r_cursorPosition - current cursor position
+		\param[in] mouseClicked - is mouse clicked
+		\param[in] mouseClickedPrevious - was mouse clicked in previous frame
 		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious) = 0;
 

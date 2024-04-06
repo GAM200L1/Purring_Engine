@@ -73,10 +73,6 @@ namespace PE
 	{
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
-
-		// retrive mouse click data from plan state
-		/*p_mouseClick = p_planMouseClick;
-		p_mouseClickedPrevious = p_planMouseClickPrev;*/
 	}
 
 	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious)

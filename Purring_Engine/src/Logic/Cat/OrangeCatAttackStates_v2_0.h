@@ -68,8 +68,6 @@ namespace PE
 		\brief Set up the state and subscribe to the collision events
 
 		\param[in,out] id - ID of instance of script
-		\param[in] p_planMouseClick - pointer to mouse click bool in plan state
-		\param[in] p_planMouseClickPrev - pointer to mouse click previous bool in plan state
 		*************************************************************************************/
 		virtual void Enter(EntityID id);
 
@@ -78,6 +76,9 @@ namespace PE
 
 		\param[in,out] id - ID of instance of script
 		\param[in,out] deltaTime - delta time to update the state with
+		\param[in] r_cursorPosition - current cursor position
+		\param[in] mouseClicked - is mouse clicked
+		\param[in] mouseClickedPrevious - was mouse clicked in previous frame
 		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious);
 
@@ -121,8 +122,6 @@ namespace PE
 
 		// checks
 		bool m_firstUpdate{ true };
-		//bool* p_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
-		//bool* p_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 	};
 
 	class OrangeCatAttack_v2_0EXECUTE : public State

@@ -98,7 +98,7 @@ namespace PE
 		}
 		else if (!p_data->attackSelected && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id))
 		{
-			p_catMovement->Update(id, deltatime, cursorPosition, m_mouseClicked, m_mouseClickPrevious);
+			p_catMovement->Update(id, deltatime, cursorPosition, m_mousePositionPrevious, m_mouseClicked, m_mouseClickPrevious);
 		}
 
 		// save previous frame data

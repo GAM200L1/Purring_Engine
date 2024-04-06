@@ -39,8 +39,6 @@ namespace PE
 		 \brief Subscribes to input and collision events and resets the variables of the state.
 
 		 \param[in] id - EntityID of the entity this instance of the script is attached to.
-		 \param[in] p_planMouseClick - pointer to mouse click bool in plan state
-		 \param[in] p_planMouseClickPrev - pointer to mouse click previous bool in plan state
 		*************************************************************************************/
 		void Enter(EntityID id);
 
@@ -49,8 +47,12 @@ namespace PE
 
 		 \param[in] id - EntityID of the entity this instance of the script is attached to.
 		 \param[in] deltaTime - Time in seconds since the last frame.
+		 \param[in] r_cursorPosition - current cursor position
+		 \param[in] r_prevCursorPosition - previous cursor position
+		 \param[in] mouseClicked - is mouse clicked
+		 \param[in] mouseClickedPrevious - was mouse clicked in previous frame
 		*************************************************************************************/
-		void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious);
+		void Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, vec2 const& r_prevCursorPosition, bool mouseClicked, bool mouseClickedPrevious);
 
 		/*!***********************************************************************************
 		 \brief Unsubscribe from all the event listeners.
@@ -148,7 +150,6 @@ namespace PE
 		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
 		bool m_invalidPath{ false };
-		vec2 m_previousCursorPosition{};
 
 		// taken from planning state
 		//bool* p_mouseClick{ nullptr }; // Set to true when the mouse is pressed, false otherwise
