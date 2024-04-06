@@ -56,6 +56,7 @@ namespace PE
 				EntityManager::GetInstance().Get<PE::Transform>(id).position = m_ScriptData[id].originalPosition;
 				m_ScriptData[id].elapsedTime = 0;
 				m_ScriptData[id].shakeEnabled = false;
+				m_ScriptData[id].isShaking = false;
 			}
 		}
 	}
@@ -92,7 +93,12 @@ namespace PE
 
 	void CameraShakeScript::Shake(EntityID id)
 	{
-		m_ScriptData[id].originalPosition = EntityManager::GetInstance().Get<PE::Transform>(id).position;
-		m_ScriptData[id].shakeEnabled = true;
+		// if camera is not shaking
+		if (!m_ScriptData[id].isShaking)
+		{
+			m_ScriptData[id].originalPosition = EntityManager::GetInstance().Get<PE::Transform>(id).position;
+			m_ScriptData[id].shakeEnabled = true;
+			m_ScriptData[id].isShaking = true;
+		}
 	}
 }

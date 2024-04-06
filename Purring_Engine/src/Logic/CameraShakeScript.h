@@ -27,6 +27,7 @@ namespace PE
 		float elapsedTime{};
 		vec2 originalPosition{};
 		bool shakeEnabled{ false };
+		bool isShaking{ false };
 		
 
 		float m_timer{ 3 };
