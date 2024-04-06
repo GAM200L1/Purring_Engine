@@ -153,6 +153,7 @@ namespace PE
 			{
 				p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
 				GETSCRIPTINSTANCEPOINTER(CameraShakeScript)->Shake(GETCAMERAMANAGER()->GetMainCameraId());
+				p_script->PlaySlamShockWaveAudio();
 			}
 			m_isCharging = false;
 
