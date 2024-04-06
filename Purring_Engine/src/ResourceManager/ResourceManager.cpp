@@ -654,7 +654,6 @@ namespace PE
         if (!m_defaultCursorTexture)
             return m_defaultTexture;
 
-        std::cout << "ResourceManager::GetHoverCursorTexture() default texture exists" << std::endl;
         return m_defaultCursorTexture;
     }
 
@@ -663,7 +662,6 @@ namespace PE
         if (!m_hoverCursorTexture)
             return m_defaultTexture;
 
-        std::cout << "ResourceManager::GetHoverCursorTexture() hover texture exists" << std::endl;
         return m_hoverCursorTexture;
     }
 
