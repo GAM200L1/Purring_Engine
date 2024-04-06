@@ -67,6 +67,7 @@ namespace PE
 		}
 		SetPathColor(m_defaultPathColor);
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
+		m_heartPlayed = false;
 	}
 
 	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, vec2 const& r_prevCursorPosition, bool mouseClicked, bool mouseClickedPrevious)
@@ -310,7 +311,6 @@ namespace PE
 
 		SetPathColor(m_defaultPathColor);
 
-		//*p_mouseClickPrevious = false;
 		m_pathBeingDrawn = false;
 
 		m_resetPositions.pop();
@@ -324,6 +324,7 @@ namespace PE
 			// stop heart animation
 			EntityManager::GetInstance().Get<AnimationComponent>(m_heartIcon).StopAnimation();
 			CatHelperFunctions::ToggleEntity(m_heartIcon, false);
+			m_heartPlayed = false;
 
 			// play sad cat sounds
 			switch (*GETSCRIPTDATA(CatScript_v2_0, m_cagedCatID).catType)
@@ -373,6 +374,11 @@ namespace PE
 			auto PlayHeart = 
 				[&](EntityID cagedCatID)
 				{
+					if (!m_heartPlayed)
+						m_heartPlayed = true;
+					else
+						return;
+
 					for (EntityID findHeartID : Hierarchy::GetInstance().GetChildren(cagedCatID))
 					{
 						if (EntityManager::GetInstance().Get<EntityDescriptor>(findHeartID).name.find("Heart") != std::string::npos)
