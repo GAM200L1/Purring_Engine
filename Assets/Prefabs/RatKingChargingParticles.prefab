@@ -15,33 +15,33 @@
                                 26,
                                 27
                             ],
-                            "isActive": true,
+                            "isActive": false,
                             "name": "RatKingChargingParticles",
                             "parent": null,
                             "sceneID": 22
                         },
                         "Renderer": {
                             "Color": {
-                                "a": 1.0,
+                                "a": 0.0,
                                 "b": 1.0,
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": ""
+                            "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
                         },
                         "Transform": {
-                            "height": 1.0,
+                            "height": 136.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 433.699951171875,
-                                "y": -175.89999389648438
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "relativeposition": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "relorientation": 0.0,
-                            "width": 1.0
+                            "width": 147.0
                         }
                     },
                     "name": ""
@@ -56,7 +56,7 @@
                             "Old ID": 24,
                             "Prefab Type": "",
                             "children": [],
-                            "isActive": true,
+                            "isActive": false,
                             "name": "GameObject24",
                             "parent": 22,
                             "sceneID": 24
@@ -111,12 +111,12 @@
                             "height": 100.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 248.699951171875,
-                                "y": -109.4998779296875
+                                "x": -248.0,
+                                "y": 109.0
                             },
                             "relativeposition": {
-                                "x": -185.0,
-                                "y": 66.40011596679688
+                                "x": -248.0,
+                                "y": 109.0
                             },
                             "relorientation": 0.0,
                             "width": 100.0
@@ -134,7 +134,7 @@
                             "Old ID": 25,
                             "Prefab Type": "",
                             "children": [],
-                            "isActive": true,
+                            "isActive": false,
                             "name": "GameObject25",
                             "parent": 22,
                             "sceneID": 25
@@ -189,12 +189,12 @@
                             "height": 100.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 618.699951171875,
-                                "y": -108.89999389648438
+                                "x": 248.0,
+                                "y": 109.0
                             },
                             "relativeposition": {
-                                "x": 185.0,
-                                "y": 67.0
+                                "x": 248.0,
+                                "y": 109.0
                             },
                             "relorientation": 0.0,
                             "width": 100.0
@@ -212,7 +212,7 @@
                             "Old ID": 26,
                             "Prefab Type": "",
                             "children": [],
-                            "isActive": true,
+                            "isActive": false,
                             "name": "GameObject26",
                             "parent": 22,
                             "sceneID": 26
@@ -267,12 +267,12 @@
                             "height": 100.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 248.699951171875,
-                                "y": -242.89999389648438
+                                "x": -248.0,
+                                "y": -109.0
                             },
                             "relativeposition": {
-                                "x": -185.0,
-                                "y": -67.0
+                                "x": -248.0,
+                                "y": -109.0
                             },
                             "relorientation": 0.0,
                             "width": 100.0
@@ -290,7 +290,7 @@
                             "Old ID": 27,
                             "Prefab Type": "",
                             "children": [],
-                            "isActive": true,
+                            "isActive": false,
                             "name": "GameObject27",
                             "parent": 22,
                             "sceneID": 27
@@ -345,12 +345,12 @@
                             "height": 100.0,
                             "orientation": 0.0,
                             "position": {
-                                "x": 618.699951171875,
-                                "y": -242.89999389648438
+                                "x": 248.0,
+                                "y": -109.0
                             },
                             "relativeposition": {
-                                "x": 185.0,
-                                "y": -67.0
+                                "x": 248.0,
+                                "y": -109.0
                             },
                             "relorientation": 0.0,
                             "width": 100.0

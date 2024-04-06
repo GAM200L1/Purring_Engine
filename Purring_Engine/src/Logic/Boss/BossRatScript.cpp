@@ -46,8 +46,9 @@ namespace PE
 		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(3);
 		
 		m_chargeParticlePrefabID = ResourceManager::GetInstance().LoadPrefabFromFile(m_chargeParticlePrefab);
+		Hierarchy::GetInstance().AttachChild(id, m_chargeParticlePrefabID);
+		EntityManager::GetInstance().Get<Transform>(m_chargeParticlePrefabID).relPosition = vec2(0.f, -100.f);
 		DeactiveObject(m_chargeParticlePrefabID);
-	
 	}
 
 
@@ -365,13 +366,12 @@ namespace PE
 
 	void BossRatScript::PlayChargeParticles(vec2 pos)
 	{	
-		if (EntityManager::GetInstance().Has<Transform>(m_chargeParticlePrefabID))
+		/*if (EntityManager::GetInstance().Has<Transform>(m_chargeParticlePrefabID))
 		{
 			EntityManager::GetInstance().Get<Transform>(m_chargeParticlePrefabID).position = pos;
-		}
-		
-		ActiveObject(m_chargeParticlePrefabID);
+		}*/
 		ResetChargeParticles(m_chargeParticlePrefabID);
+		ActiveObject(m_chargeParticlePrefabID);
 	}
 
 	void BossRatScript::StopChargeParticles()
@@ -407,12 +407,12 @@ namespace PE
 			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
 				break;
 
-			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
 
 			if (EntityManager::GetInstance().Has<ParticleEmitter>(id2))
 			{
 				EntityManager::GetInstance().Get<ParticleEmitter>(id2).ResetAllParticles();
 			}
+			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
 		}
 	}
 	void BossRatScript::DeactiveObject(EntityID id)
@@ -423,7 +423,7 @@ namespace PE
 			{
 				if (EntityManager::GetInstance().Has<ParticleEmitter>(id2))
 				{
-					EntityManager::GetInstance().Get<ParticleEmitter>(id2).ResetAllParticles();
+					EntityManager::GetInstance().Get<ParticleEmitter>(id2).ResetAllParticles(false);
 				}
 
 				if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
