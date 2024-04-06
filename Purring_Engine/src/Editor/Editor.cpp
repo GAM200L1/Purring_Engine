@@ -83,6 +83,7 @@
 #include "Logic/ObjectAttachScript.h"
 #include "Logic/Settings.h"
 #include "Logic/TutorialController.h"
+#include "Graphics/Cursor.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -5590,6 +5591,10 @@ namespace PE {
 						m_isRunTime = true;
 						m_showEditor = false;
 						m_showGameView = true;
+
+						// Enable the custom cursor
+						Graphics::Cursor::GetInstance().SetVisibility(true);
+
 						if (!m_gameplayPaused)
 						{
 							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
@@ -5616,6 +5621,9 @@ namespace PE {
 					if (ImGui::Button("Stop")) {
 						LayerManager::GetInstance().RestoreLayerState();
 						m_showEditor = true;
+
+						// Enable the custom cursor
+						Graphics::Cursor::GetInstance().SetVisibility(false);
 
 						if (m_isRunTime && !m_gameplayPaused)
 						{
@@ -6372,7 +6380,9 @@ namespace PE {
 					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = EntityManager::GetInstance().Get<ParticleEmitter>(id).prevPause;
 				}
 			}
-			
+
+			// Enable the custom cursor
+			Graphics::Cursor::GetInstance().SetVisibility(true);
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
@@ -6389,6 +6399,9 @@ namespace PE {
 					EntityManager::GetInstance().Get<ParticleEmitter>(id).pause = true;
 				}
 			}
+
+			// Enable the custom cursor
+			Graphics::Cursor::GetInstance().SetVisibility(false);
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
@@ -6419,6 +6432,9 @@ namespace PE {
 				m_isRunTime = false;
 
 			m_showGameView = false;
+
+			// Enable the custom cursor
+			Graphics::Cursor::GetInstance().SetVisibility(false);
 		}
 
 		//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));

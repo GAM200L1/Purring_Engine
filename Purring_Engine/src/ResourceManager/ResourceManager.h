@@ -326,6 +326,23 @@ namespace PE
         \param[in] r_key Filepath of prefab.
         *************************************************************************************/
         void AddPrefabKeyToLoad(std::string const& r_key);
+
+        /*!***********************************************************************************
+        \brief Returns the default cursor texture.
+
+        \return Returns a shared pointer to the default cursor texture. If it could not be 
+            loaded, the default texture is returned instead.
+        *************************************************************************************/
+        std::shared_ptr<Graphics::Texture> GetDefaultCursorTexture() const;
+
+        /*!***********************************************************************************
+        \brief Returns the hover cursor texture.
+
+        \return Returns a shared pointer to the hover cursor texture. If it could not be 
+            loaded, the default texture is returned instead.
+        *************************************************************************************/
+        std::shared_ptr<Graphics::Texture> GetHoverCursorTexture() const;
+
     private:
 
         /*!***********************************************************************************
@@ -343,11 +360,17 @@ namespace PE
         std::shared_ptr<Font> m_defaultFont;
         std::shared_ptr<Animation> m_defaultAnimation;
 
+        std::shared_ptr<Graphics::Texture> m_defaultCursorTexture;
+        std::shared_ptr<Graphics::Texture> m_hoverCursorTexture;
+
         std::string m_defaultTextureKey;
         std::string m_defaultAudioKey;
         std::string m_defaultFontKey;
         std::string m_defaultAnimationKey;
         std::string m_defaultPrefabKey;
+
+        std::string m_defaultCursorKey;
+        std::string m_hoverCursorKey;
 
         std::unordered_set<std::string> m_allTextureKeys;
         std::unordered_set<std::string> m_allAudioKeys;
