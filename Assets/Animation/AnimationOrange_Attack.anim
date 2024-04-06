@@ -61,6 +61,12 @@
             "textureKey": ""
         },
         {
+            "actions": [
+                {
+                    "scriptFunction": "TestFunction2",
+                    "scriptName": "testScript"
+                }
+            ],
             "duration": 0.1666666716337204,
             "maxUV": [
                 1.0,

@@ -2,14 +2,15 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
+                "InteractionLayer": 0,
                 "Layer": 0,
-                "Old ID": 18446744073709551615,
+                "Old ID": 1,
                 "Prefab Type": "PawPrints",
                 "children": [],
                 "isActive": true,
                 "name": "PawPrints",
                 "parent": null,
-                "sceneID": 18446744073709551615
+                "sceneID": 1
             },
             "Renderer": {
                 "Color": {

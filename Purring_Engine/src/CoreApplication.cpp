@@ -112,6 +112,9 @@
 #include "Logic/Cat/CatScript_v2_0.h"
 
 #include "Logic/TutorialController.h"
+
+#include "Logic/CameraShakeScript.h"
+
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
@@ -325,7 +328,11 @@ RTTR_REGISTRATION
         .property("WinCanvas", &PE::EndingCutsceneControllerData::WinCanvas)
         .property("SkipButton", &PE::EndingCutsceneControllerData::SkipButton)
         .property("ContinueButton", &PE::EndingCutsceneControllerData::ContinueButton)
-        .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen);
+        .property("TransitionScreen", &PE::EndingCutsceneControllerData::TransitionScreen)
+        .property("DeathCounter", &PE::EndingCutsceneControllerData::DeathCounter)
+        .property("KillCounter", &PE::EndingCutsceneControllerData::KillCounter)
+        .property("RescueCounter", &PE::EndingCutsceneControllerData::RescueCounter)
+        .property("TurnCounter", &PE::EndingCutsceneControllerData::TurnCounter);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
@@ -472,6 +479,11 @@ RTTR_REGISTRATION
         .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
         .property("distanceBetweenPools", &PE::BossRatScriptData::distanceBetweenPools)
         .property("animationStates", &PE::BossRatScriptData::animationStates);
+
+    rttr::registration::class_<PE::CameraShakeScriptData>("CameraShakeScript")
+        .property("shakeDuration", &PE::CameraShakeScriptData::shakeDuration)
+        .property("shakeAmount", &PE::CameraShakeScriptData::shakeAmount);
+
 
     rttr::registration::class_<PE::ParticleEmitter>(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string())
         .property("Is Active", &PE::ParticleEmitter::isActive)

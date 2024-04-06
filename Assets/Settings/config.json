@@ -12,7 +12,7 @@
         "showLogs": true,
         "showObjectList": true,
         "showPerformanceWindow": false,
-        "showPhysicsWindow": true,
+        "showPhysicsWindow": false,
         "showResourceWindow": true,
         "showSceneView": true,
         "showTestWindows": false

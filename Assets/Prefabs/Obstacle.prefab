@@ -5,7 +5,7 @@
                 "Entity": {
                     "components": {
                         "Collider": {
-                            "collisionLayerIndex": 0,
+                            "collisionLayerIndex": 4,
                             "data": {
                                 "max": {
                                     "x": -776.5419921875,
