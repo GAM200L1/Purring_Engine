@@ -63,6 +63,7 @@
 #include "Boss/BossRatHealthBarScript.h"
 #include "ObjectAttachScript.h"
 
+#include "CameraShakeScript.h"
 
 #include "TutorialController.h"
 #ifndef GAMERELEASE
@@ -120,6 +121,8 @@ void PE::LogicSystem::InitializeSystem()
 
 	REGISTER_SCRIPT(SettingsScript);
 	REGISTER_SCRIPT(TutorialController);
+
+	REGISTER_SCRIPT(CameraShakeScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

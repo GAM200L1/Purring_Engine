@@ -83,6 +83,7 @@
 #include "Logic/ObjectAttachScript.h"
 #include "Logic/Settings.h"
 #include "Logic/TutorialController.h"
+#include "Logic/CameraShakeScript.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -4301,6 +4302,16 @@ namespace PE {
 								}
 							}
 
+							if (key == "CameraShakeScript")
+							{
+								CameraShakeScript* p_Script = dynamic_cast<CameraShakeScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("CameraShakeScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
+									}
+							}
 
 }
 					}

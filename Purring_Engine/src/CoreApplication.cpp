@@ -112,6 +112,9 @@
 #include "Logic/Cat/CatScript_v2_0.h"
 
 #include "Logic/TutorialController.h"
+
+#include "Logic/CameraShakeScript.h"
+
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
@@ -476,6 +479,12 @@ RTTR_REGISTRATION
         .property("slamAreaTelegraph", &PE::BossRatScriptData::slamAreaTelegraph)
         .property("distanceBetweenPools", &PE::BossRatScriptData::distanceBetweenPools)
         .property("animationStates", &PE::BossRatScriptData::animationStates);
+
+    rttr::registration::class_<PE::CameraShakeScriptData>("CameraShakeScript")
+        .property("m_rotationSpeed", &PE::CameraShakeScriptData::m_rotationSpeed)
+        .property("shakeDuration", &PE::CameraShakeScriptData::shakeDuration)
+        .property("shakeAmount", &PE::CameraShakeScriptData::shakeAmount);
+
 
     rttr::registration::class_<PE::ParticleEmitter>(PE::EntityManager::GetInstance().GetComponentID<PE::ParticleEmitter>().to_string())
         .property("Is Active", &PE::ParticleEmitter::isActive)
