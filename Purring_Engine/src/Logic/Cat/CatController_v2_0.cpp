@@ -136,6 +136,7 @@ namespace PE
 
 	void CatController_v2_0::KillCat(EntityID id)
 	{
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->godMode) { return; }
 		if (IsCatAndNotCaged(id))
 		{
 			EntityID catToRemove = id;

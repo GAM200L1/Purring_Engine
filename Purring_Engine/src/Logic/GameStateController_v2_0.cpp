@@ -442,9 +442,15 @@ namespace PE
 			return;
 		}
 
-		if (KTE.keycode == GLFW_KEY_F3)
+		if (KTE.keycode == GLFW_KEY_F2)
 		{
 			LoseGame();
+			return;
+		}
+
+		if (KTE.keycode == GLFW_KEY_F3)
+		{
+			godMode = godMode ? false : true;
 			return;
 		}
 
