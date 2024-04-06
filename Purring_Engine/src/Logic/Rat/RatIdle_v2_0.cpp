@@ -89,6 +89,8 @@ namespace PE
 
                 // Disable movement telegraphs
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableMovementTelegraphs(id);
+
+                p_data->ratIsMoving = true;
             }
             m_planningRunOnce = false;
 
@@ -104,6 +106,7 @@ namespace PE
             {
                 m_planningRunOnce = true;
                 p_data->finishedExecution = (!m_willPatrol);
+                p_data->ratIsMoving = false;
 
                 // Play idle animation
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(id, EnumRatAnimations::IDLE);
@@ -127,6 +130,7 @@ namespace PE
         {
             m_willPatrol = false;
             p_data->finishedExecution = true;
+            p_data->ratIsMoving = false;
             return;
         }
         else if (p_data->finishedExecution) { return; } // Don't update movement further if we're done 
@@ -135,6 +139,7 @@ namespace PE
 
         // Stop moving this turn if we have reached our destination
         p_data->finishedExecution = setNewTarget;
+        p_data->ratIsMoving = !setNewTarget;
 
         // Update to next target if we have reached
         if (setNewTarget)
