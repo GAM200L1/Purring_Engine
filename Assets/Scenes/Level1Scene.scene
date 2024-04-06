@@ -6502,7 +6502,7 @@
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 10,
                         "Old ID": 3,
                         "Prefab Type": "",
                         "children": [],

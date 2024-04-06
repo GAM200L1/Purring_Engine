@@ -6917,7 +6917,7 @@
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
-                        "Layer": 0,
+                        "Layer": 10,
                         "Old ID": 3,
                         "Prefab Type": "",
                         "children": [],
@@ -6970,7 +6970,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Resources/LeafTwirl_Sepia.png"
+                        "TextureKey": "../Assets/Textures/Animations/LeafTwirl.png"
                     },
                     "Transform": {
                         "height": 100.0000228881836,
