@@ -186,6 +186,14 @@ namespace PE
 	void CatController_v2_0::UndoCatPlan()
 	{
 		if (m_catUndoStack.empty()) { return; }
+		while (m_catUndoStack.top().second == EnumUndoType::UNDO_ATTACK)
+		{
+			if (!GETSCRIPTDATA(CatScript_v2_0, m_catUndoStack.top().first).attackSelected)
+				m_catUndoStack.pop();
+			else
+				break;
+		}
+
 		// get the id of the cat to undo and which planning to undo
 		auto const& toUndo = m_catUndoStack.top();
 		// pop the stack
