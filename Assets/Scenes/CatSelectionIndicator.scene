@@ -421,7 +421,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 16
+                        "sceneID": 15
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1636,7 +1636,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 60
+                        "sceneID": 17
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1913,7 +1913,7 @@
                         "isActive": false,
                         "name": "LoseCanvas",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 18
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3065,7 +3065,7 @@
                         "isActive": false,
                         "name": "AreYouSureRestartCanvas",
                         "parent": null,
-                        "sceneID": 53
+                        "sceneID": 16
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3339,7 +3339,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 62
+                        "sceneID": 19
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3435,7 +3435,7 @@
                         "isActive": true,
                         "name": "Exit Point",
                         "parent": null,
-                        "sceneID": 78
+                        "sceneID": 27
                     },
                     "Transform": {
                         "height": 113.0,
@@ -3490,7 +3490,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 80
+                        "sceneID": 29
                     },
                     "Renderer": {
                         "Color": {
@@ -3559,7 +3559,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 91
+                        "sceneID": 32
                     },
                     "Renderer": {
                         "Color": {
@@ -3628,7 +3628,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 93
+                        "sceneID": 33
                     },
                     "Renderer": {
                         "Color": {
@@ -3697,7 +3697,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 94
+                        "sceneID": 34
                     },
                     "Renderer": {
                         "Color": {
@@ -3766,7 +3766,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 110
+                        "sceneID": 36
                     },
                     "Renderer": {
                         "Color": {
@@ -3835,7 +3835,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 95
+                        "sceneID": 35
                     },
                     "Renderer": {
                         "Color": {
@@ -3904,7 +3904,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 79
+                        "sceneID": 28
                     },
                     "Renderer": {
                         "Color": {
@@ -3973,7 +3973,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 83
+                        "sceneID": 31
                     },
                     "Renderer": {
                         "Color": {
@@ -4042,7 +4042,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 81
+                        "sceneID": 30
                     },
                     "Renderer": {
                         "Color": {
@@ -4173,7 +4173,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 63
+                        "sceneID": 20
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4286,7 +4286,7 @@
                         "isActive": true,
                         "name": "Grey Cat",
                         "parent": null,
-                        "sceneID": 75
+                        "sceneID": 24
                     },
                     "Renderer": {
                         "Color": {
@@ -4432,13 +4432,11 @@
                         "Layer": 2,
                         "Old ID": 61,
                         "Prefab Type": "Meowsalot",
-                        "children": [
-                            113
-                        ],
+                        "children": [],
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 77
+                        "sceneID": 26
                     },
                     "Renderer": {
                         "Color": {
@@ -5096,7 +5094,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 111
+                        "sceneID": 37
                     },
                     "Renderer": {
                         "Color": {
@@ -5189,7 +5187,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 112
+                        "sceneID": 38
                     },
                     "Renderer": {
                         "Color": {
@@ -5261,7 +5259,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 76
+                        "sceneID": 25
                     },
                     "Transform": {
                         "height": 100.0,
@@ -6232,7 +6230,7 @@
                         "isActive": false,
                         "name": "TutorialPanel1",
                         "parent": null,
-                        "sceneID": 64
+                        "sceneID": 21
                     },
                     "Renderer": {
                         "Color": {
@@ -6273,7 +6271,7 @@
                         "isActive": false,
                         "name": "TutorialPanel2",
                         "parent": null,
-                        "sceneID": 73
+                        "sceneID": 22
                     },
                     "Renderer": {
                         "Color": {
@@ -6314,7 +6312,7 @@
                         "isActive": false,
                         "name": "TutorialPanel3",
                         "parent": null,
-                        "sceneID": 74
+                        "sceneID": 23
                     },
                     "Renderer": {
                         "Color": {
@@ -6354,31 +6352,31 @@
                         "children": [],
                         "isActive": true,
                         "name": "CatSelectionIndicator",
-                        "parent": 61,
-                        "sceneID": 113
+                        "parent": null,
+                        "sceneID": 39
                     },
                     "Renderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
+                            "b": 0.11024338006973267,
+                            "g": 0.8465116024017334,
+                            "r": 0.12394138425588608
                         },
-                        "TextureKey": "../Assets/Textures/selection_indicator.png"
+                        "TextureKey": "../Assets/Textures/SelectionCircle_Small_512x128.png"
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 50.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -503.5008239746094,
-                            "y": 77.00000762939453
+                            "x": -502.0008239746094,
+                            "y": 57.00000762939453
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 75.0
                     }
                 },
                 "name": ""

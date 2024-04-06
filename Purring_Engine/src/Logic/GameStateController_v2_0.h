@@ -246,10 +246,6 @@ namespace PE
 		*************************************************************************************/
 		bool GetSelectedCat(EntityID catID);
 
-		void ShowSelectionIndicator(EntityID catID);
-
-		void HideSelectionIndicator();
-
 		// ----- Object Helper Functions ----- //
 	private:
 		/*!***********************************************************************************
@@ -551,7 +547,8 @@ namespace PE
 		// Audio Controls
 		bool m_bgmStarted = false;
 
-
+		private:
+			void ToggleSelectionIndicatorVisibility(EntityID indicatorID, bool isVisible);
 	};
 }
 
