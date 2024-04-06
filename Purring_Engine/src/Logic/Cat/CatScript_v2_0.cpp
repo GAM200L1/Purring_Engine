@@ -38,6 +38,8 @@
 #include "ResourceManager/ResourceManager.h"
 #include "AudioManager/GlobalMusicManager.h"
 
+#include "Hierarchy/HierarchyManager.h"
+
 namespace PE
 {
 	CatScript_v2_0::~CatScript_v2_0()
@@ -50,6 +52,8 @@ namespace PE
 		//m_scriptData[id].catID = id;
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		m_scriptData[id].catID = id;
+
+		CreateCatWalkParticles(id);
 
 		switch (m_scriptData[id].catType)
 		{
@@ -495,6 +499,26 @@ namespace PE
 			m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{new GreyCatAttack_v2_0PLAN, new CatMovement_v2_0PLAN}, id);
 			break;
 		}
+	}
+
+	void CatScript_v2_0::CreateCatWalkParticles(EntityID id)
+	{
+		// Check if the path telegraph entity alr exists
+		if (m_scriptData.at(id).catWalkParticles != 0UL && m_scriptData.at(id).catWalkParticles != MAXSIZE_T) { return; }
+		m_scriptData.at(id).catWalkParticles = ResourceManager::GetInstance().LoadPrefabFromFile("CatWalkDirtParticles.prefab");
+
+		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 2 || GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 3)
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData.at(id).catWalkParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData.at(id).catWalkParticles).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Particle_SnowSmoke_512px.png"));
+
+		Hierarchy::GetInstance().AttachChild(m_scriptData.at(id).catID, m_scriptData.at(id).catWalkParticles); // attach child to parent
+		
+		if (EntityManager::GetInstance().Has<Transform>(m_scriptData.at(id).catWalkParticles))
+		{
+			EntityManager::GetInstance().Get<Transform>(m_scriptData.at(id).catWalkParticles).relPosition = vec2{ 7.f, -29.f };
+		}
+
+		CatHelperFunctions::ToggleEntity(m_scriptData.at(id).catWalkParticles, false); // set to inactive, it will only show during planning phase
 	}
 
 	void CatScript_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)

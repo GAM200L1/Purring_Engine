@@ -86,7 +86,7 @@ namespace PE
 		bool executionAnimationFinished{ false };
 		bool playDeathSound{ true };
 
-
+		EntityID catWalkParticles{ 0 };
 	};
 
 	class CatScript_v2_0 : public Script
@@ -270,5 +270,8 @@ namespace PE
 		 \param[in] id - EntityID of the cat undergoing the execution state.
 		*************************************************************************************/
 		inline void ChangeToPlanningState(EntityID id);
+
+
+		void CreateCatWalkParticles(EntityID id);
 	};
 }

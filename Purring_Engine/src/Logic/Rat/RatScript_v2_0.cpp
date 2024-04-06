@@ -108,17 +108,17 @@ namespace PE
 
 			if(gameStateController->currentState == GameStates_v2_0::PAUSE){
 					previousGameState = gameStateController->currentState;
-					ToggleEntity(m_scriptData.at(id).RatWalkParticles, false);
+					ToggleEntity(m_scriptData.at(id).ratWalkParticles, false);
 					return;
 			}
 			else if (gameStateController->currentState == GameStates_v2_0::PLANNING || gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
 			{
-				if (EntityManager::GetInstance().Has<ParticleEmitter>(m_scriptData.at(id).RatWalkParticles))
+				if (EntityManager::GetInstance().Has<ParticleEmitter>(m_scriptData.at(id).ratWalkParticles))
 				{
-					EntityManager::GetInstance().Get<ParticleEmitter>(m_scriptData.at(id).RatWalkParticles).ResetAllParticles();
+					EntityManager::GetInstance().Get<ParticleEmitter>(m_scriptData.at(id).ratWalkParticles).ResetAllParticles();
 				}
 
-				ToggleEntity(m_scriptData.at(id).RatWalkParticles, false);
+				ToggleEntity(m_scriptData.at(id).ratWalkParticles, false);
 			}
 			// Update the rat state
 			CreateCheckStateManager(id);
@@ -1075,7 +1075,7 @@ namespace PE
 						vec2 newPosition = RatScript_v2_0::GetEntityPosition(id) + (it->second.directionFromRatToPlayerCat * amountToMove);
 						RatScript_v2_0::PositionEntity(id, newPosition);
 						it->second.ratPlayerDistance -= amountToMove;
-						ToggleEntity(m_scriptData.at(id).RatWalkParticles, true); // set to inactive, it will only show during exec phase
+						ToggleEntity(m_scriptData.at(id).ratWalkParticles, true); // set to inactive, it will only show during exec phase
 #ifdef DEBUG_PRINT
 						printOnce = false;
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
@@ -1282,17 +1282,17 @@ namespace PE
 		void RatScript_v2_0::CreateRatWalkParticles(RatScript_v2_0_Data& r_data)
 		{
 			// Check if the path telegraph entity alr exists
-			if (r_data.RatWalkParticles != 0UL && r_data.RatWalkParticles != MAXSIZE_T) { return; }
-			r_data.RatWalkParticles = ResourceManager::GetInstance().LoadPrefabFromFile("CatWalkDirtParticles.prefab");
+			if (r_data.ratWalkParticles != 0UL && r_data.ratWalkParticles != MAXSIZE_T) { return; }
+			r_data.ratWalkParticles = ResourceManager::GetInstance().LoadPrefabFromFile("RatWalkDirtParticles.prefab");
 
 			if(GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 2 || GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 3)
-			if (EntityManager::GetInstance().Has<Graphics::Renderer>(r_data.RatWalkParticles))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(r_data.RatWalkParticles).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Particle_SnowSmoke_512px.png"));
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(r_data.ratWalkParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(r_data.ratWalkParticles).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Particle_SnowSmoke_512px.png"));
 
-			ToggleEntity(r_data.RatWalkParticles, false); // set to inactive, it will only show during planning phase
-			Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.RatWalkParticles); // attach child to parent
+			ToggleEntity(r_data.ratWalkParticles, false); // set to inactive, it will only show during planning phase
+			Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.ratWalkParticles); // attach child to parent
 
-			PositionEntityRelative(r_data.RatWalkParticles, vec2{ 7.f, -29.f });
+			PositionEntityRelative(r_data.ratWalkParticles, vec2{ 7.f, -29.f });
 		}
 		
 
