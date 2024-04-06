@@ -35,7 +35,7 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].ObjectToAttachTo))
 			{
-				EntityManager::GetInstance().Get<Transform>(id).position = EntityManager::GetInstance().Get<Transform>(m_scriptData[id].ObjectToAttachTo).position;
+				EntityManager::GetInstance().Get<Transform>(id).position = vec2(EntityManager::GetInstance().Get<Transform>(m_scriptData[id].ObjectToAttachTo).position.x + 1, EntityManager::GetInstance().Get<Transform>(m_scriptData[id].ObjectToAttachTo).position.y - 20);
 			}
 		}
 	}

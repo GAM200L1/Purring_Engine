@@ -6364,6 +6364,14 @@
                         },
                         "TextureKey": "../Assets/Textures/SelectionCircle_Small_512x128.png"
                     },
+                    "ScriptComponent": {
+                        "ObjectAttachScript": {
+                            "data": {
+                                "ObjectToAttachTo": 61
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 50.0,
                         "orientation": 0.0,

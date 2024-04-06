@@ -27,6 +27,7 @@
 #include "CatController_v2_0.h"
 #include "CatHelperFunctions.h"
 #include "FollowScript_v2_0.h"
+#include "CatUtilities.h"
 
 #include "ECS/Entity.h"
 #include "Events/CollisionEvent.h"
@@ -37,7 +38,6 @@
 #include "Animation/Animation.h"
 #include "Logic/Script.h"
 #include "AudioManager/GlobalMusicManager.h"
-
 
 namespace PE
 {
@@ -103,6 +103,8 @@ namespace PE
 				// Attempt to create a node at the position of the cursor
 				// and position the cat where the node is
 				CatHelperFunctions::PositionEntity(id, AttemptToDrawPath(CatHelperFunctions::GetCursorPositionInWorld()));
+
+				//CatUtilities::UpdateIndicatorPosition(id);
 			}
 			else // Path is being drawn but the player has run out of energy
 			{
@@ -427,6 +429,7 @@ namespace PE
 
 				// Update the position of the cat
 				CatHelperFunctions::PositionEntity(id, currentCatPosition + directionToMove);
+				//CatUtilities::UpdateIndicatorPosition(id);
 
 				footstepTimer -= deltaTime;
 
@@ -541,4 +544,5 @@ namespace PE
 			m_startMovementTimer = false;
 		}
 	}
+
 }
