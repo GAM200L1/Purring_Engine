@@ -162,6 +162,7 @@ namespace PE
 				// add to followers list
 				scriptData[OTEE.Entity1].followers.emplace_back(OTEE.Entity2);
 				p_catData = GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity2);
+				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->IncrementCatRescued();
 
 				// set cat position to the end of the chain
 				CatHelperFunctions::PositionEntity(OTEE.Entity2, scriptData[OTEE.Entity1].nextPosition.back());
@@ -173,6 +174,7 @@ namespace PE
 				// add to followers list
 				scriptData[OTEE.Entity2].followers.emplace_back(OTEE.Entity1);
 				p_catData = GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity1);
+				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->IncrementCatRescued();
 
 				// set cat position to the end of the chain
 				CatHelperFunctions::PositionEntity(OTEE.Entity1, scriptData[OTEE.Entity2].nextPosition.back());

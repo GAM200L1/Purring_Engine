@@ -331,7 +331,7 @@ namespace PE
         // check if animation is already loaded
         if (Animations.find(r_key) == Animations.end())
         {
-            Animations[r_key] = std::make_shared<Animation>();
+                Animations[r_key] = std::make_shared<Animation>();
             Animations[r_key]->SetAnimationID(r_key);
 
             if (!Animations[r_key]->LoadAnimation(r_filePath))

@@ -135,5 +135,9 @@ namespace PE
 		float m_slamAttackDelay{ 0.5f };
 		bool m_ratSpawned{ false };
 		bool m_playedSlamAudio{ false };
+
+		EntityID m_shockWavePrefabID;
+		std::string m_shockWavePrefab{"RatKingShockwaveParticles.prefab"};
+
 	};
 }

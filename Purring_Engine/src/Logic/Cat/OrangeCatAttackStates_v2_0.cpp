@@ -101,7 +101,7 @@ namespace PE
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
 		}
 
-		if ((mouseClicked && !mouseClickedPrevious && !m_firstUpdate) &&
+		if ((mouseClicked && !mouseClickedPrevious && !m_firstUpdate) && 
 			(!collidingWithTelegraph || !GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id)))
 		{
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;

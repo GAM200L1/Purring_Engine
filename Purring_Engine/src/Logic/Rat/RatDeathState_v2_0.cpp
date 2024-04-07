@@ -28,6 +28,8 @@ namespace PE
 
 		// Play the death audio
 		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayDeathAudio(p_data->myID);
+
+		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->IncrementRatsKilled();
 	}
 
 

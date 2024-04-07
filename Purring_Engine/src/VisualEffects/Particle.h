@@ -96,7 +96,8 @@ namespace PE
 				   const float& r_dr,
 				   const float& r_spd,
 				   const float& r_lifetime,
-				   const int& r_animIdx = 0
+				   const int& r_animIdx = 0,
+				   bool en = true
 			)
 		{
 			type = r_tp;
@@ -113,7 +114,7 @@ namespace PE
 			speed = r_spd;
 			lifetime = r_lifetime;
 			spriteID = r_animIdx;
-			enabled = true;
+			enabled = en;
 		}
 
 		/*!***********************************************************************************

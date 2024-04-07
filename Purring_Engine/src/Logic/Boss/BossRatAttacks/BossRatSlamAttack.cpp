@@ -19,6 +19,10 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/LogicSystem.h"
 #include "Hierarchy/HierarchyManager.h"
 #include "Logic/Cat/CatController_v2_0.h"
+#include "ResourceManager/ResourceManager.h"
+#include "Logic/CameraShakeScript.h"
+#include "Graphics/CameraManager.h"
+
 namespace PE
 {
 	BossRatSlamAttack::BossRatSlamAttack()
@@ -60,8 +64,10 @@ namespace PE
 		if (p_script->currentSlamTurnCounter == 2)
 		{
 			if (p_data->curr_Anim != BossRatAnimationsEnum::CHARGE)
+			{
+				p_script->PlayChargeParticles(vec2(EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.x + 15, EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.y - 94));
 				p_script->PlayAnimation(BossRatAnimationsEnum::CHARGE);
-
+			}
 			p_script->PlayAttackAudio();
 		}
 		if (p_script->currentSlamTurnCounter == 0)
@@ -75,9 +81,15 @@ namespace PE
 		if (p_script->currentSlamTurnCounter == 2)
 		{
 			if (EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetAnimationMaxIndex())
-			JumpUp(p_script->currentBoss,dt);
-			if(m_ratSpawned)
-			p_data->finishExecution = true;
+			{
+				p_script->StopChargeParticles();
+				JumpUp(p_script->currentBoss, dt);
+			}
+			if (m_ratSpawned)
+			{	
+
+				p_data->finishExecution = true;
+			}
 		
 		}
 		else if (p_script->currentSlamTurnCounter == 1)
@@ -182,6 +194,7 @@ namespace PE
 			{
 				p_script->PlayAttackAudio();
 				p_script->PlaySlamShockWaveAudio();
+				GETSCRIPTINSTANCEPOINTER(CameraShakeScript)->Shake(GETCAMERAMANAGER()->GetMainCameraId());
 				m_playedSlamAudio = true;
 			}
 		}
@@ -317,22 +330,50 @@ namespace PE
 	{
 		if (m_attackIsLeft)
 		{
+
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->leftSideSlamAnimation))
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(p_data->leftSideSlamAnimation).isActive == false) 
+				{
+					m_shockWavePrefabID = ResourceManager::GetInstance().LoadPrefabFromFile(m_shockWavePrefab);
+				}
+
 				EntityManager::GetInstance().Get<EntityDescriptor>(p_data->leftSideSlamAnimation).isActive = true;
+			}
+
 
 			if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->leftSideSlamAnimation))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(p_data->leftSideSlamAnimation).PlayAnimation();
+
+				if (EntityManager::GetInstance().Has<Transform>(m_shockWavePrefabID))
+				{
+					EntityManager::GetInstance().Get<Transform>(m_shockWavePrefabID).position = EntityManager::GetInstance().Get<Transform>(p_data->leftSideSlamAnimation).position;
+				}
+
 			}
 		}
 		else
 		{
+
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->rightSideSlamAnimation))
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive == false)
+				{
+					m_shockWavePrefabID = ResourceManager::GetInstance().LoadPrefabFromFile(m_shockWavePrefab);
+				}
+
 				EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive = true;
+			}
 
 			if (EntityManager::GetInstance().Has<AnimationComponent>(p_data->rightSideSlamAnimation))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(p_data->rightSideSlamAnimation).PlayAnimation();		
+
+				if (EntityManager::GetInstance().Has<Transform>(m_shockWavePrefabID))
+				{
+					EntityManager::GetInstance().Get<Transform>(m_shockWavePrefabID).position = EntityManager::GetInstance().Get<Transform>(p_data->rightSideSlamAnimation).position;
+				}
 			}
 		}
 	}
@@ -344,6 +385,9 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->leftSideSlamAnimation).isActive = false;
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(p_data->rightSideSlamAnimation))
 			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->rightSideSlamAnimation).isActive = false;
+
+		EntityManager::GetInstance().RemoveEntity(m_shockWavePrefabID);
+
 
 		if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && p_data->curr_Anim != BossRatAnimationsEnum::HURT && p_data->curr_Anim != BossRatAnimationsEnum::DEATH)
 			p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);

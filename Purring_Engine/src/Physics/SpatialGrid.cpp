@@ -186,8 +186,12 @@ namespace PE
 
 				for (int col{ colliderMinMaxID.first.x }; col <= colliderMinMaxID.second.x; ++col)
 				{
+					if (col == INT32_MIN)
+						continue;
 					for (int row{ colliderMinMaxID.first.y }; row <= colliderMinMaxID.second.y; ++row)
 					{
+						if (row == INT32_MIN)
+							continue;
 						m_cells[col][row].Add(colliderID);
 					}
 				}

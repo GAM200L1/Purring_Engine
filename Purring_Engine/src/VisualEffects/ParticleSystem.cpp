@@ -183,7 +183,7 @@ namespace PE
 		}
 	}
 
-	void ParticleEmitter::ResetAllParticles()
+	void ParticleEmitter::ResetAllParticles(bool enable)
 	{
 		for (Particle& r_particle : particles)
 		{
@@ -194,11 +194,11 @@ namespace PE
 			if (EntityManager::GetInstance().Has<AnimationComponent>(m_id))
 			{
 				std::uniform_int_distribution<unsigned> distributorAnim(0U, EntityManager::GetInstance().Get<AnimationComponent>(m_id).GetAnimation()->GetFrameCount());
-				r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime, distributorAnim(generator));
+				r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime, distributorAnim(generator), enable);
 			}
 			else
 			{
-				r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime);
+				r_particle.Reset(particleType, pos, vec2(1.f, 1.f) * distributorScale(generator), GenerateDirectionVector(pos), scaleChangeSpeed, orientationChangeSpeed, distributor(generator), startLifetime, 0, enable);
 			}
 		}
 	}
@@ -272,7 +272,9 @@ namespace PE
 
 		std::mt19937 generator(seed());
 		if (emitterType == POINT)
+		{
 			emittorLength = 0.f;
+		}
 		std::uniform_real_distribution<float> distributor(-emittorLength * 0.5f, emittorLength * 0.5f);
 		const float scale = distributor(generator);
 		return vec2{ EntityManager::GetInstance().Get<Transform>(m_id).position.x + (-emissionVector.y * scale), EntityManager::GetInstance().Get<Transform>(m_id).position.y + emissionVector.x * scale };

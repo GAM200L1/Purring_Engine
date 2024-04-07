@@ -329,7 +329,7 @@ namespace PE
 						SetWindowFullScreen(!m_fullScreen);
 					}
 
-					if (ev.keycode == GLFW_KEY_F4)
+					if (ev.keycode == GLFW_KEY_P)
 					{
 						m_showFps = !m_showFps;
 					}

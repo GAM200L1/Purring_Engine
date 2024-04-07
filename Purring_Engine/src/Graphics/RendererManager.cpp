@@ -456,6 +456,7 @@ namespace PE
             for (EntityID const& id : r_rendererIdContainer)
             {
 
+                
                 // break the instanced render
                 if (EntityManager::GetInstance().Has<PE::TextComponent>(id))
                 {
@@ -478,7 +479,8 @@ namespace PE
                 // handle particle effects
                 if (EntityManager::GetInstance().Has<PE::ParticleEmitter>(id))
                 {
-                    
+                    if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive)
+                        continue;
                     // dump current 
                     DrawInstanced(count, meshIndex, GL_TRIANGLES);
                     currentTexture.clear();

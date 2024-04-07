@@ -28,7 +28,9 @@
 #include "PauseManager.h"
 #include "AudioManager/GlobalMusicManager.h"
 #include "ResourceManager/ResourceManager.h"
-
+#include "Logic/CameraShakeScript.h"
+#include "Graphics/CameraManager.h"
+#include "Logic/LogicSystem.h"
 #include <limits>
 
 
@@ -154,6 +156,7 @@ namespace PE
 		REGISTER_UI_FUNCTION(ContinueToLevel, PE::IntroCutsceneController);
 		REGISTERANIMATIONFUNCTION(SetButtonText, PE::IntroCutsceneController);
 		REGISTERANIMATIONFUNCTION(StartCutscene, PE::IntroCutsceneController);
+		REGISTERANIMATIONFUNCTION(BossRatAppearance, PE::IntroCutsceneController);
 	}
 
 	void IntroCutsceneController::TransitionPanelFade(EntityID const id, float deltaTime)
@@ -212,6 +215,11 @@ namespace PE
 		PE::GlobalMusicManager::GetInstance().PlayBGM("AudioObject/Intro Cutscene Music.prefab", false, 5.0f);
 
 		m_startCutscene = false;
+	}
+
+	void IntroCutsceneController::BossRatAppearance(EntityID id)
+	{
+		GETSCRIPTINSTANCEPOINTER(CameraShakeScript)->Shake(GETCAMERAMANAGER()->GetMainCameraId());
 	}
 
 	void IntroCutsceneController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)

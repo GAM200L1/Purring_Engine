@@ -146,6 +146,12 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_933x302.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_933x302.png");
 
+		m_windParticleTexture = ResourceManager::GetInstance().LoadTexture("LeafTwirl.png");
+		m_sepiaWindParticleTexture = ResourceManager::GetInstance().LoadTexture("LeafTwirl_Sepia.png");
+
+		m_snowParticleTextures = ResourceManager::GetInstance().LoadTexture("Particle_Snow_512px.png");
+		m_sepiaSnowParticleTexture = ResourceManager::GetInstance().LoadTexture("Particle_Snow_Sepia_512px.png");
+
 		PlayBackgroundMusicForStage();
 
 		if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData.at(m_currentGameStateControllerID).JournalIcon))
@@ -224,6 +230,12 @@ namespace PE
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles).GetAnimation()->SetSpriteSheetKey(m_sepiaWindParticleTexture);
+
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles).SetTextureKey(m_sepiaSnowParticleTexture);
+
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 			DeactiveAllMenu();
 			ActiveObject(m_scriptData[id].HUDCanvas);
@@ -277,6 +289,12 @@ namespace PE
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles).GetAnimation()->SetSpriteSheetKey(m_sepiaWindParticleTexture);
+
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles).SetTextureKey(m_sepiaSnowParticleTexture);
+
 			PhaseBannerTransition(id, deltaTime);
 			UpdateTurnCounter("Planning");
 			prevState = currentState;
@@ -287,6 +305,12 @@ namespace PE
 
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelBackground);
+
+			if (EntityManager::GetInstance().Has<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles))
+				EntityManager::GetInstance().Get<AnimationComponent>(m_scriptData[m_currentGameStateControllerID].WindParticles).GetAnimation()->SetSpriteSheetKey(m_windParticleTexture);
+
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].SnowParticles).SetTextureKey(m_snowParticleTextures);
 
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
@@ -1467,6 +1491,8 @@ namespace PE
 	void GameStateController_v2_0::IncrementCatRescued()
 	{
 		++m_catsRescued;
+
+		std::cout << "Number of Cats Rescued Incremented" << std::endl;
 	}
 
 	void GameStateController_v2_0::IncrementRatsKilled()
@@ -1576,6 +1602,8 @@ namespace PE
 		else
 		for (auto catid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
 		{
+			std::cout << "Cat object clicked " << EntityManager::GetInstance().Get<EntityDescriptor>(catid).name << std::endl;
+
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "CatPortraitName")
 			{
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(catid))
@@ -1594,6 +1622,20 @@ namespace PE
 					EntityManager::GetInstance().Get<GUISlider>(catid).m_currentValue = static_cast<float>(Current);
 				}
 			}
+
+			if (GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData().at(m_lastSelectedEntity).isCaged)
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "EnergyFrame")
+				{
+					DeactiveObject(catid);
+				}
+
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "CatEnergyBar")
+				{
+					DeactiveObject(catid);
+				}
+			}
+
 		}
 	}
 
@@ -1866,54 +1908,5 @@ namespace PE
 		if (Finished)
 			NextState();
 	}
-
-	//void GameStateController_v2_0::ShowSelectionIndicator(EntityID catID)
-	//{
-	//	if (m_lastSelectedEntity == 0)  // Assuming 0 is an invalid entity ID
-	//	{
-	//		// Create the selection indicator entity if it doesn't exist
-	//		m_lastSelectedEntity = EntityManager::GetInstance().NewEntity();
-
-	//		// Add necessary components, such as Transform and Renderer
-	//		Transform* transform = EntityManager::GetInstance().Assign<Transform>(m_lastSelectedEntity);
-	//		Graphics::Renderer* renderer = EntityManager::GetInstance().Assign<Graphics::Renderer>(m_lastSelectedEntity);
-
-	//		// Check if both transform and renderer are not null
-	//		if (transform && renderer)
-	//		{
-	//			// Set the texture of the renderer to "indicator selection.png"
-	//			renderer->SetTextureKey(ResourceManager::GetInstance().LoadTexture("indicator selection.png"));
-	//		}
-	//	}
-
-	//	// Check if the lastSelectedEntity is valid
-	//	if (m_lastSelectedEntity != 0)
-	//	{
-	//		// Update the position of the selection indicator to match the cat's position
-	//		Transform* catTransform = EntityManager::GetInstance().Get<Transform>(catID);
-	//		Transform* indicatorTransform = EntityManager::GetInstance().Get<Transform>(m_lastSelectedEntity);
-
-	//		// Check if both catTransform and indicatorTransform are not null
-	//		if (catTransform && indicatorTransform)
-	//		{
-	//			indicatorTransform->position = catTransform->position;
-	//		}
-
-	//		// Make the selection indicator visible
-	//		// You might need to add a method or logic to enable the entity if your engine supports enabling/disabling entities
-	//	}
-	//}
-
-	//void GameStateController_v2_0::HideSelectionIndicator()
-	//{
-	//	// Logic to hide or disable the selection indicator
-	//	// You might need to add a method or logic to disable the entity if your engine supports enabling/disabling entities
-	//}
-
-
-
-
-
-
 
 }

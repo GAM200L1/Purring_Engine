@@ -580,7 +580,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/SadCat_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/VerySadCat_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -807,9 +807,11 @@
                                 "RatKingPortrait": 0,
                                 "RatPortrait": 53,
                                 "SettingsMenu": 119,
+                                "SnowParticles": 137,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
+                                "WindParticles": 0,
                                 "clicklisttest": [
                                     18446744073709551615,
                                     60,
@@ -1430,12 +1432,12 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_EndPlanning_512x128.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_512x128.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_EndPlanning_512x128.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,
@@ -2363,9 +2365,9 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_Menu_127x107.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
                         "m_disabledTexture": "../Assets/Textures/Button_Menu_127x107.png",
@@ -3216,7 +3218,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/SadCat_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/VerySadCat_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -7766,12 +7768,12 @@
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_UndoAction_222x112.png",
                         "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
+                            1.0,
+                            1.0,
+                            1.0,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_512x128.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_UndoAction_222x112.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,
@@ -8115,6 +8117,84 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 10,
+                        "Old ID": 13,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SnowParticles",
+                        "parent": null,
+                        "sceneID": 137
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 2.9670588970184326,
+                        "Emittor Length": 1900.0,
+                        "End Scale": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1000.0,
+                        "Looping": true,
+                        "Max particles": 5,
+                        "MinMax Speed": {
+                            "x": 100.0,
+                            "y": 100.0
+                        },
+                        "Mode": 1,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 40.0,
+                            "y": 40.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Snow_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -105.0001220703125,
+                            "y": 625.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""

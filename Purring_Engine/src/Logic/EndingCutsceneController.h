@@ -237,6 +237,8 @@ namespace PE
 
 		// Fade out variable
 		bool m_isFadingOut{ false };
+
+		bool m_hasStoppedCutscene{ false };
 	};
 
 

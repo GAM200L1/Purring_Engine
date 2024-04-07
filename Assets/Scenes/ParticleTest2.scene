@@ -1,0 +1,1790 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": true,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 2,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimParticleTest.anim",
+                            "../Assets/Animation/AnimationGrey_Death.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimParticleTest.anim"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 1,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "ParticleAnimationTest",
+                        "parent": null,
+                        "sceneID": 7
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 2.7925267219543457,
+                        "Emittor Length": 815.0,
+                        "End Scale": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "Is Active": false,
+                        "Lifetime": 20.0,
+                        "Looping": true,
+                        "Max particles": 50,
+                        "MinMax Speed": {
+                            "x": 20.0,
+                            "y": 100.0
+                        },
+                        "Mode": 1,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 50.0,
+                            "y": 50.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 2
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/Rat_Detect.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                            "../Assets/Animation/AnimationLeafTwirl.anim",
+                            "../Assets/Animation/AnimationRat_Hurt.anim"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationLeafTwirl.anim"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 3,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "WindParticles",
+                        "parent": null,
+                        "sceneID": 8
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 3.1415927410125732,
+                        "Emittor Length": 500.0,
+                        "End Scale": {
+                            "x": 50.0,
+                            "y": 50.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 500.0,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": -500.0,
+                            "y": -200.0
+                        },
+                        "Mode": 1,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 50.0,
+                            "y": 50.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 2
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Animations/LeafTwirl.png"
+                    },
+                    "Transform": {
+                        "height": 100.0000228881836,
+                        "orientation": 2.0354056358337402,
+                        "position": {
+                            "x": 900.0,
+                            "y": 430.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0000228881836
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 4,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "BackgroundSnow",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/MapBackground_Level3_1920x1080px.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 5,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "HairballParticles",
+                        "parent": null,
+                        "sceneID": 16
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 6.2831854820251465,
+                        "Emission Direction": 0.0,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.0,
+                        "Looping": false,
+                        "Max particles": 3,
+                        "MinMax Speed": {
+                            "x": 100.0,
+                            "y": 100.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 20.0,
+                            "y": 20.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Hairball_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 6,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SpikeballParticles",
+                        "parent": null,
+                        "sceneID": 17
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 6.2831854820251465,
+                        "Emission Direction": 0.0,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 0.75,
+                        "Looping": false,
+                        "Max particles": 3,
+                        "MinMax Speed": {
+                            "x": 150.0,
+                            "y": 150.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 20.0,
+                            "y": 20.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Spikeball_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 7,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CatForScale",
+                        "parent": null,
+                        "sceneID": 4
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -183.10028076171875,
+                            "y": 81.50048065185547
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 8,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatKingForScale",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.2930232286453247,
+                            "g": 0.2930232286453247,
+                            "r": 0.2930232286453247
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
+                    },
+                    "Transform": {
+                        "height": 256.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 412.60040283203125,
+                            "y": -108.79959106445313
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 256.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 9,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CatWalkLeafParticles",
+                        "parent": null,
+                        "sceneID": 10
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 1.3089969158172607,
+                        "Emission Direction": 4.71238899230957,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.5,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 15.0,
+                            "y": 25.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 30.0,
+                            "y": 30.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Leaf_Green_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0000228881836,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -200.19970703125,
+                            "y": 59.700382232666016
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0000228881836
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 10,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "FatCatForScale",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Citrus_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 4.600166320800781,
+                            "y": 145.200439453125
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 11,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CitrusShockwaveParticles",
+                        "parent": null,
+                        "sceneID": 18
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 6.2831854820251465,
+                        "Emission Direction": 0.0,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 0.75,
+                        "Looping": false,
+                        "Max particles": 5,
+                        "MinMax Speed": {
+                            "x": 200.0,
+                            "y": 200.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 30.0,
+                            "y": 30.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Dirt3_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 11.100086212158203,
+                            "y": 125.90000915527344
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 12,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "BackgroundPlain",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/MapBackground_Level2_1920x1080px.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 13,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SnowParticles",
+                        "parent": null,
+                        "sceneID": 9
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 2.9670588970184326,
+                        "Emittor Length": 1900.0,
+                        "End Scale": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1000.0,
+                        "Looping": true,
+                        "Max particles": 10,
+                        "MinMax Speed": {
+                            "x": 50.0,
+                            "y": 274.0
+                        },
+                        "Mode": 1,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 20.0,
+                            "y": 10.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Snow_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -105.0001220703125,
+                            "y": 385.8000183105469
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 14,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CatWalkDirtParticles",
+                        "parent": null,
+                        "sceneID": 11
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 1.5707963705062866,
+                        "Emission Direction": 4.71238899230957,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.5,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 15.0,
+                            "y": 25.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 20.0,
+                            "y": 20.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_DirtSmoke_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -195.99961853027344,
+                            "y": 59.00043869018555
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 15,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CatWalkSnowParticles",
+                        "parent": null,
+                        "sceneID": 12
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 1.5707963705062866,
+                        "Emission Direction": 4.71238899230957,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.5,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 15.0,
+                            "y": 25.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 20.0,
+                            "y": 20.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_SnowSmoke_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -199.19964599609375,
+                            "y": 61.200355529785156
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 16,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatKingShockwaveParticles",
+                        "parent": null,
+                        "sceneID": 19
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 6.2831854820251465,
+                        "Emission Direction": 0.0,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.5,
+                        "Looping": false,
+                        "Max particles": 5,
+                        "MinMax Speed": {
+                            "x": 200.0,
+                            "y": 200.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 50.0,
+                            "y": 50.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Dirt3_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 431.00042724609375,
+                            "y": -159.89964294433594
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 17,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatWalkLeafParticles",
+                        "parent": null,
+                        "sceneID": 13
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 1.3089969158172607,
+                        "Emission Direction": 1.5707963705062866,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.5,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 15.0,
+                            "y": 25.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 30.0,
+                            "y": 30.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Leaf_Green_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 234.30055236816406,
+                            "y": 46.20009231567383
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 18,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatWalkDirtParticles",
+                        "parent": null,
+                        "sceneID": 14
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 1.5707963705062866,
+                        "Emission Direction": 1.5707963705062866,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.5,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 15.0,
+                            "y": 25.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 30.0,
+                            "y": 30.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_DirtSmoke_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 228.60031127929688,
+                            "y": 46.20037841796875
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 19,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatWalkSnowParticles",
+                        "parent": null,
+                        "sceneID": 15
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 1.5707963705062866,
+                        "Emission Direction": 1.5707963705062866,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 0.10000000149011612,
+                            "y": 0.10000000149011612
+                        },
+                        "Is Active": true,
+                        "Lifetime": 1.5,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 15.0,
+                            "y": 25.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 30.0,
+                            "y": 30.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_SnowSmoke_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 233.40042114257813,
+                            "y": 43.20033264160156
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 21,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "RatKingBubbleParticles",
+                        "parent": null,
+                        "sceneID": 21
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 0.7843137383460999,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 0.0,
+                        "Emittor Length": 200.0,
+                        "End Scale": {
+                            "x": 30.0,
+                            "y": 30.0
+                        },
+                        "Is Active": false,
+                        "Lifetime": 20.0,
+                        "Looping": true,
+                        "Max particles": 2,
+                        "MinMax Speed": {
+                            "x": 50.0,
+                            "y": 50.0
+                        },
+                        "Mode": 1,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 10.0,
+                            "y": 10.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 430.10040283203125,
+                            "y": -220.5995330810547
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 24,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "GameObject24",
+                        "parent": 22,
+                        "sceneID": 24
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 2.0071287155151367,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": false,
+                        "Lifetime": 0.25,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 500.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 25.0,
+                            "y": 25.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 248.699951171875,
+                            "y": -109.4998779296875
+                        },
+                        "relativeposition": {
+                            "x": -185.0,
+                            "y": 66.40011596679688
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 25,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "GameObject25",
+                        "parent": 22,
+                        "sceneID": 25
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 4.27605676651001,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": false,
+                        "Lifetime": 0.25,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 500.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 25.0,
+                            "y": 25.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 618.699951171875,
+                            "y": -108.89999389648438
+                        },
+                        "relativeposition": {
+                            "x": 185.0,
+                            "y": 67.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 26,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "GameObject26",
+                        "parent": 22,
+                        "sceneID": 26
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 1.1344640254974365,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": false,
+                        "Lifetime": 0.25,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 500.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 25.0,
+                            "y": 25.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 248.699951171875,
+                            "y": -242.89999389648438
+                        },
+                        "relativeposition": {
+                            "x": -185.0,
+                            "y": -67.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 27,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "GameObject27",
+                        "parent": 22,
+                        "sceneID": 27
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.0,
+                        "Emission Direction": 5.148721218109131,
+                        "Emittor Length": 0.0,
+                        "End Scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "Is Active": false,
+                        "Lifetime": 0.25,
+                        "Looping": true,
+                        "Max particles": 1,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 500.0
+                        },
+                        "Mode": 0,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 25.0,
+                            "y": 25.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": false
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_BossBubble_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 618.699951171875,
+                            "y": -242.89999389648438
+                        },
+                        "relativeposition": {
+                            "x": 185.0,
+                            "y": -67.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 22,
+                        "Prefab Type": "",
+                        "children": [
+                            24,
+                            25,
+                            26,
+                            27
+                        ],
+                        "isActive": false,
+                        "name": "RatKingChargingParticles",
+                        "parent": null,
+                        "sceneID": 22
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 0.10000000149011612,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 433.699951171875,
+                            "y": -175.89999389648438
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 0.10000000149011612
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 20,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "RatKingChargeParticles",
+                        "parent": null,
+                        "sceneID": 20
+                    },
+                    "ParticleEmitter": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 1.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Delta Scale": {
+                            "x": -10.0,
+                            "y": -10.0
+                        },
+                        "Emission Arc": 0.8726646304130554,
+                        "Emission Direction": 0.0,
+                        "Emittor Length": 150.0,
+                        "End Scale": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "Is Active": true,
+                        "Lifetime": 0.5,
+                        "Looping": true,
+                        "Max particles": 5,
+                        "MinMax Speed": {
+                            "x": 500.0,
+                            "y": 1000.0
+                        },
+                        "Mode": 1,
+                        "Paused": false,
+                        "Starting Scale": {
+                            "x": 10.0,
+                            "y": 10.0
+                        },
+                        "Toggles": {
+                            "Emission Arc": true
+                        },
+                        "Type": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Particle_Snow_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 430.10040283203125,
+                            "y": -229.39952087402344
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}
