@@ -480,6 +480,7 @@ namespace PE
 		m_movementTimer = 0.5f;
 		m_startMovementTimer = false;
 
+		CatHelperFunctions::ToggleEntity(p_data->catWalkParticles, true); // set to active, it will only show during execute phase
 		
 		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->godMode)
 			EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;

@@ -4,6 +4,12 @@
             "Entity": {
                 "components": {
                     "Camera": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
                         "ismaincamera": true,
                         "magnification": 1.0,
                         "viewportHeight": 1080.0,
@@ -327,7 +333,7 @@
                             "y": 250.0
                         },
                         "relorientation": 0.0,
-                        "width": 1011.0
+                        "width": 1122.0
                     }
                 },
                 "name": ""

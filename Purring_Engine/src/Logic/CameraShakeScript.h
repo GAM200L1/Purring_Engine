@@ -2,14 +2,14 @@
 
  \project  Purring Engine
  \module   CSD2401-A
- \file     CameraShakeScrip.h
- \date     03-11-2023
+ \file     CameraShakeScript.h
+ \date     04-06-2023
 
- \author               Jarran Tan Yan Zhi
- \par      email:      jarranyanzhi.tan\@digipen.edu
+ \author               Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho@digipen.edu
 
 
- \brief  This file contains the declarations of testScript
+ \brief  This file contains the declarations of CameraShakeScript
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -28,11 +28,6 @@ namespace PE
 		vec2 originalPosition{};
 		bool shakeEnabled{ false };
 		bool isShaking{ false };
-		
-
-		float m_timer{ 3 };
-		int newEntityKey{-1};
-		bool isCreated{};
 	};
 
 	class CameraShakeScript : public Script
@@ -108,10 +103,12 @@ namespace PE
 		*************************************************************************************/
 		CameraShakeScript();
 
-		void TestFunction(EntityID);
-		void TestFunction2(EntityID);
-		void TestFunction3(EntityID);
+		/*!***********************************************************************************
+		 \brief Enables shaking for the script
 
+		 \param[in] id - The unique EntityID to destroy the script for
+		 \return void
+		*************************************************************************************/
 		void Shake(EntityID);
 	private:
 		std::map<EntityID, CameraShakeScriptData> m_ScriptData;

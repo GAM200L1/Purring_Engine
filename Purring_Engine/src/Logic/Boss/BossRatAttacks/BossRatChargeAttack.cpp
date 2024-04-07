@@ -20,6 +20,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Hierarchy/HierarchyManager.h"
 #include "Logic/Cat/CatController_v2_0.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Logic/CameraShakeScript.h"
+#include "Graphics/CameraManager.h"
 namespace PE
 {
 	BossRatChargeAttack::BossRatChargeAttack(EntityID furthestCat) : m_furthestCat{furthestCat}
@@ -69,6 +71,8 @@ namespace PE
 	{
 		if (!m_isCharging)
 		{
+			p_script->PlayChargeParticles(vec2(EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.x + 15, EntityManager::GetInstance().Get<Transform>(p_script->currentBoss).position.y - 94));
+
 			if (p_data->curr_Anim != BossRatAnimationsEnum::CHARGE)
 			p_script->PlayAnimation(BossRatAnimationsEnum::CHARGE);
 		}
@@ -82,6 +86,7 @@ namespace PE
 		{
 			m_animationPlayed = true;
 			p_script->PlayAttackAudio();
+			p_script->StopChargeParticles();
 			p_script->PlayAnimation(BossRatAnimationsEnum::WALKFASTER);
 			m_isCharging = true;
 		}
@@ -145,7 +150,11 @@ namespace PE
 		if (m_travelTime < 0)
 		{
 			if (p_data->curr_Anim != BossRatAnimationsEnum::IDLE && m_isCharging && p_data->curr_Anim != BossRatAnimationsEnum::DEATH)
+			{
 				p_script->PlayAnimation(BossRatAnimationsEnum::IDLE);
+				GETSCRIPTINSTANCEPOINTER(CameraShakeScript)->Shake(GETCAMERAMANAGER()->GetMainCameraId());
+				p_script->PlaySlamShockWaveAudio();
+			}
 			m_isCharging = false;
 
 		}

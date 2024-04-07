@@ -82,7 +82,7 @@ namespace PE
 		 \brief Resets all particles to starting postion
 		 
 		*************************************************************************************/
-		void ResetAllParticles();
+		void ResetAllParticles(bool enable = true);
 
 		/*!***********************************************************************************
 		 \brief Get the Particles owned by this emitter

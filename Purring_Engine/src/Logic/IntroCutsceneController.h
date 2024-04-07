@@ -150,6 +150,13 @@ namespace PE
 		void StartCutscene(EntityID id);
 
 		/*!***********************************************************************************
+		 \brief			Screen Shake
+
+		 \param[in]		EntityID
+		*************************************************************************************/
+		void BossRatAppearance(EntityID id);
+
+		/*!***********************************************************************************
 		 \brief			Handle window out of focus event.
 		 \param[in]     Event containing window-specific details.
 		*************************************************************************************/

@@ -266,8 +266,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -433,8 +433,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -524,8 +524,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -603,8 +603,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1062,7 +1062,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/VerySadCat_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/VeryVerySadCat_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -1466,11 +1466,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -550.9998779296875,
-                            "y": 172.5
+                            "y": 192.0
                         },
                         "relativeposition": {
                             "x": -550.9998779296875,
-                            "y": 172.5
+                            "y": 192.0
                         },
                         "relorientation": 0.0,
                         "width": 200.0
@@ -1514,11 +1514,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -187.99996948242188,
-                            "y": 172.5
+                            "y": 192.0
                         },
                         "relativeposition": {
                             "x": -187.99996948242188,
-                            "y": 172.5
+                            "y": 192.0
                         },
                         "relorientation": 0.0,
                         "width": 200.0
@@ -1562,11 +1562,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 180.0001220703125,
-                            "y": 172.5
+                            "y": 192.0
                         },
                         "relativeposition": {
                             "x": 180.0001220703125,
-                            "y": 172.5
+                            "y": 192.0
                         },
                         "relorientation": 0.0,
                         "width": 200.0
@@ -1610,11 +1610,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 546.0000610351563,
-                            "y": 172.5
+                            "y": 192.0
                         },
                         "relativeposition": {
                             "x": 546.0000610351563,
-                            "y": 172.5
+                            "y": 192.0
                         },
                         "relorientation": 0.0,
                         "width": 200.0

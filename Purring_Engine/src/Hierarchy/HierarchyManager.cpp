@@ -222,9 +222,16 @@ namespace PE
 
 	void Hierarchy::UpdateTransform()
 	{
-		for (const EntityID& parentID : m_parentOrder)
+		if (m_parentOrder.empty() && m_hierarchyOrder.size() == 1)
 		{
-			TransformUpdateHelper(parentID);
+			TransformUpdateHelper(m_hierarchyOrder.front());
+		}
+		else
+		{
+			for (const EntityID& parentID : m_parentOrder)
+			{
+				TransformUpdateHelper(parentID);
+			}
 		}
 	}
 

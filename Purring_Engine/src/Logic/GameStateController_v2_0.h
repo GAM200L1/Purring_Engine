@@ -59,6 +59,9 @@ namespace PE
 
 		EntityID SettingsMenu;
 
+		EntityID WindParticles;
+		EntityID SnowParticles;
+
 		int NumberInList{5};
 		std::vector<EntityID> clicklisttest;
 
@@ -246,22 +249,59 @@ namespace PE
 		*************************************************************************************/
 		bool GetSelectedCat(EntityID catID);
 
+		/*!***********************************************************************************
+		 \brief			Reset Stats
+		*************************************************************************************/
 		void ResetStats();
 
+		/*!***********************************************************************************
+		 \brief			Increment Cat Rescued
+		*************************************************************************************/
 		void IncrementCatRescued();
 
+		/*!***********************************************************************************
+		 \brief			Increment Rats Killed
+		 *************************************************************************************/
 		void IncrementRatsKilled();
 
+		/*!***********************************************************************************
+		 \brief			Increment Turn count
+
+		 \param[in]		count to add
+		*************************************************************************************/
 		void IncrementTurnCount(int count);
 
+		/*!***********************************************************************************
+		 \brief			Increment Death count
+		*************************************************************************************/	
 		void IncrementDeathCount();
 
+		/*!***********************************************************************************
+		\brief			Get Cat Rescued
+				 
+		 \return		Cat Rescued
+		*************************************************************************************/
 		int GetCatRescued();
 
+		/*!***********************************************************************************
+		\brief			Get Rats Killed
+
+		 \return		Rats Kileld
+		*************************************************************************************/
 		int GetRatsKilled();
 
+		/*!***********************************************************************************
+		\brief			Get Turn Count
+
+		 \return		Turn count
+		*************************************************************************************/
 		int GetTurnCount();
 
+		/*!***********************************************************************************
+		\brief			Get Death Count
+
+		 \return		Death count
+		*************************************************************************************/
 		int GetDeathCount();
 
 		// ----- Object Helper Functions ----- //
@@ -520,6 +560,12 @@ namespace PE
 		std::string m_defaultPotraitTextureKey;
 		std::string m_deploymentPhaseBanner, m_planningPhaseBanner, m_exexcutePhaseBanner;
 
+		std::string m_windParticleTexture;
+		std::string m_sepiaWindParticleTexture;
+
+		std::string m_snowParticleTextures;
+		std::string m_sepiaSnowParticleTexture;
+
 		//Pause and Win/Lose Variables
 		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
 		bool m_isTransitioning{ false };
@@ -567,10 +613,10 @@ namespace PE
 		bool m_bgmStarted = false;
 
 		//stats
-		int m_catsRescued;
-		int m_ratsVanquished;
-		int m_totalTurns;
-		int m_deathCount;
+		int m_catsRescued{};
+		int m_ratsVanquished{};
+		int m_totalTurns{};
+		int m_deathCount{};
 	};
 }
 
