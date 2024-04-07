@@ -791,6 +791,7 @@
                                 "CatPortrait": 51,
                                 "ExecuteCanvas": 25,
                                 "GameStateManagerActive": true,
+                                "GodModeText": 138,
                                 "HUDCanvas": 24,
                                 "HowToPlayCanvas": 18,
                                 "HowToPlayPageOne": 19,
@@ -1203,8 +1204,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2153,7 +2154,7 @@
                             "y": 418.0
                         },
                         "relativeposition": {
-                            "x": 39.99989318847656,
+                            "x": 0.0,
                             "y": 418.0
                         },
                         "relorientation": 0.0,
@@ -4845,8 +4846,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4924,8 +4925,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4933,7 +4934,8 @@
                         "Old ID": 94,
                         "Prefab Type": "Canvas Object",
                         "children": [
-                            96
+                            96,
+                            138
                         ],
                         "isActive": true,
                         "name": "Canvas Object",
@@ -5015,8 +5017,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -8195,6 +8197,47 @@
                         },
                         "relorientation": 0.0,
                         "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 138,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GodModeText",
+                        "parent": 94,
+                        "sceneID": 117
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/GodMode_244x78.png"
+                    },
+                    "Transform": {
+                        "height": 78.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -585.0,
+                            "y": 492.0
+                        },
+                        "relativeposition": {
+                            "x": -585.0,
+                            "y": 492.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 244.0
                     }
                 },
                 "name": ""
