@@ -55,6 +55,8 @@ namespace PE
 
 		m_scriptData[id].windowNotFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, EndingCutsceneController::OnWindowOutOfFocus, this)
 		m_scriptData[id].windowFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus, EndingCutsceneController::OnWindowFocus, this)
+
+		m_hasStoppedCutscene = false;
 	}
 
 	void EndingCutsceneController::Update(EntityID id, float deltaTime)
@@ -314,6 +316,12 @@ namespace PE
 	void EndingCutsceneController::WinScreen(EntityID)
 	{
 		GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState = GameStates_v2_0::WIN;
+
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[m_currentCutsceneObject].ContinueButton))
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentCutsceneObject].ContinueButton).isActive = false;
+
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[m_currentCutsceneObject].SkipButton))
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentCutsceneObject].SkipButton).isActive = false;
 
 		m_hasStoppedCutscene = true;
 
