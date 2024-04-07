@@ -498,7 +498,7 @@ namespace PE
 
 		if (KTE.keycode == GLFW_KEY_F1)
 		{
-			WinGame();
+			//WinGame();
 			return;
 		}
 
