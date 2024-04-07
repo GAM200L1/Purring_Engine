@@ -22,8 +22,8 @@
                             "type": "CircleCollider"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 0,
-                            "Layer": 0,
+                            "InteractionLayer": 2,
+                            "Layer": 2,
                             "Old ID": 1,
                             "Prefab Type": "OrangeCatAttackTelegraph",
                             "children": [],

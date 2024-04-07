@@ -155,6 +155,7 @@ namespace PE
 						CatHelperFunctions::ToggleEntity(telegraphID, false);
 					}
 					CatHelperFunctions::ToggleEntity(vars.projectileID, false);
+					CatHelperFunctions::ToggleEntity(vars.telegraphParentID, false);
 					break;
 				}
 				}
