@@ -705,8 +705,7 @@ namespace PE
 		{
 			// starts 
 			OnCollisionStayEvent OCSE{ dynamic_cast<const OnCollisionStayEvent&>(r_collisionEvent) };
-			if ((OCSE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OCSE.Entity2))
-				|| (OCSE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OCSE.Entity1)))
+			if (OCSE.Entity1 == p_data->catID || OCSE.Entity2 == p_data->catID)
 			{
 				m_startMovementTimer = true;
 			}
