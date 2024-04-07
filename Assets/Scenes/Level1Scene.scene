@@ -791,6 +791,7 @@
                                 "CatPortrait": 51,
                                 "ExecuteCanvas": 25,
                                 "GameStateManagerActive": true,
+                                "GodModeText": 116,
                                 "HUDCanvas": 24,
                                 "HowToPlayCanvas": 18,
                                 "HowToPlayPageOne": 19,
@@ -2161,7 +2162,7 @@
                             "y": 418.0
                         },
                         "relativeposition": {
-                            "x": 39.99989318847656,
+                            "x": 0.0,
                             "y": 418.0
                         },
                         "relorientation": 0.0,
@@ -4171,7 +4172,8 @@
                         "Old ID": 71,
                         "Prefab Type": "Canvas Object",
                         "children": [
-                            82
+                            82,
+                            116
                         ],
                         "isActive": true,
                         "name": "Canvas Object",
@@ -6557,7 +6559,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Resources/LeafTwirl_Sepia.png"
+                        "TextureKey": "../Assets/Textures/Animations/LeafTwirl.png"
                     },
                     "Transform": {
                         "height": 100.0000228881836,
@@ -6572,6 +6574,47 @@
                         },
                         "relorientation": 0.0,
                         "width": 100.0000228881836
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 116,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GodModeText",
+                        "parent": 71,
+                        "sceneID": 88
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/GodMode_244x78.png"
+                    },
+                    "Transform": {
+                        "height": 78.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -585.0,
+                            "y": 492.0
+                        },
+                        "relativeposition": {
+                            "x": -585.0,
+                            "y": 492.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 244.0
                     }
                 },
                 "name": ""

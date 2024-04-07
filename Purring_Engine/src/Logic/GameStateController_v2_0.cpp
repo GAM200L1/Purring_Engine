@@ -165,6 +165,22 @@ namespace PE
 	{
 		GlobalMusicManager::GetInstance().Update(deltaTime);
 
+		if (godMode)
+		{
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).GodModeText))
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).GodModeText).isActive = true;
+			}
+		}
+		else
+		{
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).GodModeText))
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).GodModeText).isActive = false;
+			}
+
+		}
+
 		if (!m_isRat && m_isPotraitShowing)
 		{
 			CatScript_v2_0Data* cat = GETSCRIPTDATA(CatScript_v2_0, m_lastSelectedEntity);
@@ -482,7 +498,7 @@ namespace PE
 
 		if (KTE.keycode == GLFW_KEY_F1)
 		{
-			WinGame();
+			//WinGame();
 			return;
 		}
 

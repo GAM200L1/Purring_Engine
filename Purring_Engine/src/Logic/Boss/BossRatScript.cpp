@@ -191,7 +191,15 @@ namespace PE
 
 	void BossRatScript::TakeDamage(int damage)
 	{
-		m_scriptData[currentBoss].currenthealth -= damage;
+		if(m_scriptData[currentBoss].currenthealth > 0)
+		{ 
+			m_scriptData[currentBoss].currenthealth -= damage;
+
+			if (m_scriptData[currentBoss].currenthealth < 0)
+			{
+				m_scriptData[currentBoss].currenthealth = 0;
+			}
+		}
 		if(m_scriptData[currentBoss].curr_Anim != BossRatAnimationsEnum::WALKFASTER)
 		PlayAnimation(BossRatAnimationsEnum::HURT);
 		PlayHurtAudio();

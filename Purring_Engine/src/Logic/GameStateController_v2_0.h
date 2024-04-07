@@ -62,6 +62,8 @@ namespace PE
 		EntityID WindParticles;
 		EntityID SnowParticles;
 
+		EntityID GodModeText;
+
 		int NumberInList{5};
 		std::vector<EntityID> clicklisttest;
 
