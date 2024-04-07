@@ -6,6 +6,13 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     98%
+ \par      changes:    Defined most of the functions.
+
+ \co-author            Krystal YAMIN
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     2%
+ \par      changes:    Added a function to toggle the cursor visibilty using GLFW.
 
  \brief	   This file contains the implementation of the WindowManager class.
 		   WindowManager handles the initialization, maintenance, and cleanup

@@ -27,6 +27,7 @@ namespace PE
 {
 	struct OrangeCatAttackVariables
 	{
+		EntityID orangeCatID{ 0 }; // id of the seismic attack
 		EntityID seismicID{ 0 }; // id of the seismic attack
 		EntityID telegraphID{ 0 }; // id of the UI
 

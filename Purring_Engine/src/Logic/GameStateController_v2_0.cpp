@@ -168,6 +168,26 @@ namespace PE
 		if (!m_isRat && m_isPotraitShowing)
 		{
 			CatScript_v2_0Data* cat = GETSCRIPTDATA(CatScript_v2_0, m_lastSelectedEntity);
+
+			switch (cat->catType)
+			{
+			case EnumCatType::MAINCAT: //
+				nextPortraitTexture = "UnitPortrait_CatNameFrame_Meowsalot_239x82.png";
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_Meowsalot_753x402.png"));
+				break;
+			case EnumCatType::GREYCAT: //
+				nextPortraitTexture = "UnitPortrait_CatNameFrame_GreyCat_239x82.png";
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Grey_256px.png"));
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_GreyCat_753x402.png"));
+				break;
+			case EnumCatType::ORANGECAT: //
+				nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_OrangeCat_753x402.png"));
+				break;
+			}
+
 			SetPortraitInformation(nextPortraitTexture, cat->catCurrentEnergy, cat->catMaxMovementEnergy, 0);
 		}
 
@@ -1491,8 +1511,6 @@ namespace PE
 	void GameStateController_v2_0::IncrementCatRescued()
 	{
 		++m_catsRescued;
-
-		std::cout << "Number of Cats Rescued Incremented" << std::endl;
 	}
 
 	void GameStateController_v2_0::IncrementRatsKilled()
@@ -1781,9 +1799,6 @@ namespace PE
 		int randomSelection = std::rand() % 3 + 1;  // Random number between 1 and 3
 		std::string soundPath = "AudioObject/BossAudioPrefab/Rat King Selection SFX" + std::to_string(randomSelection) + ".prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
-
-		//@DEBUGHANS For Reviewer to test
-		std::cout << "Playing Boss Rat selection sound: " << soundPath << std::endl;
 	}
 
 	void GameStateController_v2_0::PlayRatSelectionSound(int ratType)
@@ -1809,9 +1824,6 @@ namespace PE
 
 		std::string soundPath = "AudioObject/Rat " + ratTypeName + " Selection SFX" + std::to_string(randomSelection) + ".prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
-
-		//@DEBUGHANS For Reviewer to test
-		//std::cout << "Playing Rat selection sound: " << soundPath << std::endl;
 	}
 
 	void GameStateController_v2_0::PlayCatSelectionSound(int catType)
@@ -1838,8 +1850,6 @@ namespace PE
 		std::string soundPath = "AudioObject/Cat " + catTypeName + " Selection SFX" + std::to_string(randomSelection) + ".prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
 
-		//@DEBUGHANS For Reviewer to test
-		//std::cout << "Playing Cat selection sound: " << soundPath << std::endl;
 	}
 
 	void GameStateController_v2_0::UpdateTurnCounter(std::string currentphase)

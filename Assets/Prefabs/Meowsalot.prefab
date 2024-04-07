@@ -31,8 +31,8 @@
                             "type": "CircleCollider"
                         },
                         "EntityDescriptor": {
-                            "InteractionLayer": 4,
-                            "Layer": 4,
+                            "InteractionLayer": 6,
+                            "Layer": 6,
                             "Old ID": 61,
                             "Prefab Type": "Meowsalot",
                             "children": [],

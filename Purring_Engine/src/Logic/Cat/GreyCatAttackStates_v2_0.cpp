@@ -34,11 +34,20 @@ namespace PE
 	// ----- Create Projectile and Telegraphs ----- //
 	void GreyCatAttackVariables::CreateProjectileAndTelegraphs(EntityID catID, bool isMainCat)
 	{
+		greyCatID = catID;
+
 		// create projectile //
 		projectileID = ResourceManager::GetInstance().LoadPrefabFromFile("Projectile.prefab");
 		CatHelperFunctions::ToggleEntity(projectileID, false);
 		/*EntityManager::GetInstance().Get<EntityDescriptor>(projectileID).layer = 0;
 		EntityManager::GetInstance().Get<Collider>(projectileID).collisionLayerIndex = 0;*/
+
+		telegraphParentID = EntityFactory::GetInstance().CreateEntity<EntityDescriptor, Transform>();
+		CatHelperFunctions::PositionEntity(telegraphParentID, CatHelperFunctions::GetEntityPosition(catID));
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(telegraphParentID))
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(telegraphParentID).SetLayer(2);
+		}
 
 		if (isMainCat)
 			EntityManager::GetInstance().Get<Collider>(projectileID).isTrigger = true;
@@ -53,7 +62,7 @@ namespace PE
 			Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
 			//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
-			Hierarchy::GetInstance().AttachChild(catID, telegraphID); // new way of attatching parent child
+			Hierarchy::GetInstance().AttachChild(telegraphParentID, telegraphID); // new way of attatching parent child
 			telegraphTransform.relPosition.Zero();
 			EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false; // telegraph to not show until attack planning
 			EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false; // telegraph to not show until attack planning
@@ -105,6 +114,10 @@ namespace PE
 
 	void GreyCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious)
 	{
+		// Update the position of the telegraphs
+		CatHelperFunctions::PositionEntity(p_attackData->telegraphParentID, CatHelperFunctions::GetEntityPosition(id));
+
+		// Check if the telegraphs are being selected
 		bool collidingWithAnyTelegraph{ false };
 
 		try
@@ -181,6 +194,9 @@ namespace PE
 
 	void GreyCatAttack_v2_0PLAN::ToggleTelegraphs(bool setToggle, bool ignoreSelected)
 	{
+		// Update the position of the telegraphs
+		CatHelperFunctions::PositionEntity(p_attackData->telegraphParentID, CatHelperFunctions::GetEntityPosition(p_attackData->greyCatID));
+
 		for (auto const& r_telegraph : p_attackData->telegraphIDs)
 		{
 			if (r_telegraph.first == p_attackData->attackDirection && ignoreSelected) { continue; } // don't disable attack that has been selected
