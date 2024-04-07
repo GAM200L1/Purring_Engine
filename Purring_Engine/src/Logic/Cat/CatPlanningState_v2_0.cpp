@@ -129,7 +129,8 @@ namespace PE
 		p_catMovement->Exit(id);
 		p_catAttack->Exit(id);
 
-		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
+		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->godMode)
+			EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
 	}
 
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
@@ -161,6 +162,7 @@ namespace PE
 			p_data->planningAttack = false;
 		}
 		p_catMovement->ResetDrawnPath();
+		p_catMovement->StopHeartAnimation(id);
 		PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
 	}
 
