@@ -267,6 +267,7 @@ RTTR_REGISTRATION
         .property("JournalIcon", &PE::GameStateController_v2_0Data::JournalIcon)
         .property("WindParticles", &PE::GameStateController_v2_0Data::WindParticles)
         .property("SnowParticles", &PE::GameStateController_v2_0Data::SnowParticles)
+        .property("GodModeText", &PE::GameStateController_v2_0Data::GodModeText)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
