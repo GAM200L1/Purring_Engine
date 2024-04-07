@@ -6,7 +6,7 @@
  
  \author               Liew Yeni
  \par      email:      yeni.l\@digipen.edu
- \par      code %:     25%
+ \par      code %:     24%
  \par      changes:    Original Author
 
  \co-author            Brandon Ho Jun Jie
@@ -28,6 +28,12 @@
                        Lifetime of newShader ended (auto destruct and stuff)
                        causing the shader program to not exist when called
                        later on in the shader program.
+ 
+ \co-author            Krystal YAMIN
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     1%
+ \par      changes:    06-04-2023
+                       Added functions to load and get cursor textures.
  
  \brief     This file contains the implementation for the resource manager.
             Currently only supports shader and texture loading.
