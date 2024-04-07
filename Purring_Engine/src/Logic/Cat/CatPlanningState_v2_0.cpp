@@ -127,7 +127,8 @@ namespace PE
 		p_catMovement->Exit(id);
 		p_catAttack->Exit(id);
 
-		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
+		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->godMode)
+			EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
 	}
 
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)

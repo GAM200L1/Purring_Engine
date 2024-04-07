@@ -55,6 +55,10 @@ namespace PE
 			m_defaultPathColor = vec4{ 0.506f, 0.490f, 0.490f, 1.f };
 		
 		p_data->pathPositions.clear();
+
+		// clear cache data
+		while (!(GETSCRIPTDATA(FollowScript_v2_0, id))->cacheFollowerPosition.empty())
+			(GETSCRIPTDATA(FollowScript_v2_0, id))->cacheFollowerPosition.pop();
 		
 		// subscribe to collision events
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
@@ -67,7 +71,6 @@ namespace PE
 		}
 		SetPathColor(m_defaultPathColor);
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
-		m_heartPlayed = false;
 	}
 
 	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, vec2 const& r_prevCursorPosition, bool mouseClicked, bool mouseClickedPrevious)
@@ -135,11 +138,13 @@ namespace PE
 	{
 		EndPathDrawing(id);
 		
-		if (p_data->catType == EnumCatType::MAINCAT && !(GETSCRIPTDATA(FollowScript_v2_0, id))->followers.empty())
+		if (p_data->catType == EnumCatType::MAINCAT && !(GETSCRIPTDATA(FollowScript_v2_0, id))->followers.empty() && !(GETSCRIPTDATA(FollowScript_v2_0, id))->cacheFollowerPosition.empty())
 		{
 			// set follow cats to their previous positions
 			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->ResetToSavePositions(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID());
 		}
+
+		StopHeartAnimation(id);
 
 		p_data = nullptr;
 	}
@@ -298,10 +303,6 @@ namespace PE
 		// Disable all the path nodes
 		for (int i{ static_cast<int>(p_data->pathQuads.size() - 1) }; i > r_resetPosition.first; --i)
 		{
-			// erases path node which entityid is in the path colliders on cage
-			if (r_mainID == p_data->catID && !m_pathCollidersOnCage.empty())
-				m_pathCollidersOnCage.erase(std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), i));
-			
 			// deactivates path node
 			CatHelperFunctions::ToggleEntity(p_data->pathQuads[i], false);
 		}
@@ -314,8 +315,21 @@ namespace PE
 		m_pathBeingDrawn = false;
 
 		m_resetPositions.pop();
+		
 		// Add the player's starting position as a node
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
+
+		// disregards where the cat resets to
+		for (int i{ static_cast<int>(p_data->pathQuads.size() - 1) }; i > r_resetPosition.first + 1; --i)
+		{
+			// erases path node which entityid is in the path colliders on cage
+			if (r_mainID == p_data->catID && !m_pathCollidersOnCage.empty())
+			{
+				auto const& iter = std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), p_data->pathQuads[i]);
+				if (iter != m_pathCollidersOnCage.end())
+					m_pathCollidersOnCage.erase(iter);
+			}
+		}
 
 		if (r_mainID == p_data->catID && m_pathHasCagedCat && m_pathCollidersOnCage.empty())
 		{
@@ -324,7 +338,6 @@ namespace PE
 			// stop heart animation
 			EntityManager::GetInstance().Get<AnimationComponent>(m_heartIcon).StopAnimation();
 			CatHelperFunctions::ToggleEntity(m_heartIcon, false);
-			m_heartPlayed = false;
 
 			// play sad cat sounds
 			switch (*GETSCRIPTDATA(CatScript_v2_0, m_cagedCatID).catType)
@@ -374,8 +387,8 @@ namespace PE
 			auto PlayHeart = 
 				[&](EntityID cagedCatID)
 				{
-					if (!m_heartPlayed)
-						m_heartPlayed = true;
+					if (!m_pathHasCagedCat)
+						m_pathHasCagedCat = true;
 					else
 						return;
 
@@ -390,9 +403,6 @@ namespace PE
 							CatScript_v2_0::PlayRescueCatAudio(*GETSCRIPTDATA(CatScript_v2_0, cagedCatID).catType);
 						}
 					}
-					// @TODO Play audio for gonna rescue cat
-					//std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
-					//PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 				};
 
 			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
@@ -425,7 +435,6 @@ namespace PE
 				{
 					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity2);
-					m_pathHasCagedCat = true;
 					m_cagedCatID = OTEE.Entity2;
 				}
 				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
@@ -439,7 +448,6 @@ namespace PE
 				{
 					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity1);
-					m_pathHasCagedCat = true;
 					m_cagedCatID = OTEE.Entity1;
 				}
 				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
@@ -479,12 +487,6 @@ namespace PE
 
 		m_movementTimer = 0.5f;
 		m_startMovementTimer = false;
-
-		
-		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->godMode)
-			EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
-		else
-			EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
 	}
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -603,7 +605,7 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::StateExit(EntityID id)
 	{
 		StopMoving(id);
-
+		
 		p_data = nullptr;
 	}
 

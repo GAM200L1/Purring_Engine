@@ -252,7 +252,7 @@ namespace PE
 		{
 			if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, damage);
 				return;
 			}
 			else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id2) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id2))
@@ -262,14 +262,14 @@ namespace PE
 			}
 			else if (id2 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 			{
-				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(damage);
 			}
 		}
 		else if (id2 == p_attackData->seismicID)
 		{
 			if (GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, damage);
 				return;
 			}
 			else if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatAndNotCaged(id1) && !GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id1))
@@ -279,7 +279,7 @@ namespace PE
 			}
 			else if (id1 == GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss)
 			{
-				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(p_attackData->damage);
+				GETSCRIPTINSTANCEPOINTER(BossRatScript)->TakeDamage(damage);
 			}
 		}
 	}

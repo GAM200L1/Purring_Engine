@@ -155,7 +155,6 @@ namespace PE
 		std::stack<std::pair<int, vec2>> m_resetPositions{};
 		std::vector<EntityID> m_pathCollidersOnCage{}; // vector of path colliders that are colliding with the caged cat, saved to play animation
 		EntityID m_cagedCatID, m_heartIcon;
-		bool m_heartPlayed{ false };
 		bool m_pathHasCagedCat{ false };
 		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
