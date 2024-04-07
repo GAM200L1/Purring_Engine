@@ -84,7 +84,7 @@
                                     "forgivenessOffset": 1.0,
                                     "isCaged": false,
                                     "maxDistance": 50.0,
-                                    "minDistance": 10.0,
+                                    "minDistance": 5.0,
                                     "movementSpeed": 325.0,
                                     "nodeSize": 10.0,
                                     "toggleDeathAnimation": false

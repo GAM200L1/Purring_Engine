@@ -1211,7 +1211,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3328,7 +3328,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4162,7 +4162,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4485,7 +4485,7 @@
                                 "forgivenessOffset": 1.0,
                                 "isCaged": false,
                                 "maxDistance": 50.0,
-                                "minDistance": 10.0,
+                                "minDistance": 5.0,
                                 "movementSpeed": 325.0,
                                 "nodeSize": 10.0,
                                 "toggleDeathAnimation": false
@@ -4518,7 +4518,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
