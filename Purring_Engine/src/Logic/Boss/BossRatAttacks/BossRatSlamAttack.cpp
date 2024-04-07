@@ -80,8 +80,9 @@ namespace PE
 	{	
 		if (p_script->currentSlamTurnCounter == 2)
 		{
-			if (EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetAnimationMaxIndex())
+			if (EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(p_script->currentBoss).GetAnimationMaxIndex() || m_hasCharged)
 			{
+				m_hasCharged = true;
 				p_script->StopChargeParticles();
 				JumpUp(p_script->currentBoss, dt);
 			}
