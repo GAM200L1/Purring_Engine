@@ -73,7 +73,6 @@ namespace PE
 		}
 
 		m_pathBeingDrawn = false;
-		m_checkFirstPath = false;
 
 		SetPathColor(m_defaultPathColor);
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
@@ -165,19 +164,8 @@ namespace PE
 			// Get the distance of the last two nodes
 			if (p_data->pathPositions.back().DistanceSquared(p_data->pathPositions[p_data->pathPositions.size() - 2]) < p_data->maxDistance * p_data->maxDistance)
 			{
-				//if (!(p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())) // not the main cat
-				//{
-				//	// IF  the last two nodes are not the max dist from each other, delete the last node
-				//	p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
-				//}
-				//else
-				//{
-				//	if (m_pathBeingDrawn && m_checkFirstPath) // else if main cat
-				//		m_checkFirstPath = false;
-				//	else
-						// IF  the last two nodes are not the max dist from each other, delete the last node
-						p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
-				//}
+				// IF  the last two nodes are not the max dist from each other, delete the last node
+				p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));	
 			}
 		}
 		
@@ -245,8 +233,8 @@ namespace PE
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
 		if (!CatHelperFunctions::IsActive(nodeId)) 
 		{
-				CatScript_v2_0::PlayPathPlacementAudio();
-				CatHelperFunctions::ToggleEntity(nodeId, true);
+			CatScript_v2_0::PlayPathPlacementAudio();
+			CatHelperFunctions::ToggleEntity(nodeId, true);
 		}
 
 		// Add the position to the path positions list
@@ -347,7 +335,6 @@ namespace PE
 		SetPathColor(m_defaultPathColor);
 
 		m_pathBeingDrawn = false;
-		m_checkFirstPath = false;
 
 		m_resetPositions.pop();
 		
@@ -397,7 +384,6 @@ namespace PE
 				{
 					if (EntityManager::GetInstance().Get<EntityDescriptor>(findHeartID).name.find("Heart") != std::string::npos)
 					{
-						m_checkFirstPath = true;
 						m_heartIcon = findHeartID;
 						CatHelperFunctions::ToggleEntity(findHeartID, true);
 						EntityManager::GetInstance().Get<AnimationComponent>(findHeartID).PlayAnimation();
