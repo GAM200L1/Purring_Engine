@@ -186,8 +186,16 @@ namespace PE
 
 		bool hitSomething{};
 		bool continueLoop{ true };
-		int loopTimer = 360 / 15;
+		int angleIncrement{ 15 };
+		int loopTimer = 360 / angleIncrement;
 
+		//// Calculate the direction to rotate in
+		//vec2 left{-1.f, 0.f};
+		//vec2 right{1.f, 0.f};
+		//vec2 up{0.f, 1.f};
+		//vec2 down{0.f, -1.f};
+		//float catWithLeft{  };
+		//if(Dot(finalTarget, up))
 
 		while (continueLoop)
 		{
@@ -244,7 +252,7 @@ namespace PE
 			}
 
 			std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): rotate 15 deg" << std::endl;
-			finalTarget = RotatePoint(ratPosition, finalTarget, 15.f);
+			finalTarget = RotatePoint(ratPosition, finalTarget, angleIncrement);
 		}
 
 		// Set the rat target
