@@ -83,10 +83,11 @@ namespace PE
 		bool collidingWithTelegraph = PointCollision(r_telegraphCollider, r_cursorPosition);
 		bool collidingWithCat = PointCollision(r_catCollider, r_cursorPosition);
 
-		if (collidingWithTelegraph && !collidingWithCat && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id))
+		if (collidingWithTelegraph && !collidingWithCat)
 		{
 			if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
 				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
+
 			if (mouseClicked && !mouseClickedPrevious)
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->AddToUndoStack(id, EnumUndoType::UNDO_ATTACK);
