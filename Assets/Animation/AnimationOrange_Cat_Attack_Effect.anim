@@ -76,6 +76,6 @@
     "animationID": "../Assets/Animation/AnimationOrange_Cat_Attack_Effect.anim",
     "frameRate": 30,
     "isSpriteSheet": true,
-    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Orange_Attack_Effect.png",
+    "spriteSheetKey": "../Assets/Textures/Animations/Cat_Orange_Attack_Effect.png",
     "totalSprites": 6
 }

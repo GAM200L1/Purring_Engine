@@ -45,7 +45,7 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Animations/Individual Rows/Cat_Orange_Attack_Effect.png"
+                            "TextureKey": "../Assets/Textures/Animations/Cat_Orange_Attack_Effect.png"
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,

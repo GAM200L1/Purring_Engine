@@ -165,7 +165,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cutscenes/Cutscene_Intro20_1920x1080.png"
+                        "TextureKey": ""
                     },
                     "Transform": {
                         "height": 1080.0,

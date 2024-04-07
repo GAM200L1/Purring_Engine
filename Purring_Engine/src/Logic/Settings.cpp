@@ -108,6 +108,7 @@ namespace PE
 
 	SettingsScript::~SettingsScript()
 	{
+#ifndef GAMERELEASE
 		const char* filepath = "../Assets/Settings/gamesettings.json";
 		std::ifstream settingsFile(filepath);
 		if (!settingsFile.fail())
@@ -132,6 +133,7 @@ namespace PE
 				std::cerr << "Could not open the file for writing: " << filepath << std::endl;
 			}
 		}
+#endif // !GAMERELEASE
 	}
 
 	void SettingsScript::OnAttach(EntityID id)

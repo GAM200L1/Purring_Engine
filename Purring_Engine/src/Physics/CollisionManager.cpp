@@ -67,6 +67,7 @@ namespace PE
 
 	CollisionManager::~CollisionManager()
 	{
+#ifndef GAMERELEASE
 		const char* filepath = "../Assets/Settings/collidercfg.json";
 		nlohmann::json cfgjson;
 
@@ -90,6 +91,7 @@ namespace PE
 		{
 			std::cerr << "Could not open the file for writing: " << filepath << std::endl;
 		}
+#endif // !
 
 		m_grid.ClearGrid();
 	}

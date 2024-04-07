@@ -6498,9 +6498,7 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationGutterRat_Hurt.anim",
-                            "../Assets/Animation/AnimationLeafTwirl.anim",
-                            "../Assets/Animation/AnimationRat_Hurt.anim"
+                            "../Assets/Animation/AnimationLeafTwirl.anim"
                         ],
                         "CurrentAnimationID": "../Assets/Animation/AnimationLeafTwirl.anim"
                     },

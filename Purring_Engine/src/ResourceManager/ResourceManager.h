@@ -53,7 +53,7 @@
 #include "MetaData.h"
 #include "Data/SerializationManager.h"
 
-#define RESOURCE_LOG
+//#define RESOURCE_LOG
 
 //class Resource
 //{
