@@ -34,6 +34,8 @@ namespace PE
 	// ----- Create Orange Cat Stomp and Telegraphs ----- //
 	void OrangeCatAttackVariables::CreateSeismicAndTelegraph(EntityID catID)
 	{
+		orangeCatID = catID;
+
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(catID);
 
 		// create seismic //
@@ -54,9 +56,7 @@ namespace PE
 		
 		// create telegraph //
 		telegraphID = ResourceManager::GetInstance().LoadPrefabFromFile("OrangeCatAttackTelegraph.prefab");
-
-		Hierarchy::GetInstance().AttachChild(catID, telegraphID);
-		EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.Zero();
+		CatHelperFunctions::PositionEntity(telegraphID, CatHelperFunctions::GetEntityPosition(catID));
 
 		CatHelperFunctions::ToggleEntity(telegraphID, false); // telegraph to not show until attack planning
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false;
@@ -77,6 +77,9 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime, vec2 const& r_cursorPosition, bool mouseClicked, bool mouseClickedPrevious)
 	{
+		// Update the position of the telegraphs
+		CatHelperFunctions::PositionEntity(p_attackData->telegraphID, CatHelperFunctions::GetEntityPosition(id));
+
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 
@@ -139,6 +142,9 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::ToggleTelegraphs(bool setToggle, bool ignoreSelected)
 	{
+		// Update the position of the telegraphs
+		CatHelperFunctions::PositionEntity(p_attackData->telegraphID, CatHelperFunctions::GetEntityPosition(p_attackData->orangeCatID));
+
 		ignoreSelected;
 		CatHelperFunctions::ToggleEntity(p_attackData->telegraphID, setToggle);
 	}

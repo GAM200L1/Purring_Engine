@@ -38,7 +38,9 @@ namespace PE
 	struct GreyCatAttackVariables
 	{
 		// id of the projectile
+		EntityID greyCatID{ 0 };
 		EntityID projectileID{ 0 };
+		EntityID telegraphParentID{ 0 };
 
 		// damage of the attack
 		int damage{ 1 };
