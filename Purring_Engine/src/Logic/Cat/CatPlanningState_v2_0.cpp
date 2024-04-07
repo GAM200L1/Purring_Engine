@@ -160,6 +160,7 @@ namespace PE
 			p_data->planningAttack = false;
 		}
 		p_catMovement->ResetDrawnPath();
+		p_catMovement->StopHeartAnimation(id);
 		PE::GlobalMusicManager::GetInstance().PlaySFX(std::string{ "AudioObject/UI Scribble SFX2.prefab" }, false);
 	}
 

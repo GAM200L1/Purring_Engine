@@ -69,6 +69,9 @@ namespace PE
 		{
 			CatHelperFunctions::ToggleEntity(nodeID, false);
 		}
+
+		m_pathBeingDrawn = false;
+
 		SetPathColor(m_defaultPathColor);
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
 	}
@@ -303,10 +306,25 @@ namespace PE
 		// Disable all the path nodes
 		for (int i{ static_cast<int>(p_data->pathQuads.size() - 1) }; i > r_resetPosition.first; --i)
 		{
+			// erases path node which entityid is in the path colliders on cage
+			if (r_mainID == p_data->catID && !m_pathCollidersOnCage.empty())
+			{
+				auto const& iter = std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), p_data->pathQuads[i]);
+				if (iter != m_pathCollidersOnCage.end())
+					m_pathCollidersOnCage.erase(iter);
+			}
 			// deactivates path node
 			CatHelperFunctions::ToggleEntity(p_data->pathQuads[i], false);
 		}
 		
+		// if the node where the main cat is is the only node left in the quads and 
+		// it is a reasonable distance away from the caged cat, it is not counted
+		if (r_mainID == p_data->catID && m_pathCollidersOnCage.size() == 1 &&
+			CatHelperFunctions::GetEntityPosition(m_cagedCatID).DistanceSquared(r_resetPosition.second) > 64.f * 64.f)
+		{
+			m_pathCollidersOnCage.clear();
+		}
+
 		// reset the last node's position to where the cat is
 		CatHelperFunctions::PositionEntity(p_data->pathQuads[r_resetPosition.first], r_resetPosition.second);
 
@@ -318,18 +336,6 @@ namespace PE
 		
 		// Add the player's starting position as a node
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
-
-		// disregards where the cat resets to
-		for (int i{ static_cast<int>(p_data->pathQuads.size() - 1) }; i > r_resetPosition.first + 1; --i)
-		{
-			// erases path node which entityid is in the path colliders on cage
-			if (r_mainID == p_data->catID && !m_pathCollidersOnCage.empty())
-			{
-				auto const& iter = std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), p_data->pathQuads[i]);
-				if (iter != m_pathCollidersOnCage.end())
-					m_pathCollidersOnCage.erase(iter);
-			}
-		}
 
 		if (r_mainID == p_data->catID && m_pathHasCagedCat && m_pathCollidersOnCage.empty())
 		{
@@ -431,27 +437,20 @@ namespace PE
 			}
 			else if (IsCatAndCaged(OTEE.Entity2))
 			{
-				if (OTEE.Entity1 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())
+				if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
 				{
-					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity2);
 					m_cagedCatID = OTEE.Entity2;
-				}
-				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
-				{
 					m_pathCollidersOnCage.emplace_back(OTEE.Entity1);
 				}
 			}
 			else if (IsCatAndCaged(OTEE.Entity1))
 			{
-				if (OTEE.Entity2 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())
+				if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
 				{
 					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity1);
 					m_cagedCatID = OTEE.Entity1;
-				}
-				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
-				{
 					m_pathCollidersOnCage.emplace_back(OTEE.Entity2);
 				}
 			}
