@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Cat_Grey_Attack5.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Cat Grey Attack SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Cat Grey Attack SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

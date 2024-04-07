@@ -25,10 +25,10 @@ namespace PE
         // ----- Pubic Variables ----- //
         float width{100}, height{100};
         float orientation{}; // in radians
-        vec2 position{};
+        vec2 position{}; // World position
 
-        float relOrientation{};
-        vec2 relPosition{};
+        float relOrientation{}; // Orientation of the object in relation to the absolute parent
+        vec2 relPosition{};     // Position of the object in relation to the absolute parent
         
         // ----- Getter ----- //
         /*!***********************************************************************************

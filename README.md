@@ -1,42 +1,37 @@
-![Stay Pawsitive!](https://github.com/GAM200L1/Purring_Engine/assets/93074650/0f33f7c1-61bd-43ba-ada4-c2c33717d5f6)
-# March of the Meows | Pawsitive
+# GAM200_Pawsitive
 
-## Guide to Updating Your Local Repository:
+## Repo walkthrough:
 
-### Steps to Refresh Your Local Copy:
-- Regularly pull updates as you would normally do using `git pull`.
-- Retrieve the necessary external libraries and tools by downloading `vendor.zip` from OneDrive ([available here](https://digipen824-my.sharepoint.com/:w:/g/personal/krystal_y_digipen_edu/EYxGu6mo5XZJvxmTTSB_6MQBt8zNiXm29dOKu_Xq9dEWKg?e=hCycpZ)). This archive includes:
-    - All required external libraries
-    - The premake executable for project setup
-- Unzip `vendor.zip` directly into the current directory using the "Extract Here" option.
-- Execute the `GenerateProject.bat` script to configure project files.
-- Place header files (`.h`) in the `include` directory and separate C++ source files (`.cpp`) into the `src` directory as needed.
-- Whenever a new library is integrated, ensure to fetch the latest `premake` script and re-download `vendor.zip`.
-- Always run the `GenerateProject.bat` script after pulling changes from the repository to keep your environment up to date.
+How to update local repo
+- Pull as per normal
+- Download libraries (vendor.zip) from onedrive ([here](https://digipen824-my.sharepoint.com/:w:/g/personal/krystal_y_digipen_edu/EYxGu6mo5XZJvxmTTSB_6MQBt8zNiXm29dOKu_Xq9dEWKg?e=hCycpZ))
+    - contains all external libraries and premake executable
+- Extract vendor.zip with "Extract Here"
+- Run GenerateProject.bat file
+- .h file to go in include folder, .cpp to be separated further in src folder(?)
+- Every time a library is added, pull the premake file and redownload the vendor zip
+- Run the BAT file every time you pull the repo
 
-### Adding New Source Files or Directories:
+How to add source file or directories
 
-#### Method 1: Via Visual Studio
-- Creating a file or directory directly in Visual Studio will place it in the project's root directory, which might not be where you want it.
-- Manually move the file or directory to the desired location using the File Explorer. Visual Studio will recognize the change and update the project structure accordingly.
+Method 1 Adding through VS
+    - File/directory created will be in project root directory and not the desired location
+    - Drag folder to appropriate location in file explorer, VS will add it automatically
 
-#### Method 2: Using File Explorer
-- Create the file in the desired location directly through the File Explorer for precise placement.
-- This newly created file won't automatically be recognized by the Visual Studio project.
-- To include the new file in the project, run the `GenerateProject.bat` script so that premake can update the Visual Studio project files accordingly.
+Method 2 Adding through file explorer
+    - File created will be in the desired location
+    - File will not be added into VS project
+    - Run BAT file for premake to update VS and add the new files in
 
-## Ignored Warnings in This Project
 
-### Suppressed Compiler Warnings:
-- `C4201`: Use of non-standard extension: unnamed struct/union.
-- `C4819`: Presence of a character in the file that cannot be represented in the current code page (949).
-- `C4996`: Use of potentially unsafe function or variable, specifically the `localtime` function from the standard library.
-- `C4505`: Removal of unreferenced function with internal linkage, such as 'FMOD_ErrorString'.
+## Suppressed Warnings in this Project
+warnings supressed:
+C4201: nonstandard extension used : nameless struct/union
+C4819: The file contains a character that cannot be represented in the current code page(949)
+C4996: localtime function of standard library. The function or variable may be unsafe. 
+C4505: ('FMOD_ErrorString': unreferenced function with internal linkage has been removed)
 
-### Linker Warnings Overlooked (Configured in Properties > Linker > Command Line):
-- `LNK4006`: Ignoring second definition of a symbol that's already defined in an object.
-- `LNK4098`: Conflict between 'library' defaultlib and other libraries; resolved by using `/NODEFAULTLIB:library`.
-- `LNK4099`: Missing PDB 'filename' for 'object/library' or at specified 'path'; linking the object as if no debug info were available.
-
-## Last Updated
-This document was last updated on 17 March 2024 by Hans.
+**Linker Warnings Ignored (in properties > linker > command line):**
+LNK4006: symbol already defined in object; second definition ignored
+LNK4098: defaultlib 'library' conflicts with use of other libs; use /NODEFAULTLIB:library
+LNK4099: PDB 'filename' was not found with 'object/library' or at 'path'; linking object as if no debug info

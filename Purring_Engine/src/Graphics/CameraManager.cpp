@@ -17,6 +17,8 @@
 #include "prpch.h"
 #include "CameraManager.h"
 #include "ECS/SceneView.h"
+#include "Layers/LayerManager.h"
+#include "RendererManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -57,6 +59,27 @@ namespace PE
                 if (mainCamera.has_value())
                 {
                     return mainCamera.value().get().GetWorldToNdcMatrix();
+                }
+
+                return glm::mat4{ 0 };
+            }
+        }
+
+
+        glm::mat4 CameraManager::GetWorldToViewMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetWorldToViewMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetWorldToViewMatrix();
                 }
 
                 return glm::mat4{ 0 };
@@ -179,6 +202,41 @@ namespace PE
         }
 
 
+        vec2 CameraManager::GetWorldToWindowPosition(float const x, float const y) const
+        {
+            // Get the main camera
+            std::optional<std::reference_wrapper<Camera>> ref_mainCamera{ GetMainCamera() };
+
+            if (ref_mainCamera.has_value())
+            {
+                Camera& r_mainCamera = ref_mainCamera.value().get();
+                
+#ifndef GAMERELEASE
+                // Get the size of the render window
+                float editorWindowSizeX{}, editorWindowSizeY{};
+                Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+                float widthRatio{ !CompareFloats(m_viewportWidth, 0.f) ? editorWindowSizeX / m_viewportWidth : 1.f };
+                float heightRatio{ !CompareFloats(m_viewportHeight, 0.f) ? editorWindowSizeY / m_viewportHeight : 1.f };
+
+                // Adjust scale of the position
+                vec2 ret{ r_mainCamera.GetWorldToViewportPosition(x, y - Editor::GetInstance().GetPlayWindowOffset()) };
+                ret.x *= widthRatio, ret.y *= heightRatio;
+#else
+                float widthRatio{ !CompareFloats(m_viewportWidth, 0.f) ? m_windowWidth / m_viewportWidth : 1.f };
+                float heightRatio{ !CompareFloats(m_viewportHeight, 0.f) ? m_windowHeight / m_viewportHeight : 1.f };
+                vec2 ret{ r_mainCamera.GetWorldToViewportPosition(x, y) };
+                ret.x *= widthRatio, ret.y *= heightRatio;
+#endif // !GAMERELEASE
+
+                return ret;
+            }
+            else 
+            {
+                return vec2{x, y};
+            }
+        }
+
+
         vec2 CameraManager::GetWindowToWorldPosition(float const x, float const y) const
         {
             // Get the main camera
@@ -220,12 +278,16 @@ namespace PE
                 // Get the size of the render window
             float editorWindowSizeX{}, editorWindowSizeY{};
             Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+            float widthRatio{ !CompareFloats(editorWindowSizeX, 0.f) ? GetUiCamera().GetViewportWidth() / editorWindowSizeX : 1.f };
+            float heightRatio{ !CompareFloats(editorWindowSizeY, 0.f) ? GetUiCamera().GetViewportHeight() / editorWindowSizeY : 1.f };
 
             // Adjust scale of the position
-            vec2 ret{ x * GetUiCamera().GetViewportWidth() / editorWindowSizeX, y * GetUiCamera().GetViewportHeight() / editorWindowSizeY };
+            vec2 ret{ x * widthRatio, y * heightRatio };
             ret.y += Editor::GetInstance().GetPlayWindowOffset();
 #else
-            vec2 ret{ x * GetUiCamera().GetViewportWidth() / m_windowWidth, y * GetUiCamera().GetViewportHeight() / m_windowHeight};
+            float widthRatio{ !CompareFloats(m_windowWidth, 0.f) ? GetUiCamera().GetViewportWidth() / m_windowWidth : 1.f };
+            float heightRatio{ !CompareFloats(m_windowHeight, 0.f) ? GetUiCamera().GetViewportHeight() / m_windowHeight : 1.f };
+            vec2 ret{ x * widthRatio, y * heightRatio };
 #endif // !GAMERELEASE
 
             return ret;
@@ -279,33 +341,42 @@ namespace PE
             bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
 
             // Loop through all runtime cameras
-            for (const EntityID& id : SceneView<Camera, Transform>())
+            for (const auto& layer : LayerView<Camera, Transform>())
             {
-                // Recompute the matrices of all the cameras
-                Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
-                Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
-
-                // If this camera has been set as the main camera in the last frame
-                // or this camera is the first valid runtime camera available 
-                if ((r_camera.GetMainCameraStatusChanged() && r_camera.GetIsMainCamera()) 
-                    || (setNewMainCamera && (id != m_uiCameraId)))
+                for (const EntityID& id : InternalView(layer))
                 {
-                    SetMainCamera(id);
-                    setNewMainCamera = false;
-                }
+                    // Recompute the matrices of all the cameras
+                    Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
+                    Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
 
-                r_camera.UpdateCamera(r_transform, m_mainCameraId == id);
-
-                // Update the cached viewport dimensions
-                if(m_mainCameraId == id) { 
-                    if (m_viewportWidth != r_camera.GetViewportWidth()) 
+                    // If this camera has been set as the main camera in the last frame
+                    // or this camera is the first valid runtime camera available 
+                    if ((r_camera.GetMainCameraStatusChanged() && r_camera.GetIsMainCamera())
+                        || (setNewMainCamera && (id != m_uiCameraId)))
                     {
-                        m_viewportWidth = r_camera.GetViewportWidth();
+                        SetMainCamera(id);
+                        setNewMainCamera = false;
                     }
 
-                    if(m_viewportHeight != r_camera.GetViewportHeight()) 
-                    {
-                        m_viewportHeight = r_camera.GetViewportHeight();
+                    r_camera.UpdateCamera(r_transform, m_mainCameraId == id);
+
+                    // Update the cached viewport dimensions
+                    if (m_mainCameraId == id) {
+                        if (m_viewportWidth != r_camera.GetViewportWidth())
+                        {
+                            m_viewportWidth = r_camera.GetViewportWidth();
+                        }
+
+                        if (m_viewportHeight != r_camera.GetViewportHeight())
+                        {
+                            m_viewportHeight = r_camera.GetViewportHeight();
+                        }
+
+                        // set the background color of the renderer manager to the main camera's background color
+                        const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(r_camera.GetBackgroundColor().r,
+                                                                                                         r_camera.GetBackgroundColor().g,
+                                                                                                         r_camera.GetBackgroundColor().b,
+                                                                                                         r_camera.GetBackgroundColor().a);
                     }
                 }
             }
@@ -335,7 +406,7 @@ namespace PE
                 m_windowWidth = static_cast<float>(event.width);
                 m_windowHeight = static_cast<float>(event.height);
 
-                // Store the ratio of the main camera's viewport to the avtual window size
+                // Store the ratio of the main camera's viewport to the actual window size
                 std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
                 if (mainCamera) {
                     m_viewportWidth = mainCamera.value().get().GetViewportWidth();
@@ -378,19 +449,19 @@ namespace PE
                 // Move the editor camera
                 if (event.keycode == GLFW_KEY_UP)
                 {
-                    GetEditorCamera().AdjustPosition(0.f, 10.f);
+                    GetEditorCamera().AdjustLocalPosition(0.f, 10.f);
                 }
                 if (event.keycode == GLFW_KEY_DOWN)
                 {
-                    GetEditorCamera().AdjustPosition(0.f, -10.f);
+                    GetEditorCamera().AdjustLocalPosition(0.f, -10.f);
                 }
                 if (event.keycode == GLFW_KEY_LEFT)
                 {
-                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
+                    GetEditorCamera().AdjustLocalPosition(-10.f, 0.f);
                 }
                 if (event.keycode == GLFW_KEY_RIGHT)
                 {
-                    GetEditorCamera().AdjustPosition(10.f, 0.f);
+                    GetEditorCamera().AdjustLocalPosition(10.f, 0.f);
                 }
 
                 // Rotate the editor camera
@@ -411,19 +482,19 @@ namespace PE
                 // Move the editor camera
                 if (event.keycode == GLFW_KEY_UP)
                 {
-                    GetEditorCamera().AdjustPosition(0.f, 10.f);
+                    GetEditorCamera().AdjustLocalPosition(0.f, 10.f);
                 }
                 if (event.keycode == GLFW_KEY_DOWN)
                 {
-                    GetEditorCamera().AdjustPosition(0.f, -10.f);
+                    GetEditorCamera().AdjustLocalPosition(0.f, -10.f);
                 }
                 if (event.keycode == GLFW_KEY_LEFT)
                 {
-                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
+                    GetEditorCamera().AdjustLocalPosition(-10.f, 0.f);
                 }
                 if (event.keycode == GLFW_KEY_RIGHT)
                 {
-                    GetEditorCamera().AdjustPosition(10.f, 0.f);
+                    GetEditorCamera().AdjustLocalPosition(10.f, 0.f);
                 }
 
                 // Rotate the editor camera

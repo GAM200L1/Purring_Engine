@@ -6,6 +6,13 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     98%
+ \par      changes:    Defined most of the functions.
+
+ \co-author            Krystal YAMIN
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     2%
+ \par      changes:    Added a function to toggle the cursor visibilty using GLFW.
 
  \brief	   This file contains the implementation of the WindowManager class.
 		   WindowManager handles the initialization, maintenance, and cleanup
@@ -26,8 +33,10 @@
 #include "GUISystem.h"
 #include "GameStateManager.h"
 #include "Input/InputSystem.h"
+#include "PauseManager.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
+#include "SceneManager/SceneManager.h"
 #endif
 //logger instantiation
 Logger event_logger = Logger("EVENT");
@@ -36,6 +45,7 @@ namespace PE
 {
 	// Initialize static variables
 	bool WindowManager::msepress = false;
+	bool WindowManager::m_fullScreen = true;
 
 	WindowManager::WindowManager()
 	{
@@ -50,6 +60,7 @@ namespace PE
 			std::cerr << "Failed to initialize GLFW." << std::endl;
 			exit(-1);
 		}
+
 	}
 
 
@@ -64,15 +75,15 @@ namespace PE
 #ifndef GAMERELEASE
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
 		p_monitor = glfwGetWindowMonitor(window);
-		p_currWindow = window;
+		WindowManager::GetInstance().SetWindow(window);
 #else
 		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, p_title, glfwGetPrimaryMonitor(), nullptr);
 
 		p_monitor = glfwGetWindowMonitor(window);
-		p_currWindow = window;
+		WindowManager::GetInstance().SetWindow(window);
+		SetWindowFullScreen(m_fullScreen);
 #endif
-		GameStateManager::GetInstance().p_window = window;
 
 		if (!window)
 		{
@@ -102,8 +113,23 @@ namespace PE
 		ADD_ALL_KEY_EVENT_LISTENER(WindowManager::OnKeyEvent, this)
 
 		REGISTER_UI_FUNCTION(TestFunction, WindowManager);
+		REGISTER_UI_FUNCTION(CloseWindow, WindowManager);
 
 		return window;
+	}
+
+	GLFWwindow* WindowManager::GetWindow()
+	{
+		return p_currWindow;
+	}
+
+	void WindowManager::SetWindow(GLFWwindow* p_win)
+	{
+		p_currWindow = p_win;
+	}
+	void WindowManager::CloseWindow(EntityID)
+	{
+		glfwSetWindowShouldClose(WindowManager::GetInstance().GetWindow(), true);
 	}
 
 
@@ -117,7 +143,8 @@ namespace PE
 	{
 		std::ostringstream titleStream;
 #ifndef GAMERELEASE
-		titleStream << "Purring Engine | FPS: " << static_cast<int>(fps);
+		std::string sceneName = SceneManager::GetInstance().GetActiveScene();
+		titleStream << "Purring Engine | " << sceneName.substr(0, sceneName.find_last_of('.')) << " | FPS: " << static_cast<int>(fps);
 #else
 		titleStream << "March Of The Meows";
 		
@@ -126,7 +153,7 @@ namespace PE
 			titleStream << " | FPS: " << static_cast<int>(fps);
 		}
 #endif
-		glfwSetWindowTitle(p_currWindow, titleStream.str().c_str());
+		glfwSetWindowTitle(WindowManager::GetInstance().GetWindow(), titleStream.str().c_str());
 	}
 
 
@@ -135,6 +162,46 @@ namespace PE
 	void WindowManager::Cleanup()
 	{
 		glfwTerminate();
+	}
+
+	void WindowManager::SetFullScreen(bool fullScreen)
+	{
+		m_fullScreen = fullScreen;
+	}
+
+	bool WindowManager::GetFullScreen()
+	{
+		return m_fullScreen;
+	}
+
+	void WindowManager::SetWindowFullScreen(bool fs)
+	{
+		const GLFWvidmode* mode = glfwGetVideoMode(p_monitor);
+
+		if (!fs)
+		{
+			glfwSetWindowMonitor(WindowManager::GetInstance().GetWindow(), NULL, 30, 30, 1920, 1080, 0);
+			HWND windowHandle = GetActiveWindow();
+			long Style = GetWindowLong(windowHandle, GWL_STYLE);
+			Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
+			SetWindowLong(windowHandle, GWL_STYLE, Style);
+			glfwSetWindowAttrib(WindowManager::GetInstance().GetWindow(), GLFW_RESIZABLE, false);
+			m_fullScreen = false;
+		}
+		else
+		{
+			glfwSetWindowMonitor(WindowManager::GetInstance().GetWindow(), p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+			m_fullScreen = true;
+		}
+	}
+
+	void WindowManager::ToggleCursor(bool _isVisible)
+	{
+		if(_isVisible)
+			glfwSetInputMode(p_currWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		else
+			glfwSetInputMode(p_currWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
 	}
 
 
@@ -210,15 +277,19 @@ namespace PE
 	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event)
 	{
 #ifndef GAMERELEASE
-			Editor::GetInstance().AddEventLog(r_event.ToString());
+			//Editor::GetInstance().AddEventLog(r_event.ToString());
 #else
 			if (r_event.GetType() == WindowEvents::WindowLostFocus)
 			{
-					GameStateManager::GetInstance().SetPauseState();
+					PauseManager::GetInstance().SetPaused(true);
 					if (msepress)
-							glfwIconifyWindow(p_currWindow);
+							glfwIconifyWindow(WindowManager::GetInstance().GetWindow());
 
 					msepress = true;
+			}
+			else if (r_event.GetType() == WindowEvents::WindowFocus)
+			{
+					PauseManager::GetInstance().SetPaused(false);
 			}
 #endif
 	}
@@ -227,7 +298,7 @@ namespace PE
 	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
 	{
 #ifndef GAMERELEASE
-			Editor::GetInstance().AddEventLog(r_event.ToString());
+			//Editor::GetInstance().AddEventLog(r_event.ToString());
 #endif
 	}
 
@@ -235,7 +306,7 @@ namespace PE
 	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
 	{
 #ifndef GAMERELEASE
-			Editor::GetInstance().AddEventLog(r_event.ToString());
+			//Editor::GetInstance().AddEventLog(r_event.ToString());
 #endif
 
 			//dynamic cast
@@ -262,27 +333,10 @@ namespace PE
 					//only on game release be able to change fullscreen
 					if (ev.keycode == GLFW_KEY_F11)
 					{
-							const GLFWvidmode* mode = glfwGetVideoMode(p_monitor);
-
-							if (!fs)
-							{
-									glfwSetWindowMonitor(p_currWindow, NULL, 30, 30, 1920, 1080, 0);
-									HWND windowHandle = GetActiveWindow();
-									long Style = GetWindowLong(windowHandle, GWL_STYLE);
-									Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
-									SetWindowLong(windowHandle, GWL_STYLE, Style);
-									glfwSetWindowAttrib(p_currWindow, GLFW_RESIZABLE, false);
-									fs = !fs;
-							}
-							else
-							{
-
-									glfwSetWindowMonitor(p_currWindow, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-									fs = !fs;
-							}
+						SetWindowFullScreen(!m_fullScreen);
 					}
 
-					if (ev.keycode == GLFW_KEY_F4)
+					if (ev.keycode == GLFW_KEY_P)
 					{
 						m_showFps = !m_showFps;
 					}

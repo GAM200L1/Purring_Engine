@@ -209,7 +209,6 @@ namespace PE {
 
 		// ----- Public Variables ----- // 
 	public:
-		GLFWwindow* p_window;
 		bool godMode{}, noPause{}; // boolean for cheatcode
 
 		// ----- Private Variables ----- // 

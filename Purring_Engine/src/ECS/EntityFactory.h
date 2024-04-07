@@ -26,6 +26,7 @@
 #include "Physics/RigidBody.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Camera.h"
+#include "Graphics/Text.h"
 #include "Prefabs.h"
 #include "Singleton.h"
 #include "Animation/Animation.h"
@@ -274,7 +275,18 @@ namespace PE
 		 \return true 	 Successfully copied/initialized
 		 \return false 	 Failed to copy/initialize
 		*************************************************************************************/
-		bool InitializeGUI(const EntityID& r_id, void* p_data);
+		bool InitializeGUIButton(const EntityID& r_id, void* p_data);		
+		
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
+		bool InitializeGUISlider(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Initializes/copy the component of the specified entity
@@ -320,6 +332,29 @@ namespace PE
 		*************************************************************************************/
 		bool InitializeAudioComponent(const EntityID& r_id, void* p_data);
 
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+						 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
+		bool InitializeCanvasComponent(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+						 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
+		bool InitializeParticleEmitter(const EntityID& r_id, void* p_data);
+
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap
 		 
@@ -344,6 +379,7 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(ret);
+		p_entityManager->AddHelper(ret);
 		return ret;
 	}
 
@@ -361,6 +397,7 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(ret);
+		p_entityManager->AddHelper(ret);
 		return ret;
 	}
 
@@ -383,6 +420,8 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(id);
+		p_entityManager->RemoveHelper(ret);
+		p_entityManager->AddHelper(ret);
 	}
 
 }

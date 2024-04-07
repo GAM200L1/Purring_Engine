@@ -51,7 +51,7 @@ namespace PE
 			
 			prefabs.emplace("CameraObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Camera>() });
 
-			prefabs.emplace("ButtonObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<GUI>(),
+			prefabs.emplace("ButtonObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<GUIButton>(),
 																							EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>() });
 		}
 	};

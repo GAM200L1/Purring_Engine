@@ -1,0 +1,45 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "Prefab Type": "Text",
+                "children": [],
+                "isActive": true,
+                "name": "Text",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "TextComponent": {
+                "Color": {
+                    "w": 1.0,
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                "HAlignment": 0,
+                "HOverflow": 0,
+                "LineSpacing": 1.0,
+                "Size": 1.0,
+                "Text": "Text here",
+                "VAlignment": 2,
+                "VOverflow": 2
+            },
+            "Transform": {
+                "height": 100.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 200.0
+            }
+        },
+        "name": ""
+    }
+}

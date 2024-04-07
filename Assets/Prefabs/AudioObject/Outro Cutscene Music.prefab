@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/MOTM_M6_EndingCutscene_AudioOnly.wav",
+                "loop": true
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "M6 Ending Cutscene Music",
+                "children": [],
+                "isActive": true,
+                "name": "M6 Ending Cutscene Music",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

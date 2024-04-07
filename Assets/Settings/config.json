@@ -2,11 +2,13 @@
     "Editor": {
         "firstLaunch": false,
         "isPrefabMode": false,
-        "renderDebug": false,
+        "layerSettings": 1023,
+        "renderDebug": true,
         "showAnimationWindow": false,
         "showComponentWindow": true,
         "showConsole": false,
         "showEditor": true,
+        "showLayerWindow": false,
         "showLogs": true,
         "showObjectList": true,
         "showPerformanceWindow": false,
@@ -14,6 +16,10 @@
         "showResourceWindow": true,
         "showSceneView": true,
         "showTestWindows": false
+    },
+    "cursor": {
+        "cursorDefaultTexture": "../Assets/Textures/Cursor/PointyCursor_32px.png",
+        "cursorHoverTexture": "../Assets/Textures/Cursor/CustomCursor_32px.png"
     },
     "window": {
         "height": 1080,

@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Cat_Orange_Sad.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Audio Object",
+                "children": [],
+                "isActive": true,
+                "name": "Audio Object",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

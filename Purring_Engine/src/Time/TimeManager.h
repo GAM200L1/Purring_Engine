@@ -160,10 +160,10 @@ namespace PE
 		// ----- Private Variables ----- //
 	private:
 		// system time
-		std::array<std::chrono::high_resolution_clock::time_point, TotalSystems> m_systemStartFrame;
-		std::array<float, TotalSystems> m_systemFrameTime;					// stores all system frame time
-		std::array<float, TotalSystems> m_systemAccumulatedFrameTime;		// stores all accumulated system frame time
-		std::array<float, TotalSystems> m_systemFrameUsage;					// stores all system frame usage
+		std::array<std::chrono::high_resolution_clock::time_point, SYSTEMCOUNT> m_systemStartFrame;
+		std::array<float, SYSTEMCOUNT> m_systemFrameTime;					// stores all system frame time
+		std::array<float, SYSTEMCOUNT> m_systemAccumulatedFrameTime;		// stores all accumulated system frame time
+		std::array<float, SYSTEMCOUNT> m_systemFrameUsage;					// stores all system frame usage
 		//std::chrono::high_resolution_clock::time_point m_systemStartFrame, m_systemEndFrame;	// system time
 
 		// global time

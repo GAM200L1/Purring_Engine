@@ -1,0 +1,47 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 1,
+                            "Layer": 1,
+                            "Old ID": 1,
+                            "Prefab Type": "RatUI",
+                            "children": [],
+                            "isActive": true,
+                            "name": "EnemyArrowTelegraph",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 0.21568627655506134,
+                                "g": 0.46666666865348816,
+                                "r": 0.8549019694328308
+                            },
+                            "TextureKey": "../Assets/Textures/Telegraphs/Telegraph_Arrow_512x128.png"
+                        },
+                        "Transform": {
+                            "height": 128.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 512.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

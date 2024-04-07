@@ -34,6 +34,8 @@
 #include "ECS/SceneView.h"
 #include "Text.h"
 
+#pragma once
+
 namespace PE
 {
     namespace Graphics
@@ -47,6 +49,10 @@ namespace PE
         public:
             // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
             static std::vector<EntityID> renderedEntities;
+            static unsigned totalDrawCalls;   // Sum total of all draw calls made
+            static unsigned textDrawCalls;    // Total draw calls made for text (1 draw call per chara)
+            static unsigned objectDrawCalls;  // Total draw calls for gameobjects
+            static unsigned debugDrawCalls;   // Total draw calls for debug shapes
 
             // ----- Constructors ----- //
         public:
@@ -59,8 +65,30 @@ namespace PE
              \param[in] windowWidth Width of the window.
              \param[in] windowHeight Height of the window.
             *************************************************************************************/
-            RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, 
+            RendererManager( CameraManager& r_cameraManagerArg, 
                 int const windowWidth, int const windowHeight);
+
+            // ----- Public getters / setters ----- //
+        public:
+            /*!***********************************************************************************
+             \brief Sets the RGBA color that is rendered when there is nothing in the scene. 
+
+             \param[in] r Red component of the color to set the background to (from [0, 1]).
+             \param[in] g Green component of the color to set the background to (from [0, 1]).
+             \param[in] b Blue component of the color to set the background to (from [0, 1]).
+             \param[in] a Alpha component of the color to set the background to (from [0, 1]).
+            *************************************************************************************/
+            void SetBackgroundColor(float const r = 0.f, float const g = 0.f, float const b = 0.f, float const a = 1.f);
+
+            /*!***********************************************************************************
+             \brief Gets the RGBA color that is rendered when there is nothing in the scene. 
+
+             \return The RGBA color that is rendered when there is nothing in the scene. 
+            *************************************************************************************/
+            inline vec4 GetBackgroundColor() const 
+            {
+                return vec4{ m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a };
+            }
 
             // ----- Public methods ----- //
         public:
@@ -94,17 +122,11 @@ namespace PE
             void DrawCameraQuad();
 
             /*!***********************************************************************************
-             \brief Loops through all objects with a Renderer component (or a class that
-                    derives from it) and draws it. Makes a draw call for each object.
+             \brief Draws the custom cursor.
 
-             \tparam T - A component type derived from the Renderer.
-             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
-                                NDC space.
-             \param[in] r_sceneView Only works with SceneView objects that are scoped to
-                                a component derived from the Renderer.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
-            template<typename T>
-            void DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
+            void DrawCursor(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
              \brief Loops through all objects with a Renderer component (or a class that
@@ -114,32 +136,21 @@ namespace PE
 
              \tparam T - A component type derived from the Renderer.
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
-                                NDC space.
-             \param[in] r_sceneView Only works with SceneView objects that are scoped to
-                                a component derived from the Renderer.
+                            NDC space.
+             \param[in] r_rendererContainer Container containing the renderer and transform 
+                            components of the objects to draw
             *************************************************************************************/
             template<typename T>
-            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_rendererIdContainer);
 
             /*!***********************************************************************************
              \brief Loops through all objects with colliders and rigidbody components and draws 
                     shapes to visualise their bounds, direction and magnitude for debug purposes. 
 
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from view to NDC space.
             *************************************************************************************/
-            void DrawDebug(glm::mat4 const& r_worldToNdc);
-
-            /*!***********************************************************************************
-             \brief Binds the shader program, vertex array object and texture and makes the
-                    draw call for the [r_renderer] passed in.
-
-             \param[in] r_renderer Renderer object with all the information to draw with.
-             \param[in] r_shaderProgram Shader program to use.
-             \param[in] primitiveType GL Primitive type to make the draw call with.
-             \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
-            *************************************************************************************/
-            void Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram, 
-                GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
+            void DrawDebug(glm::mat4 const& r_worldToNdc, glm::mat4 const& r_viewToNdc);
 
             /*!***********************************************************************************
              \brief Binds the shader program, vertex array object and texture and makes a
@@ -202,6 +213,23 @@ namespace PE
             void DrawCollider(CircleCollider const& r_circleCollider,
                 glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
                 glm::vec4 const& r_color = { 0.f, 1.f, 0.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Makes a draw call for the outline of a rectangle.
+
+             \param[in] width Width of the rectangle.
+             \param[in] height Height of the rectangle.
+             \param[in] orientation Orientation of the rectangle (in radians).
+             \param[in] xPosition X position of the center of the rectangle.
+             \param[in] yPosition Y position of the center of the rectangle.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugRectangle(float const width, float const height,
+                float const orientation, float const xPosition, float const yPosition,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color);
 
             /*!***********************************************************************************
              \brief Makes a draw call for a line to represent the vector passed in.
@@ -289,17 +317,33 @@ namespace PE
              \brief Renders text from r_text parameter. Retrieves glyph information from map
                    and renders a quad with the data.
 
-             \param[in] r_text String to render.
-             \param[in] position Position of text to render onto the screen.s
-             \param[in] scale Amount to scale text size.
              \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
-             \param[in] r_color Color to render text as.
             *************************************************************************************/
             void RenderText(glm::mat4 const& r_worldToNdc);
 
+            /*!***********************************************************************************
+             \brief Renders text from r_text parameter. Retrieves glyph information from map
+                   and renders a quad with the data.
+
+             \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
+            *************************************************************************************/
+            void RenderText(const EntityID& r_id, glm::mat4 const& r_worldToNdc);
+
+            /*!***********************************************************************************
+             \brief Renders a line of text from r_line parameter. Retrieves glyph information from
+                    map and renders a quad with the data.
+
+             \param[in] r_textComponent Component to get text data.
+             \param[in] r_line line to render.
+             \param[in] position Position of text to render on to the screen.
+             \param[in] currentY y position of the line.
+             \param[in] hAlignOffset horizontal alignment offset.
+             \param[in] vAlignOffset vertical alignment offset.
+            *************************************************************************************/
+            void RenderLine(TextComponent const& r_textComponent, std::string const& r_line, vec2 position, float currentY, float hAlignOffset, float vAlignOffset);
+
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to
             CameraManager& r_cameraManager; // Reference to the camera manager
 
             // Framebuffer object for rendering game scene rendered through the editor or in-game runtime camera
@@ -323,6 +367,10 @@ namespace PE
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
             std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
             std::vector<glm::vec2> m_UV{};
+
+            // Color that is rendered when there is nothing in the scene
+            glm::vec4 m_backgroundColor{ 0.796f, 0.6157f, 0.4588f, 1.f }; // brown by default
+
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************
@@ -379,6 +427,12 @@ namespace PE
             *************************************************************************************/
             void PrintSpecifications() const;
         };
+
+        /*!***********************************************************************************
+         \brief Prints error messages from OpenGL.
+        *************************************************************************************/
+        void APIENTRY GlDebugOutput(GLenum source, GLenum type, unsigned int id,
+            GLenum severity, GLsizei length, const char* message, const void* userParam);
 
     } // End of Graphics namespace
 } // End of PE namespace

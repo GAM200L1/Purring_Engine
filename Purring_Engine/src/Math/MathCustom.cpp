@@ -323,7 +323,44 @@ namespace PE
 	{
 		return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
 	}
+	
+	// addition
+	vec4 vec4::operator+(vec4 const& r_rhs) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] + r_rhs[i];
 
+		return ret;
+	}
+
+	// subtraction
+	vec4 vec4::operator-(vec4 const& r_rhs) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] - r_rhs[i];
+
+		return ret;
+	}
+
+	vec4 vec4::operator/(float denominator) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] / denominator;
+
+		return ret;
+	}
+
+	vec4 vec4::operator*(float multiplier) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] * multiplier;
+
+		return ret;
+	}
 
 	/*                                                                               mat3x3 struct member implementations
 	--------------------------------------------------------------------------------------------------------------------- */
@@ -708,6 +745,18 @@ namespace PE
 		return r_lhs.Dot(r_rhs);
 	}
 
+	vec2 Rotate(vec2 const& inputVector, float const radians)
+	{
+		float sineValue		{ std::sin(radians) };
+		float cosineValue	{ std::cos(radians) };
+
+		return vec2
+		{
+			inputVector.x * cosineValue	- inputVector.y * sineValue,
+			inputVector.x * sineValue		+ inputVector.y * cosineValue
+		};
+	}
+
 	float ConvertRadToDeg(float radAngle)
 	{
 		return radAngle * 180.f / static_cast<float>(PE_PI);
@@ -715,7 +764,7 @@ namespace PE
 
 	float ConvertDegToRad(float degAngle)
 	{
-		return degAngle * static_cast<float>(PE_PI) / 180.f;
+		return degAngle * (static_cast<float>(PE_PI) / 180.f);
 	}
 
 	void Clamp(float& r_varToClamp, float min, float max)

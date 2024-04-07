@@ -1,0 +1,99 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "AnimationComponent": {
+                            "AnimationIDs": [
+                                "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                                "../Assets/Animation/AnimationGutterRat_Death.anim",
+                                "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                                "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                                "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                            ],
+                            "CurrentAnimationID": "../Assets/Animation/AnimationGutterRat_Idle.anim"
+                        },
+                        "Collider": {
+                            "collisionLayerIndex": 1,
+                            "data": {
+                                "center": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "positionOffset": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "radius": 32.0,
+                                "scaleOffset": 1.0
+                            },
+                            "isTrigger": false,
+                            "type": "CircleCollider"
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 3,
+                            "Layer": 3,
+                            "Old ID": 1,
+                            "Prefab Type": "GutterRat",
+                            "children": [],
+                            "isActive": true,
+                            "name": "GutterRat",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Animations/Rat_Gutter_Idle.png"
+                        },
+                        "RigidBody": {
+                            "linearDrag": 2.0,
+                            "mass": 10.0,
+                            "type": 1
+                        },
+                        "ScriptComponent": {
+                            "RatScript_v2_0": {
+                                "data": {
+                                    "animationStates": {
+                                        "Attack": "../Assets/Animation/AnimationGutterRat_Attack.anim",
+                                        "Death": "../Assets/Animation/AnimationGutterRat_Death.anim",
+                                        "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
+                                        "Idle": "../Assets/Animation/AnimationGutterRat_Idle.anim",
+                                        "Walk": "../Assets/Animation/AnimationGutterRat_Walk.anim"
+                                    },
+                                    "detectionRadius": 200.0,
+                                    "maxHuntTurns": 2,
+                                    "maxMovementRange": 200.0,
+                                    "movementSpeed": 250.0,
+                                    "ratMaxHealth": 2,
+                                    "ratType": 1
+                                },
+                                "state": 0
+                            }
+                        },
+                        "Transform": {
+                            "height": 64.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 64.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

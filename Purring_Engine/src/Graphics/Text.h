@@ -35,17 +35,18 @@ namespace PE
 	// Holds all state information relevant to a character as loaded using FreeType
 	struct Character
 	{
-		unsigned int TextureID; // ID handle of the glyph texture
-		glm::ivec2 Size;		// Size of glyph
-		glm::ivec2 Bearing;		// Offset from baseline to left/top of glyph
-		unsigned int Advance;	// Horizontal offset to next glyph
+		unsigned int textureID; // ID handle of the glyph texture
+		glm::ivec2 size;		// Size of glyph
+		glm::ivec2 bearing;		// Offset from baseline to left/top of glyph
+		unsigned int advance;	// Horizontal offset to next glyph
 	};
 
 	class Font
 	{
 	public:
-		std::map<char, Character> Characters;
-		unsigned int m_vertexArrayObject{ 0 }, m_vertexBufferObject{ 0 };
+		std::map<char, Character> characters;
+		unsigned int vertexArrayObject{ 0 }, vertexBufferObject{ 0 };
+		float lineHeight{ 0.f };
 
 		/*!***********************************************************************************
 			\brief default constructor of the font class
@@ -70,17 +71,20 @@ namespace PE
 		bool Load(std::string const& r_fontPath, unsigned int fontSize = 45);
 		};
 
+	enum class EnumTextAlignment { LEFT, RIGHT, TOP, BOTTOM, CENTER };
+	enum class EnumTextOverflow { WRAP, OVERFLOW_, TRUNCATE };
+
+	struct TextBox
+	{
+		vec2 position{ 0.f, 0.f };
+		float width{ 200.f };
+		float height{ 100.f };
+	};
+
 	class TextComponent
 	{
 
 	public:
-		/*!***********************************************************************************
-		 \brief Get the Font 
-		 
-		 \return std::shared_ptr<const Font> 
-		*************************************************************************************/
-		inline std::shared_ptr<Font> GetFont() const { return m_font; }
-
 		/*!***********************************************************************************
 		 \brief Get the Font Key 
 		 
@@ -108,6 +112,41 @@ namespace PE
 		 \return glm::vec4 const& 
 		*************************************************************************************/
 		inline glm::vec4 const& GetColor() const { return m_color; }
+
+		/*!***********************************************************************************
+		 \brief Get the horizontal alignment of the text
+
+		 \return EnumTextAlignment - the horizontal alignment of the text
+		*************************************************************************************/
+		inline EnumTextAlignment GetHAlignment() const { return m_hAlignment; }
+
+		/*!***********************************************************************************
+		 \brief Get the vertical alignment of the text
+
+		 \return EnumTextAlignment - the vertical alignment of the text
+		*************************************************************************************/
+		inline EnumTextAlignment GetVAlignment() const { return m_vAlignment; }
+
+		/*!***********************************************************************************
+		 \brief Get the horizontal overflow of the text
+
+		 \return EnumTextAlignment - the horizontal overflow of the text
+		*************************************************************************************/
+		inline EnumTextOverflow GetHOverflow()  const { return m_hOverflow; }
+
+		/*!***********************************************************************************
+		 \brief Get the vertical overflow of the text
+
+		 \return EnumTextAlignment - the vertical overflow of the text
+		*************************************************************************************/
+		inline EnumTextOverflow GetVOverflow()  const { return m_vOverflow; }
+
+		/*!***********************************************************************************
+		 \brief Get the line spacing of the text
+
+		 \return float - the line spacing of the text
+		*************************************************************************************/
+		inline float GetLineSpacing() const { return m_lineSpacing; }
 
 		/*!***********************************************************************************
 		 \brief Set the Font
@@ -145,6 +184,41 @@ namespace PE
 		void SetAlpha(float const alpha);
 
 		/*!***********************************************************************************
+		 \brief Set the horizontal alignment of the text
+
+		 \param[in] hAlignment - the horizontal alignment of the text
+		*************************************************************************************/
+		void SetHAlignment(EnumTextAlignment hAlignment);
+
+		/*!***********************************************************************************
+		 \brief Set the vertical alignment of the text
+
+		 \param[in] vAlignment - the vertical alignment of the text
+		*************************************************************************************/
+		void SetVAlignment(EnumTextAlignment vAlignment);
+
+		/*!***********************************************************************************
+		 \brief Set the horizontal overflow of the text
+
+		 \param[in] hOverflow - the horizontal overflow of the text
+		*************************************************************************************/
+		void SetHOverflow(EnumTextOverflow hOverflow);
+
+		/*!***********************************************************************************
+		 \brief Set the vertical overflow of the text
+
+		 \param[in] vOverflow - the vertical overflow of the text
+		*************************************************************************************/
+		void SetVOverflow(EnumTextOverflow vOverflow);
+
+		/*!***********************************************************************************
+		 \brief Set the line spacing of the text
+
+		 \param[in] lineSpacing - the line spacing of the text
+		*************************************************************************************/
+		void SetLineSpacing(float lineSpacing);
+
+		/*!***********************************************************************************
 		 \brief Serializes the specified entity's TextComponent into a json file, returns a
 		 		copy
 		 
@@ -160,6 +234,7 @@ namespace PE
 			for (auto& prop : type.get_properties())
 			{
 				rttr::variant var = prop.get_value(inst);
+				
 				if (var.get_type().get_name() == "std::string")
 				{
 					ret[prop.get_name().to_string()] = var.get_value<std::string>();
@@ -174,6 +249,18 @@ namespace PE
 					ret[prop.get_name().to_string()]["y"] = var.get_value<glm::vec4>().y;
 					ret[prop.get_name().to_string()]["z"] = var.get_value<glm::vec4>().z;
 					ret[prop.get_name().to_string()]["w"] = var.get_value<glm::vec4>().w;
+				}
+				else if (var.get_type().get_name() == "enumPE::EnumTextAlignment")
+				{
+					ret[prop.get_name().to_string()] = var.get_value<EnumTextAlignment>();
+				}
+				else if (var.get_type().get_name() == "enumPE::EnumTextOverflow")
+				{
+					ret[prop.get_name().to_string()] = var.get_value<EnumTextOverflow>();
+				}
+				else
+				{
+					std::cout << var.get_type().get_name() << std::endl;
 				}
 			}
 
@@ -196,14 +283,36 @@ namespace PE
 			{
 				if (meth.get_name() == "Color")
 				{
-					meth.invoke(inst, glm::vec4{ j[meth.get_name().to_string()]["x"].get<float>(), j[meth.get_name().to_string()]["y"].get<float>(), j[meth.get_name().to_string()]["z"].get<float>(), j[meth.get_name().to_string()]["w"].get<float>() });
+					if(j.contains(meth.get_name().to_string()))
+					meth.invoke(inst, j[meth.get_name().to_string()]["x"].get<float>(), j[meth.get_name().to_string()]["y"].get<float>(), j[meth.get_name().to_string()]["z"].get<float>(), j[meth.get_name().to_string()]["w"].get<float>() );
 				}
 				else if (meth.get_name() == "Text" || meth.get_name() == "Font")
 				{
+					if (j.contains(meth.get_name().to_string()))
+
 					meth.invoke(inst, j[meth.get_name().to_string()].get<std::string>());
 				}
 				else if (meth.get_name() == "Size")
 				{
+					if (j.contains(meth.get_name().to_string()))
+
+					meth.invoke(inst, j[meth.get_name().to_string()].get<float>());
+				}
+				else if (meth.get_name() == "HAlignment" || meth.get_name() == "VAlignment")
+				{
+					if (j.contains(meth.get_name().to_string()))
+
+					meth.invoke(inst, j[meth.get_name().to_string()].get<EnumTextAlignment>());
+				}
+				else if (meth.get_name() == "HOverflow" || meth.get_name() == "VOverflow")
+				{
+					if (j.contains(meth.get_name().to_string()))
+
+					meth.invoke(inst, j[meth.get_name().to_string()].get<EnumTextOverflow>());
+				}
+				else if (meth.get_name() == "LineSpacing")
+				{
+					if (j.contains(meth.get_name().to_string()))
 					meth.invoke(inst, j[meth.get_name().to_string()].get<float>());
 				}
 
@@ -214,15 +323,53 @@ namespace PE
 	private:
 		std::string m_text;
 		std::string m_fontKey;
-		std::shared_ptr<Font> m_font;
 		// font style
 		float m_size{ 1.f };
-		// line spacing
-		// paragraph
-		// alignment
-		// h_overflow
-		// v_overflow
+		float m_lineSpacing{ 1.f }; // % of font size
+		EnumTextAlignment m_hAlignment{ EnumTextAlignment::LEFT };
+		EnumTextAlignment m_vAlignment{ EnumTextAlignment::TOP };
+		EnumTextOverflow m_hOverflow { EnumTextOverflow::WRAP }; // wrap, overflow
+		EnumTextOverflow m_vOverflow { EnumTextOverflow::TRUNCATE}; // truncate, overflow
 		glm::vec4 m_color{ 0.f, 0.f, 0.f, 1.f};
 		// material
 	};
+
+	/*!***********************************************************************************
+	 \brief Splits the text into lines based on the width of the text box
+
+	 \param[in] r_textComponent The text component to split
+	 \param[in] textBox The text box to split the text into
+	 \return std::vector<std::string> The vector of lines
+	*************************************************************************************/
+	std::vector<std::string> SplitTextIntoLines(TextComponent const& r_textComponent, TextBox textBox);
+
+	/*!***********************************************************************************
+	 \brief Horizontally aligns the text based on the horizontal alignment of the text
+
+	 \param[in] r_textComponent The text component to align
+	 \param[in] line The line to align
+	 \param[in] textBox The text box to align the text into
+	 \param[in/out] hAlignOffset The horizontal offset of the text
+	*************************************************************************************/
+	void HorizontalTextAlignment(TextComponent const& r_textComponent,std::string const& r_line, TextBox textBox, float& r_hAlignOffset);
+
+	/*!***********************************************************************************
+	 \brief Vertically aligns the text based on the vertical alignment of the text
+
+	 \param[in] r_textComponent The text component to align
+	 \param[in] lines The lines to align
+	 \param[in] textBox The text box to align the text into
+	 \param[in/out] vAlignOffset The vertical offset of the text
+	*************************************************************************************/
+	void VerticalTextAlignment(TextComponent const& r_textComponent, std::vector<std::string> const& r_lines, TextBox textBox, float& r_vAlignOffset);
+
+	/*!***********************************************************************************
+	 \brief Calculates the width of the line
+
+	 \param[in] r_textComponent The text component to calculate the width
+	 \param[in] line The line to calculate the width
+	 \return float The width of the line
+	*************************************************************************************/
+	float CalculateLineWidth(TextComponent const& r_textComponent, std::string const& r_line);
+
 }

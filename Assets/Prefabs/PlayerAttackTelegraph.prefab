@@ -1,0 +1,63 @@
+{
+    "Entity": {
+        "components": {
+            "Collider": {
+                "collisionLayerIndex": 0,
+                "data": {
+                    "max": {
+                        "x": 498.0,
+                        "y": 271.0
+                    },
+                    "min": {
+                        "x": -14.0,
+                        "y": 143.0
+                    },
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scaleOffset": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "isTrigger": true,
+                "type": "AABBCollider"
+            },
+            "EntityDescriptor": {
+                "InteractionLayer": 2,
+                "Layer": 2,
+                "Prefab Type": "CatUI",
+                "children": [],
+                "isActive": true,
+                "name": "PlayerAttackTelegraph",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "Renderer": {
+                "Color": {
+                    "a": 1.0,
+                    "b": 0.5764706134796143,
+                    "g": 1.0,
+                    "r": 0.545098066329956
+                },
+                "TextureKey": "../Assets/Textures/Telegraphs/Telegraph_Long_512x128.png"
+            },
+            "Transform": {
+                "height": 128.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 242.0,
+                    "y": 207.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 512.0
+            }
+        },
+        "name": ""
+    }
+}

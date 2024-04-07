@@ -56,12 +56,24 @@ namespace PE
              \param[in] editorMode Set to true to get the 4x4 world to NDC matrix of 
                             the editor camera, false to get that of the main runtime camera.
 
-             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
-                        with the 4x4 world to NDC matrix the editor camera or the main 
-                        runtime camera. If editorMode is false and there are no runtime cameras, 
-                        optional::has_value() will return false.
+             \return glm::mat4 - Returns the 4x4 world to NDC matrix of the editor camera or
+                        the main runtime camera. If editorMode is false and there are no
+                        runtime cameras, a zero matrix is returned.
             *************************************************************************************/
             glm::mat4 GetWorldToNdcMatrix(bool const editorMode);
+
+            /*!***********************************************************************************
+             \brief Returns an optional object initalized with the 4x4 world to view matrix 
+                    the editor camera or the main runtime camera.
+
+             \param[in] editorMode Set to true to get the 4x4 view to NDC matrix of 
+                            the editor camera, false to get that of the main runtime camera.
+
+             \return glm::mat4 - Returns the 4x4 world to view matrix of the editor camera or
+                        the main runtime camera. If editorMode is false and there are no
+                        runtime cameras, a zero matrix is returned.
+            *************************************************************************************/
+            glm::mat4 GetWorldToViewMatrix(bool const editorMode);
 
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 view to NDC matrix 
@@ -70,10 +82,9 @@ namespace PE
              \param[in] editorMode Set to true to get the 4x4 view to NDC matrix of 
                             the editor camera, false to get that of the main runtime camera.
 
-             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
-                        with the 4x4 view to NDC matrix the editor camera or the main 
-                        runtime camera. If editorMode is false and there are no runtime cameras, 
-                        optional::has_value() will return false.
+             \return glm::mat4 - Returns the 4x4 view to NDC matrix of the editor camera or
+                        the main runtime camera. If editorMode is false and there are no
+                        runtime cameras, a zero matrix is returned.
             *************************************************************************************/
             glm::mat4 GetViewToNdcMatrix(bool const editorMode);
             
@@ -84,10 +95,9 @@ namespace PE
              \param[in] editorMode Set to true to get the 4x4 NDC to world matrix of 
                             the editor camera, false to get that of the main runtime camera.
 
-             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
-                        with the 4x4 NDC to world matrix the editor camera or the main 
-                        runtime camera. If editorMode is false and there are no runtime cameras, 
-                        optional::has_value() will return false.
+             \return glm::mat4 - Returns the 4x4 NDC to world matrix of the editor camera or 
+                        the main runtime camera. If editorMode is false and there are no 
+                        runtime cameras, a zero matrix is returned.
             *************************************************************************************/
             glm::mat4 GetNdcToWorldMatrix(bool const editorMode);
 
@@ -98,10 +108,9 @@ namespace PE
              \param[in] editorMode Set to true to get the 4x4 NDC to view matrix of 
                             the editor camera, false to get that of the main runtime camera.
 
-             \return std::optional<glm::mat4> - Returns an optional object initalized 
-                        with the 4x4 NDC to view matrix the editor camera or the main 
-                        runtime camera. If editorMode is false and there are no runtime cameras, 
-                        optional::has_value() will return false.
+             \return glm::mat4 - Returns the 4x4 NDC to view matrix of the editor camera or 
+                        the main runtime camera. If editorMode is false and there are no 
+                        runtime cameras, a zero matrix is returned.
             *************************************************************************************/
             glm::mat4 GetNdcToViewMatrix(bool const editorMode);
             
@@ -112,10 +121,9 @@ namespace PE
              \param[in] editorMode Set to true to get the 4x4 view to world matrix of 
                             the editor camera, false to get that of the main runtime camera.
 
-             \return std::optional<glm::mat4> - Returns an optional object initalized 
-                        with the 4x4 view to world matrix the editor camera or the main 
-                        runtime camera. If editorMode is false and there are no runtime cameras, 
-                        optional::has_value() will return false.
+             \return glm::mat4 - Returns the 4x4 view to world matrix of the editor camera or
+                        the main runtime camera. If editorMode is false and there are no
+                        runtime cameras, a zero matrix is returned.
             *************************************************************************************/
             glm::mat4 GetViewToWorldMatrix(bool const editorMode);
 
@@ -167,6 +175,27 @@ namespace PE
             static inline EntityID GetUiCameraId() { return m_uiCameraId; }
 
             /*!***********************************************************************************
+            \brief Returns the entity ID of the main camera object.
+            \return EntityID - The entity ID of the main camera object.
+            *************************************************************************************/
+            inline EntityID GetMainCameraId() const { return m_mainCameraId; }
+
+            /*!***********************************************************************************
+             \brief  Returns a vec2 object with a position in world coordinates converted to 
+                window coordinates (with the origin at the center of the window). This function  
+                takes the ratio of the viewport to the window's dimensions into account.
+
+             \param[in] x x-coordinate of the position in viewport coordinates (with the origin
+                at the center of the window) to convert to world coordinates.
+             \param[in] y y-coordinate of the position in viewport coordinates (with the origin
+                at the center of the window) to convert to world coordinates.
+
+             \return vec2 - Converted position in window coordinates (with the origin at 
+                the center of the window).
+            *************************************************************************************/
+            vec2 GetWorldToWindowPosition(float const x, float const y) const;            
+
+            /*!***********************************************************************************
              \brief  Returns a vec2 object with a position in window coordinates (with the origin
                 at the center of the window) converted to world coordinates. This function takes 
                 the ratio of the viewport to the window's dimensions into account.
@@ -185,12 +214,12 @@ namespace PE
                 at the center of the window) converted to screen coordinates for the UI. This 
                 function takes the ratio of the viewport to the window's dimensions into account.
 
-             \param[in] x x-coordinate of the position in viewport coordinates (with the origin
-                at the center of the window) to convert to world coordinates.
-             \param[in] y y-coordinate of the position in viewport coordinates (with the origin
-                at the center of the window) to convert to world coordinates.
+             \param[in] x x-coordinate of the position in window coordinates (with the origin
+                at the center of the window) to convert to screen coordinates.
+             \param[in] y y-coordinate of the position in window coordinates (with the origin
+                at the center of the window) to convert to screen coordinates.
 
-             \return vec2 - Converted position in world coordinates.
+             \return vec2 - Converted position in screen coordinates.
             *************************************************************************************/
             static vec2 GetUiWindowToScreenPosition(float const x, float const y);
 

@@ -1,0 +1,200 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 85,
+                            "Prefab Type": "WorldHealthBar",
+                            "children": [
+                                86,
+                                89
+                            ],
+                            "isActive": true,
+                            "name": "WorldHealthBar",
+                            "parent": null,
+                            "sceneID": 85
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": ""
+                        },
+                        "GUISlider": {
+                            "m_Hovered": false,
+                            "m_clicked": false,
+                            "m_currentValue": 1.0,
+                            "m_currentWidth": 16.0,
+                            "m_currentXpos": 32.0,
+                            "m_defaultColor": [
+                                0.3607843220233917,
+                                0.9882352948188782,
+                                0.21176470816135406,
+                                1.0
+                            ],
+                            "m_defaultTexture": "",
+                            "m_disabled": false,
+                            "m_disabledColor": [
+                                0.9882352948188782,
+                                0.23137255012989044,
+                                0.21176470816135406,
+                                1.0
+                            ],
+                            "m_disabledTexture": "",
+                            "m_endPoint": 32.0,
+                            "m_hoveredColor": [
+                                0.9254902005195618,
+                                0.9882352948188782,
+                                0.21176470816135406,
+                                1.0
+                            ],
+                            "m_hoveredTexture": "",
+                            "m_isHealthBar": true,
+                            "m_knobID": 86,
+                            "m_maxValue": 1.0,
+                            "m_minValue": 0.0,
+                            "m_pressedColor": [
+                                0.23529411852359772,
+                                0.23529411852359772,
+                                0.23529411852359772,
+                                1.0
+                            ],
+                            "m_pressedTexture": "",
+                            "m_startPoint": -32.0
+                        },
+                        "ScriptComponent": {
+                            "HealthBarScript_v2_0": {
+                                "data": {
+                                    "FollowObjectID": 93,
+                                    "fillColorAlmostEmpty": {
+                                        "w": 1.0,
+                                        "x": 0.9800000190734863,
+                                        "y": 0.23000000417232513,
+                                        "z": 0.20999999344348907
+                                    },
+                                    "fillColorFull": {
+                                        "w": 1.0,
+                                        "x": 0.36000001430511475,
+                                        "y": 0.9800000190734863,
+                                        "z": 0.20999999344348907
+                                    },
+                                    "fillColorHalf": {
+                                        "w": 1.0,
+                                        "x": 0.9200000166893005,
+                                        "y": 0.9800000190734863,
+                                        "z": 0.20999999344348907
+                                    }
+                                },
+                                "state": 0
+                            }
+                        },
+                        "Transform": {
+                            "height": 16.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 1355.0001220703125,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 1355.0001220703125,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 64.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 86,
+                            "Prefab Type": "SliderKnob",
+                            "children": [],
+                            "isActive": true,
+                            "name": "SliderKnob",
+                            "parent": 85,
+                            "sceneID": 0
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 0.5735294222831726,
+                                "g": 0.5735294222831726,
+                                "r": 0.5735294222831726
+                            },
+                            "TextureKey": ""
+                        },
+                        "Transform": {
+                            "height": 16.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 1355.0001220703125,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 64.0
+                        }
+                    },
+                    "name": ""
+                }
+            },
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 89,
+                            "Prefab Type": "WorldHealthBarFrame",
+                            "children": [],
+                            "isActive": true,
+                            "name": "WorldHealthBarFrame",
+                            "parent": 85,
+                            "sceneID": 89
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/UnitPortrait_HealthBar_TwoSeg_180x46.png"
+                        },
+                        "Transform": {
+                            "height": 19.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 1355.0001220703125,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 70.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

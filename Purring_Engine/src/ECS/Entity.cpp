@@ -21,6 +21,7 @@
 #include "Logging/Logger.h"
 #include "EntityFactory.h"
 #include "Hierarchy/HierarchyManager.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -55,11 +56,13 @@ namespace PE
 		Get<EntityDescriptor>(id).name = "GameObject";
 		Get<EntityDescriptor>(id).name += std::to_string(id);
 		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
+		Get<EntityDescriptor>(id).oldID = id;
 		return id;
 	}
 
 	EntityID EntityManager::NewEntity(EntityID id)
 	{
+		
 		if (m_removed.count(id))
 			m_removed.erase(id);
 		else if (id == ULLONG_MAX || m_entities.count(id)) // if a prefab or the id alread is used
@@ -92,7 +95,8 @@ namespace PE
 		Assign(id, GetComponentID<EntityDescriptor>());
 		Get<EntityDescriptor>(id).name = "GameObject";
 		Get<EntityDescriptor>(id).name += std::to_string(id);
-		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
+		Get<EntityDescriptor>(id).sceneID = (Get<EntityDescriptor>(id).sceneID == ULLONG_MAX)? id : Get<EntityDescriptor>(id).sceneID; // potentially in the future it will not be tied!!
+		Get<EntityDescriptor>(id).oldID = id;
 		return id;
 	}
 
@@ -122,6 +126,7 @@ namespace PE
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[r_componentID]->size);
+		LayerManager::GetInstance().AddEntity(r_id);
 	}
 
 	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& r_component) const
@@ -167,7 +172,10 @@ namespace PE
 					if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 						Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value(), cid);
 				}
+				
 			}
+			Hierarchy::GetInstance().DetachChild(id);
+			LayerManager::GetInstance().RemoveEntity(id);
 			for (const ComponentID& r_pool : GetComponentIDs(id))
 			{
 				m_componentPools[r_pool]->Remove(id);
@@ -199,6 +207,16 @@ namespace PE
 		}
 	}
 
+	void EntityManager::AddHelper(const EntityID& r_id)
+	{
+		LayerManager::GetInstance().AddEntity(r_id);
+	}
+
+	void EntityManager::RemoveHelper(const EntityID& r_id)
+	{
+		LayerManager::GetInstance().RemoveEntity(r_id);
+	}
+
 	nlohmann::json EntityDescriptor::ToJson(size_t id) const
 	{
 		UNREFERENCED_PARAMETER(id);
@@ -220,6 +238,9 @@ namespace PE
 		j["isActive"] = isActive;
 
 		j["Prefab Type"] = prefabType;
+		j["Layer"] = layer;
+		j["InteractionLayer"] = interactionLayer;
+		j["Old ID"] = oldID;
 
 		return j;
 	}
@@ -238,9 +259,12 @@ namespace PE
 			desc.parent = std::nullopt;
 		}
 
-		desc.children = j["children"].get<std::set<EntityID>>();
+		if (j.contains("children"))
+			desc.children = j["children"].get<std::set<EntityID>>();
 
-		desc.sceneID = j["sceneID"].get<EntityID>();
+		if (j.contains("sceneID"))
+			desc.sceneID = j["sceneID"].get<EntityID>();
+
 
 		if (j.contains("isActive"))
 		{
@@ -250,6 +274,22 @@ namespace PE
 		if (j.contains("Prefab Type"))
 		{
 			desc.prefabType = j["Prefab Type"].get<std::string>();
+		}
+
+		if (j.contains("Layer"))
+		{
+			desc.layer = j["Layer"].get<int>();
+		}
+		if (j.contains("InteractionLayer"))
+		{
+			desc.interactionLayer = j["InteractionLayer"].get<int>();
+		}
+
+		if (j.contains("Old ID"))
+		{
+			if (j["Old ID"].get<EntityID>() != ULLONG_MAX)
+				desc.oldID = j["Old ID"].get<EntityID>();
+			
 		}
 
 		return desc;

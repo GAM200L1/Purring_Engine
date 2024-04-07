@@ -6,6 +6,13 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     98%
+ \par      changes:    Defined most of the functions.
+
+ \co-author            Krystal YAMIN
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     2%
+ \par      changes:    Added a function to toggle the cursor visibilty using GLFW.
 
  \brief	   This file contains the implementation of the WindowManager class.
            WindowManager handles the initialization, maintenance, and cleanup
@@ -56,6 +63,23 @@ namespace PE
         GLFWwindow* InitWindow(int width, int height, const char* p_title);
 
         /*!***********************************************************************************
+         \brief     return the current window.
+         \return    GLFWwindow* the window
+        *************************************************************************************/
+        GLFWwindow* GetWindow();
+
+        /*!***********************************************************************************
+         \brief     set current window.
+         \param    GLFWwindow* the window
+        *************************************************************************************/
+        void SetWindow(GLFWwindow* p_win);
+
+        /*!***********************************************************************************
+         \brief     Close The Window
+        *************************************************************************************/
+        void CloseWindow(EntityID = -1);
+
+        /*!***********************************************************************************
          \brief     Update the window title to show current FPS.
          \param     window Pointer to the GLFW window.
          \param     fps Current frames per second.
@@ -72,6 +96,30 @@ namespace PE
          \return    std::string The name of the system.
         *************************************************************************************/
         virtual std::string GetName() { return "Windows Manager"; }
+
+        /*!***********************************************************************************
+         \brief     set fullscreen boolean
+         \param     boolean to set for the fullscreen
+        *************************************************************************************/
+        void SetFullScreen(bool fullScreen);
+
+        /*!***********************************************************************************
+         \brief     get the fullscreen state
+         \return    return the current fullscreen state
+        *************************************************************************************/
+        bool GetFullScreen();
+
+        /*!***********************************************************************************
+         \brief     set fullscreen of the window
+         \param     bool what mode to set the window to
+        *************************************************************************************/
+        void SetWindowFullScreen(bool fs);
+
+        /*!***********************************************************************************
+         \brief     Toggles the cursor visibility.
+         \param     _isVisible what mode to set the window to
+        *************************************************************************************/
+        void ToggleCursor(bool _isVisible);
 /*                                                                                          Window Callback Functions
 --------------------------------------------------------------------------------------------------------------------- */
         /*!***********************************************************************************
@@ -136,8 +184,13 @@ namespace PE
         *************************************************************************************/
         void TestFunction(EntityID);
 
-    private:
+
+
+    public:
         GLFWwindow* p_currWindow;
+        static bool m_fullScreen;
+
+    private:
         GLFWmonitor* p_monitor;
         static bool msepress;
         bool m_showFps;

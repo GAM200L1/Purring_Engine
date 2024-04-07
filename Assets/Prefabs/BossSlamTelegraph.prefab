@@ -1,0 +1,47 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 1,
+                            "Layer": 1,
+                            "Old ID": 99,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": false,
+                            "name": "BossSlamTelegraph",
+                            "parent": null,
+                            "sceneID": 99
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Slam_100x140.png"
+                        },
+                        "Transform": {
+                            "height": 100.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": -300.0001220703125,
+                                "y": 122.49993896484375
+                            },
+                            "relativeposition": {
+                                "x": 116.9998779296875,
+                                "y": 95.49993896484375
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

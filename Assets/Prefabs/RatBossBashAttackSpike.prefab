@@ -1,0 +1,47 @@
+{
+    "Entity": {
+        "components": {
+            "AnimationComponent": {
+                "AnimationIDs": [
+                    "../Assets/Animation/RatKingBashAttack.anim"
+                ],
+                "CurrentAnimationID": "../Assets/Animation/RatKingBashAttack.anim"
+            },
+            "EntityDescriptor": {
+                "InteractionLayer": 1,
+                "Layer": 1,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "RatBossBashAttackSpike",
+                "children": [],
+                "isActive": true,
+                "name": "RatBossBashAttackSpike",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "Renderer": {
+                "Color": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "TextureKey": ""
+            },
+            "Transform": {
+                "height": 256.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 162.00015258789063,
+                    "y": 27.99999237060547
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 256.0
+            }
+        },
+        "name": ""
+    }
+}

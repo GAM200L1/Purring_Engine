@@ -16,7 +16,6 @@
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-
 #include <glm/glm.hpp>
 #include "Camera.h"
 
@@ -87,12 +86,20 @@ namespace PE
             void SetRotationRadians(float const radians);
 
             /*!***********************************************************************************
-            \brief  Changes the position of the camera by the amount passed in.
+            \brief  Changes the local position of the camera by the amount passed in.
 
-            \param[in] deltaX Amount to move the camera along the camera's x-axis.
-            \param[in] deltaY Amount to move the camera along the camera's y-axis.
+            \param[in] deltaX Amount to move the camera along the camera's local x-axis.
+            \param[in] deltaY Amount to move the camera along the camera's local y-axis.
             *************************************************************************************/
-            void AdjustPosition(float const deltaX, float const deltaY);
+            void AdjustLocalPosition(float const deltaX, float const deltaY);
+
+            /*!***********************************************************************************
+            \brief  Changes the world position of the camera by the amount passed in.
+
+            \param[in] deltaX Amount to move the camera along the world's x-axis.
+            \param[in] deltaY Amount to move the camera along the world's y-axis.
+            *************************************************************************************/
+            void AdjustWorldPosition(float const deltaX, float const deltaY);
 
             /*!***********************************************************************************
             \brief  Changes the orientation of the camera about the z-axis from the x-axis 

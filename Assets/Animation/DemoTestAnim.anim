@@ -1,0 +1,74 @@
+{
+    "animationFrames": [
+        {
+            "duration": 0.2666666805744171,
+            "maxUV": [
+                0.1666666716337204,
+                1.0
+            ],
+            "minUV": [
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "duration": 0.23333333432674408,
+            "maxUV": [
+                0.3333333432674408,
+                1.0
+            ],
+            "minUV": [
+                0.1666666716337204,
+                0.0
+            ]
+        },
+        {
+            "duration": 0.20000000298023224,
+            "maxUV": [
+                0.5,
+                1.0
+            ],
+            "minUV": [
+                0.3333333432674408,
+                0.0
+            ]
+        },
+        {
+            "duration": 3.3333332538604736,
+            "maxUV": [
+                0.6666666865348816,
+                1.0
+            ],
+            "minUV": [
+                0.5,
+                0.0
+            ]
+        },
+        {
+            "duration": 0.20000000298023224,
+            "maxUV": [
+                0.8333333134651184,
+                1.0
+            ],
+            "minUV": [
+                0.6666666865348816,
+                0.0
+            ]
+        },
+        {
+            "duration": 1.0333333015441895,
+            "maxUV": [
+                1.0,
+                1.0
+            ],
+            "minUV": [
+                0.8333333134651184,
+                0.0
+            ]
+        }
+    ],
+    "animationID": "../Assets/Animation/DemoTestAnim.anim",
+    "frameRate": 30,
+    "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png",
+    "totalSprites": 6
+}

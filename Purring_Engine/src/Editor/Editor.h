@@ -22,8 +22,7 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <misc/cpp/imgui_stdlib.h>
-
-#include "UndoStack.h"
+#include "ImGuizmo.h"
 
 #include "Singleton.h"
 
@@ -63,7 +62,7 @@ namespace PE {
 
 		 \param[in] GLFWwindow 	the glfw window that we are drawing onto
 		*************************************************************************************/
-		void Init(GLFWwindow* p_window);
+		void Init();
 		/*!***********************************************************************************
 		 \brief Render all imgui windows
 
@@ -149,7 +148,12 @@ namespace PE {
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
 		void AddWarningLog(std::string_view text);
-
+		// -----Public Helper Functions ----- // 
+	public:
+		/*!***********************************************************************************
+		\brief Reset Selected Object to be used externally
+		*************************************************************************************/
+		void ResetSelectedObject();
 		// -----Event Callbacks ----- // 
 	public:
 		/*!***********************************************************************************
@@ -157,6 +161,12 @@ namespace PE {
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
 		void OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_e);
+
+		/*!***********************************************************************************
+		 \brief the callback function for an onwindowevent
+		 \param[in] const temp::Event<temp::WindowEvents>& event called
+		*************************************************************************************/
+		void OnWindowFocusEvent(const PE::Event<PE::WindowEvents>& r_e);
 		// ----- ImGui Window Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -177,12 +187,6 @@ namespace PE {
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowObjectWindow(bool* p_active);
-		/*!***********************************************************************************
-		 \brief render the test windows (Temp for milestone 1 for elie to test)
-
-		 \param[in] bool* reference to the boolean that sets the window active
-		*************************************************************************************/
-		void ShowDemoWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the object component window
 
@@ -242,9 +246,24 @@ namespace PE {
 		void ShowApplyWindow(bool*p_active);
 
 		/*!***********************************************************************************
+		 \brief open the layer window
+
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowLayerWindow(bool* p_active);
+
+		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Dark();
+		/*!***********************************************************************************
+		 \brief Set custom ImGUI style
+		*************************************************************************************/
+		void SetImGUIStyle_Light();
+		/*!***********************************************************************************
+		 \brief Set custom ImGUI style
+		*************************************************************************************/
+		void SetImGUIStyle_Kurumi();
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
@@ -253,6 +272,11 @@ namespace PE {
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Blue();
+
+
+		std::string ToLower(const std::string& str);
+		bool CaseInsensitiveFind(const std::string& str, const std::string& toFind);
+
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -277,6 +301,17 @@ namespace PE {
 		 \param[in] string path name
 		*************************************************************************************/
 		void LoadSceneFromGivenPath(std::string const& path);
+
+		/*!***********************************************************************************
+		 \brief	Compare 2 C-Style Float[16] Arrays to check for equality
+
+		 \param[in] float* a	Matrix A
+		 \param[in] float* b	Matrix B
+		 \param[in] float epsilon value to check if values differ by more than episilon
+
+		 \return true if equal, false if not
+		*************************************************************************************/
+		bool CompareFloat16Arrays(float* a, float* b);
 		// ----- ImGui Command Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -297,7 +332,7 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Helper function to help the displaying of obj hierarchy
 		*************************************************************************************/
-		void ObjectWindowHelper(const EntityID& id, bool& is_selected, bool& isHoveringObject, bool& drag, std::optional<EntityID>& hoveredObject, std::optional<EntityID>& dragID, std::string& dragName);
+		void ObjectWindowHelper(const EntityID& id, bool& is_selected, bool& isHoveringObject, bool& drag, std::optional<EntityID>& hoveredObject, std::optional<EntityID>& dragID, std::string& dragName, std::set<std::string>& usedNames);
 
 		/*!***********************************************************************************
 		 \brief Allows files to be dragged into the assets browser and copied from that its
@@ -311,15 +346,47 @@ namespace PE {
 		*************************************************************************************/
 		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** p_paths);
 
+		/*!***********************************************************************************
+		 \brief Count Number of canvases including inactive ones
+		*************************************************************************************/
+		EntityID CountCanvas();
+
+		/*!***********************************************************************************
+		 \brief Check what is the current canvas and returns it
+		*************************************************************************************/
+		EntityID CheckCanvas();
+
+		/*!***********************************************************************************
+		 \brief Save the current state as save state and press play
+		*************************************************************************************/
+		void SaveAndPlayScene();
+
+		/*!***********************************************************************************
+		 \brief Stop and Load previous safestate
+		*************************************************************************************/
+		void StopAndLoadScene();
+
 	private:
-		enum class GuiStyle 
+		enum class GuiStyle
 		{
 			DARK,
+			LIGHT,
+			KURUMI,
 			PINK,
 			BLUE
 		};
 
+		struct LogColors
+		{
+			ImVec4 errorColor;
+			ImVec4 infoColor;
+			ImVec4 warningColor;
+			ImVec4 eventColor;
+		};
+
 		GuiStyle m_currentStyle;
+
+		LogColors GetLogColorsForCurrentStyle() const;
 
 		// ----- Private Variables ----- // 
 	private:
@@ -328,7 +395,6 @@ namespace PE {
 		bool m_showObjectList;
 		bool m_showConsole;
 		bool m_showSceneView;
-		bool m_showTestWindows;
 		bool m_showEditor;
 		bool m_showComponentWindow;
 		bool m_showResourceWindow;
@@ -337,6 +403,7 @@ namespace PE {
 		bool m_firstLaunch;
 		bool m_showGameView;
 		bool m_showAnimationWindow;
+		bool m_showLayerWindow;
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;
@@ -358,25 +425,31 @@ namespace PE {
 		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
 		bool m_sceneViewFocused;
-		int m_currentSelectedObject;
-
-		UndoStack m_undoStack;
+		int m_currentSelectedObject{ -1 };
+		std::string m_currentSelectedResourcePath;
+		ImGuizmo::OPERATION m_currentGizmoOperation{ImGuizmo::OPERATION::TRANSLATE};
 
 		//variable for assets browser
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
 		float m_playWindowOffset {27.f};
-		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
 		std::pair<std::string, int> m_entityToModify;
+		std::pair<std::string, std::string> m_animationToModify;
 		static bool m_fileDragged;
 
 		// variables for prefab editor
 		std::string prefabFP;
 		std::string prefabTP;
 		std::vector<ComponentID> prefabCID;
+
+		// variable for scene loading
+		std::string m_savedScene;
+
+		//variable for pausing gameplay
+		bool m_gameplayPaused{false};
 	};
 }
 

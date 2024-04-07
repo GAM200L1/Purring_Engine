@@ -22,6 +22,7 @@
 #include "Data/json.hpp"
 #include "AudioManager.h"
 
+
 namespace PE
 {
     /*!***********************************************************************************
@@ -30,6 +31,12 @@ namespace PE
     class AudioComponent
     {
     public:
+        enum class AudioType
+        {
+            BGM,
+            SFX
+        };
+
         /*!***********************************************************************************
         \brief     Constructor for the AudioComponent class.
         *************************************************************************************/
@@ -49,32 +56,33 @@ namespace PE
 
         /*!***********************************************************************************
         \brief     Plays an audio sound associated with the given identifier.
-        \param     r_id The identifier of the audio sound.
+        \param     type The type of the audio sound.
         *************************************************************************************/
-        void PlayAudioSound();
+        void PlayAudioSound(AudioType type);
+
+        /*!***********************************************************************************
+        \brief     Checks if the audio sound with the specified identifier is currently playing.
+        *************************************************************************************/
+        bool IsPlaying() const;
 
         /*!***********************************************************************************
         \brief     Sets the volume for the audio sound with the specified identifier.
-        \param     r_id The identifier of the audio sound.
         \param     volume The volume level to set.
         *************************************************************************************/
         void SetVolume(float volume);
 
         /*!***********************************************************************************
         \brief     Pauses the audio sound with the given identifier.
-        \param     r_id The identifier of the audio sound.
         *************************************************************************************/
         void PauseSound();
 
         /*!***********************************************************************************
         \brief     Resumes the paused audio sound with the specified identifier.
-        \param     r_id The identifier of the audio sound.
         *************************************************************************************/
         void ResumeSound();
 
         /*!***********************************************************************************
         \brief     Stops the audio sound associated with the given identifier.
-        \param     r_id The identifier of the audio sound.
         *************************************************************************************/
         void StopSound();
 
@@ -86,15 +94,15 @@ namespace PE
 
         /*!***********************************************************************************
         \brief     Sets a new audio file key.
-        \param     r_newKey The new audio file key to set.
+        \param     r_audioKey The new audio file key to set.
         *************************************************************************************/
-        void SetAudioKey(const std::string& audiokey);
+        void SetAudioKey(const std::string& r_audioKey);
 
         /*!***********************************************************************************
         \brief     Sets the audio to loop or not.
         \param     loop True if the audio should loop, false otherwise.
         *************************************************************************************/
-        void SetLoop(bool loop) { m_loop = loop; }
+        void SetLoop(bool loop);
 
         /*!***********************************************************************************
         \brief     Gets whether the audio is looping or not.
@@ -106,14 +114,43 @@ namespace PE
         \brief     Sets the audio to loop or not.
         \param     loop True if the audio should loop, false otherwise.
         *************************************************************************************/
-        void SetPause(bool p) { isPaused = p; }
+        void SetPause(bool p) { m_isPaused = p; }
 
         /*!***********************************************************************************
         \brief     Gets whether the audio is looping or not.
         \return    True if the audio is looping, false otherwise.
         *************************************************************************************/
-        bool IsPaused() const { return isPaused; }
+        bool IsPaused() const { return m_isPaused; }
 
+        /*!***********************************************************************************
+        \brief     Gets the volume of the audio sound with the specified identifier.
+        \return    The volume level of the audio sound.
+        *************************************************************************************/
+        float GetVolume() const;
+
+        /*!***********************************************************************************
+        \brief     Gets the audio channel.
+        \return    The audio channel.
+        *************************************************************************************/
+        FMOD::Channel* GetChannel() const;
+
+        /*!***********************************************************************************
+        \brief     Updates the fade effect based on elapsed time. Use in a loop for continuous fade effects.
+        \param     deltaTime Time since last update, in seconds.
+        *************************************************************************************/
+        void UpdateIndividualFade(float deltaTime);
+
+        /*!***********************************************************************************
+        \brief     Begins a fade-in effect, smoothly increasing volume to its original level over the specified duration.
+        \param     duration Fade-in time in seconds.
+        *************************************************************************************/
+        void StartIndividualFadeIn(float targetVolume, float duration);
+
+        /*!***********************************************************************************
+        \brief     Begins a fade-out effect, smoothly decreasing volume to zero over the specified duration.
+        \param     duration Fade-out time in seconds.
+        *************************************************************************************/
+        void StartIndividualFadeOut(float targetVolume, float duration);
 
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
@@ -131,6 +168,14 @@ namespace PE
     private:
         std::string m_audioKey;         // The audio file key
         bool m_loop = false;            // Whether the audio should loop or not
-        bool isPaused = false;          // Whether the audio is paused or not
+        bool m_isPaused = false;        // Whether the audio is paused or not
+        AudioType m_audioType;
+
+        bool m_isFadingIndividual = false;
+        bool m_isFadingInIndividual = false;
+        float m_fadeDurationIndividual = 0.0f;
+        float m_fadeProgressIndividual = 0.0f;
+        float m_originalVolume = 1.0f;
+        float m_targetVolumeIndividual;
     };
 }

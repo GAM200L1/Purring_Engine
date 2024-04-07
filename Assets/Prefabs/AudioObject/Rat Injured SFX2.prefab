@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/vo_Rat_Injured2.wav",
+            "loop": false
+          },
+          "EntityDescriptor": {
+            "Prefab Type": "Rat Injured SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Rat Injured SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
+        },
+        "name": ""
+    }
+}

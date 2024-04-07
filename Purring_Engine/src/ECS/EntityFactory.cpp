@@ -21,6 +21,9 @@
 #include "Graphics/Text.h"
 #include "AudioManager/AudioComponent.h"
 #include "Hierarchy/HierarchyManager.h"
+#include "GUI/Canvas.h"
+#include "Layers/LayerManager.h"
+#include "VisualEffects/ParticleSystem.h"
 extern Logger engine_logger;
 
 
@@ -47,6 +50,8 @@ namespace PE
 			EntityID clone = CreateEntity();
 			for (const ComponentID& r_componentCreator : p_entityManager->GetComponentIDs(id))
 			{
+				if (r_componentCreator == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+					continue;
 				LoadComponent(clone, r_componentCreator,
 					p_entityManager->GetComponentPoolPointer(r_componentCreator)->Get(id));
 			}
@@ -73,11 +78,14 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(),	&EntityFactory::InitializeRenderer);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(),		&EntityFactory::InitializeScriptComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(),		&EntityFactory::InitializeCamera);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(),					&EntityFactory::InitializeGUI);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUIButton>(),					&EntityFactory::InitializeGUIButton);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUISlider>(),					&EntityFactory::InitializeGUISlider);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(),	&EntityFactory::InitializeAnimationComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(),			&EntityFactory::InitializeTextComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<AudioComponent>(),		&EntityFactory::InitializeAudioComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Canvas>(),                &EntityFactory::InitializeCanvasComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<ParticleEmitter>(),		&EntityFactory::InitializeParticleEmitter);
 	}
 
 
@@ -219,6 +227,11 @@ namespace PE
 							PE::vec2 val = prop.get_value(from).get_value<PE::vec2>();
 							prop.set_value(to, val);
 						}
+						else if (prop.get_type().get_name() == "structPE::vec4")
+						{
+							PE::vec4 val = prop.get_value(from).get_value<PE::vec4>();
+							prop.set_value(to, val);
+						}
 						else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
 						{
 							std::vector<PE::vec2> val = prop.get_value(from).get_value<std::vector<PE::vec2>>();
@@ -257,13 +270,23 @@ namespace PE
 		return true;
 	}
 
-	bool EntityFactory::InitializeGUI(const EntityID& r_id, void* p_data)
+	bool EntityFactory::InitializeGUIButton(const EntityID& r_id, void* p_data)
 	{
-		EntityManager::GetInstance().Get<GUI>(r_id) =
+		EntityManager::GetInstance().Get<GUIButton>(r_id) =
 			(p_data == nullptr) ?
-			GUI()
+			GUIButton()
 			:
-			*reinterpret_cast<GUI*>(p_data);
+			*reinterpret_cast<GUIButton*>(p_data);
+		return true;
+	}	
+	
+	bool EntityFactory::InitializeGUISlider(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<GUISlider>(r_id) =
+			(p_data == nullptr) ?
+			GUISlider()
+			:
+			*reinterpret_cast<GUISlider*>(p_data);
 		return true;
 	}
 
@@ -297,6 +320,28 @@ namespace PE
 		return true;
 	}
 
+	bool EntityFactory::InitializeCanvasComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<Canvas>(r_id) =
+			(p_data == nullptr) ?
+			Canvas()
+			:
+			*reinterpret_cast<Canvas*>(p_data);
+		return true;
+	}
+
+	bool EntityFactory::InitializeParticleEmitter(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<ParticleEmitter>(r_id) =
+			(p_data == nullptr) ?
+			ParticleEmitter()
+			:
+			*reinterpret_cast<ParticleEmitter*>(p_data);
+
+		EntityManager::GetInstance().Get<ParticleEmitter>(r_id).SetParent(r_id);
+
+		return true;
+	}
 	
 
 	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)
@@ -337,5 +382,6 @@ namespace PE
 			}
 		}
 		p_entityManager->UpdateVectors(id);
+		LayerManager::GetInstance().UpdateEntity(id);
 	}
 }

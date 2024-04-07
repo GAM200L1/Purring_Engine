@@ -22,6 +22,11 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "Animation/Animation.h"
+#include "LogicSystem.h"
+#include "Logic/CameraShakeScript.h"
+#include "System.h"
+#include "Graphics/CameraManager.h"
 
 #include <limits>
 
@@ -30,13 +35,40 @@
 
 namespace PE 
 {
+	testScript::testScript()
+	{
+		REGISTERANIMATIONFUNCTION(TestFunction, PE::testScript);
+		REGISTERANIMATIONFUNCTION(TestFunction2, PE::testScript);
+		REGISTERANIMATIONFUNCTION(TestFunction3, PE::testScript);
+
+
+	}
+
 	void testScript::Init(EntityID id)
 	{
 		id;
 	}
 	void testScript::Update(EntityID id, float deltaTime)
 	{
-		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * m_ScriptData[id].m_rotationSpeed);
+		//PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * m_ScriptData[id].m_rotationSpeed);
+		m_ScriptData[id].m_timer -= deltaTime;
+
+		if (m_ScriptData[id].m_timer < 0)
+		{
+			if (!m_ScriptData[id].isCreated)
+			{
+				m_ScriptData[id].newEntityKey = ADDNEWENTITYTOQUEUE("testObject.prefab");
+				m_ScriptData[id].isCreated = true;
+			}
+			else if (m_ScriptData[id].newEntityKey > -1 && GETCREATEDENTITY(m_ScriptData[id].newEntityKey).has_value())
+			{
+				Transform curT = EntityManager::GetInstance().Get<PE::Transform>(id);
+				PE::EntityManager::GetInstance().Get<PE::Transform>(GETCREATEDENTITY(m_ScriptData[id].newEntityKey).value()).position = vec2(curT.position.x + curT.width, curT.position.y + curT.height);
+				m_ScriptData[id].m_timer = 100000;
+			}
+		}
+	
+	
 	}
 	void testScript::Destroy(EntityID id)
 	{
@@ -69,4 +101,19 @@ namespace PE
 		return rttr::instance(m_ScriptData.at(id));
 	}
 
+	void testScript::TestFunction(EntityID)
+	{
+		std::cout << "Test Function Called" << std::endl;
+	}
+
+	void testScript::TestFunction2(EntityID id)
+	{
+		std::cout << "Test Function 2 Called" << std::endl;
+		GETSCRIPTINSTANCEPOINTER(CameraShakeScript)->Shake(GETCAMERAMANAGER()->GetMainCameraId());
+	}
+
+	void testScript::TestFunction3(EntityID)
+	{
+		std::cout << "Test Function 3 Called" << std::endl;
+	}
 }

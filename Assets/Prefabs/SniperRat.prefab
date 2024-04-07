@@ -1,0 +1,99 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "AnimationComponent": {
+                            "AnimationIDs": [
+                                "../Assets/Animation/AnimationSniperRat_Attack.anim",
+                                "../Assets/Animation/AnimationSniperRat_Death.anim",
+                                "../Assets/Animation/AnimationSniperRat_Hurt.anim",
+                                "../Assets/Animation/AnimationSniperRat_Idle.anim",
+                                "../Assets/Animation/AnimationSniperRat_Walk.anim"
+                            ],
+                            "CurrentAnimationID": "../Assets/Animation/AnimationSniperRat_Idle.anim"
+                        },
+                        "Collider": {
+                            "collisionLayerIndex": 1,
+                            "data": {
+                                "center": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "positionOffset": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "radius": 32.0,
+                                "scaleOffset": 1.0
+                            },
+                            "isTrigger": false,
+                            "type": "CircleCollider"
+                        },
+                        "EntityDescriptor": {
+                            "InteractionLayer": 3,
+                            "Layer": 3,
+                            "Old ID": 1,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "SniperRat",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Animations/Rat_Sniper_Idle.png"
+                        },
+                        "RigidBody": {
+                            "linearDrag": 2.0,
+                            "mass": 10.0,
+                            "type": 1
+                        },
+                        "ScriptComponent": {
+                            "RatScript_v2_0": {
+                                "data": {
+                                    "animationStates": {
+                                        "Attack": "../Assets/Animation/AnimationSniperRat_Attack.anim",
+                                        "Death": "../Assets/Animation/AnimationSniperRat_Death.anim",
+                                        "Hurt": "../Assets/Animation/AnimationSniperRat_Hurt.anim",
+                                        "Idle": "../Assets/Animation/AnimationSniperRat_Idle.anim",
+                                        "Walk": "../Assets/Animation/AnimationSniperRat_Walk.anim"
+                                    },
+                                    "detectionRadius": 340.0,
+                                    "maxHuntTurns": 2,
+                                    "maxMovementRange": 128.0,
+                                    "movementSpeed": 400.0,
+                                    "ratMaxHealth": 3,
+                                    "ratType": 3
+                                },
+                                "state": 0
+                            }
+                        },
+                        "Transform": {
+                            "height": 64.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 64.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

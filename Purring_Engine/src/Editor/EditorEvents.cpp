@@ -18,6 +18,8 @@
 #include "Data/SerializationManager.h"
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
+#include "UndoStack.h"
+#include "Utilities/FileUtilities.h"
 
 extern SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
@@ -33,48 +35,49 @@ namespace PE {
 						KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
 				}
 
-				if (KTE.keycode == GLFW_KEY_F1)
+				if (IsEditorActive())
+				{
+					if (KTE.keycode == GLFW_KEY_F1)
 						m_showConsole = !m_showConsole;
 
-				if (KTE.keycode == GLFW_KEY_F2)
+					if (KTE.keycode == GLFW_KEY_F2)
 						m_showObjectList = !m_showObjectList;
 
-				if (KTE.keycode == GLFW_KEY_F3)
+					if (KTE.keycode == GLFW_KEY_F3)
 						m_showLogs = !m_showLogs;
 
-				if (KTE.keycode == GLFW_KEY_F4)
+					if (KTE.keycode == GLFW_KEY_F4)
 						m_showSceneView = !m_showSceneView;
 
-				if (KTE.keycode == GLFW_KEY_F5)
-					m_showResourceWindow = !m_showResourceWindow;
+					if (KTE.keycode == GLFW_KEY_F5)
+						m_showResourceWindow = !m_showResourceWindow;
 
-				if (KTE.keycode == GLFW_KEY_F6)
-					m_showPerformanceWindow = !m_showPerformanceWindow;
+					if (KTE.keycode == GLFW_KEY_F6)
+						m_showPerformanceWindow = !m_showPerformanceWindow;
 
-				if (KTE.keycode == GLFW_KEY_F7)
+					if (KTE.keycode == GLFW_KEY_F7)
 						m_showComponentWindow = !m_showComponentWindow;
 
-				if (KTE.keycode == GLFW_KEY_F8)
-					m_showPhysicsWindow = !m_showPhysicsWindow;
+					if (KTE.keycode == GLFW_KEY_F8)
+						m_showPhysicsWindow = !m_showPhysicsWindow;
 
-				if (KTE.keycode == GLFW_KEY_F9)
-					m_showAnimationWindow = !m_showAnimationWindow;
-
+					if (KTE.keycode == GLFW_KEY_F9)
+						m_showAnimationWindow = !m_showAnimationWindow;
+				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
-					m_undoStack.UndoChange();
-					
+					UndoStack::GetInstance().UndoChange();
 				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Y)
 				{
-					m_undoStack.RedoChange();
+					UndoStack::GetInstance().RedoChange();
 				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_SHIFT) && KTE.keycode == GLFW_KEY_F10)
 				{
-					m_showTestWindows = !m_showTestWindows;
+					m_showLayerWindow = !m_showLayerWindow;
 				}
 				else if (KTE.keycode == GLFW_KEY_F10)
 				{
@@ -83,23 +86,88 @@ namespace PE {
 
 				if (KTE.keycode == GLFW_KEY_DELETE)
 				{
-					for (const auto& id : SceneView())
-					{
-						if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
-							EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
-					}
+					AddInfoLog("Object Deleted");
 					if (m_currentSelectedObject != -1)
 					{
-						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
-						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
-					}
-					//if not first index
-					m_currentSelectedObject = -1; // just reset it
-					//if object selected
-					m_objectIsSelected = false;
+						if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children.size())
+						{
+							for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children)
+							{
+								EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).savedChildren.emplace_back(cid);
+							}
 
-					if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
+							for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).savedChildren)
+							{
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value())
+									Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value(), cid);
+								else
+									Hierarchy::GetInstance().DetachChild(cid);
+							}
+						}
+						if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent)
+						{
+							EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value()).children.erase(m_currentSelectedObject);
+						}
+
+						UndoStack::GetInstance().AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+					}
 				}
 
+				if (InputSystem::IsKeyHeld(GLFW_KEY_R))
+				{
+					if(m_sceneViewFocused)
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE_Y;
+					}
+					else
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE;
+					}
+				}
+
+				if (InputSystem::IsKeyHeld(GLFW_KEY_S))
+				{
+					if (m_sceneViewFocused)
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE_Y;
+					}
+					else
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE;
+					}
+				}
+
+				if (InputSystem::IsKeyHeld(GLFW_KEY_T))
+				{
+					if (m_sceneViewFocused)
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE_Y;
+					}
+					else
+					{
+					m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+					}
+				}
+		}
+
+		void Editor::OnWindowFocusEvent(const PE::Event<PE::WindowEvents>& r_e)
+		{
+			GetFileNamesInParentPath(m_parentPath, m_files);
 		}
 }

@@ -1,0 +1,83 @@
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 107,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "UndoButton",
+                            "parent": null,
+                            "sceneID": 107
+                        },
+                        "GUI": {
+                            "disabled": false,
+                            "m_UIType": 0,
+                            "m_defaultColor": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "m_defaultTexture": "../Assets/Textures/Button_UndoAction_222x112.png",
+                            "m_disabledColor": [
+                                0.5,
+                                0.5,
+                                0.5,
+                                1.0
+                            ],
+                            "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                            "m_hoveredColor": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "m_hoveredTexture": "../Assets/Textures/Button_UndoAction_Highlighted_222x112.png",
+                            "m_onClicked": "",
+                            "m_onHoverEnter": "ButtonHoverExpand",
+                            "m_onHoverExit": "ButtonOffHoverShrink",
+                            "m_onHovered": "",
+                            "m_pressedColor": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "m_pressedTexture": "../Assets/Textures/Button_UndoAction_Dark_222x112.png"
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/Button_UndoAction_222x112.png"
+                        },
+                        "Transform": {
+                            "height": 112.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 350.0,
+                                "y": -418.5
+                            },
+                            "relativeposition": {
+                                "x": 350.0,
+                                "y": -418.5
+                            },
+                            "relorientation": 0.0,
+                            "width": 222.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

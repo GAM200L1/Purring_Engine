@@ -21,6 +21,9 @@ namespace PE
 	struct TestScriptData
 	{
 		float m_rotationSpeed{ 10 };
+		float m_timer{ 3 };
+		int newEntityKey{-1};
+		bool isCreated{};
 	};
 
 	class testScript : public Script
@@ -88,6 +91,17 @@ namespace PE
 		 \return void
 		*************************************************************************************/
 		~testScript();
+
+		/*!***********************************************************************************
+		 \brief Constructor for the test script
+
+		 \return void
+		*************************************************************************************/
+		testScript();
+
+		void TestFunction(EntityID);
+		void TestFunction2(EntityID);
+		void TestFunction3(EntityID);
 	private:
 		std::map<EntityID, TestScriptData> m_ScriptData;
 	};

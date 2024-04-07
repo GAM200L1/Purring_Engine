@@ -36,6 +36,8 @@
 #include "Graphics/Text.h"
 #include "CatScript.h"
 #include "RatScript.h"
+#include "Layers/LayerManager.h"
+#include "ResourceManager/ResourceManager.h"
 
 # define M_PI           3.14159265358979323846 
 
@@ -60,8 +62,7 @@ namespace PE
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
 
 		// Play BGM
-		SerializationManager serializationManager;
-		bgm = serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
+		bgm = ResourceManager::GetInstance().LoadPrefabFromFile("AudioObject/Background Music1.prefab");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm)) 
 		{
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
@@ -88,7 +89,7 @@ namespace PE
 				m_ScriptData[id].timeSinceExitedState = 0.f;
 
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
+					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound(AudioComponent::AudioType::BGM);
 			}
 
 			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
@@ -212,7 +213,6 @@ namespace PE
 		return rttr::instance(m_ScriptData.at(id));
 	}
 
-
 	void GameStateController::MovementStateHUD(EntityID const id, float deltaTime)
 	{
 			// Enable all HUD elements and begin fading in/out
@@ -241,16 +241,15 @@ namespace PE
 			{
 					ToggleExecutionHUD(id, false);
 
-					if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
+					if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUIButton>()))
 					{
-							EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = false;
+							EntityManager::GetInstance().Get<GUIButton>(m_ScriptData[id].endTurnButton).disabled = false;
 					}
 			}
 
 			// Update the energy level
 			UpdateEnergyHUD(id, CatScript::GetCurrentEnergyLevel(), CatScript::GetMaximumEnergyLevel() - 1);
 	}
-
 
 	void GameStateController::AttackStateHUD(EntityID const id)
 	{
@@ -260,7 +259,6 @@ namespace PE
 			EndPhaseButton(id, false);
 			UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), false);
 	}
-
 
 	void GameStateController::ExecutionStateHUD(EntityID const id, float deltaTime)
 	{
@@ -283,9 +281,9 @@ namespace PE
 			FadePlanningHUD(id, fadeOutSpeed);
 
 			// Disable button while fading
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
+			if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUIButton>()))
 			{
-					EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = true;
+					EntityManager::GetInstance().Get<GUIButton>(m_ScriptData[id].endTurnButton).disabled = true;
 			}
 
 			FadeExecutionHUD(id, fadeInSpeed);
@@ -468,7 +466,6 @@ namespace PE
 			return false;
 	}
 
-
 	void GameStateController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)
 	{
 		if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE && GameStateManager::GetInstance().GetGameState() != GameStates::WIN && GameStateManager::GetInstance().GetGameState() != GameStates::LOSE)
@@ -517,11 +514,10 @@ namespace PE
 			if (KTE.keycode == GLFW_KEY_F3)
 			{
 				GameStateManager::GetInstance().godMode = !GameStateManager::GetInstance().godMode;
-				SerializationManager serializationManager;
 
 				if (GameStateManager::GetInstance().godMode)
 				{
-					godModeText = serializationManager.LoadFromFile("HUD/God Mode_Prefab.json");
+					godModeText = ResourceManager::GetInstance().LoadPrefabFromFile("HUD/God Mode.prefab");
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(godModeText))
 						EntityManager::GetInstance().Get<EntityDescriptor>(godModeText).toSave = false;
 				}
@@ -544,33 +540,36 @@ namespace PE
 	{
 		if (!m_finishExecution)
 		{
-			for (EntityID scriptID : SceneView<ScriptComponent>())
+			for (const auto& layer : LayerView<ScriptComponent>())
 			{
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(scriptID).isActive) { continue; }
-				if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+				for (EntityID scriptID : InternalView(layer))
 				{
-					RatScriptData* p_ratScript = GETSCRIPTDATA(RatScript, scriptID);
-					if (!p_ratScript->finishedExecution)
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(scriptID).isActive) { continue; }
+					if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
 					{
-						m_finishExecution = false;
-						break;
+						RatScriptData* p_ratScript = GETSCRIPTDATA(RatScript, scriptID);
+						if (!p_ratScript->finishedExecution)
+						{
+							m_finishExecution = false;
+							break;
+						}
+						else
+						{
+							m_finishExecution = true;
+						}
 					}
-					else
+					else if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
 					{
-						m_finishExecution = true;
-					}
-				}
-				else if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
-				{
-					CatScriptData* p_catScript = GETSCRIPTDATA(CatScript, scriptID);
-					if (!p_catScript->finishedExecution)
-					{
-						m_finishExecution = false;
-						break;
-					}
-					else
-					{
-						m_finishExecution = true;
+						CatScriptData* p_catScript = GETSCRIPTDATA(CatScript, scriptID);
+						if (!p_catScript->finishedExecution)
+						{
+							m_finishExecution = false;
+							break;
+						}
+						else
+						{
+							m_finishExecution = true;
+						}
 					}
 				}
 			}

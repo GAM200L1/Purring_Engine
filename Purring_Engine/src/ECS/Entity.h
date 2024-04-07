@@ -100,6 +100,16 @@ namespace PE
 		template<typename T>
 		ComponentID GetComponentID() const;
 
+
+		/*!***********************************************************************************
+		 \brief Get the combined Component ID
+
+		 \tparam T 				The multiple components to Get the IDs of
+		 \return ComponentID 	The combined component ids
+		*************************************************************************************/
+		template<typename ... T>
+		ComponentID GetComponentIDs() const;
+
 		/*!***********************************************************************************
 		 \brief Get a pointer to a specific component pool
 
@@ -429,6 +439,20 @@ namespace PE
 				}
 			}
 		}
+		/*!***********************************************************************************
+		\brief helper function to prevent circular includes of layermanager
+		
+		\param[in] r_id 
+		*************************************************************************************/
+		void AddHelper(const EntityID& r_id);
+
+		/*!***********************************************************************************
+		 \brief helper function to prevent circular includes of layermanager
+		 
+		 \param[in] r_id 
+		*************************************************************************************/
+		void RemoveHelper(const EntityID& r_id);
+
 			// ----- Private Variables ----- //
 	private:
 		// set of entities picked over vector to increase the speed of searches for specific entites
@@ -484,6 +508,20 @@ namespace PE
 		return ComponentID().set(s_componentID);
 	}
 
+	template<typename ... T>
+	ComponentID EntityManager::GetComponentIDs() const
+	{
+		ComponentID ret{};
+		if constexpr (sizeof...(T))
+		{
+			([&]
+				{
+					ret |= GetComponentID<T>();
+				}
+			(), ...);
+		}
+		return ret;
+	}
 
 	template<typename T>
 	ComponentPool* EntityManager::GetComponentPoolPointer()
@@ -523,7 +561,7 @@ namespace PE
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
 		{
-			throw;	// to add error
+			throw 1;	// to add error
 		}
 		return *p_comp;
 	}
@@ -576,6 +614,7 @@ namespace PE
 		}
 		--(m_componentPools[componentID]->size);
 		UpdateVectors(id, false, componentID);
+		RemoveHelper(id);
 	}
 
 	/*!***********************************************************************************
@@ -586,22 +625,30 @@ namespace PE
 	{
 		// name of the entity
 		std::string name{ "GameObject" };
-
 		// the parent of the entity
 		std::optional<EntityID> parent;
 
 		// the children of this entity
 		std::set<EntityID> children;
 
+		std::map<EntityID, bool> childrenState;
+
 		// used for undo stack :(
 		std::vector<EntityID> savedChildren;
 
 		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
+		EntityID oldID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
+
+
+		float renderOrder { FLT_MAX };
 
 		bool isActive{ true };  // defaults to true
 		bool isAlive{ true };   // defaults to true, mainly used in undo/redo for editor functionality
 		bool toSave{ true };    // used for whether the entity should be saved or not
+
+		int layer = 0;
+		int interactionLayer = 0;
 
 		inline bool SaveEntity() { return toSave && isAlive; }
 
@@ -627,7 +674,37 @@ namespace PE
 		 
 		*************************************************************************************/
 		void UnHandicapEntity() { isAlive = toSave = true; }
+
+		void DisableEntity()
+		{
+			isActive = false;
+			if (childrenState.empty())
+			{
+				for (const auto& id : children)
+				{
+					childrenState[id] = EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive;
+					EntityManager::GetInstance().Get<EntityDescriptor>(id).DisableEntity();
+				}
+			}
+		}
+
+		void EnableEntity()
+		{
+			isActive = true;
+			for (const auto& id : children)
+			{
+				if (childrenState.size())
+				{
+					if (childrenState.at(id))
+						EntityManager::GetInstance().Get<EntityDescriptor>(id).EnableEntity();
+				}
+			}
+			// unlikely edge case just clear in case
+			childrenState.clear();
+		}
 		
+		// render layer settings, currently limited to 0-10 range
+		int& SetLayer(int val) { return layer = (val > 10) ? 10 : (val < 0)? 0 : val; }
 
 		/*!***********************************************************************************
 		 \brief Deserializes the input json file into a copy of the entity descriptor

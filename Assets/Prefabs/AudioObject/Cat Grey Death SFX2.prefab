@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/vo_Cat_Grey_Death2.wav",
+            "loop": false
+          },
+            "EntityDescriptor": {
+                "Prefab Type": "Cat Grey Death SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Cat Grey Death SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

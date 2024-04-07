@@ -70,9 +70,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief					Destructor for the State Machine
 		*************************************************************************************/
-		~StateMachine() { 
-			p_state->StateCleanUp();
-			delete p_state; }
+		~StateMachine() { if (p_state) { p_state->StateCleanUp(); delete p_state; } }
 		/*!***********************************************************************************
 		 \brief					The function to change state and call exit and enter state
 		 \param [In] State*		The state to change to
@@ -101,15 +99,16 @@ namespace PE
 		*************************************************************************************/
 		inline virtual void Update(EntityID id, float deltaTime)
 		{
-			//if state exist update
-			if(p_state)
-			DoStateUpdate(id, deltaTime);
+			p_state ? DoStateUpdate(id, deltaTime) : 0;
 		}
+
+		// New method to get the current state
+		State* GetCurrentState() const { return p_state ? p_state : nullptr; }
 		/*!***********************************************************************************
 		 \brief						to get the name of the state for use
 		 \return std::string_view	the name of the state
 		*************************************************************************************/
-		inline std::string_view GetStateName() { return p_state->GetName(); }
+		inline std::string_view GetStateName() { return p_state ? p_state->GetName() : "No State"; }
 	protected:
 		State* p_state;
 	private:
