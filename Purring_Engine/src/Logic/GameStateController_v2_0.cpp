@@ -1491,8 +1491,6 @@ namespace PE
 	void GameStateController_v2_0::IncrementCatRescued()
 	{
 		++m_catsRescued;
-
-		std::cout << "Number of Cats Rescued Incremented" << std::endl;
 	}
 
 	void GameStateController_v2_0::IncrementRatsKilled()
@@ -1602,8 +1600,6 @@ namespace PE
 		else
 		for (auto catid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
 		{
-			std::cout << "Cat object clicked " << EntityManager::GetInstance().Get<EntityDescriptor>(catid).name << std::endl;
-
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "CatPortraitName")
 			{
 				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(catid))
@@ -1783,9 +1779,6 @@ namespace PE
 		int randomSelection = std::rand() % 3 + 1;  // Random number between 1 and 3
 		std::string soundPath = "AudioObject/BossAudioPrefab/Rat King Selection SFX" + std::to_string(randomSelection) + ".prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
-
-		//@DEBUGHANS For Reviewer to test
-		std::cout << "Playing Boss Rat selection sound: " << soundPath << std::endl;
 	}
 
 	void GameStateController_v2_0::PlayRatSelectionSound(int ratType)
@@ -1811,9 +1804,6 @@ namespace PE
 
 		std::string soundPath = "AudioObject/Rat " + ratTypeName + " Selection SFX" + std::to_string(randomSelection) + ".prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
-
-		//@DEBUGHANS For Reviewer to test
-		//std::cout << "Playing Rat selection sound: " << soundPath << std::endl;
 	}
 
 	void GameStateController_v2_0::PlayCatSelectionSound(int catType)
@@ -1840,8 +1830,6 @@ namespace PE
 		std::string soundPath = "AudioObject/Cat " + catTypeName + " Selection SFX" + std::to_string(randomSelection) + ".prefab";
 		PE::GlobalMusicManager::GetInstance().PlaySFX(soundPath, false);
 
-		//@DEBUGHANS For Reviewer to test
-		//std::cout << "Playing Cat selection sound: " << soundPath << std::endl;
 	}
 
 	void GameStateController_v2_0::UpdateTurnCounter(std::string currentphase)
