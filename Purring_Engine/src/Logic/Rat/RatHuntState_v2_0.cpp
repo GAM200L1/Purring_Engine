@@ -205,7 +205,7 @@ namespace PE
 
 			vec2 normalizedDir = movementDirection.GetNormalized();
 
-			vec2 endPoint = ratPosition + (normalizedDir * 200.f);//std::min(p_data->maxMovementRange, targetDistance));
+			vec2 endPoint = ratPosition + (normalizedDir * std::min(p_data->maxMovementRange, targetDistance));
 			std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): ratPosition (" << ratPosition.x << ", " << ratPosition.y << "), endPoint: (" << endPoint.x << ", " << endPoint.y << ")" << std::endl;
 
 			LineSegment ls(ratPosition, endPoint);
@@ -233,16 +233,14 @@ namespace PE
 			if (!hitSomething)
 			{
 				std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): didn't hit anyth" << std::endl;
-				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
-				return finalTarget;
+				break;
 			}
 			--loopTimer;
 
 			if (loopTimer == 0)
 			{
 				std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): looped 360 degrees" << std::endl;
-				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
-				return finalTarget;
+				break;
 			}
 
 			std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): rotate 15 deg" << std::endl;
