@@ -45,6 +45,12 @@
             "Entity": {
                 "components": {
                     "Camera": {
+                        "backgroundColor": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
+                        },
                         "ismaincamera": true,
                         "magnification": 1.0,
                         "viewportHeight": 1080.0,
@@ -790,6 +796,7 @@
                                 "HowToPlayPageTwo": 20,
                                 "Journal": 62,
                                 "JournalButton": 63,
+                                "JournalIcon": 0,
                                 "LoseCanvas": 37,
                                 "PauseBackGroundCanvas": 13,
                                 "PauseMenuCanvas": 3,
@@ -4396,8 +4403,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -520.0008544921875,
-                                "y": 106.99996185302734
+                                "x": -408.001953125,
+                                "y": 15.998832702636719
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4478,8 +4485,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -520.0008544921875,
-                            "y": 106.99996185302734
+                            "x": -408.001953125,
+                            "y": 15.998832702636719
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5055,14 +5062,14 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 264.9994812011719,
-                                "y": -129.00038146972656
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 0.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -5074,7 +5081,7 @@
                         "Old ID": 93,
                         "Prefab Type": "GutterRat",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "BrawlerRat",
                         "parent": null,
                         "sceneID": 61
@@ -5162,8 +5169,8 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 43.00004577636719,
-                                "y": 160.0000762939453
+                                "x": -91.99989318847656,
+                                "y": 26.00019073486328
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5224,8 +5231,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 43.00004577636719,
-                            "y": 160.0000762939453
+                            "x": -91.99989318847656,
+                            "y": 26.00019073486328
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5255,8 +5262,8 @@
                         "collisionLayerIndex": 1,
                         "data": {
                             "center": {
-                                "x": 359.00042724609375,
-                                "y": -42.49943923950195
+                                "x": 295.9998474121094,
+                                "y": -105.50018310546875
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5317,8 +5324,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 359.00042724609375,
-                            "y": -42.49943923950195
+                            "x": 295.9998474121094,
+                            "y": -105.50018310546875
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5532,12 +5539,12 @@
                         "collisionLayerIndex": 4,
                         "data": {
                             "max": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -134.5003204345703,
+                                "y": 123.9999771118164
                             },
                             "min": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -198.5003204345703,
+                                "y": -259.0000305175781
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5557,7 +5564,7 @@
                         "Old ID": 97,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
                         "sceneID": 31
@@ -5577,11 +5584,11 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 64.0,
+                        "height": 383.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 148.49969482421875,
-                            "y": -111.00003814697266
+                            "x": -166.5003204345703,
+                            "y": -67.5000228881836
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5603,7 +5610,7 @@
                         "Old ID": 98,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PatrolPoint",
                         "parent": null,
                         "sceneID": 98

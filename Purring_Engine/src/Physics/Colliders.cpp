@@ -95,6 +95,54 @@ namespace PE
 		return ret;
 	}
 
+
+	// Return -1 if on the left of the line (outside)
+	// Return 1 if on the right of the line (inside)
+	// Return 0 if on the line
+	bool IsPointOnLine(vec2 point, vec2 lineStart, vec2 lineEnd)
+	{
+		// Normal on the right of the line
+		vec2 normal{ lineEnd.y - lineStart.y, lineStart.x - lineEnd.x };
+		normal.Normalize();
+
+		// Project points onto normal and compare
+		float pointDist{ Dot(normal, point) };
+		float lineDist{ Dot(normal, lineStart) };
+		float difference{ pointDist - lineDist };
+
+		std::cout << "----------- START -----------" << std::endl;
+		std::cout << "IsPointOnLine((" << point.x << ", " << point.y << "), (" << lineStart.x << ", " << lineStart.y << "), (" << lineEnd.x << ", " << lineEnd.y << "))" << std::endl;
+
+		std::cout << "lineDist: " << lineDist << ", normal: (" << normal.x << ", " << normal.y << ")" << std::endl;
+
+		//if (!CompareFloats(difference, 0.f))
+		//{
+		//	std::cout << "the point is on the " << (difference > 0.f ? "right, positive " : "left, negative ") << "side." << std::endl;
+		//	std::cout << "-----------  END  -----------" << std::endl;
+		//	return false;//(difference > 0.f ? 1 : -1);
+		//}
+
+		// Check if the point is within the line segment
+		// Prev check was for line seg of infinite length
+		vec2 startToPoint{point - lineStart};
+		vec2 lineVec{lineEnd - lineStart};
+
+		// Check if they are pointed in the same dir
+		bool sameDir{ Dot(startToPoint, lineVec) > 0.f };
+		if (!sameDir)
+		{
+			std::cout << "the point is moving in the opposite direction of the line" << std::endl;
+			std::cout << "-----------  END  -----------" << std::endl;
+			return false;
+		}
+
+		// Check if the point is between the line start and end
+		bool withinRange{ lineVec.LengthSquared() >= startToPoint.LengthSquared() };
+		std::cout << "the point is " << (withinRange ? "within range" : "outside the range") << " of the line" << std::endl;
+		std::cout << "-----------  END  -----------" << std::endl;
+		return withinRange;
+	}
+
 	std::optional<LSColResult> CheckLSCollision(const LineSegment& ls, const AABBCollider& tgt)
 	{
 		std::optional<LSColResult> ret;
@@ -132,7 +180,8 @@ namespace PE
 				contactPoint /= det;
 
 				if (contactPoint.x >= tgt.min.x && contactPoint.x <= tgt.max.x && 
-					contactPoint.y >= tgt.min.y && contactPoint.y <= tgt.max.y)
+					contactPoint.y >= tgt.min.y && contactPoint.y <= tgt.max.y &&
+					IsPointOnLine(contactPoint, ls.point0, ls.point1))
 				{
 					results[i] = LSColResult();
 					results[i].value().contactPoint = contactPoint;

@@ -181,7 +181,73 @@ namespace PE
 
 	vec2 RatHunt_v2_0::PickTargetPosition()
 	{
+		vec2 ratPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
 		vec2 finalTarget{ RatScript_v2_0::GetEntityPosition(targetId) };
+
+		bool hitSomething{};
+		bool continueLoop{ true };
+		int loopTimer = 360 / 15;
+
+
+		while (continueLoop)
+		{
+			hitSomething = false;
+			// Check what cats have exited the collider
+
+			std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): final target (" << finalTarget.x << ", " << finalTarget.y << ")" << std::endl;
+
+			vec2 movementDirection{ finalTarget - ratPosition };
+			float targetDistance{ (movementDirection).Length() }; //magnitude
+			if(targetDistance <= 0.f)
+			{
+				return ratPosition;
+			}
+
+			vec2 normalizedDir = movementDirection.GetNormalized();
+
+			vec2 endPoint = ratPosition + (normalizedDir * 200.f);//std::min(p_data->maxMovementRange, targetDistance));
+			std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): ratPosition (" << ratPosition.x << ", " << ratPosition.y << "), endPoint: (" << endPoint.x << ", " << endPoint.y << ")" << std::endl;
+
+			LineSegment ls(ratPosition, endPoint);
+
+			for (const auto& layer : LayerView<Collider>())
+			{
+				for (EntityID objectID : InternalView(layer))
+				{
+					if (objectID == p_data->myID)
+						continue;
+
+					if (RatScript_v2_0::GetIsObstacle(objectID))
+					{
+						std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): checking if ray hits obj " << objectID << std::endl;
+						if (DoRayCast(ls, objectID).has_value())
+						{
+							std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): ray hit " << objectID << std::endl;
+							hitSomething = true;
+							break;
+						}
+					}
+				}
+			}
+
+			if (!hitSomething)
+			{
+				std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): didn't hit anyth" << std::endl;
+				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
+				return finalTarget;
+			}
+			--loopTimer;
+
+			if (loopTimer == 0)
+			{
+				std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): looped 360 degrees" << std::endl;
+				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
+				return finalTarget;
+			}
+
+			std::cout << "RatHunt_v2_0::PickTargetPosition(" << p_data->myID << "): rotate 15 deg" << std::endl;
+			finalTarget = RotatePoint(ratPosition, finalTarget, 15.f);
+		}
 
 		// Set the rat target
 		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
