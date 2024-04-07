@@ -98,7 +98,7 @@ namespace PE
 		EntityID currentBoss{};
 		int currentSlamTurnCounter{};
 		std::map<EntityID,int> poisonPuddles;
-		float executionTimeOutTime{ 10 };
+		float executionTimeOutTime{ 3 };
 		float executionTimeOutTimer{ executionTimeOutTime };
 		BossRatAttacks bossRatAttackSets[3][3]
 		{
