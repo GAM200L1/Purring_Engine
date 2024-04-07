@@ -39,24 +39,6 @@ namespace PE
 				healthBar.m_currentValue = p_bsr->m_scriptData[p_bsr->currentBoss].currenthealth;
 				healthBar.m_maxValue = p_bsr->m_scriptData[p_bsr->currentBoss].maxHealth;
 
-				if (healthBar.m_currentValue <= 0.f)
-				{
-					//deactive all the children objects first
-					for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
-					{
-						if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
-							break;
-
-						EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
-					}
-
-					if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
-						return;
-
-					//deactive current object
-					EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
-				}
-
 				SetFillAmount(id, (healthBar.m_currentValue <= 0.f || healthBar.m_maxValue == 0.f) ? 0.f : healthBar.m_currentValue / healthBar.m_maxValue);
 		}
 	}
