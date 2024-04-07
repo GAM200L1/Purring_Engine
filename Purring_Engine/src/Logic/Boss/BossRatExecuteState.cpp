@@ -55,6 +55,9 @@ namespace PE
 
 	void BossRatExecuteState::PoisonPuddleDamageUpdate()
 	{
+		if (p_gsc->godMode == true)
+			return;
+
 		CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 
 		for (auto [CatID, CatType] : p_catController->GetCurrentCats(p_catController->mainInstance))
