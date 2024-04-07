@@ -168,6 +168,26 @@ namespace PE
 		if (!m_isRat && m_isPotraitShowing)
 		{
 			CatScript_v2_0Data* cat = GETSCRIPTDATA(CatScript_v2_0, m_lastSelectedEntity);
+
+			switch (cat->catType)
+			{
+			case EnumCatType::MAINCAT: //
+				nextPortraitTexture = "UnitPortrait_CatNameFrame_Meowsalot_239x82.png";
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_Meowsalot_753x402.png"));
+				break;
+			case EnumCatType::GREYCAT: //
+				nextPortraitTexture = "UnitPortrait_CatNameFrame_GreyCat_239x82.png";
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Grey_256px.png"));
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_GreyCat_753x402.png"));
+				break;
+			case EnumCatType::ORANGECAT: //
+				nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_OrangeCat_753x402.png"));
+				break;
+			}
+
 			SetPortraitInformation(nextPortraitTexture, cat->catCurrentEnergy, cat->catMaxMovementEnergy, 0);
 		}
 
