@@ -55,13 +55,15 @@ namespace PE
 			m_defaultPathColor = vec4{ 0.506f, 0.490f, 0.490f, 1.f };
 		
 		p_data->pathPositions.clear();
+		m_pathCollidersOnCage.clear();
 
 		// clear cache data
 		while (!(GETSCRIPTDATA(FollowScript_v2_0, id))->cacheFollowerPosition.empty())
 			(GETSCRIPTDATA(FollowScript_v2_0, id))->cacheFollowerPosition.pop();
 		
 		// subscribe to collision events
-		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
+		m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatMovement_v2_0PLAN::OnPathCollision, this);
+		m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovement_v2_0PLAN::OnPathCollision, this);
 
 		// reset energy, toggle off all path nodes, reset path node colors and add a path position
 		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
@@ -71,6 +73,7 @@ namespace PE
 		}
 
 		m_pathBeingDrawn = false;
+		m_checkFirstPath = false;
 
 		SetPathColor(m_defaultPathColor);
 		p_data->pathPositions.emplace_back(CatHelperFunctions::GetEntityPosition(p_data->catID));
@@ -134,7 +137,8 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::CleanUp()
 	{
-		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
 	}
 
 	void CatMovement_v2_0PLAN::Exit(EntityID id)
@@ -161,8 +165,19 @@ namespace PE
 			// Get the distance of the last two nodes
 			if (p_data->pathPositions.back().DistanceSquared(p_data->pathPositions[p_data->pathPositions.size() - 2]) < p_data->maxDistance * p_data->maxDistance)
 			{
-				// IF  the last two nodes are not the max dist from each other, delete the last node
-				p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
+				//if (!(p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())) // not the main cat
+				//{
+				//	// IF  the last two nodes are not the max dist from each other, delete the last node
+				//	p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
+				//}
+				//else
+				//{
+				//	if (m_pathBeingDrawn && m_checkFirstPath) // else if main cat
+				//		m_checkFirstPath = false;
+				//	else
+						// IF  the last two nodes are not the max dist from each other, delete the last node
+						p_data->pathPositions.erase(std::prev(p_data->pathPositions.end()));
+				//}
 			}
 		}
 		
@@ -313,6 +328,7 @@ namespace PE
 				if (iter != m_pathCollidersOnCage.end())
 					m_pathCollidersOnCage.erase(iter);
 			}
+			CatHelperFunctions::PositionEntity(p_data->pathQuads[i], r_resetPosition.second);
 			// deactivates path node
 			CatHelperFunctions::ToggleEntity(p_data->pathQuads[i], false);
 		}
@@ -331,6 +347,7 @@ namespace PE
 		SetPathColor(m_defaultPathColor);
 
 		m_pathBeingDrawn = false;
+		m_checkFirstPath = false;
 
 		m_resetPositions.pop();
 		
@@ -368,6 +385,37 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 	{
+		auto PlayHeart =
+			[&](EntityID cagedCatID)
+			{
+				if (!m_pathHasCagedCat)
+					m_pathHasCagedCat = true;
+				else
+					return;
+
+				for (EntityID findHeartID : Hierarchy::GetInstance().GetChildren(cagedCatID))
+				{
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(findHeartID).name.find("Heart") != std::string::npos)
+					{
+						m_checkFirstPath = true;
+						m_heartIcon = findHeartID;
+						CatHelperFunctions::ToggleEntity(findHeartID, true);
+						EntityManager::GetInstance().Get<AnimationComponent>(findHeartID).PlayAnimation();
+						// play adopt audio
+						CatScript_v2_0::PlayRescueCatAudio(*GETSCRIPTDATA(CatScript_v2_0, cagedCatID).catType);
+					}
+				}
+			};
+
+		auto IsCatAndCaged =
+			[&](EntityID catCage)
+			{
+				if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catCage) && GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(catCage))
+					return true;
+				else
+					return false;
+			};
+
 		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
 			auto InvalidPath =
@@ -381,36 +429,7 @@ namespace PE
 					std::string soundPrefabPath = "AudioObject/Path Denial SFX1.prefab";
 					PE::GlobalMusicManager::GetInstance().PlaySFX(soundPrefabPath, false);
 				};
-
-			auto IsCatAndCaged =
-				[&](EntityID catCage)
-				{
-					if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catCage) && GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(catCage))
-						return true;
-					else
-						return false;
-				};
-			auto PlayHeart = 
-				[&](EntityID cagedCatID)
-				{
-					if (!m_pathHasCagedCat)
-						m_pathHasCagedCat = true;
-					else
-						return;
-
-					for (EntityID findHeartID : Hierarchy::GetInstance().GetChildren(cagedCatID))
-					{
-						if (EntityManager::GetInstance().Get<EntityDescriptor>(findHeartID).name.find("Heart") != std::string::npos)
-						{
-							m_heartIcon = findHeartID;
-							CatHelperFunctions::ToggleEntity(findHeartID, true);
-							EntityManager::GetInstance().Get<AnimationComponent>(findHeartID).PlayAnimation();
-							// play adopt audio
-							CatScript_v2_0::PlayRescueCatAudio(*GETSCRIPTDATA(CatScript_v2_0, cagedCatID).catType);
-						}
-					}
-				};
-
+			
 			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
 			// Check if the cat is colliding with an obstacle
 			if (CatHelperFunctions::IsObstacle(OTEE.Entity2))
@@ -437,7 +456,14 @@ namespace PE
 			}
 			else if (IsCatAndCaged(OTEE.Entity2))
 			{
-				if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end())
+				if (OTEE.Entity1 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())
+				{
+					PlayHeart(OTEE.Entity2);
+					m_cagedCatID = OTEE.Entity2;
+				}
+				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID()
+					&& std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end()
+					&& std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), OTEE.Entity1) == m_pathCollidersOnCage.end())
 				{
 					PlayHeart(OTEE.Entity2);
 					m_cagedCatID = OTEE.Entity2;
@@ -446,7 +472,51 @@ namespace PE
 			}
 			else if (IsCatAndCaged(OTEE.Entity1))
 			{
-				if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() && std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end())
+				if (OTEE.Entity2 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())
+				{
+					PlayHeart(OTEE.Entity1);
+					m_cagedCatID = OTEE.Entity1;
+				}
+				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID()
+					&& std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end()
+					&& std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), OTEE.Entity2) == m_pathCollidersOnCage.end())
+				{
+					// play animation and sound for the heart animation
+					PlayHeart(OTEE.Entity1);
+					m_cagedCatID = OTEE.Entity1;
+					m_pathCollidersOnCage.emplace_back(OTEE.Entity2);
+				}
+			}
+		}
+		else if (r_CE.GetType() == CollisionEvents::OnTriggerStay)
+		{
+			OnTriggerStayEvent OTEE = dynamic_cast<const OnTriggerStayEvent&>(r_CE);
+			if (IsCatAndCaged(OTEE.Entity2))
+			{
+				if (OTEE.Entity1 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())
+				{
+					PlayHeart(OTEE.Entity2);
+					m_cagedCatID = OTEE.Entity2;
+				}
+				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() 
+					&& std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity1) != p_data->pathQuads.end()
+					&& std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), OTEE.Entity1) == m_pathCollidersOnCage.end())
+				{
+					PlayHeart(OTEE.Entity2);
+					m_cagedCatID = OTEE.Entity2;
+					m_pathCollidersOnCage.emplace_back(OTEE.Entity1);
+				}
+			}
+			else if (IsCatAndCaged(OTEE.Entity1))
+			{
+				if (OTEE.Entity2 == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID())
+				{
+					PlayHeart(OTEE.Entity1);
+					m_cagedCatID = OTEE.Entity1;
+				}
+				else if (p_data->catID == GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetMainCatID() 
+					&& std::find(p_data->pathQuads.begin(), p_data->pathQuads.end(), OTEE.Entity2) != p_data->pathQuads.end()
+					&& std::find(m_pathCollidersOnCage.begin(), m_pathCollidersOnCage.end(), OTEE.Entity2) == m_pathCollidersOnCage.end())
 				{
 					// play animation and sound for the heart animation
 					PlayHeart(OTEE.Entity1);
