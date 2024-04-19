@@ -2,14 +2,14 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "../Assets/Audio/MOTM_M5_IntroCutscene_AudioOnly.wav",
+                "audioKey": "../Assets/Audio/mus_IntroBGM_NoLoop.wav",
                 "loop": true
             },
             "EntityDescriptor": {
-                "Prefab Type": "Background Music",
+                "Prefab Type": "Intro Background Music",
                 "children": [],
                 "isActive": true,
-                "name": "Background Music",
+                "name": "Intro Background Music",
                 "parent": null,
                 "sceneID": 18446744073709551615
             }
