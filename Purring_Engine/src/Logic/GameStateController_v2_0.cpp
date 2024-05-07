@@ -205,8 +205,23 @@ namespace PE
 			}
 
 			SetPortraitInformation(nextPortraitTexture, cat->catCurrentEnergy, cat->catMaxMovementEnergy, 0);
+		
 		}
 
+		if (!m_isPotraitShowing)
+		{
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).ClickIndicator))
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).ClickIndicator).isActive = false;
+		}
+		else
+		{
+			if (EntityManager::GetInstance().Has<Transform>(m_scriptData.at(id).ClickIndicator))
+			{
+				if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).ClickIndicator))
+					EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).ClickIndicator).isActive = true;
+				EntityManager::GetInstance().Get<Transform>(m_scriptData.at(id).ClickIndicator).position = vec2(EntityManager::GetInstance().Get<Transform>(m_lastSelectedEntity).position.x, EntityManager::GetInstance().Get<Transform>(m_lastSelectedEntity).position.y - 29);
+			}
+		}
 
 		if (m_isTransitioning) // if running the transitioning bgm, this is detached from states so it can happen anytime
 		{
@@ -968,6 +983,7 @@ namespace PE
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
 			m_nextTurnOnce = true;
+			m_isPotraitShowing = false;
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_exexcutePhaseBanner);

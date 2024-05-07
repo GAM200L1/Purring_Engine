@@ -268,6 +268,7 @@ RTTR_REGISTRATION
         .property("WindParticles", &PE::GameStateController_v2_0Data::WindParticles)
         .property("SnowParticles", &PE::GameStateController_v2_0Data::SnowParticles)
         .property("GodModeText", &PE::GameStateController_v2_0Data::GodModeText)
+        .property("ClickIndicator", &PE::GameStateController_v2_0Data::ClickIndicator)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")

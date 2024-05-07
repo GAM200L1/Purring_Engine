@@ -64,6 +64,8 @@ namespace PE
 
 		EntityID GodModeText;
 
+		EntityID ClickIndicator;
+
 		int NumberInList{5};
 		std::vector<EntityID> clicklisttest;
 

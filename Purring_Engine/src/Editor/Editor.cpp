@@ -3405,6 +3405,7 @@ namespace PE {
 											int WindParticlesID = static_cast<int> (it->second.WindParticles);
 											int SnowParticlesID = static_cast<int> (it->second.SnowParticles);
 											int GodModeTextID = static_cast<int> (it->second.GodModeText);
+											int ClickIndicatorID = static_cast<int> (it->second.ClickIndicator);
 
 											ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
 											if (PauseBackGroundCanvasID != m_currentSelectedObject) { it->second.PauseBackGroundCanvas = PauseBackGroundCanvasID; }
@@ -3486,6 +3487,9 @@ namespace PE {
 											
 											ImGui::Text("God Mode Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##gscgmtid", &GodModeTextID);
 											if (GodModeTextID != m_currentSelectedObject) { it->second.GodModeText = GodModeTextID; }
+
+											ImGui::Text("Click Indicator ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##gsciid", &ClickIndicatorID);
+											if (ClickIndicatorID != m_currentSelectedObject) { it->second.ClickIndicator = ClickIndicatorID; }
 
 											for (int i = 0; i < 5; i++)
 											{
