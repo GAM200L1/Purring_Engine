@@ -208,20 +208,7 @@ namespace PE
 		
 		}
 
-		if (!m_isPotraitShowing)
-		{
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).ClickIndicator))
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).ClickIndicator).isActive = false;
-		}
-		else
-		{
-			if (EntityManager::GetInstance().Has<Transform>(m_scriptData.at(id).ClickIndicator))
-			{
-				if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData.at(id).ClickIndicator))
-					EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData.at(id).ClickIndicator).isActive = true;
-				EntityManager::GetInstance().Get<Transform>(m_scriptData.at(id).ClickIndicator).position = vec2(EntityManager::GetInstance().Get<Transform>(m_lastSelectedEntity).position.x, EntityManager::GetInstance().Get<Transform>(m_lastSelectedEntity).position.y - 29);
-			}
-		}
+		UpdateSelectionIndicator(id, m_isPotraitShowing, m_lastSelectedEntity);
 
 		if (m_isTransitioning) // if running the transitioning bgm, this is detached from states so it can happen anytime
 		{
@@ -1948,5 +1935,29 @@ namespace PE
 		if (Finished)
 			NextState();
 	}
+
+	void GameStateController_v2_0::UpdateSelectionIndicator(EntityID id, bool isPortraitShowing, EntityID lastSelectedEntity)
+	{
+		auto& entityManager = EntityManager::GetInstance();
+		auto clickIndicatorID = m_scriptData.at(id).ClickIndicator;
+
+		if (!isPortraitShowing)
+		{
+			if (entityManager.Has<EntityDescriptor>(clickIndicatorID))
+			{
+				entityManager.Get<EntityDescriptor>(clickIndicatorID).isActive = false;
+			}
+		}
+		else
+		{
+			if (entityManager.Has<Transform>(clickIndicatorID) && entityManager.Has<EntityDescriptor>(clickIndicatorID))
+			{
+				entityManager.Get<EntityDescriptor>(clickIndicatorID).isActive = true;
+				auto& lastSelectedTransform = entityManager.Get<Transform>(lastSelectedEntity);
+				entityManager.Get<Transform>(clickIndicatorID).position = vec2(lastSelectedTransform.position.x, lastSelectedTransform.position.y - 29);
+			}
+		}
+	}
+
 
 }

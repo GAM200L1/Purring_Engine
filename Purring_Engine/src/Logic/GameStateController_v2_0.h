@@ -534,6 +534,9 @@ namespace PE
 		*************************************************************************************/
 		void PlayCatSelectionSound(int catType);
 
+		void UpdateSelectionIndicator(EntityID id, bool isPortraitShowing, EntityID lastSelectedEntity);
+
+
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;

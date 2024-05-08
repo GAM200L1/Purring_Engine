@@ -6560,7 +6560,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Resources/LeafTwirl_Sepia.png"
+                        "TextureKey": "../Assets/Textures/Animations/LeafTwirl.png"
                     },
                     "Transform": {
                         "height": 100.0000228881836,
@@ -6631,7 +6631,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Click Indicator",
+                        "name": "Selection Indicator",
                         "parent": null,
                         "sceneID": 117
                     },
