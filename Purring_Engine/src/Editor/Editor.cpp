@@ -3710,6 +3710,9 @@ namespace PE {
 											int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
 											int HowToPlayPageOneID = static_cast<int> (it->second.HowToPlayPageOne);
 											int HowToPlayPageTwoID = static_cast<int> (it->second.HowToPlayPageTwo);
+											int CreditCanvasID = static_cast<int> (it->second.CreditsCanvas);
+											int CreditsPageOneID = static_cast<int> (it->second.CreditsPageOne);
+											int CreditsPageTwoID = static_cast<int> (it->second.CreditsPageTwo);
 											int SettingsMenuID = static_cast<int> (it->second.SettingsMenu);
 											int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 
@@ -3736,6 +3739,15 @@ namespace PE {
 
 											ImGui::Text("Transition Panel Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMTPID", &TransitionPanelID);
 											if (TransitionPanelID != m_currentSelectedObject) it->second.TransitionPanel = TransitionPanelID;
+
+											ImGui::Text("Credit Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCCID", &CreditCanvasID);
+											if (CreditCanvasID != m_currentSelectedObject) { it->second.CreditsCanvas = CreditCanvasID; }
+
+											ImGui::Text("Credit Page One ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCP1ID", &CreditsPageOneID);
+											if (CreditsPageOneID != m_currentSelectedObject) { it->second.CreditsPageOne = CreditsPageOneID; }
+
+											ImGui::Text("Credit Page Two ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCP2ID", &CreditsPageTwoID);
+											if (CreditsPageTwoID != m_currentSelectedObject) it->second.CreditsPageTwo = CreditsPageTwoID;
 										}
 									}
 								}

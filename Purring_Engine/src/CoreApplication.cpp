@@ -302,6 +302,9 @@ RTTR_REGISTRATION
         .property("HowToPlayCanvas", &PE::MainMenuControllerData::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::MainMenuControllerData::HowToPlayPageOne)
         .property("HowToPlayPageTwo", &PE::MainMenuControllerData::HowToPlayPageTwo)
+        .property("CreditsCanvas", &PE::MainMenuControllerData::CreditsCanvas)
+        .property("CreditsPageOne", &PE::MainMenuControllerData::CreditsPageOne)
+        .property("CreditsPageTwo", &PE::MainMenuControllerData::CreditsPageTwo)
         .property("TransitionPanel", &PE::MainMenuControllerData::TransitionPanel)
         .property("SettingsMenu", &PE::MainMenuControllerData::SettingsMenu);
 

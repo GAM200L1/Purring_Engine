@@ -71,6 +71,9 @@
                         "MainMenuController": {
                             "data": {
                                 "AreYouSureCanvas": 14,
+                                "CreditsCanvas": 41,
+                                "CreditsPageOne": 43,
+                                "CreditsPageTwo": 42,
                                 "HowToPlayCanvas": 18,
                                 "HowToPlayPageOne": 8,
                                 "HowToPlayPageTwo": 10,
@@ -104,7 +107,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -183,7 +186,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -196,7 +199,8 @@
                             5,
                             9,
                             27,
-                            28
+                            28,
+                            47
                         ],
                         "isActive": true,
                         "name": "MainMenuCanvas",
@@ -403,11 +407,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": -338.0
+                            "y": -445.0999755859375
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": -338.0
+                            "y": -445.0999755859375
                         },
                         "relorientation": 0.0,
                         "width": 512.0
@@ -574,7 +578,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -680,7 +684,7 @@
                         "isActive": true,
                         "name": "SplashScreenCanvas",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 7
                     },
                     "Transform": {
                         "height": 100.0,
@@ -804,7 +808,7 @@
                         "isActive": false,
                         "name": "HowToPlayCanvas",
                         "parent": null,
-                        "sceneID": 18
+                        "sceneID": 8
                     },
                     "Transform": {
                         "height": 100.0,
@@ -836,7 +840,7 @@
                         "isActive": false,
                         "name": "HTPpg1",
                         "parent": 18,
-                        "sceneID": 8
+                        "sceneID": 9
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1439,7 +1443,7 @@
                         "isActive": false,
                         "name": "Settings Canvas",
                         "parent": null,
-                        "sceneID": 25
+                        "sceneID": 10
                     },
                     "ScriptComponent": {
                         "SettingsScript": {
@@ -2088,7 +2092,7 @@
                         "isActive": true,
                         "name": "Transition Canvas",
                         "parent": null,
-                        "sceneID": 36
+                        "sceneID": 11
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2120,7 +2124,7 @@
                         "isActive": true,
                         "name": "UI Object",
                         "parent": 36,
-                        "sceneID": 0
+                        "sceneID": 37
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2185,6 +2189,438 @@
                         },
                         "relorientation": 0.0,
                         "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 0.0,
+                        "Width": 0.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 41,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            42,
+                            43,
+                            44,
+                            45,
+                            46
+                        ],
+                        "isActive": false,
+                        "name": "Credit Canvas",
+                        "parent": null,
+                        "sceneID": 9
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 43,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "credit page 1",
+                        "parent": 41,
+                        "sceneID": 11
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Credits_Page1_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 42,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "credit page 2",
+                        "parent": 41,
+                        "sceneID": 10
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Credits_Page2_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 44,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "cpg2",
+                        "parent": 41,
+                        "sceneID": 13
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Next_79x77.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_Next_79x77.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Next_Highlighted_79x77.png",
+                        "m_onClicked": "MMCreditsPage2",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Next_Dark_79x77.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Next_79x77.png"
+                    },
+                    "Transform": {
+                        "height": 77.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 849.0,
+                            "y": -55.0
+                        },
+                        "relativeposition": {
+                            "x": 849.0,
+                            "y": -55.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 79.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 45,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "cpg1",
+                        "parent": 41,
+                        "sceneID": 14
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Back_79x77.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Back_Highlighted_79x77.png",
+                        "m_onClicked": "MMCreditsPage1",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Back_Dark_79x77.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Back_79x77.png"
+                    },
+                    "Transform": {
+                        "height": 77.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -880.0,
+                            "y": -55.0
+                        },
+                        "relativeposition": {
+                            "x": -880.0,
+                            "y": -55.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 79.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 46,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "ReturnFromCreditsButton",
+                        "parent": 41,
+                        "sceneID": 12
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Return_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
+                        "m_onClicked": "MMCloseCredits",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Return_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Return_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 125.51300048828125,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -747.5,
+                            "y": 457.5
+                        },
+                        "relativeposition": {
+                            "x": -747.5,
+                            "y": 457.5
+                        },
+                        "relorientation": 0.0,
+                        "width": 409.8819885253906
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 47,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Credits Button",
+                        "parent": 12,
+                        "sceneID": 20
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Credits_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Credits_Highlighted_512x128.png",
+                        "m_onClicked": "MMOpenCredits",
+                        "m_onHoverEnter": "ButtonHoverExpand",
+                        "m_onHoverExit": "ButtonOffHoverShrink",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Credits_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Credits_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 128.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": -321.2999267578125
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": -321.2999267578125
+                        },
+                        "relorientation": 0.0,
+                        "width": 512.0
                     }
                 },
                 "name": ""

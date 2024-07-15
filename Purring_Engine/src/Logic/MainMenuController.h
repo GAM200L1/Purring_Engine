@@ -34,6 +34,10 @@ namespace PE
 
 		EntityID TransitionPanel;
 
+		EntityID CreditsCanvas;
+		EntityID CreditsPageOne;
+		EntityID CreditsPageTwo;
+
 		int mouseClickEventID;
 		int windowNotFocusEventID;
 		int windowFocusEventID;
@@ -247,6 +251,10 @@ namespace PE
 		 \brief			Shrink button after expanding
 		*************************************************************************************/
 		void ButtonOffHoverShrink(EntityID);
+		void MMCloseCredits(EntityID);
+		void MMOpenCredits(EntityID);
+		void MMCreditsPage2(EntityID);
+		void MMCreditsPage1(EntityID);
 	private:
 		//Script Variables
 		std::map<EntityID, MainMenuControllerData> m_scriptData; // Data associated with each instance of the script

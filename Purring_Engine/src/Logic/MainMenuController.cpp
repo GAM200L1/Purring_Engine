@@ -38,7 +38,11 @@ namespace PE
 		REGISTER_UI_FUNCTION(MMHTPPage1, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(MMHTPPage2, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(MMOpenSettings, PE::MainMenuController);
-		REGISTER_UI_FUNCTION(MMCloseSettings, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMCloseSettings, PE::MainMenuController);		
+		REGISTER_UI_FUNCTION(MMCreditsPage1, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMCreditsPage2, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMOpenCredits, PE::MainMenuController);
+		REGISTER_UI_FUNCTION(MMCloseCredits, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(PlayButtonHoverAudio, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(ButtonHoverExpand, PE::MainMenuController);
 		REGISTER_UI_FUNCTION(ButtonOffHoverShrink, PE::MainMenuController);
@@ -493,4 +497,65 @@ namespace PE
 		}
 
 	}
+
+	void MainMenuController::MMCloseCredits(EntityID)
+	{
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].CreditsCanvas);
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMOpenCredits(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].CreditsCanvas);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].CreditsPageTwo);
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].CreditsCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "cpg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+		}
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMCreditsPage2(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].CreditsPageTwo);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].CreditsPageOne);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].CreditsCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "cpg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+			}
+			else if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "cpg2")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+		}
+		PlayClickAudio();
+	}
+
+	void MainMenuController::MMCreditsPage1(EntityID)
+	{
+		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].CreditsPageOne);
+		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].CreditsPageTwo);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentMainMenuControllerEntityID].CreditsCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "cpg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+			else if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "cpg2")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+			}
+		}
+		PlayClickAudio();
+	}
+
 }
