@@ -1,37 +1,118 @@
-# GAM200_Pawsitive
+# Purring Engine by Team Pawsitive
+<img align="center" alt="Pawsitive Logo" src="https://github.com/user-attachments/assets/172c8bdc-5be1-4758-88aa-d9dc65cb6fd1" style="max-width:100px;height:auto;"/>
+</br>
+</br>
 
-## Repo walkthrough:
+A simple but effective custom 2D game engine, built using C++ with OpenGL for rendering.
+Our engine features a level editor, a component-based architecture, sprite batching and instancing, and custom algorithms for physics and collision detection.
+</br>
 
-How to update local repo
-- Pull as per normal
-- Download libraries (vendor.zip) from onedrive ([here](https://digipen824-my.sharepoint.com/:w:/g/personal/krystal_y_digipen_edu/EYxGu6mo5XZJvxmTTSB_6MQBt8zNiXm29dOKu_Xq9dEWKg?e=hCycpZ))
-    - contains all external libraries and premake executable
-- Extract vendor.zip with "Extract Here"
-- Run GenerateProject.bat file
-- .h file to go in include folder, .cpp to be separated further in src folder(?)
-- Every time a library is added, pull the premake file and redownload the vendor zip
-- Run the BAT file every time you pull the repo
-
-How to add source file or directories
-
-Method 1 Adding through VS
-    - File/directory created will be in project root directory and not the desired location
-    - Drag folder to appropriate location in file explorer, VS will add it automatically
-
-Method 2 Adding through file explorer
-    - File created will be in the desired location
-    - File will not be added into VS project
-    - Run BAT file for premake to update VS and add the new files in
+This engine was designed to support the development of "March of the Meows", our turn-based strategy game with a real-time twist. More details about our game can be [found below](#March-of-the-Meows).
 
 
-## Suppressed Warnings in this Project
-warnings supressed:
-C4201: nonstandard extension used : nameless struct/union
-C4819: The file contains a character that cannot be represented in the current code page(949)
-C4996: localtime function of standard library. The function or variable may be unsafe. 
-C4505: ('FMOD_ErrorString': unreferenced function with internal linkage has been removed)
+## Screenshots and Demos
 
-**Linker Warnings Ignored (in properties > linker > command line):**
-LNK4006: symbol already defined in object; second definition ignored
-LNK4098: defaultlib 'library' conflicts with use of other libs; use /NODEFAULTLIB:library
-LNK4099: PDB 'filename' was not found with 'object/library' or at 'path'; linking object as if no debug info
+
+### Dependencies
+- GLFW 
+- GLEW 
+- glm
+- stb_image
+- FMOD     
+- imgui    
+- ImGuizmo 
+- nlohmann 
+- FreeType 
+- RTTR     
+- FMOD Studio
+
+### Target Specs
+- Windows 10 (x64) machine capable
+- 4 GB of RAM
+- NVidia GeForce GTX 970M
+
+### Visual Studios Version
+- Microsoft Visual Studios 2022 (C++ Compiler)
+- SDK Version (10.0…) or later
+- Platform Toolset (v143)
+
+
+## Setting it Up
+1. Extract vendor.zip in root folder with "Extract Here".
+2. Run GenerateProject.bat file by double-clicking it.
+3. Open the Visual Studios solution "Purring_Engine.sln" using Microsoft Visual Studios 2022.
+
+Your file directory should now look like this: </br>
+![image](https://github.com/user-attachments/assets/f51675f4-76d0-4c1e-970c-a5ed2f78585b)
+
+
+## Running the Engine
+1. Set the target platform to "Release". </br>
+![image](https://github.com/user-attachments/assets/bfb1899d-4750-4322-8169-fe7bca357af2)
+2. Build the solution (Ctrl+Shift+B).
+3. Run the engine (Ctrl+F5).
+4. Congrats! You're running the Purring Engine.
+
+![image](https://github.com/user-attachments/assets/2d7d97f8-050d-4e46-a2e0-43681f543806)
+
+_For more details on using the engine, please refer to "editorGuide.pdf" in the root folder._
+
+
+
+
+# March of the Meows
+March of the Meows is a turn-based strategy game with a real-time twist! 
+
+You play as Sir Meowsalot, the last defender of the small village of Meowsville. Rescue felines as you journey through the world. Then, harness the power of friendship and teamwork to defeat the nefarious Rat King.
+
+The game can be downloaded [here (itch.io page)](), or by building it with our engine by following these instructions:
+
+## Running the Game "March of the Meows"
+1. Follow the instructions in the ["Setting it Up"](#Setting-it-Up) section 
+2. Set the target platform to "GameRelease"
+3. Build the solution (Ctrl+Shift+B).
+4. Run the game (Ctrl+F5).
+5. Have fun with March of the Meows!
+
+
+
+# Team
+*Tech Lead*
+
+HO Brandon Jun Jie (RTIS) </br>
+Role: Technical Lead, Programmer </br>
+Responsibilities: Engine (Assets Management), Engine (Architecture), Librarian, Animation Editor </br>
+
+*Programmers*
+
+FOONG Jun Wei (RTIS) </br>
+Role: Programmer </br>
+Responsibilities: Engine (GameObject Factory), Debugging Tools, Reflection </br>
+
+LIEW Yeni (RTIS) </br>
+Role: Programmer </br>
+Responsibilities: Resource, Physics, Collision, Particles </br>
+
+ONG You Yang (RTIS) </br>
+Role: Programmer </br>
+Responsibilities: Serialization, Scripting, Audio </br>
+
+YAMIN Krystal (RTIS) </br>
+Role: Programmer </br>
+Responsibilities: Graphics, Rendering </br>
+
+TAN Jarran Yan Zhi (IMGD) </br>
+Role: Programmer </br>
+Responsibilities: AI, Gameplay, Event, Input, Editor </br>
+
+*Design Leads*
+
+LAI Kar Lonng (UXGD) </br>
+Role: Design Lead, Art Lead </br>
+Responsibilities: Level Design, Mechanics, Concepts, Game Music, SFX, Voiceovers </br>
+
+*Product Manager*
+
+LEONG Aixian (UXGD) </br>
+Role: Product Manager, Designer </br>
+Responsibilities: Story, Systems Design, Production </br>
