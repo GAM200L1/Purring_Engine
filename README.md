@@ -12,13 +12,13 @@ This engine was designed to support the development of "March of the Meows", our
 
 ## Screenshots and Demos
 
-*Instanced Rendering*
+**Instanced Rendering**
 ![image](https://github.com/user-attachments/assets/df7e2e1b-b94e-4243-96f9-e058bdfc364a)
 
-*Particle Effects*
+**Particle Effects**
 ![image](https://github.com/user-attachments/assets/310e6036-e8f1-4279-9e29-056c92daadd3)
 
-*Physics*
+**Physics**
 
 https://github.com/user-attachments/assets/d2cab0f5-fba3-4da1-b3ff-7c4516e02248
 
@@ -86,13 +86,13 @@ The game can be downloaded [here (itch.io page)](), or by building it with our e
 </br></br>
 
 # Team
-*Tech Lead*
+**Tech Lead**
 
 HO Brandon Jun Jie (RTIS) </br>
 Role: Technical Lead, Programmer </br>
 Responsibilities: Engine (Assets Management), Engine (Architecture), Librarian, Animation Editor </br>
 
-*Programmers*
+**Programmers**
 
 FOONG Jun Wei (RTIS) </br>
 Role: Programmer </br>
@@ -114,13 +114,13 @@ TAN Jarran Yan Zhi (IMGD) </br>
 Role: Programmer </br>
 Responsibilities: AI, Gameplay, Event, Input, Editor </br>
 
-*Design Leads*
+**Design Leads**
 
 LAI Kar Lonng (UXGD) </br>
 Role: Design Lead, Art Lead </br>
 Responsibilities: Level Design, Mechanics, Concepts, Game Music, SFX, Voiceovers </br>
 
-*Product Manager*
+**Product Manager**
 
 LEONG Aixian (UXGD) </br>
 Role: Product Manager, Designer </br>
