@@ -94,6 +94,7 @@ _For more detailed instructions and troubleshooting, please refer to the "editor
 </br></br>
 
 # March of the Meows
+![Title Screen](https://github.com/user-attachments/assets/30294970-b48a-4bf2-9b1a-4a828922bf80) </br>
 _**March of the Meows**_ is a **turn-based strategy game with a real-time twist**!  
 
 In this adventure, you play as Sir Meowsalot, the last defender of the small village of Meowsville. Rescue felines as you journey through the world. Then, harness the power of friendship and teamwork to defeat the nefarious Rat King.
@@ -107,6 +108,11 @@ In this adventure, you play as Sir Meowsalot, the last defender of the small vil
 3. Build the solution by pressing `Ctrl + Shift + B`.
 4. Run the game by pressing `Ctrl + F5`.
 5. Enjoy playing _March of the Meows_!
+
+| Game Start! | Planning Phase | Action Time! |
+|---|---|---|
+ |![Screenshot 3](https://github.com/user-attachments/assets/1d68cf98-8469-4071-bca7-1895018855c1) | ![Screenshot 2](https://github.com/user-attachments/assets/4ca31055-f075-4c4f-8e79-4d751085be16) | ![Screenshot](https://github.com/user-attachments/assets/ab4b94bb-ce9c-488d-899d-d56c79d15d55) |
+
 
 </br></br>
 
