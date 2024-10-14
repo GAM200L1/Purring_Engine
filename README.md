@@ -1,6 +1,6 @@
 # Purring Engine by Team Pawsitive
 <p align="center">
-  <img alt="Pawsitive Logo" src="https://github.com/user-attachments/assets/172c8bdc-5be1-4758-88aa-d9dc65cb6fd1" style="max-width:50px;height:auto;"/>
+  <img alt="Pawsitive Logo" src="https://github.com/user-attachments/assets/edb1c22b-9a3d-44e1-9e4a-66e671ce746e" style="max-width:50px;height:auto;"/>
 </p>
 
 `Purring_Engine` is a simple but effective custom 2D game engine, developed using C++ with OpenGL for rendering.
@@ -94,13 +94,13 @@ _For more detailed instructions and troubleshooting, please refer to the "editor
 </br></br>
 
 # March of the Meows
-![Title Screen](https://github.com/user-attachments/assets/30294970-b48a-4bf2-9b1a-4a828922bf80) </br>
+![TitleCard](https://github.com/user-attachments/assets/5bc3f443-6ba7-4a94-8b56-367d4a0566e3) </br>
 _**March of the Meows**_ is a **turn-based strategy game with a real-time twist**!  Watch the gameplay showcase [here](https://youtu.be/nU-O-rKS07c).
 
 In this adventure, you play as Sir Meowsalot, the last defender of the small village of Meowsville. Rescue felines as you journey through the world. Then, harness the power of friendship and teamwork to defeat the nefarious Rat King.
 
-> 🎮 **Download the game**:  
-> You can [**download March of the Meows**](itch.io link) or build it with our engine by following the instructions below.
+> 🎮 **Playing the game**:  
+> You can build it with our engine by following the instructions below.
 
 ### Running the Game "March of the Meows"
 1. Follow the instructions in the [**Setting it Up**](#setting-it-up) section.
@@ -111,8 +111,7 @@ In this adventure, you play as Sir Meowsalot, the last defender of the small vil
 
 | Game Start! | Planning Phase | Action Time! |
 |---|---|---|
- |![Screenshot 3](https://github.com/user-attachments/assets/1d68cf98-8469-4071-bca7-1895018855c1) | ![Screenshot 2](https://github.com/user-attachments/assets/4ca31055-f075-4c4f-8e79-4d751085be16) | ![Screenshot](https://github.com/user-attachments/assets/ab4b94bb-ce9c-488d-899d-d56c79d15d55) |
-
+| ![GameplayPhase-Deployment](https://github.com/user-attachments/assets/7decc6b1-4314-482b-9b2a-0122059cb562) | ![GameplayPhase-Planning](https://github.com/user-attachments/assets/da3a6a33-0470-4064-9c11-4d6ffb3c21e6) | ![GameplayPhase-Execution](https://github.com/user-attachments/assets/010ac2dd-cf67-4c2e-8413-6d635037cd03) |
 
 </br></br>
 
